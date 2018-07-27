@@ -450,6 +450,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.USE, data)
     }
 
+    override fun visitSetConfiguration(ctx: SparkSqlBaseParser.SetConfigurationContext?): StatementData {
+        return StatementData(StatementType.SET)
+    }
+
     //-----------------------------------insert & query-------------------------------------------------
 
     override fun visitStatementDefault(ctx: SparkSqlBaseParser.StatementDefaultContext): StatementData? {

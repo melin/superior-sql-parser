@@ -639,4 +639,12 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun setTest() {
+        var sql = "set spark.executor.memory=30g"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SET, statementData.type)
+    }
 }
