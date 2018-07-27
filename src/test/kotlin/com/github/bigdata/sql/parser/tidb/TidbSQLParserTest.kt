@@ -196,6 +196,34 @@ class TidbSQLParserTest {
     }
 
     @Test
+    fun createTableTest5() {
+        val sql = """
+            CREATE TABLE `dw_job_analysis_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(255) DEFAULT NULL,
+  `job_id` int(11) DEFAULT NULL,
+  `job_type` varchar(255) DEFAULT NULL,
+  `job_status` int(255) DEFAULT NULL,
+  `create_time` timestamp(6) NULL DEFAULT NULL,
+  `creater` varchar(255) DEFAULT NULL,
+  `modifier` varchar(255) DEFAULT NULL,
+  `gmt_created` timestamp(6) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
+  `gmt_modified` datetime(6) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(6),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=75306 DEFAULT CHARSET=utf8
+            """
+
+        val statementData = TidbSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if(statement is TidbCreateTable) {
+            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals("dw_job_analysis_detail", statement.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun dropTableTest() {
         val sql = "DROP table IF EXISTS bigdata.users"
 

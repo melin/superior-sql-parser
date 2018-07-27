@@ -1949,7 +1949,7 @@ nullNotnull
     ;
 
 updateTime
-    : ON UPDATE CURRENT_TIMESTAMP
+    : ON UPDATE CURRENT_TIMESTAMP ('(' decimalLiteral? ')')?
     ;
 
 constant
