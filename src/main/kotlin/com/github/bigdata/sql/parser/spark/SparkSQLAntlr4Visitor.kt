@@ -22,7 +22,13 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     private var command: String? = null
 
     override fun visit(tree: ParseTree?): StatementData {
-        return super.visit(tree)
+        val data = super.visit(tree)
+
+        if (data == null) {
+            throw SQLParserException("不支持的SQL")
+        }
+
+        return data;
     }
 
     //-----------------------------------database-------------------------------------------------
