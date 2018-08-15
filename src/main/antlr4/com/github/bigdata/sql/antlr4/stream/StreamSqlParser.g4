@@ -80,7 +80,7 @@ colTypeList
     ;
 
 colType
-    : ID dataType (COMMENT comment=STRING_LITERAL)?
+    : ID (jsonPath=STRING_LITERAL)? dataType (COMMENT comment=STRING_LITERAL)?
     ;
 
 dataType

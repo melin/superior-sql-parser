@@ -21,13 +21,15 @@ class StreamSQLAntlr4Visitor : StreamSqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateSoureTable(ctx: StreamSqlParser.CreateSoureTableContext): StatementData {
         val tableName = ctx.tableName().ID().text
-        var columns: List<DcColumn> = ctx.columns.children
-            .filter { it is StreamSqlParser.ColTypeContext }.map { item ->
-                val column = item as StreamSqlParser.ColTypeContext
-                val colName = column.ID().text
-                var dataType = column.dataType().text
-                val colComment = if (column.comment != null) StringUtil.cleanSingleQuote(column.comment.text) else null
-                    DcColumn(colName, dataType, colComment)
+        var columns: List<StreamColumn> = ctx.columns.children
+            .filter {
+                it is StreamSqlParser.ColTypeContext }.map { item ->
+                    val column = item as StreamSqlParser.ColTypeContext
+                    val colName = column.ID().text
+                    var dataType = column.dataType().text
+                    val colComment = if (column.comment != null) StringUtil.cleanSingleQuote(column.comment.text) else null
+                    val jsonPath = if (column.jsonPath != null) StringUtil.cleanSingleQuote(column.jsonPath.text) else null
+                    StreamColumn(colName, dataType, colComment, jsonPath)
             }
 
         var properties = HashMap<String, String>()
@@ -61,13 +63,13 @@ class StreamSQLAntlr4Visitor : StreamSqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateSinkTable(ctx: StreamSqlParser.CreateSinkTableContext): StatementData {
         val tableName = ctx.tableName().ID().text
-        var columns: List<DcColumn> = ctx.columns.children
+        var columns: List<StreamColumn> = ctx.columns.children
                 .filter { it is StreamSqlParser.ColTypeContext }.map { item ->
                     val column = item as StreamSqlParser.ColTypeContext
                     val colName = column.ID().text
                     var dataType = column.dataType().text
                     val colComment = if (column.comment != null) StringUtil.cleanSingleQuote(column.comment.text) else null
-                    DcColumn(colName, dataType, colComment)
+                    StreamColumn(colName, dataType, colComment)
                 }
 
         var properties = HashMap<String, String>()

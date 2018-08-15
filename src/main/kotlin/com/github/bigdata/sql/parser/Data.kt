@@ -162,7 +162,7 @@ data class JobData(val resourceName: String,
 
 data class StreamSourceTable(
         val tableName: String,
-        var columns: List<DcColumn>,
+        var columns: List<StreamColumn>,
         var properties: Map<String, String>,
         var timeMode: StreamTimeMode,
         var timeAttrName: String,
@@ -172,9 +172,15 @@ data class StreamSourceTable(
 
 data class StreamSinkTable(
         val tableName: String,
-        var columns: List<DcColumn>,
+        var columns: List<StreamColumn>,
         var properties: Map<String, String>
 ) : Statement()
+
+data class StreamColumn(
+        val name: String,
+        val type: String? = null,
+        val comment: String? = null,
+        val jsonPath: String? = null) : Statement()
 
 data class StreamView(
         val tableName: String,
