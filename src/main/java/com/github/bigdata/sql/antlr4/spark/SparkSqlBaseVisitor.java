@@ -348,6 +348,13 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClearCache(SparkSqlBaseParser.ClearCacheContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code loadData}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLoadData(SparkSqlBaseParser.LoadDataContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code truncateTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -390,6 +397,13 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitResetConfiguration(SparkSqlBaseParser.ResetConfigurationContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code statusJob}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatusJob(SparkSqlBaseParser.StatusJobContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code mergeTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -431,13 +445,6 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLoadTempTable(SparkSqlBaseParser.LoadTempTableContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code loadData}
-	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLoadData(SparkSqlBaseParser.LoadDataContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exportCSV}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
@@ -754,6 +761,24 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGroupingSet(SparkSqlBaseParser.GroupingSetContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#pivotClause}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPivotClause(SparkSqlBaseParser.PivotClauseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#pivotColumn}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPivotColumn(SparkSqlBaseParser.PivotColumnContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#pivotValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPivotValue(SparkSqlBaseParser.PivotValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#lateralView}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -964,12 +989,12 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLogicalNot(SparkSqlBaseParser.LogicalNotContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code booleanDefault}
+	 * Visit a parse tree produced by the {@code predicated}
 	 * labeled alternative in {@link SparkSqlBaseParser#booleanExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBooleanDefault(SparkSqlBaseParser.BooleanDefaultContext ctx);
+	T visitPredicated(SparkSqlBaseParser.PredicatedContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exists}
 	 * labeled alternative in {@link SparkSqlBaseParser#booleanExpression}.
@@ -984,12 +1009,6 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLogicalBinary(SparkSqlBaseParser.LogicalBinaryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SparkSqlBaseParser#predicated}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPredicated(SparkSqlBaseParser.PredicatedContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#predicate}.
 	 * @param ctx the parse tree
@@ -1102,12 +1121,26 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConstantDefault(SparkSqlBaseParser.ConstantDefaultContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code lambda}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLambda(SparkSqlBaseParser.LambdaContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code parenthesizedExpression}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitParenthesizedExpression(SparkSqlBaseParser.ParenthesizedExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code extract}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExtract(SparkSqlBaseParser.ExtractContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.

@@ -604,6 +604,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLoadData(SparkSqlBaseParser.LoadDataContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLoadData(SparkSqlBaseParser.LoadDataContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTruncateTable(SparkSqlBaseParser.TruncateTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -676,6 +688,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStatusJob(SparkSqlBaseParser.StatusJobContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatusJob(SparkSqlBaseParser.StatusJobContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMergeTable(SparkSqlBaseParser.MergeTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -743,18 +767,6 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLoadTempTable(SparkSqlBaseParser.LoadTempTableContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterLoadData(SparkSqlBaseParser.LoadDataContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLoadData(SparkSqlBaseParser.LoadDataContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1360,6 +1372,42 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPivotClause(SparkSqlBaseParser.PivotClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPivotClause(SparkSqlBaseParser.PivotClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPivotColumn(SparkSqlBaseParser.PivotColumnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPivotColumn(SparkSqlBaseParser.PivotColumnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPivotValue(SparkSqlBaseParser.PivotValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPivotValue(SparkSqlBaseParser.PivotValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLateralView(SparkSqlBaseParser.LateralViewContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1756,13 +1804,13 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBooleanDefault(SparkSqlBaseParser.BooleanDefaultContext ctx) { }
+	@Override public void enterPredicated(SparkSqlBaseParser.PredicatedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBooleanDefault(SparkSqlBaseParser.BooleanDefaultContext ctx) { }
+	@Override public void exitPredicated(SparkSqlBaseParser.PredicatedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1787,18 +1835,6 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLogicalBinary(SparkSqlBaseParser.LogicalBinaryContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPredicated(SparkSqlBaseParser.PredicatedContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPredicated(SparkSqlBaseParser.PredicatedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1996,6 +2032,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLambda(SparkSqlBaseParser.LambdaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLambda(SparkSqlBaseParser.LambdaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParenthesizedExpression(SparkSqlBaseParser.ParenthesizedExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2003,6 +2051,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParenthesizedExpression(SparkSqlBaseParser.ParenthesizedExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExtract(SparkSqlBaseParser.ExtractContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExtract(SparkSqlBaseParser.ExtractContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

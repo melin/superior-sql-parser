@@ -584,6 +584,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitClearCache(SparkSqlBaseParser.ClearCacheContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code loadData}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterLoadData(SparkSqlBaseParser.LoadDataContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code loadData}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitLoadData(SparkSqlBaseParser.LoadDataContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code truncateTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -656,6 +668,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitResetConfiguration(SparkSqlBaseParser.ResetConfigurationContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code statusJob}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatusJob(SparkSqlBaseParser.StatusJobContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code statusJob}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatusJob(SparkSqlBaseParser.StatusJobContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code mergeTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -727,18 +751,6 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLoadTempTable(SparkSqlBaseParser.LoadTempTableContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code loadData}
-	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterLoadData(SparkSqlBaseParser.LoadDataContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code loadData}
-	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitLoadData(SparkSqlBaseParser.LoadDataContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exportCSV}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
@@ -1270,6 +1282,36 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitGroupingSet(SparkSqlBaseParser.GroupingSetContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#pivotClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterPivotClause(SparkSqlBaseParser.PivotClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#pivotClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitPivotClause(SparkSqlBaseParser.PivotClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#pivotColumn}.
+	 * @param ctx the parse tree
+	 */
+	void enterPivotColumn(SparkSqlBaseParser.PivotColumnContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#pivotColumn}.
+	 * @param ctx the parse tree
+	 */
+	void exitPivotColumn(SparkSqlBaseParser.PivotColumnContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#pivotValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterPivotValue(SparkSqlBaseParser.PivotValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#pivotValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitPivotValue(SparkSqlBaseParser.PivotValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#lateralView}.
 	 * @param ctx the parse tree
 	 */
@@ -1624,17 +1666,17 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitLogicalNot(SparkSqlBaseParser.LogicalNotContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code booleanDefault}
+	 * Enter a parse tree produced by the {@code predicated}
 	 * labeled alternative in {@link SparkSqlBaseParser#booleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterBooleanDefault(SparkSqlBaseParser.BooleanDefaultContext ctx);
+	void enterPredicated(SparkSqlBaseParser.PredicatedContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code booleanDefault}
+	 * Exit a parse tree produced by the {@code predicated}
 	 * labeled alternative in {@link SparkSqlBaseParser#booleanExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitBooleanDefault(SparkSqlBaseParser.BooleanDefaultContext ctx);
+	void exitPredicated(SparkSqlBaseParser.PredicatedContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exists}
 	 * labeled alternative in {@link SparkSqlBaseParser#booleanExpression}.
@@ -1659,16 +1701,6 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLogicalBinary(SparkSqlBaseParser.LogicalBinaryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SparkSqlBaseParser#predicated}.
-	 * @param ctx the parse tree
-	 */
-	void enterPredicated(SparkSqlBaseParser.PredicatedContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SparkSqlBaseParser#predicated}.
-	 * @param ctx the parse tree
-	 */
-	void exitPredicated(SparkSqlBaseParser.PredicatedContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#predicate}.
 	 * @param ctx the parse tree
@@ -1860,6 +1892,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitConstantDefault(SparkSqlBaseParser.ConstantDefaultContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code lambda}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLambda(SparkSqlBaseParser.LambdaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lambda}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLambda(SparkSqlBaseParser.LambdaContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code parenthesizedExpression}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1871,6 +1915,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParenthesizedExpression(SparkSqlBaseParser.ParenthesizedExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code extract}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExtract(SparkSqlBaseParser.ExtractContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code extract}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExtract(SparkSqlBaseParser.ExtractContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
