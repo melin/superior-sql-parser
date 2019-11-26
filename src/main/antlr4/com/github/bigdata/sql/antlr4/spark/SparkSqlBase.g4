@@ -78,7 +78,7 @@ statement
         (WITH DBPROPERTIES tablePropertyList)?                         #createDatabase
     | ALTER DATABASE identifier SET DBPROPERTIES tablePropertyList     #setDatabaseProperties
     | DROP DATABASE (IF EXISTS)? identifier (RESTRICT | CASCADE)?      #dropDatabase
-    | createTableHeader ('(' colTypeList ')')? tableProvider
+    | createTableHeader ('(' columns=colTypeList ')')? tableProvider
         ((OPTIONS options=tablePropertyList) |
         (PARTITIONED BY partitionColumnNames=identifierList) |
         bucketSpec |
@@ -89,7 +89,8 @@ statement
         (AS? query)?                                                   #createTable
     | createTableHeader ('(' columns=colTypeList ')')?
         ((COMMENT comment=STRING) |
-        (PARTITIONED BY '(' partitionColumns=colTypeList ')') |
+        (PARTITIONED BY '(' partitionColumns=colTypeList ')' |
+        PARTITIONED BY partitionColumnNames=identifierList) |
         bucketSpec |
         skewSpec |
         rowFormat |
@@ -160,6 +161,9 @@ statement
     | SHOW CREATE TABLE tableIdentifier                                #showCreateTable
     | (DESC | DESCRIBE) FUNCTION EXTENDED? describeFuncName            #describeFunction
     | (DESC | DESCRIBE) DATABASE EXTENDED? identifier                  #describeDatabase
+    | (DESC | DESCRIBE) DETAIL table=tableIdentifier                   #describeDeltaDetail
+    | (DESC | DESCRIBE) HISTORY table=tableIdentifier
+        (LIMIT limit=INTEGER_VALUE)?                                   #describeDeltaHistory
     | (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)?
         tableIdentifier partitionSpec? describeColName?                #describeTable
     | REFRESH TABLE tableIdentifier                                    #refreshTable
@@ -177,29 +181,63 @@ statement
     | RESET                                                            #resetConfiguration
 
     | STATUS .*?                                                       #statusJob
-    | MERGE TABLE tableIdentifier partitionSpec?                       #mergeTable
-    | KILL JOB  jobIdentifier                                          #killJob
+    | MERGE TABLE tableIdentifier partitionSpec? sparkOptions?         #mergeTable
+    | KILL JOB  identifier                                             #killJob
     | ADDJAR jar=identifier                                            #addJar
     | ANGEL name=identifier tablePropertyList?                         #angel
     | READ TABLE tableIdentifier partitionSpec? LIMIT number           #readTable
-    | LOAD DATA path=constant TABLE tableIdentifier loadOptions?       #loadTempTable
-    | LOAD DATA resName=STRING loadMode=(OVERWRITE | INTO) TABLE
-        tableIdentifier partitionSpec?                                 #loadData
+    | LOAD DATA path=constant TABLE tableIdentifier sparkOptions?      #loadTempTable
     | EXPORT TABLE tableIdentifier partitionSpec?
-        TO name=constant loadOptions?                                  #exportCSV
+        TO name=constant sparkOptions?                                 #exportCSV
+    | COMPRESS TABLE tableIdentifier partitionSpec? sparkOptions?      #compressTable
+    | COMPRESS FILE path=constant sparkOptions?                        #compressFile
+    | DISTCP DRUID srcTableIdentifier = tableIdentifier
+        partitionSpec? TO datasource=identifier sparkOptions?          #distcpDruid
+
+    | DELETE FROM table=tableIdentifier tableAlias
+        (WHERE where=booleanExpression)?                               #deleteFromTable
+    | UPDATE table=tableIdentifier tableAlias upset=setClause
+        (WHERE where=booleanExpression)?                               #updateTable
+    | VACUUM table=tableIdentifier
+        (RETAIN num=number HOURS)? (DRY RUN)?                          #vacuumTable
+
+    | MERGE INTO target=tableIdentifier targetAlias=tableAlias
+        USING (source=tableIdentifier |
+            '(' sourceQuery=query')') sourceAlias=tableAlias
+        ON mergeCondition=booleanExpression?
+        matchedClause?
+        matchedClause?
+        notMatchedClause                                               #deltaMerge
+
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
-jobIdentifier
-    : JOBIDENTIFIER
-    ;
-
-loadOptions
+sparkOptions
     : OPTIONS '(' optionVal (',' optionVal)* ')'
     ;
 
 optionVal
-    : identifier EQ constant
+    : key=identifier EQ value=constant
+    ;
+
+matchedClause
+    : WHEN MATCHED (AND where=booleanExpression)? THEN matchedAction
+    ;
+
+matchedAction
+    : DELETE                                                   #delete
+    | UPDATE SET ASTERISK                                      #updateStar
+    | UPDATE upset=setClause                                   #updateSetClause
+    ;
+
+notMatchedClause
+    : WHEN NOT MATCHED (AND where=booleanExpression)? THEN notMatchedAction
+    ;
+
+notMatchedAction
+    : INSERT ASTERISK                                          #insertStar
+    | INSERT '(' namedExpressionSeq ')'
+        VALUES '(' namedExpressionSeq ')'                      #insertSetClause
     ;
 
 unsupportedHiveNativeCommands
@@ -247,7 +285,6 @@ unsupportedHiveNativeCommands
     | kw1=COMMIT
     | kw1=ROLLBACK
     | kw1=DFS
-    | kw1=DELETE kw2=FROM
     ;
 
 createTableHeader
@@ -279,6 +316,14 @@ insertInto
     | INSERT INTO TABLE? tableIdentifier partitionSpec?                                                     #insertIntoTable
     | INSERT OVERWRITE LOCAL? DIRECTORY path=STRING rowFormat? createFileFormat?                            #insertOverwriteHiveDir
     | INSERT OVERWRITE LOCAL? DIRECTORY (path=STRING)? tableProvider (OPTIONS options=tablePropertyList)?   #insertOverwriteDir
+    ;
+
+setClause
+    : SET assign (',' assign)*
+    ;
+
+assign
+    : key=identifier EQ value=expression
     ;
 
 partitionSpecLocation
@@ -565,6 +610,7 @@ rowFormat
 
 tableIdentifier
     : (db=identifier '.')? table=identifier
+    | (DRUID '.')? table=identifier
     ;
 
 functionIdentifier
@@ -597,6 +643,7 @@ predicate
     | NOT? kind=IN '(' query ')'
     | NOT? kind=(RLIKE | LIKE) pattern=valueExpression
     | IS NOT? kind=NULL
+    | IS NOT? kind=(TRUE | FALSE | UNKNOWN)
     | IS NOT? kind=DISTINCT FROM right=valueExpression
     ;
 
@@ -626,8 +673,6 @@ primaryExpression
     | '(' query ')'                                                                            #subqueryExpression
     | qualifiedName '(' (setQuantifier? argument+=expression (',' argument+=expression)*)? ')'
        (OVER windowSpec)?                                                                      #functionCall
-    | qualifiedName '(' trimOption=(BOTH | LEADING | TRAILING) argument+=expression
-      FROM argument+=expression ')'                                                            #functionCall
     | IDENTIFIER '->' expression                                                               #lambda
     | '(' IDENTIFIER (',' IDENTIFIER)+ ')' '->' expression                                     #lambda
     | value=primaryExpression '[' index=valueExpression ']'                                    #subscript
@@ -635,6 +680,12 @@ primaryExpression
     | base=primaryExpression '.' fieldName=identifier                                          #dereference
     | '(' expression ')'                                                                       #parenthesizedExpression
     | EXTRACT '(' field=identifier FROM source=valueExpression ')'                             #extract
+    | (SUBSTR | SUBSTRING) '(' str=valueExpression (FROM | ',') pos=valueExpression
+      ((FOR | ',') len=valueExpression)? ')'                                                   #substring
+    | TRIM '(' trimOption=(BOTH | LEADING | TRAILING)? (trimStr=valueExpression)?
+       FROM srcStr=valueExpression ')'                                                         #trim
+    | OVERLAY '(' input=valueExpression PLACING replace=valueExpression
+       FROM position=valueExpression (FOR length=valueExpression)? ')'                         #overlay
     ;
 
 constant
@@ -771,10 +822,10 @@ nonReserved
     : SHOW | TABLES | COLUMNS | COLUMN | PARTITIONS | FUNCTIONS | DATABASES
     | ADD
     | OVER | PARTITION | RANGE | ROWS | PRECEDING | FOLLOWING | CURRENT | ROW | LAST | FIRST | AFTER
-    | MAP | ARRAY | STRUCT
+    | MAP | ARRAY | STRUCT | SUBSTR | SUBSTRING
     | PIVOT | LATERAL | WINDOW | REDUCE | TRANSFORM | SERDE | SERDEPROPERTIES | RECORDREADER
     | DELIMITED | FIELDS | TERMINATED | COLLECTION | ITEMS | KEYS | ESCAPED | LINES | SEPARATED
-    | EXTENDED | REFRESH | CLEAR | CACHE | UNCACHE | LAZY | GLOBAL | TEMPORARY | OPTIONS
+    | EXTENDED | REFRESH | CLEAR | CACHE | UNCACHE | UNKNOWN | LAZY | GLOBAL | TEMPORARY | OPTIONS
     | GROUPING | CUBE | ROLLUP
     | EXPLAIN | FORMAT | LOGICAL | FORMATTED | CODEGEN | COST
     | TABLESAMPLE | USE | TO | BUCKET | PERCENTLIT | OUT | OF
@@ -783,6 +834,8 @@ nonReserved
     | IF
     | POSITION
     | EXTRACT
+    | TRIM
+    | OVERLAY | PLACING
     | NO | DATA
     | START | TRANSACTION | COMMIT | ROLLBACK | IGNORE
     | SORT | CLUSTER | DISTRIBUTE | UNSET | TBLPROPERTIES | SKEWED | STORED | DIRECTORIES | LOCATION
@@ -793,15 +846,15 @@ nonReserved
     | REVOKE | GRANT | LOCK | UNLOCK | MSCK | REPAIR | RECOVER | EXPORT | IMPORT | LOAD | VALUES | COMMENT | ROLE
     | ROLES | COMPACTIONS | PRINCIPALS | TRANSACTIONS | INDEX | INDEXES | LOCKS | OPTION | LOCAL | INPATH
     | ASC | DESC | LIMIT | RENAME | SETS
-    | AT | NULLS | OVERWRITE | ALL | ANY | ALTER | AS | BETWEEN | BY | CREATE | DELETE
+    | AT | NULLS | OVERWRITE | ALL | ANY | ALTER | AS | BETWEEN | BY | CREATE | DELETE | UPDATE
     | DESCRIBE | DROP | EXISTS | FALSE | FOR | GROUP | IN | INSERT | INTO | IS |LIKE
     | NULL | ORDER | OUTER | TABLE | TRUE | WITH | RLIKE
     | AND | CASE | CAST | DISTINCT | DIV | ELSE | END | FUNCTION | INTERVAL | MACRO | OR | STRATIFY | THEN
     | UNBOUNDED | WHEN
     | DATABASE | SELECT | FROM | WHERE | HAVING | TO | TABLE | WITH | NOT
     | DIRECTORY
-    | BOTH | LEADING | TRAILING
-    | MERGE | KILL | READ | STATUS
+    | BOTH | LEADING | TRAILING | MATCHED
+    | MERGE | KILL | READ | STATUS | VACUUM | RETAIN | RUN | HISTORY | HOURS | DETAIL | DRY
     ;
 
 SELECT: 'SELECT';
@@ -891,6 +944,7 @@ SHOW: 'SHOW';
 TABLES: 'TABLES';
 COLUMNS: 'COLUMNS';
 COLUMN: 'COLUMN';
+UPDATE: 'UPDATE';
 USE: 'USE';
 PARTITIONS: 'PARTITIONS';
 FUNCTIONS: 'FUNCTIONS';
@@ -907,6 +961,8 @@ RENAME: 'RENAME';
 ARRAY: 'ARRAY';
 MAP: 'MAP';
 STRUCT: 'STRUCT';
+SUBSTR: 'SUBSTR';
+SUBSTRING: 'SUBSTRING';
 COMMENT: 'COMMENT';
 LIFECYCLE: 'LIFECYCLE';
 SET: 'SET';
@@ -921,6 +977,15 @@ IGNORE: 'IGNORE';
 BOTH: 'BOTH';
 LEADING: 'LEADING';
 TRAILING: 'TRAILING';
+
+VACUUM: 'VACUUM';
+RETAIN: 'RETAIN';
+RUN: 'RUN';
+HISTORY: 'HISTORY';
+HOURS: 'HOURS';
+DETAIL: 'DETAIL';
+DRY: 'DRY';
+MATCHED: 'MATCHED';
 
 MERGE: 'MERGE';
 KILL: 'KILL';
@@ -957,9 +1022,13 @@ BUCKET: 'BUCKET';
 OUT: 'OUT';
 OF: 'OF';
 
+STATUS: 'STATUS';
 SORT: 'SORT';
 CLUSTER: 'CLUSTER';
 DISTRIBUTE: 'DISTRIBUTE';
+TRIM: 'TRIM';
+OVERLAY: 'OVERLAY';
+PLACING: 'PLACING';
 OVERWRITE: 'OVERWRITE';
 TRANSFORM: 'TRANSFORM';
 REDUCE: 'REDUCE';
@@ -983,6 +1052,7 @@ REFRESH: 'REFRESH';
 CLEAR: 'CLEAR';
 CACHE: 'CACHE';
 UNCACHE: 'UNCACHE';
+UNKNOWN: 'UNKNOWN';
 LAZY: 'LAZY';
 FORMATTED: 'FORMATTED';
 GLOBAL: 'GLOBAL';
@@ -1046,6 +1116,10 @@ LOCAL: 'LOCAL';
 INPATH: 'INPATH';
 ANGEL: 'ANGEL';
 ADDJAR: 'ADDJAR';
+COMPRESS: 'COMPRESS';
+FILE: 'FILE';
+DISTCP: 'DISTCP';
+DRUID: 'DRUID';
 
 STRING
     : '\'' ( ~('\''|'\\') | ('\\' .) )* '\''
