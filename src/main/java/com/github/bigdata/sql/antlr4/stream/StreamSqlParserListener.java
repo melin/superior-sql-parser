@@ -58,6 +58,16 @@ public interface StreamSqlParserListener extends ParseTreeListener {
 	 */
 	void exitCreateSinkTable(StreamSqlParser.CreateSinkTableContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link StreamSqlParser#createSideTable}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreateSideTable(StreamSqlParser.CreateSideTableContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StreamSqlParser#createSideTable}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreateSideTable(StreamSqlParser.CreateSideTableContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link StreamSqlParser#createView}.
 	 * @param ctx the parse tree
 	 */
@@ -177,6 +187,16 @@ public interface StreamSqlParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDataType(StreamSqlParser.DataTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link StreamSqlParser#tableNameList}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableNameList(StreamSqlParser.TableNameListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link StreamSqlParser#tableNameList}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableNameList(StreamSqlParser.TableNameListContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link StreamSqlParser#tablePropertyList}.
 	 * @param ctx the parse tree

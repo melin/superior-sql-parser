@@ -18,6 +18,7 @@ CREATE:                              'CREATE';
 TABLE:                               'TABLE';
 SOURCE:                              'SOURCE';
 SINK:                                'SINK';
+SIDE:                                'SIDE';
 WITH:                                'WITH';
 VIEW:                                'VIEW';
 COMMENT:                             'COMMENT';

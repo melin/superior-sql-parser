@@ -306,6 +306,20 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDescribeDatabase(SparkSqlBaseParser.DescribeDatabaseContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code describeDeltaDetail}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDescribeDeltaDetail(SparkSqlBaseParser.DescribeDeltaDetailContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code describeDeltaHistory}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDescribeDeltaHistory(SparkSqlBaseParser.DescribeDeltaHistoryContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code describeTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -446,30 +460,133 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLoadTempTable(SparkSqlBaseParser.LoadTempTableContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code exportCSV}
+	 * Visit a parse tree produced by the {@code exportTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExportCSV(SparkSqlBaseParser.ExportCSVContext ctx);
+	T visitExportTable(SparkSqlBaseParser.ExportTableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SparkSqlBaseParser#jobIdentifier}.
+	 * Visit a parse tree produced by the {@code compressTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitJobIdentifier(SparkSqlBaseParser.JobIdentifierContext ctx);
+	T visitCompressTable(SparkSqlBaseParser.CompressTableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SparkSqlBaseParser#loadOptions}.
+	 * Visit a parse tree produced by the {@code compressFile}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoadOptions(SparkSqlBaseParser.LoadOptionsContext ctx);
+	T visitCompressFile(SparkSqlBaseParser.CompressFileContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code distcpDatasource}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code deleteFromTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeleteFromTable(SparkSqlBaseParser.DeleteFromTableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code updateTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdateTable(SparkSqlBaseParser.UpdateTableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code vacuumTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVacuumTable(SparkSqlBaseParser.VacuumTableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code deltaMerge}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeltaMerge(SparkSqlBaseParser.DeltaMergeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code deltaConvert}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDataSource(SparkSqlBaseParser.DataSourceContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#sparkOptions}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSparkOptions(SparkSqlBaseParser.SparkOptionsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#optionVal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitOptionVal(SparkSqlBaseParser.OptionValContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#matchedClause}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMatchedClause(SparkSqlBaseParser.MatchedClauseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code delete}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDelete(SparkSqlBaseParser.DeleteContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code updateStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdateStar(SparkSqlBaseParser.UpdateStarContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code updateSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdateSetClause(SparkSqlBaseParser.UpdateSetClauseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#notMatchedClause}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotMatchedClause(SparkSqlBaseParser.NotMatchedClauseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code insertStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInsertStar(SparkSqlBaseParser.InsertStarContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code insertSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInsertSetClause(SparkSqlBaseParser.InsertSetClauseContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#unsupportedHiveNativeCommands}.
 	 * @param ctx the parse tree
@@ -534,6 +651,36 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInsertOverwriteDir(SparkSqlBaseParser.InsertOverwriteDirContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#setClause}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetClause(SparkSqlBaseParser.SetClauseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#assign}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssign(SparkSqlBaseParser.AssignContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#assignmentList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignmentList(SparkSqlBaseParser.AssignmentListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(SparkSqlBaseParser.AssignmentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#multipartIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultipartIdentifier(SparkSqlBaseParser.MultipartIdentifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#partitionSpecLocation}.
 	 * @param ctx the parse tree
@@ -1093,6 +1240,13 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStar(SparkSqlBaseParser.StarContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code overlay}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOverlay(SparkSqlBaseParser.OverlayContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code subscript}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1106,6 +1260,13 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubqueryExpression(SparkSqlBaseParser.SubqueryExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code substring}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubstring(SparkSqlBaseParser.SubstringContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code cast}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
@@ -1141,6 +1302,13 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExtract(SparkSqlBaseParser.ExtractContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code trim}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTrim(SparkSqlBaseParser.TrimContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.

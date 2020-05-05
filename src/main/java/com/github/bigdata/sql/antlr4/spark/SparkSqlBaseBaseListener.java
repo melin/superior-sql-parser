@@ -532,6 +532,30 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDescribeDeltaDetail(SparkSqlBaseParser.DescribeDeltaDetailContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDescribeDeltaDetail(SparkSqlBaseParser.DescribeDeltaDetailContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDescribeDeltaHistory(SparkSqlBaseParser.DescribeDeltaHistoryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDescribeDeltaHistory(SparkSqlBaseParser.DescribeDeltaHistoryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDescribeTable(SparkSqlBaseParser.DescribeTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -772,37 +796,133 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExportCSV(SparkSqlBaseParser.ExportCSVContext ctx) { }
+	@Override public void enterExportTable(SparkSqlBaseParser.ExportTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExportCSV(SparkSqlBaseParser.ExportCSVContext ctx) { }
+	@Override public void exitExportTable(SparkSqlBaseParser.ExportTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterJobIdentifier(SparkSqlBaseParser.JobIdentifierContext ctx) { }
+	@Override public void enterCompressTable(SparkSqlBaseParser.CompressTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitJobIdentifier(SparkSqlBaseParser.JobIdentifierContext ctx) { }
+	@Override public void exitCompressTable(SparkSqlBaseParser.CompressTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoadOptions(SparkSqlBaseParser.LoadOptionsContext ctx) { }
+	@Override public void enterCompressFile(SparkSqlBaseParser.CompressFileContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoadOptions(SparkSqlBaseParser.LoadOptionsContext ctx) { }
+	@Override public void exitCompressFile(SparkSqlBaseParser.CompressFileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeleteFromTable(SparkSqlBaseParser.DeleteFromTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeleteFromTable(SparkSqlBaseParser.DeleteFromTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUpdateTable(SparkSqlBaseParser.UpdateTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdateTable(SparkSqlBaseParser.UpdateTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVacuumTable(SparkSqlBaseParser.VacuumTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVacuumTable(SparkSqlBaseParser.VacuumTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeltaMerge(SparkSqlBaseParser.DeltaMergeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeltaMerge(SparkSqlBaseParser.DeltaMergeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDataSource(SparkSqlBaseParser.DataSourceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDataSource(SparkSqlBaseParser.DataSourceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSparkOptions(SparkSqlBaseParser.SparkOptionsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSparkOptions(SparkSqlBaseParser.SparkOptionsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -815,6 +935,90 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOptionVal(SparkSqlBaseParser.OptionValContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMatchedClause(SparkSqlBaseParser.MatchedClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMatchedClause(SparkSqlBaseParser.MatchedClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDelete(SparkSqlBaseParser.DeleteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDelete(SparkSqlBaseParser.DeleteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUpdateStar(SparkSqlBaseParser.UpdateStarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdateStar(SparkSqlBaseParser.UpdateStarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUpdateSetClause(SparkSqlBaseParser.UpdateSetClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdateSetClause(SparkSqlBaseParser.UpdateSetClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNotMatchedClause(SparkSqlBaseParser.NotMatchedClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNotMatchedClause(SparkSqlBaseParser.NotMatchedClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInsertStar(SparkSqlBaseParser.InsertStarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInsertStar(SparkSqlBaseParser.InsertStarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInsertSetClause(SparkSqlBaseParser.InsertSetClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInsertSetClause(SparkSqlBaseParser.InsertSetClauseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -935,6 +1139,66 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInsertOverwriteDir(SparkSqlBaseParser.InsertOverwriteDirContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSetClause(SparkSqlBaseParser.SetClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetClause(SparkSqlBaseParser.SetClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssign(SparkSqlBaseParser.AssignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssign(SparkSqlBaseParser.AssignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssignmentList(SparkSqlBaseParser.AssignmentListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssignmentList(SparkSqlBaseParser.AssignmentListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAssignment(SparkSqlBaseParser.AssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssignment(SparkSqlBaseParser.AssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMultipartIdentifier(SparkSqlBaseParser.MultipartIdentifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMultipartIdentifier(SparkSqlBaseParser.MultipartIdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1984,6 +2248,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOverlay(SparkSqlBaseParser.OverlayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOverlay(SparkSqlBaseParser.OverlayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSubscript(SparkSqlBaseParser.SubscriptContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2003,6 +2279,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubqueryExpression(SparkSqlBaseParser.SubqueryExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSubstring(SparkSqlBaseParser.SubstringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSubstring(SparkSqlBaseParser.SubstringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2063,6 +2351,18 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExtract(SparkSqlBaseParser.ExtractContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTrim(SparkSqlBaseParser.TrimContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTrim(SparkSqlBaseParser.TrimContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

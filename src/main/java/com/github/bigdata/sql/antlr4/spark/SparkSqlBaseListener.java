@@ -512,6 +512,30 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitDescribeDatabase(SparkSqlBaseParser.DescribeDatabaseContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code describeDeltaDetail}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDescribeDeltaDetail(SparkSqlBaseParser.DescribeDeltaDetailContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code describeDeltaDetail}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDescribeDeltaDetail(SparkSqlBaseParser.DescribeDeltaDetailContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code describeDeltaHistory}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDescribeDeltaHistory(SparkSqlBaseParser.DescribeDeltaHistoryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code describeDeltaHistory}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDescribeDeltaHistory(SparkSqlBaseParser.DescribeDeltaHistoryContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code describeTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -752,37 +776,133 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitLoadTempTable(SparkSqlBaseParser.LoadTempTableContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exportCSV}
+	 * Enter a parse tree produced by the {@code exportTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterExportCSV(SparkSqlBaseParser.ExportCSVContext ctx);
+	void enterExportTable(SparkSqlBaseParser.ExportTableContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code exportCSV}
+	 * Exit a parse tree produced by the {@code exportTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitExportCSV(SparkSqlBaseParser.ExportCSVContext ctx);
+	void exitExportTable(SparkSqlBaseParser.ExportTableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SparkSqlBaseParser#jobIdentifier}.
+	 * Enter a parse tree produced by the {@code compressTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterJobIdentifier(SparkSqlBaseParser.JobIdentifierContext ctx);
+	void enterCompressTable(SparkSqlBaseParser.CompressTableContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SparkSqlBaseParser#jobIdentifier}.
+	 * Exit a parse tree produced by the {@code compressTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitJobIdentifier(SparkSqlBaseParser.JobIdentifierContext ctx);
+	void exitCompressTable(SparkSqlBaseParser.CompressTableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SparkSqlBaseParser#loadOptions}.
+	 * Enter a parse tree produced by the {@code compressFile}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoadOptions(SparkSqlBaseParser.LoadOptionsContext ctx);
+	void enterCompressFile(SparkSqlBaseParser.CompressFileContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SparkSqlBaseParser#loadOptions}.
+	 * Exit a parse tree produced by the {@code compressFile}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoadOptions(SparkSqlBaseParser.LoadOptionsContext ctx);
+	void exitCompressFile(SparkSqlBaseParser.CompressFileContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code distcpDatasource}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code distcpDatasource}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code deleteFromTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeleteFromTable(SparkSqlBaseParser.DeleteFromTableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code deleteFromTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeleteFromTable(SparkSqlBaseParser.DeleteFromTableContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code updateTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdateTable(SparkSqlBaseParser.UpdateTableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code updateTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdateTable(SparkSqlBaseParser.UpdateTableContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code vacuumTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterVacuumTable(SparkSqlBaseParser.VacuumTableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code vacuumTable}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitVacuumTable(SparkSqlBaseParser.VacuumTableContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code deltaMerge}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeltaMerge(SparkSqlBaseParser.DeltaMergeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code deltaMerge}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeltaMerge(SparkSqlBaseParser.DeltaMergeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code deltaConvert}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code deltaConvert}
+	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
+	 * @param ctx the parse tree
+	 */
+	void enterDataSource(SparkSqlBaseParser.DataSourceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
+	 * @param ctx the parse tree
+	 */
+	void exitDataSource(SparkSqlBaseParser.DataSourceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#sparkOptions}.
+	 * @param ctx the parse tree
+	 */
+	void enterSparkOptions(SparkSqlBaseParser.SparkOptionsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#sparkOptions}.
+	 * @param ctx the parse tree
+	 */
+	void exitSparkOptions(SparkSqlBaseParser.SparkOptionsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#optionVal}.
 	 * @param ctx the parse tree
@@ -793,6 +913,86 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOptionVal(SparkSqlBaseParser.OptionValContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#matchedClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterMatchedClause(SparkSqlBaseParser.MatchedClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#matchedClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitMatchedClause(SparkSqlBaseParser.MatchedClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code delete}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void enterDelete(SparkSqlBaseParser.DeleteContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code delete}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void exitDelete(SparkSqlBaseParser.DeleteContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code updateStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdateStar(SparkSqlBaseParser.UpdateStarContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code updateStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdateStar(SparkSqlBaseParser.UpdateStarContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code updateSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdateSetClause(SparkSqlBaseParser.UpdateSetClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code updateSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#matchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdateSetClause(SparkSqlBaseParser.UpdateSetClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#notMatchedClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotMatchedClause(SparkSqlBaseParser.NotMatchedClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#notMatchedClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotMatchedClause(SparkSqlBaseParser.NotMatchedClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code insertStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void enterInsertStar(SparkSqlBaseParser.InsertStarContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code insertStar}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void exitInsertStar(SparkSqlBaseParser.InsertStarContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code insertSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void enterInsertSetClause(SparkSqlBaseParser.InsertSetClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code insertSetClause}
+	 * labeled alternative in {@link SparkSqlBaseParser#notMatchedAction}.
+	 * @param ctx the parse tree
+	 */
+	void exitInsertSetClause(SparkSqlBaseParser.InsertSetClauseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#unsupportedHiveNativeCommands}.
 	 * @param ctx the parse tree
@@ -901,6 +1101,56 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInsertOverwriteDir(SparkSqlBaseParser.InsertOverwriteDirContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#setClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetClause(SparkSqlBaseParser.SetClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#setClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetClause(SparkSqlBaseParser.SetClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#assign}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssign(SparkSqlBaseParser.AssignContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#assign}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssign(SparkSqlBaseParser.AssignContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#assignmentList}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignmentList(SparkSqlBaseParser.AssignmentListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#assignmentList}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignmentList(SparkSqlBaseParser.AssignmentListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignment(SparkSqlBaseParser.AssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignment(SparkSqlBaseParser.AssignmentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#multipartIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultipartIdentifier(SparkSqlBaseParser.MultipartIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#multipartIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultipartIdentifier(SparkSqlBaseParser.MultipartIdentifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#partitionSpecLocation}.
 	 * @param ctx the parse tree
@@ -1844,6 +2094,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitStar(SparkSqlBaseParser.StarContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code overlay}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterOverlay(SparkSqlBaseParser.OverlayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code overlay}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitOverlay(SparkSqlBaseParser.OverlayContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code subscript}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1867,6 +2129,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubqueryExpression(SparkSqlBaseParser.SubqueryExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code substring}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSubstring(SparkSqlBaseParser.SubstringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code substring}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSubstring(SparkSqlBaseParser.SubstringContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code cast}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
@@ -1927,6 +2201,18 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExtract(SparkSqlBaseParser.ExtractContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code trim}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterTrim(SparkSqlBaseParser.TrimContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code trim}
+	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitTrim(SparkSqlBaseParser.TrimContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code functionCall}
 	 * labeled alternative in {@link SparkSqlBaseParser#primaryExpression}.

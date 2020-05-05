@@ -76,6 +76,18 @@ public class StreamSqlParserBaseListener implements StreamSqlParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCreateSideTable(StreamSqlParser.CreateSideTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCreateSideTable(StreamSqlParser.CreateSideTableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCreateView(StreamSqlParser.CreateViewContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -215,6 +227,18 @@ public class StreamSqlParserBaseListener implements StreamSqlParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDataType(StreamSqlParser.DataTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTableNameList(StreamSqlParser.TableNameListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTableNameList(StreamSqlParser.TableNameListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

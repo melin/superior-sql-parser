@@ -41,6 +41,12 @@ public interface StreamSqlParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCreateSinkTable(StreamSqlParser.CreateSinkTableContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link StreamSqlParser#createSideTable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCreateSideTable(StreamSqlParser.CreateSideTableContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link StreamSqlParser#createView}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -112,6 +118,12 @@ public interface StreamSqlParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDataType(StreamSqlParser.DataTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link StreamSqlParser#tableNameList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableNameList(StreamSqlParser.TableNameListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link StreamSqlParser#tablePropertyList}.
 	 * @param ctx the parse tree

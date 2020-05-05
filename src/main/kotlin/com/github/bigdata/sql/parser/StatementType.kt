@@ -21,7 +21,6 @@ enum class StatementType: Serializable {
     READ_TABLE,
     MERGE_TABLE,
     REFRESH_TABLE,
-    LOAD_TABLE,
     LOAD_TEMP_TABLE,
     EXPORT_TABLE,
     ANALYZE_TABLE,
@@ -93,6 +92,18 @@ enum class StatementType: Serializable {
     UNSET,
     JOB,
     USE,
+
+    COMPRESS_FILE,
+    COMPRESS_TABLE,
+
+    DISTCP_DATASOURCE,
+
+    //Delta
+    VACUUM,
+    DESC_DETAIL,
+    DESC_HISTORY,
+    DELTA_MERGE,
+    DELTA_CONVERT,
 
     UNKOWN;
 }

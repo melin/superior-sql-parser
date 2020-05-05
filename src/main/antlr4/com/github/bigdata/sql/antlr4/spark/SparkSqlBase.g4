@@ -187,12 +187,12 @@ statement
     | ANGEL name=identifier tablePropertyList?                         #angel
     | READ TABLE tableIdentifier partitionSpec? LIMIT number           #readTable
     | LOAD DATA path=constant TABLE tableIdentifier sparkOptions?      #loadTempTable
-    | EXPORT TABLE tableIdentifier partitionSpec?
-        TO name=constant sparkOptions?                                 #exportCSV
+    | ctes? EXPORT TABLE tableIdentifier partitionSpec?
+        TO name=constant sparkOptions?                                 #exportTable
     | COMPRESS TABLE tableIdentifier partitionSpec? sparkOptions?      #compressTable
     | COMPRESS FILE path=constant sparkOptions?                        #compressFile
-    | DISTCP DRUID srcTableIdentifier = tableIdentifier
-        partitionSpec? TO datasource=identifier sparkOptions?          #distcpDruid
+    | ctes? DISTCP ds=dataSource srcTable=tableIdentifier
+        partitionSpec? TO destTable=tableIdentifier sparkOptions?      #distcpDatasource
 
     | DELETE FROM table=tableIdentifier tableAlias
         (WHERE where=booleanExpression)?                               #deleteFromTable
@@ -205,13 +205,19 @@ statement
         USING (source=tableIdentifier |
             '(' sourceQuery=query')') sourceAlias=tableAlias
         ON mergeCondition=booleanExpression?
-        matchedClause?
-        matchedClause?
-        notMatchedClause                                               #deltaMerge
+        matchedClause*
+        notMatchedClause*                                              #deltaMerge
+
+    | CONVERT TO format = (DELTA | PARQUET) table=tableIdentifier
+        (PARTITIONED BY '(' colTypeList ')')? sparkOptions?            #deltaConvert
 
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
+dataSource
+    : DRUID
+    | CLICKHOUSE
+    ;
 sparkOptions
     : OPTIONS '(' optionVal (',' optionVal)* ')'
     ;
@@ -227,7 +233,7 @@ matchedClause
 matchedAction
     : DELETE                                                   #delete
     | UPDATE SET ASTERISK                                      #updateStar
-    | UPDATE upset=setClause                                   #updateSetClause
+    | UPDATE SET upset=assignmentList                          #updateSetClause
     ;
 
 notMatchedClause
@@ -324,6 +330,18 @@ setClause
 
 assign
     : key=identifier EQ value=expression
+    ;
+
+assignmentList
+    : assignment (',' assignment)*
+    ;
+
+assignment
+    : key=multipartIdentifier EQ value=expression
+    ;
+
+multipartIdentifier
+    : (identifier '.')? identifier
     ;
 
 partitionSpecLocation
@@ -854,7 +872,7 @@ nonReserved
     | DATABASE | SELECT | FROM | WHERE | HAVING | TO | TABLE | WITH | NOT
     | DIRECTORY
     | BOTH | LEADING | TRAILING | MATCHED
-    | MERGE | KILL | READ | STATUS | VACUUM | RETAIN | RUN | HISTORY | HOURS | DETAIL | DRY
+    | MERGE | KILL | READ | STATUS | VACUUM | DELTA | PARQUET | CONVERT | RETAIN | RUN | HISTORY | HOURS | DETAIL | DRY
     ;
 
 SELECT: 'SELECT';
@@ -978,6 +996,9 @@ BOTH: 'BOTH';
 LEADING: 'LEADING';
 TRAILING: 'TRAILING';
 
+CONVERT: 'CONVERT';
+DELTA: 'DELTA';
+PARQUET: 'PARQUET';
 VACUUM: 'VACUUM';
 RETAIN: 'RETAIN';
 RUN: 'RUN';
@@ -1120,6 +1141,7 @@ COMPRESS: 'COMPRESS';
 FILE: 'FILE';
 DISTCP: 'DISTCP';
 DRUID: 'DRUID';
+CLICKHOUSE: 'CLICKHOUSE';
 
 STRING
     : '\'' ( ~('\''|'\\') | ('\\' .) )* '\''

@@ -12,7 +12,7 @@ sqlStatements
     ;
 
 sqlStatement
-    : createSoureTable | createSinkTable | createView | createFunction | insertStatement
+    : createSoureTable | createSinkTable | createView | createFunction | insertStatement | createSideTable
     | setStatement
     ;
 
@@ -29,6 +29,12 @@ createSinkTable
       WITH tableProps=tablePropertyList
     ;
 
+createSideTable
+    : CREATE SIDE TABLE tableName
+      '(' columns=colTypeList ')'
+      WITH tableProps=tablePropertyList
+    ;
+
 createView
     : CREATE VIEW tableName AS
       select = selectExpr
@@ -40,7 +46,7 @@ createFunction
     ;
 
 insertStatement
-    : INSERT INTO tableName
+    : INSERT INTO tableNames=tableNameList
       select = selectExpr
     ;
 
@@ -72,7 +78,7 @@ word
     | STAR | DIVIDE | MODULE | PLUS | MINUS
     | EQUAL_SYMBOL | GREATER_SYMBOL | LESS_SYMBOL | EXCLAMATION_SYMBOL
     | BIT_NOT_OP | BIT_OR_OP | BIT_AND_OP | BIT_XOR_OP
-    | LR_BRACKET | RR_BRACKET | COMMA
+    | LR_BRACKET | RR_BRACKET | COMMA | TABLE
     ;
 
 colTypeList
@@ -87,6 +93,10 @@ dataType
     : VARCHAR | BOOLEAN | TINYINT | SMALLINT | INT | BIGINT
     | FLOAT | DECIMAL | DOUBLE
     | DATE | TIME | TIMESTAMP
+    ;
+
+tableNameList
+    : tableName (',' tableName)*
     ;
 
 tablePropertyList

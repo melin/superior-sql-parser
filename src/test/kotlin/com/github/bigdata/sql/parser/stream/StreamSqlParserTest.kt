@@ -16,7 +16,7 @@ class StreamSqlParserTest {
                 "  student_number varchar comment '学号', \n" +
                 "  student_name varchar comment '姓名', \n" +
                 "  subject varchar comment '学科',\n" +
-                "  score INT comment '成绩' \n" +
+                "  score '/data/score' INT comment '成绩' \n" +
                 ")\n" +
                 "WITH (\n" +
                 "  type = \"dis\",\n" +
@@ -156,14 +156,14 @@ set flink.test = dsd(id)%=2;
 
     @Test
     fun createFunctionTest() {
-        val sql = "create function to_json as 'cn.github.JsonTest' USING \"demo.jar\"";
+        val sql = "create function to_json as 'cn.tongdun.JsonTest' USING \"demo.jar\"";
 
         val statementData = StreamSQLHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is DcFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
             Assert.assertEquals("to_json", statement.name)
-            Assert.assertEquals("cn.github.JsonTest", statement.className)
+            Assert.assertEquals("cn.tongdun.JsonTest", statement.className)
             Assert.assertEquals("demo.jar", statement.file)
         } else {
             Assert.fail()
@@ -232,14 +232,37 @@ set flink.test = dsd(id)%=2;
 
     @Test
     fun insertSqlTest() {
-        val sql = "insert into  test_result select * from users";
+        val sql = "insert into test_result1, test_result2 select * from users";
 
         val statementData = StreamSQLHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is StreamInsertStatement) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals("test_result", statement.tableName)
+            Assert.assertEquals(2, statement.tableNames.size)
+            Assert.assertEquals("test_result1", statement.tableNames[0])
             Assert.assertEquals("select * from users", statement.querySql)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertUDTFSqlTest() {
+        val sql = "insert into stat_orders_kafka\n" +
+                "SELECT \n" +
+                "    TUMBLE_START(proctime, INTERVAL '10' SECOND),\n" +
+                "    TUMBLE_END(proctime, INTERVAL '10' SECOND),\n" +
+                "    userid, \n" +
+                "    SUM(money) as total_money \n" +
+                "FROM (select userid, money, proctime from orders LEFT JOIN LATERAL TABLE(demoFunc(a)) as T(newuserid) ON TRUE) a\n" +
+                "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;";
+
+        val statementData = StreamSQLHelper.getStatementData(sql).get(0)
+        val statement = statementData.statement
+        if (statement is StreamInsertStatement) {
+            Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+            Assert.assertEquals(1, statement.tableNames.size)
+            Assert.assertEquals("stat_orders_kafka", statement.tableNames[0])
         } else {
             Assert.fail()
         }

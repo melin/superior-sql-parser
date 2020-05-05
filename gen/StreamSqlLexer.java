@@ -1,5 +1,4 @@
-// Generated from com/github/bigdata/sql/antlr4/stream/StreamSqlLexer.g4 by ANTLR 4.7
-package com.github.bigdata.sql.antlr4.stream;
+// Generated from /Users/libinsong/Documents/codes/bigdata-sql-parser/src/main/antlr4/com/github/bigdata/sql/antlr4/stream/StreamSqlLexer.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -11,7 +10,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class StreamSqlLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -38,42 +37,51 @@ public class StreamSqlLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", "CREATE", 
-		"TABLE", "SOURCE", "SINK", "SIDE", "WITH", "VIEW", "COMMENT", "TRUE", 
-		"FALSE", "AS", "BY", "PROCTIME", "ROWTIME", "SET", "WATERMARK", "RANGE", 
-		"DELAY", "INSERT", "INTO", "FUNCTION", "USING", "MINUSMINUS", "VARCHAR", 
-		"BOOLEAN", "TINYINT", "SMALLINT", "INT", "BIGINT", "FLOAT", "DECIMAL", 
-		"DOUBLE", "DATE", "TIME", "TIMESTAMP", "STAR", "DIVIDE", "MODULE", "PLUS", 
-		"MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", "LESS_SYMBOL", "EXCLAMATION_SYMBOL", 
-		"BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", "BIT_XOR_OP", "DOT", "LR_BRACKET", 
-		"RR_BRACKET", "COMMA", "SEMI", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_LITERAL", 
-		"DECIMAL_LITERAL", "REAL_LITERAL", "EXPONENT_NUM_PART", "ID_LITERAL", 
-		"DQUOTA_STRING", "SQUOTA_STRING", "DEC_DIGIT", "ERROR_RECONGNIGION"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", "CREATE", 
+			"TABLE", "SOURCE", "SINK", "SIDE", "WITH", "VIEW", "COMMENT", "TRUE", 
+			"FALSE", "AS", "BY", "PROCTIME", "ROWTIME", "SET", "WATERMARK", "RANGE", 
+			"DELAY", "INSERT", "INTO", "FUNCTION", "USING", "MINUSMINUS", "VARCHAR", 
+			"BOOLEAN", "TINYINT", "SMALLINT", "INT", "BIGINT", "FLOAT", "DECIMAL", 
+			"DOUBLE", "DATE", "TIME", "TIMESTAMP", "STAR", "DIVIDE", "MODULE", "PLUS", 
+			"MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", "LESS_SYMBOL", "EXCLAMATION_SYMBOL", 
+			"BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", "BIT_XOR_OP", "DOT", "LR_BRACKET", 
+			"RR_BRACKET", "COMMA", "SEMI", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_LITERAL", 
+			"DECIMAL_LITERAL", "REAL_LITERAL", "EXPONENT_NUM_PART", "ID_LITERAL", 
+			"DQUOTA_STRING", "SQUOTA_STRING", "DEC_DIGIT", "ERROR_RECONGNIGION"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, "'CREATE'", "'TABLE'", "'SOURCE'", "'SINK'", 
-		"'SIDE'", "'WITH'", "'VIEW'", "'COMMENT'", "'TRUE'", "'FALSE'", "'AS'", 
-		"'BY'", "'PROCTIME'", "'ROWTIME'", "'SET'", "'WATERMARK'", "'RANGE'", 
-		"'DELAY'", "'INSERT'", "'INTO'", "'FUNCTION'", "'USING'", "'--'", "'VARCHAR'", 
-		"'BOOLEAN'", "'TINYINT'", "'SMALLINT'", "'INT'", "'BIGINT'", "'FLOAT'", 
-		"'DECIMAL'", "'DOUBLE'", "'DATE'", "'TIME'", "'TIMESTAMP'", "'*'", "'/'", 
-		"'%'", "'+'", "'-'", "'='", "'>'", "'<'", "'!'", "'~'", "'|'", "'&'", 
-		"'^'", "'.'", "'('", "')'", "','", "';'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
-		"CREATE", "TABLE", "SOURCE", "SINK", "SIDE", "WITH", "VIEW", "COMMENT", 
-		"TRUE", "FALSE", "AS", "BY", "PROCTIME", "ROWTIME", "SET", "WATERMARK", 
-		"RANGE", "DELAY", "INSERT", "INTO", "FUNCTION", "USING", "MINUSMINUS", 
-		"VARCHAR", "BOOLEAN", "TINYINT", "SMALLINT", "INT", "BIGINT", "FLOAT", 
-		"DECIMAL", "DOUBLE", "DATE", "TIME", "TIMESTAMP", "STAR", "DIVIDE", "MODULE", 
-		"PLUS", "MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", "LESS_SYMBOL", "EXCLAMATION_SYMBOL", 
-		"BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", "BIT_XOR_OP", "DOT", "LR_BRACKET", 
-		"RR_BRACKET", "COMMA", "SEMI", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_LITERAL", 
-		"DECIMAL_LITERAL", "REAL_LITERAL", "ERROR_RECONGNIGION"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, "'CREATE'", "'TABLE'", "'SOURCE'", "'SINK'", 
+			"'SIDE'", "'WITH'", "'VIEW'", "'COMMENT'", "'TRUE'", "'FALSE'", "'AS'", 
+			"'BY'", "'PROCTIME'", "'ROWTIME'", "'SET'", "'WATERMARK'", "'RANGE'", 
+			"'DELAY'", "'INSERT'", "'INTO'", "'FUNCTION'", "'USING'", "'--'", "'VARCHAR'", 
+			"'BOOLEAN'", "'TINYINT'", "'SMALLINT'", "'INT'", "'BIGINT'", "'FLOAT'", 
+			"'DECIMAL'", "'DOUBLE'", "'DATE'", "'TIME'", "'TIMESTAMP'", "'*'", "'/'", 
+			"'%'", "'+'", "'-'", "'='", "'>'", "'<'", "'!'", "'~'", "'|'", "'&'", 
+			"'^'", "'.'", "'('", "')'", "','", "';'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
+			"CREATE", "TABLE", "SOURCE", "SINK", "SIDE", "WITH", "VIEW", "COMMENT", 
+			"TRUE", "FALSE", "AS", "BY", "PROCTIME", "ROWTIME", "SET", "WATERMARK", 
+			"RANGE", "DELAY", "INSERT", "INTO", "FUNCTION", "USING", "MINUSMINUS", 
+			"VARCHAR", "BOOLEAN", "TINYINT", "SMALLINT", "INT", "BIGINT", "FLOAT", 
+			"DECIMAL", "DOUBLE", "DATE", "TIME", "TIMESTAMP", "STAR", "DIVIDE", "MODULE", 
+			"PLUS", "MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", "LESS_SYMBOL", "EXCLAMATION_SYMBOL", 
+			"BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", "BIT_XOR_OP", "DOT", "LR_BRACKET", 
+			"RR_BRACKET", "COMMA", "SEMI", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_LITERAL", 
+			"DECIMAL_LITERAL", "REAL_LITERAL", "ERROR_RECONGNIGION"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

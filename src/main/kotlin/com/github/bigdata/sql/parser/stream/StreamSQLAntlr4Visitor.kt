@@ -22,15 +22,16 @@ class StreamSQLAntlr4Visitor : StreamSqlParserBaseVisitor<StatementData>() {
     override fun visitCreateSoureTable(ctx: StreamSqlParser.CreateSoureTableContext): StatementData {
         val tableName = ctx.tableName().ID().text
         var columns: List<StreamColumn> = ctx.columns.children
-            .filter {
-                it is StreamSqlParser.ColTypeContext }.map { item ->
+                .filter {
+                    it is StreamSqlParser.ColTypeContext }.map {
+                    item ->
                     val column = item as StreamSqlParser.ColTypeContext
                     val colName = column.ID().text
                     var dataType = column.dataType().text
                     val colComment = if (column.comment != null) StringUtil.cleanSingleQuote(column.comment.text) else null
                     val jsonPath = if (column.jsonPath != null) StringUtil.cleanSingleQuote(column.jsonPath.text) else null
                     StreamColumn(colName, dataType, colComment, jsonPath)
-            }
+                }
 
         var properties = HashMap<String, String>()
         if(ctx.tableProps != null) {
@@ -88,6 +89,33 @@ class StreamSQLAntlr4Visitor : StreamSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.CREATE_TABLE, table)
     }
 
+    override fun visitCreateSideTable(ctx: StreamSqlParser.CreateSideTableContext): StatementData {
+        val tableName = ctx.tableName().ID().text
+        var columns: List<StreamColumn> = ctx.columns.children
+                .filter { it is StreamSqlParser.ColTypeContext }.map { item ->
+                    val column = item as StreamSqlParser.ColTypeContext
+                    val colName = column.ID().text
+                    var dataType = column.dataType().text
+                    val colComment = if (column.comment != null) StringUtil.cleanSingleQuote(column.comment.text) else null
+                    StreamColumn(colName, dataType, colComment)
+                }
+
+        var properties = HashMap<String, String>()
+        if(ctx.tableProps != null) {
+            ctx.tableProps.children.filter { it is StreamSqlParser.TablePropertyContext }.map { item ->
+                val property = item as StreamSqlParser.TablePropertyContext
+                val key = StringUtil.cleanSingleQuote(property.key.text)
+                var value = StringUtil.cleanSingleQuote(property.value.text)
+                value = StringUtil.cleanDoubleQuote(value)
+                properties.put(key, value)
+            }
+        }
+
+        val table = StreamSideTable(tableName, columns, properties)
+
+        return StatementData(StatementType.CREATE_TABLE, table)
+    }
+
     override fun visitCreateView(ctx: StreamSqlParser.CreateViewContext): StatementData {
         val tableName = ctx.tableName().ID().text
         val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
@@ -117,10 +145,16 @@ class StreamSQLAntlr4Visitor : StreamSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitInsertStatement(ctx: StreamSqlParser.InsertStatementContext): StatementData {
-        val tableName = ctx.tableName().ID().text
+        val tableNames = java.util.ArrayList<String>()
+        ctx.tableNames.children.forEach { item ->
+            if(item is StreamSqlParser.TableNameContext) {
+                tableNames.add(item.text)
+            }
+        }
+
         val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
 
-        var table = StreamInsertStatement(tableName, querySql)
+        var table = StreamInsertStatement(tableNames, querySql)
         return StatementData(StatementType.INSERT_SELECT, table)
     }
 

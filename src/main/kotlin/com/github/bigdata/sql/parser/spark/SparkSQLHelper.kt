@@ -6,9 +6,9 @@ import com.github.bigdata.sql.antlr4.PostProcessor
 import com.github.bigdata.sql.antlr4.UpperCaseCharStream
 import com.github.bigdata.sql.antlr4.spark.SparkSqlBaseLexer
 import com.github.bigdata.sql.antlr4.spark.SparkSqlBaseParser
+import com.github.bigdata.sql.parser.StatementData
 import com.github.bigdata.sql.parser.StatementType
 import com.github.bigdata.sql.parser.StatementType.*
-import com.github.bigdata.sql.parser.StatementData
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -33,7 +33,6 @@ object SparkSQLHelper {
             READ_TABLE,
             MERGE_TABLE,
             REFRESH_TABLE,
-            LOAD_TABLE,
             LOAD_TEMP_TABLE,
             EXPORT_TABLE,
             ANALYZE_TABLE,
@@ -71,8 +70,8 @@ object SparkSQLHelper {
             SHOW_FUNCTIONS,
             DESC_FUNCTION,
 
-            //LIST_JARS,
-            //DELETE_JAR,
+                //LIST_JARS,
+                //DELETE_JAR,
 
             KILL,
             STATUS,
@@ -82,6 +81,19 @@ object SparkSQLHelper {
             CACHE,
             UNCACHE,
             CLEAR_CACHE,
+
+            COMPRESS_TABLE,
+            COMPRESS_FILE,
+
+            DISTCP_DATASOURCE,
+
+            DELETE,
+            UPDATE,
+            VACUUM,
+            DELTA_MERGE,
+            DELTA_CONVERT,
+            DESC_DETAIL,
+            DESC_HISTORY,
 
             EXPLAIN
             -> true
