@@ -7,8 +7,8 @@
 
 ### Build
 
-mvn antlr4:antlr4
-mvn clean package
+- mvn antlr4:antlr4
+- mvn clean package
 
 ##### 备注
 
