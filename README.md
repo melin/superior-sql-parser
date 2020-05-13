@@ -5,8 +5,11 @@
 2. 解析各种sql引擎，获取表，列信息，统一权限管理
 3. 扩展Spark，Flink SQL语法
 
-##### build
+### Build
 
 mvn antlr4:antlr4
 mvn clean package
 
+### 备注
+
+[ClickHouse antlr4](https://github.com/ClickHouse/ClickHouse/tree/master/utils/grammar)
