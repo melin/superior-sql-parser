@@ -13,8 +13,8 @@
 ```sql
 create stream TABLE tdl_kafka_users (
     user_name "/name" string,
-	age	    int,
-	email   string
+    age	    int,
+    email   string
 ) WITH (
     kafka.bootstrap.servers = 'xxx.xxx.xxx.xxx:9092',
     kafka.group.id = 'dataworker-stream',
