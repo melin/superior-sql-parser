@@ -1,15 +1,10 @@
 ### 介绍
 
-基于antlr4 statement 解析器，支持spark sql, tidb sql, flink sql, Spark/flink jar 运行命令解析，主要目的: 
-1. 解析Hive、tidb、clickHouse的ddl sql，获取元数据信息统一管理，方便平台层查询表信息
-2. 解析各种sql引擎，获取表，列信息，统一权限管理
-3. 扩展Spark，Flink SQL语法
+基于antlr4 statement 解析器，支持spark sql, tidb sql, flink sql, Spark/flink jar 运行命令解析
 
-### Build
-
-- mvn antlr4:antlr4
-- mvn clean package
-
-##### 备注
-
-[ClickHouse antlr4](https://github.com/ClickHouse/ClickHouse/tree/master/utils/grammar)
+###
+1. [MySQL](https://github.com/antlr/grammars-v4/tree/master/sql/mysql)
+2. [PrestoSQL](https://github.com/prestosql/presto/tree/master/presto-parser/src/main/antlr4/io/prestosql/sql/parser)
+3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
+4. [Spark 3.0](https://github.com/apache/spark/tree/master/sql/catalyst/src/main/antlr4/org/apache/spark/sql/catalyst/parser)
+5. [T-SQL](https://github.com/antlr/grammars-v4/tree/master/sql/tsql)

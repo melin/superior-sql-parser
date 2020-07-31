@@ -1,4 +1,4 @@
-// Generated from /Users/libinsong/Documents/codes/bigdata-sql-parser/src/main/antlr4/com/github/bigdata/sql/antlr4/stream/StreamSqlLexer.g4 by ANTLR 4.8
+// Generated from /Users/libinsong/Documents/codes/tongdun/dataworker-sql-parser/src/main/antlr4/com/dataworker/sql/parser/antlr4/stream/StreamSqlLexer.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.bigdata.sql.parser</groupId>
-    <artifactId>bigdata-sql-parser</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <groupId>com.dataworker.sql.parser</groupId>
+    <artifactId>dataworker-sql-parser</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.2.51</kotlin.version>
-        <antlr4.version>4.7</antlr4.version>
+        <kotlin.version>1.3.72</kotlin.version>
+        <antlr4.version>4.7.2</antlr4.version>
     </properties>
 
     <dependencies>
@@ -27,43 +27,51 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.10</version>
         </dependency>
+
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.10</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0-jre</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.23</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.24</version>
+            <version>1.7.30</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.24</version>
+            <version>1.7.30</version>
         </dependency>
         <!-- logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
         </dependency>
     </dependencies>
 
@@ -108,7 +116,7 @@
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
                     <pluginOptions>
-                        <option>no-arg:annotation=com.github.bigdata.sql.parser.DefaultConstructor</option>
+                        <option>no-arg:annotation=cn.tongdun.datacompute.parser.DefaultConstructor</option>
                     </pluginOptions>
                 </configuration>
             </plugin>
@@ -166,16 +174,28 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>jar-no-fork</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>tongdun-nexus</id>
+            <url>http://maven.fraudmetrix.cn/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>tongdun-nexus</id>
+            <url>http://maven.fraudmetrix.cn/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <repositories>
         <repository>
