@@ -116,7 +116,7 @@
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
                     <pluginOptions>
-                        <option>no-arg:annotation=cn.tongdun.datacompute.parser.DefaultConstructor</option>
+                        <option>no-arg:annotation=com.dataworker.sql.parser.DefaultConstructor</option>
                     </pluginOptions>
                 </configuration>
             </plugin>
@@ -185,17 +185,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>tongdun-nexus</id>
-            <url>http://maven.fraudmetrix.cn/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>tongdun-nexus</id>
-            <url>http://maven.fraudmetrix.cn/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <repositories>
         <repository>
