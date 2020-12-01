@@ -1,583 +1,310 @@
 parser grammar ClickHouseParser;
 
 options {
-	tokenVocab=ClickHouseLexer;
+    tokenVocab = ClickHouseLexer;
 }
 
-// эта грамматика написана по сорсам парсеров, имена правил примерно соответствуют парсерам в cpp.
-// известные расхождения
-// 1. скобки не обязательно сразу идут после имени функции.
-// 2. многословные токены поделены на самостоятельные слова
-// 3. для INSERT запроса не написана часть парсинга значений.
-// 4. правило для expr переписано чтобы понизить глубину AST и сразу выходить на уровень expr - al
+// Top-level statements
 
-parse
- : ( query | err ) EOF
- ;
+queryList: queryStmt (SEMICOLON queryStmt)* SEMICOLON? EOF;
+
+queryStmt: query (INTO OUTFILE STRING_LITERAL)? (FORMAT identifier)?;
 
 query
- :    show_tables_query
- |    select_query
- |    insert_query
- |    create_query
- |    rename_query
- |    drop_query
- |    alter_query
- |    use_query
- |    set_query
- |    optimize_query
- |    table_properties_query
- |    show_processlist_query
- |    check_query
- |    kill_query_query
- ;
-
-// 1. QUERIES
-
-select_query
- :  select_query_main ( K_UNION K_ALL select_query_main ) *
-    query_outfile_step?
-    select_format_step?
- ;
-
-select_query_main
- :  select_with_step?
-    select_select_step select_from_step?
-    K_FINAL? select_sample_step?
-    select_array_join_step? select_join_step?
-    select_prewhere_step? select_where_step?
-    select_groupby_step? select_having_step?
-    select_orderby_step?
-    select_limitby_step? select_limit_step?
-    select_settings_step?
- ;
-
-select_with_step
- : K_WITH select_expr_list
- ;
-
-select_select_step
- : K_SELECT K_DISTINCT? select_expr_list
- ;
-
-select_from_step
- : K_FROM ( full_table_name
-          | table_function
-          | subquery
-          ) select_alias?
- ;
-
-select_array_join_step
- : K_LEFT? K_ARRAY K_JOIN not_empty_expression_list
- ;
-
-select_sample_step
- : K_SAMPLE sample_ratio (K_OFFSET sample_ratio ) ?
- ;
-
-sample_ratio
- : NUMERIC_LITERAL ( DIVIDE NUMERIC_LITERAL ) ?
- ;
-
-select_join_step
- :  K_GLOBAL?
-        ( K_ANY | K_ALL ) ( K_INNER | K_LEFT K_OUTER? | K_RIGHT K_OUTER? | K_FULL K_OUTER? ) K_JOIN select_join_right_part
-      ( K_USING LPAREN not_empty_expression_list RPAREN
-      | K_USING not_empty_expression_list
-      // | K_ON expr  на самом деле нет.
-      )
- |  K_GLOBAL? K_CROSS K_JOIN select_join_right_part
- ;
-
-select_join_right_part
- : identifier
- | subquery
- ;
-
-select_prewhere_step
- : K_PREWHERE expression_with_optional_alias
- ;
-
-select_where_step
- : K_WHERE expression_with_optional_alias
- ;
-
-select_groupby_step
- : K_GROUP K_BY not_empty_expression_list ( K_WITH K_TOTALS ) ?
- ;
-
-select_having_step
- : K_HAVING expression_with_optional_alias
- ;
-
-select_orderby_step
- : K_ORDER K_BY order_by_expression_list
- ;
-
-select_limit_step
- : K_LIMIT NUMERIC_LITERAL ( COMMA NUMERIC_LITERAL )?
- ;
-
-select_limitby_step
- : K_LIMIT NUMERIC_LITERAL K_BY not_empty_expression_list
- ;
-
-select_settings_step
- : K_SETTINGS assignment_list
- ;
-
-select_format_step
- : K_FORMAT identifier
- ;
-
-insert_query
- :  K_INSERT K_INTO full_table_name
-          ( K_ID ASSIGN STRING_LITERAL )? // wtf?
-          ( LPAREN column_name_list RPAREN )?
-          ( K_VALUES LPAREN literal (COMMA literal )* RPAREN(COMMA LPAREN literal (COMMA literal )* RPAREN)* // ch тут дальше не парсит. а я написал скобки
-          | K_FORMAT format_name // ch тут дальше не парсит, только доедает все пробелы или один перевод строки. pushMode()
-          | select_query )
- ;
-
-create_query
- :  ( K_CREATE | K_ATTACH ) K_TEMPORARY?
-            ( K_DATABASE ( K_IF K_NOT K_EXISTS ) ? database_name
-            | K_TABLE ( K_IF K_NOT K_EXISTS ) ? full_table_name ( K_ON K_CLUSTER cluster_name ) ?
-               ( LPAREN column_declaration_list RPAREN engine ( K_AS select_query ) ? // если VIEW - то есть и колонки и select.
-               | engine K_AS (  select_query
-                             |  full_table_name engine? // wtf
-                             )
-               )
-            | K_MATERIALIZED? K_VIEW ( K_IF K_NOT K_EXISTS ) ? full_table_name
-               ( LPAREN column_declaration_list RPAREN ) ? engine? K_POPULATE? K_AS select_query
-            )
- ;
-
-rename_query
- :  K_RENAME K_TABLE full_table_name K_TO full_table_name ( COMMA full_table_name K_TO full_table_name )* ( K_ON K_CLUSTER cluster_name ) ?
- ;
-
-drop_query
- :  ( K_DROP | K_DETACH )
-            ( K_DATABASE ( K_IF K_EXISTS ) ? database_name ( K_ON K_CLUSTER cluster_name ) ?
-            | K_TABLE ( K_IF K_EXISTS ) ? full_table_name ( K_ON K_CLUSTER cluster_name ) ?
-            )
- ;
-
-alter_query
- : K_ALTER K_TABLE full_table_name ( K_ON K_CLUSTER cluster_name ) ?
-        alter_query_element ( COMMA alter_query_element ) *
- ;
-
-alter_query_element
- : K_ADD K_COLUMN compound_name_type_pair ( K_AFTER column_name ) ?
- | K_DROP K_COLUMN column_name
- | K_MODIFY K_COLUMN compound_name_type_pair
- | K_ATTACH K_PARTITION partition_name
- | K_DETACH K_PARTITION partition_name
- | K_DROP K_PARTITION partition_name
- | K_FETCH K_PARTITION partition_name K_FROM STRING_LITERAL
- | K_FREEZE K_PARTITION partition_name
- ;
-
-clickhouse_type
-    : simple_type
-    | T_AGGREGATE_FUNCTION LPAREN function_name ( COMMA clickhouse_type ) * RPAREN
-    | T_ARRAY LPAREN clickhouse_type RPAREN
-    | T_TUPLE LPAREN clickhouse_type ( COMMA clickhouse_type ) * RPAREN
-    | T_NULLABLE LPAREN clickhouse_type LPAREN
+    : alterStmt     // DDL
+    | checkStmt
+    | createStmt    // DDL
+    | describeStmt
+    | dropStmt      // DDL
+    | insertStmt
+    | optimizeStmt  // DDL
+    | selectUnionStmt
+    | setStmt
+    | showStmt
+    | useStmt
     ;
 
-simple_type
-    : T_UINT8
-    | T_UINT16
-    | T_UINT32
-    | T_UINT64
-    | T_INT8
-    | T_INT16
-    | T_INT32
-    | T_INT64
-    | T_FLOAT32
-    | T_FLOAT64
-    | T_ENUM8 LPAREN enum_entry ( COMMA enum_entry ) * LPAREN
-    | T_ENUM16 LPAREN enum_entry ( COMMA enum_entry ) * LPAREN
-    | T_UUID
-    | T_DATE
-    | T_DATETIME
-    | T_STRING
-    | T_INTERVAL_YEAR
-    | T_INTERVAL_MONTH
-    | T_INTERVAL_WEEK
-    | T_INTERVAL_DAY
-    | T_INTERVAL_HOUR
-    | T_INTERVAL_MINUTE
-    | T_INTERVAL_SECOND
-    | T_NULL
-    | T_FIXEDSTRING LPAREN NUMERIC_LITERAL LPAREN
+// ALTER statement
+
+alterStmt
+    : ALTER TABLE tableIdentifier alterTableClause  # AlterTableStmt
     ;
 
-enum_entry
-    : STRING_LITERAL ASSIGN NUMERIC_LITERAL
+alterTableClause
+    : ADD COLUMN (IF NOT EXISTS)? tableColumnDfnt (AFTER identifier)?  # AlterTableAddClause
+    | DROP COLUMN (IF EXISTS)? identifier                              # AlterTableDropClause
+    | MODIFY COLUMN (IF EXISTS)? tableColumnDfnt                       # AlterTableModifyClause
     ;
 
-use_query
- : K_USE database_name
- ;
+// CHECK statement
 
-set_query
- : K_SET K_GLOBAL? assignment_list
- ;
+checkStmt: CHECK TABLE tableIdentifier;
 
-assignment_list
- : assignment ( COMMA assignment ) *
- ;
+// CREATE statement
 
-assignment
- : identifier ASSIGN literal
- ;
+createStmt
+    : CREATE DATABASE (IF NOT EXISTS)? databaseIdentifier engineExpr?        # createDatabaseStmt
+    | CREATE TEMPORARY? TABLE (IF NOT EXISTS)? tableIdentifier schemaClause  # createTableStmt
+    ;
 
-kill_query_query
- : K_KILL K_QUERY K_WHERE expression_with_optional_alias ( K_SYNC | K_ASYNC | K_TEST )
- ;
+schemaClause
+    : LPAREN tableElementExpr (COMMA tableElementExpr)* RPAREN engineClause?  # SchemaDescriptionClause
+    | engineClause? AS selectUnionStmt                                        # SchemaAsSubqueryClause
+    | AS tableIdentifier engineClause?                                        # SchemaAsTableClause
+    | AS identifier LPAREN tableArgList? RPAREN                               # SchemaAsFunctionClause
+    ;
+engineClause:
+    engineExpr
+    (orderByClause
+    | partitionByClause
+    | primaryKeyClause
+    | sampleByClause
+    | ttlClause
+    | settingsClause
+    | commentExpr) *
+    ;
+partitionByClause: PARTITION BY columnExpr;
+primaryKeyClause: PRIMARY KEY columnExpr;
+sampleByClause: SAMPLE BY columnExpr;
+ttlClause: TTL ttlExpr (COMMA ttlExpr)*;
 
-optimize_query
- : K_OPTIMIZE K_TABLE full_table_name ( K_PARTITION STRING_LITERAL ) ? K_FINAL?
- ;
+engineExpr: ENGINE EQ_SINGLE? (identifier | NULL_SQL) (LPAREN columnExprList? RPAREN)?;
+tableElementExpr
+    : tableColumnDfnt  # TableElementExprColumn
+    // TODO: INDEX
+    // TODO: CONSTRAINT
+    ;
+tableColumnDfnt
+    : identifier columnTypeExpr commentExpr?  tableColumnPropertyExpr? /*TODO: codecExpr?*/ (TTL columnExpr)?
+    | identifier columnTypeExpr? commentExpr? tableColumnPropertyExpr /*TODO: codexExpr?*/ (TTL columnExpr)?
+    ;
+tableColumnPropertyExpr: (DEFAULT | MATERIALIZED | ALIAS) columnExpr;
+ttlExpr: columnExpr (DELETE | TO DISK STRING_LITERAL | TO VOLUME STRING_LITERAL)?;
 
-table_properties_query
- : ( K_EXISTS | ( K_DESCRIBE | K_DESC ) | K_SHOW K_CREATE ) K_TABLE full_table_name query_outfile_step? ( K_FORMAT format_name ) ?
- ;
+// DESCRIBE statement
 
-show_tables_query
- : K_SHOW ( K_DATABASES
-            | K_TABLES ( K_FROM database_name ) ? ( K_NOT? K_LIKE STRING_LITERAL ) ? )
-             query_outfile_step?
-            ( K_FORMAT format_name ) ?
- ;
+describeStmt: (DESCRIBE | DESC) TABLE tableIdentifier;
 
-show_processlist_query
- : K_SHOW K_PROCESSLIST query_outfile_step? ( K_FORMAT format_name ) ?
- ;
+// DROP statement
 
-check_query
- : K_CHECK K_TABLE full_table_name
- ;
+dropStmt
+    : DROP DATABASE (IF EXISTS)? databaseIdentifier       # DropDatabaseStmt
+    | DROP TEMPORARY? TABLE (IF EXISTS)? tableIdentifier  # DropTableStmt
+    ;
 
-// 2. QUERY ELEMENTS
+// INSERT statement
 
-full_table_name
- : ( database_name DOT ) ? table_name
- ;
+insertStmt: INSERT INTO tableIdentifier (LPAREN identifier (COMMA identifier)* RPAREN)? valuesClause;
 
-partition_name
- : identifier | STRING_LITERAL
- ;
+valuesClause
+    : VALUES valueTupleExpr (COMMA? valueTupleExpr)*
+    | selectUnionStmt
+    ;
 
-cluster_name
- : identifier | STRING_LITERAL
- ;
+valueTupleExpr: LPAREN valueExprList RPAREN;  // same as ValueExprTuple
 
-database_name
- :  identifier
- ;
+// OPTIMIZE statement
 
-table_name
- :  identifier
- ;
+optimizeStmt: OPTIMIZE TABLE tableIdentifier partitionClause? FINAL? DEDUPLICATE?;
 
-format_name
- :  identifier
- ;
+partitionClause
+    : PARTITION columnExpr // actually we expect here any form of tuple of literals
+    | PARTITION ID STRING_LITERAL
+    ;
 
-query_outfile_step
- : K_INTO K_OUTFILE STRING_LITERAL
- ;
+// SELECT statement
 
-engine
- : K_ENGINE ASSIGN identifier_with_optional_parameters
- ;
+selectUnionStmt: selectStmt (UNION ALL selectStmt)*;
+selectStmt:
+    withClause?
+    SELECT DISTINCT? columnExprList
+    fromClause?
+    sampleClause?
+    arrayJoinClause?
+    prewhereClause?
+    whereClause?
+    groupByClause?
+    havingClause?
+    orderByClause?
+    limitByClause?
+    limitClause?
+    settingsClause?
+    ;
 
-identifier_with_optional_parameters
- :    identifier_with_parameters
- |    identifier
- ;
+withClause: WITH columnExprList;
+fromClause: FROM joinExpr FINAL?;
+sampleClause: SAMPLE ratioExpr (OFFSET ratioExpr)?;
+arrayJoinClause: LEFT? ARRAY JOIN columnExprList;
+prewhereClause: PREWHERE columnExpr;
+whereClause: WHERE columnExpr;
+groupByClause: GROUP BY columnExprList (WITH TOTALS)?;
+havingClause: HAVING columnExpr;
+orderByClause: ORDER BY orderExprList;
+limitByClause: LIMIT limitExpr BY columnExprList;
+limitClause: LIMIT limitExpr (WITH TIES)?;
+settingsClause: SETTINGS settingExprList;
 
-identifier_with_parameters
- : function
- | nested_table
- ;
+joinExpr
+    : tableExpr                                                           # JoinExprTable
+    | LPAREN joinExpr RPAREN                                              # JoinExprParens
+    | joinExpr (GLOBAL|LOCAL)? joinOp JOIN joinExpr joinConstraintClause  # JoinExprOp
+    | joinExpr joinOpCross joinExpr                                       # JoinExprCrossOp
+    ;
+joinOp
+    : (ANY? INNER | INNER ANY?)                                                                                  # JoinOpInner
+    | ((OUTER | SEMI | ANTI | ANY | ASOF)? (LEFT | RIGHT) | (LEFT | RIGHT) (OUTER | SEMI | ANTI | ANY | ASOF)?)  # JoinOpLeftRight
+    | ((OUTER | ANY)? FULL | FULL (OUTER | ANY)?)                                                                # JoinOpFull
+    ;
+joinOpCross
+    : (GLOBAL|LOCAL)? CROSS JOIN
+    | COMMA
+    ;
+joinConstraintClause
+    : ON columnExprList
+    | USING LPAREN columnExprList RPAREN
+    | USING columnExprList
+    ;
 
-order_by_expression_list
- :  order_by_element ( COMMA order_by_element ) *
- ;
+limitExpr: INTEGER_LITERAL ((COMMA | OFFSET) INTEGER_LITERAL)?;
+orderExprList: orderExpr (COMMA orderExpr)*;
+orderExpr: columnExpr (ASCENDING | DESCENDING | DESC)? (NULLS (FIRST | LAST))? (COLLATE STRING_LITERAL)?;
+ratioExpr: INTEGER_LITERAL (SLASH INTEGER_LITERAL); // TODO: not complete!
+settingExprList: settingExpr (COMMA settingExpr)*;
+settingExpr: identifier EQ_SINGLE literal;
 
-order_by_element
- : expression_with_optional_alias ( K_DESC | K_DESCENDING | K_ASC | K_ASCENDING ) ? ( K_NULLS ( K_FIRST | K_LAST ) ) ? ( K_COLLATE STRING_LITERAL ) ?
- ;
+// SET statement
 
-nested_table
- :   identifier LPAREN name_type_pair_list RPAREN
- ;
+setStmt: SET settingExprList;
 
-name_type_pair_list
- :  name_type_pair ( COMMA name_type_pair ) *
- ;
+// SHOW statements
 
-name_type_pair
- : identifier column_type
- ;
+showStmt
+    : SHOW CREATE TEMPORARY? TABLE tableIdentifier                                                                # showCreateTableStmt
+    | SHOW TEMPORARY? TABLES ((FROM | IN) databaseIdentifier)? (LIKE STRING_LITERAL | whereClause)? limitClause?  # showTablesStmt
+    ;
 
-compound_name_type_pair
- : compound_identifier column_type
- ;
+// USE statement
 
-column_declaration_list
- : column_declaration ( COMMA column_declaration ) *
- ;
-
-column_declaration
- : column_name
-      ( ( K_DEFAULT | K_MATERIALIZED | K_ALIAS ) expr
-      | column_type
-      )
- ;
-
-column_name
- : identifier
- ;
-
-column_type
- : clickhouse_type
- ;
-
-column_name_list
- :  column_name ( COMMA column_name ) *
- ;
-
-select_expr_list
- : select_expr ( COMMA select_expr) *
- ;
-
-select_expr
- : expr select_alias?
- ;
-
-select_alias
- : K_AS? alias_name
- ;
-
-alias
- : K_AS alias_name
- ;
-
-alias_name
- : identifier
- ;
-
-table_function
- :   function
- ;
+useStmt: USE databaseIdentifier;
 
 
-subquery
- :  LPAREN select_query_main RPAREN
- ;
 
-expression_with_optional_alias
- : expr alias?
- ;
+// Values
 
-//  EXPRESSIONS
+valueExprList: valueExpr (COMMA valueExpr)*;
+valueExpr
+    : literal                           # ValueExprLiteral
+    | valueTupleExpr                    # ValueExprTuple
+    | LBRACKET valueExprList? RBRACKET  # ValueExprArray
+    ;
 
-expr
- :  LPAREN expr RPAREN                                                                                                                                              # ExprParen
- |  function                                                                                                                                                        # ExprFunction
- |  K_CASE expr? ( K_WHEN expr K_THEN expr ) ( K_WHEN expr K_THEN expr ) * K_ELSE expr K_END                                                                        # ExprCase
- |  expr DOT expr                                                                                                                                                   # ExprTupleElement
- |  expr LBRAKET expr RBRAKET                                                                                                                                       # ExprArrayElement
- |  MINUS expr                                                                                                                                                      # ExprUnaryMinus
- |  K_CAST LPAREN expr K_AS clickhouse_type RPAREN                                                                                                                  # ExprCast
- |  expr ( STAR | DIVIDE | PERCENT ) expr                                                                                                                           # ExprMul
- |  expr  ( PLUS | MINUS ) expr                                                                                                                                     # ExprAdd
- |  expr  CONCAT expr                                                                                                                                               # ExprConcat
- |  expr  K_BETWEEN expr K_AND expr                                                                                                                                 # ExprBetween
- |  expr ( EQUALS | ASSIGN | NOT_EQUALS | NOT_EQUALS2 | LE | GE | LT | GT | K_LIKE | K_NOT K_LIKE ) expr                                                            # ExprLogical
- |  expr ( K_IN | K_NOT K_IN | K_GLOBAL K_IN | K_GLOBAL K_NOT K_IN ) expr                                                                                           # ExprIn
- |  expr ( K_IS K_NULL | K_IS K_NOT K_NULL )                                                                                                                        # ExprIsNull
- |  K_INTERVAL expr interval_unit                                                                                                                                   # ExprInterval
- |  K_NOT expr                                                                                                                                                      # ExprNot
- |  expr K_AND expr                                                                                                                                                 # ExprAnd
- |  expr K_OR expr                                                                                                                                                  # ExprOr
- |  expr QUESTION expr COLON expr                                                                                                                                   # ExprTernary
- |  ( LPAREN identifier ( COMMA identifier )* RPAREN | identifier ( COMMA identifier )* ) RARROW expr                                                               # ExprLambda
- |  subquery                                                                                                                                                        # ExprSubquery
- |  LPAREN  not_empty_expression_list RPAREN                                                                                                                        # ExprList
- |  array                                                                                                                                                           # ExprArray
- |  literal                                                                                                                                                         # ExprLiteral
- |  compound_identifier                                                                                                                                             # ExprId
- |  STAR                                                                                                                                                            # ExprStar
- | expr alias                                                                                                                                                       # ExprWithAlias
- ;
+// Columns
 
-interval_unit
- : K_YEAR
- | K_MONTH
- | K_WEEK
- | K_DAY
- | K_HOUR
- | K_MINUTE
- | K_SECOND
- ;
-expression_list
- :   ( not_empty_expression_list )?
- ;
+columnTypeExpr
+    : identifier                                                                             # ColumnTypeExprSimple   // UInt64
+    | identifier LPAREN columnParamList RPAREN                                               # ColumnTypeExprParam    // FixedString(N)
+    | identifier LPAREN enumValue (COMMA enumValue)* RPAREN                                  # ColumnTypeExprEnum     // Enum
+    | identifier LPAREN columnTypeExpr (COMMA columnTypeExpr)* RPAREN                        # ColumnTypeExprComplex  // Array, Tuple
+    | identifier LPAREN identifier columnTypeExpr (COMMA identifier columnTypeExpr)* RPAREN  # ColumnTypeExprNested   // Nested
+    ;
+columnExprList: columnsExpr (COMMA columnsExpr)*;
+columnsExpr
+    : (identifier DOT)? ASTERISK  # ColumnsExprAsterisk
+    | LPAREN selectUnionStmt RPAREN    # ColumnsExprSubquery
+    // NOTE: asterisk and subquery goes before |columnExpr| so that we can mark them as multi-column expressions.
+    | columnExpr                       # ColumnsExprColumn
+    ;
+columnExpr
+    : literal                                                                        # ColumnExprLiteral
+    | (identifier DOT)? ASTERISK                                                # ColumnExprAsterisk // single-column only
+    | LPAREN selectUnionStmt RPAREN                                                  # ColumnExprSubquery // single-column only
+    | LPAREN columnExpr RPAREN                                                       # ColumnExprParens   // single-column only
+    | LPAREN columnExprList RPAREN                                                   # ColumnExprTuple
+    | LBRACKET columnExprList? RBRACKET                                              # ColumnExprArray
+    | CASE columnExpr? (WHEN columnExpr THEN columnExpr)+ (ELSE columnExpr)? END     # ColumnExprCase
+    // TODO: | CAST LPAREN columnExpr AS columnTypeExpr RPAREN                       # ColumnExprCast
+    | EXTRACT LPAREN INTERVAL_TYPE FROM columnExpr RPAREN                            # ColumnExprExtract
+    | TRIM LPAREN (BOTH | LEADING | TRAILING) STRING_LITERAL FROM columnExpr RPAREN  # ColumnExprTrim
+    | INTERVAL columnExpr INTERVAL_TYPE                                              # ColumnExprInterval
+    | columnIdentifier                                                               # ColumnExprIdentifier
+    | identifier (LPAREN columnParamList? RPAREN)? LPAREN columnArgList? RPAREN      # ColumnExprFunction
+    | columnExpr LBRACKET columnExpr RBRACKET                                        # ColumnExprArrayAccess
+    | columnExpr FLOATING_LITERAL                                                    # ColumnExprTupleAccess
+    | unaryOp columnExpr                                                             # ColumnExprUnaryOp
+    | columnExpr IS NOT? NULL_SQL                                                    # ColumnExprIsNull
+    | columnExpr binaryOp columnExpr                                                 # ColumnExprBinaryOp
+    | columnExpr QUERY columnExpr COLON columnExpr                                   # ColumnExprTernaryOp
+    | columnExpr NOT? BETWEEN columnExpr AND columnExpr                              # ColumnExprBetween
+    | columnExpr AS identifier                                                       # ColumnExprAlias
+    ;
+columnParamList: literal (COMMA literal)*;
+columnArgList: columnArgExpr (COMMA columnArgExpr)*;
+columnArgExpr: columnLambdaExpr | columnExpr;
+columnLambdaExpr:
+    ( LPAREN identifier (COMMA identifier)* RPAREN
+    |        identifier (COMMA identifier)*
+    )
+    ARROW columnExpr
+    ;
+columnIdentifier: (identifier DOT)? identifier (DOT identifier)?;
 
-not_empty_expression_list
- : expr ( COMMA expr )*
- ;
+commentExpr: COMMENT value=STRING_LITERAL;
 
-array
- :   LBRAKET expression_list RBRAKET
- ;
+// Tables
 
-function
- : function_name function_parameters? function_arguments
- ;
+tableExpr
+    : tableIdentifier                                       # TableExprIdentifier
+    | identifier LPAREN tableArgList? RPAREN                # TableExprFunction
+    | LPAREN selectUnionStmt RPAREN                         # TableExprSubquery
+    | tableExpr AS? identifier                              # TableExprAlias
+    ;
+tableIdentifier: (databaseIdentifier DOT)? identifier;
+tableArgList: tableArgExpr (COMMA tableArgExpr)*;
+tableArgExpr
+    : literal
+    | tableIdentifier
+    ;
 
-function_parameters
- : LPAREN ( expr ( COMMA expr )* )? RPAREN
- ;
-function_arguments
- : LPAREN ( expr ( COMMA expr )* )? RPAREN
- ;
+// Databases
 
-function_name
- : identifier
- ;
+databaseIdentifier: identifier;
 
-identifier
- : QUOTED_LITERAL
- | IDENTIFIER
-    // в данном случае мы разрешаем ключевым словам выступать в качестве имен колонок или функций.
- | simple_type
- | keyword
- ;
-
-keyword
- : K_ADD
- | K_AFTER
- | K_ALL
- | K_ALIAS
- | K_ALTER
- | K_AND
- | K_ANY
- | K_ARRAY
- | K_AS
- | K_ASCENDING
- | K_ASC
- | K_ASYNC
- | K_ATTACH
- | K_BETWEEN
- | K_BY
- | K_CASE
- | K_CHECK
- | K_COLUMN
- | K_COLLATE
- | K_CREATE
- | K_CROSS
- | K_DESCRIBE
- | K_DESCENDING
- | K_DESC
- | K_DATABASE
- | K_DATABASES
- | K_DEFAULT
- | K_DETACH
- | K_DISTINCT
- | K_DROP
- | K_ENGINE
- | K_ELSE
- | K_END
- | K_EXISTS
- | K_FINAL
- | K_FIRST
- | K_FROM
- | K_FORMAT
- | K_FULL
- | K_GLOBAL
- | K_GROUP
- | K_HAVING
- | K_ID
- | K_IF
- | K_INNER
- | K_INSERT
- | K_INTO
- | K_IN
- | K_IS
- | K_JOIN
- | K_KILL
- | K_LAST
- | K_LEFT
- | K_LIKE
- | K_LIMIT
- | K_MAIN
- | K_MATERIALIZED
- | K_MODIFY
- | K_NOT
- | K_NULL
- | K_NULLS
- | K_OFFSET
- | K_ON
- | K_OPTIMIZE
- | K_ORDER
- | K_OR
- | K_OUTFILE
- | K_PARTITION
- | K_POPULATE
- | K_PREWHERE
- | K_PROCESSLIST
- | K_QUERY
- | K_RENAME
- | K_RETURN
- | K_RIGHT
- | K_SAMPLE
- | K_SELECT
- | K_SET
- | K_SETTINGS
- | K_SHOW
- | K_SYNC
- | K_TABLE
- | K_TABLES
- | K_TEMPORARY
- | K_TEST
- | K_THEN
- | K_TOTALS
- | K_TO
- | K_OUTER
- | K_VALUES
- | K_VIEW
- | K_UNION
- | K_USE
- | K_USING
- | K_WHEN
- | K_WHERE
- | K_WITH
- ;
-
-compound_identifier
-: identifier DOT identifier
-| identifier
-;
-
+// Basics
 
 literal
- :    K_NULL
- |    NUMERIC_LITERAL
- |    STRING_LITERAL
- ;
-
-err
- : UNEXPECTED_CHAR
-   {
-     throw new RuntimeException("UNEXPECTED_CHAR=" + $UNEXPECTED_CHAR.text);
-   }
- ;
+    : (PLUS | DASH)? (FLOATING_LITERAL | HEXADECIMAL_LITERAL | INTEGER_LITERAL | INF | NAN_SQL)
+    | STRING_LITERAL
+    | NULL_SQL
+    | identifier LPAREN RPAREN
+    ;
+keyword  // except NULL_SQL, SELECT, INF, NAN, USING, FROM, WHERE
+    : AFTER | ALIAS | ALL | ALTER | AND | ANTI | ANY | ARRAY | AS | ASCENDING | ASOF | BETWEEN | BOTH | BY | CASE | CAST | CHECK | CLUSTER
+    | COLLATE | CREATE | CROSS | DATABASE | DAY | DEDUPLICATE | DEFAULT | DELETE | DESC | DESCENDING | DESCRIBE | DISK | DISTINCT | DROP
+    | ELSE | END | ENGINE | EXISTS | EXTRACT | FINAL | FIRST | FORMAT | FULL | GLOBAL | GROUP | HAVING | HOUR | ID | IF | IN | INNER
+    | INSERT | INTERVAL | INTO | IS | JOIN | KEY | LAST | LEADING | LEFT | LIKE | LIMIT | LOCAL | MATERIALIZED | MINUTE | MODIFY | MONTH
+    | NOT | NULLS | OFFSET | ON | OPTIMIZE | OR | ORDER | OUTER | OUTFILE | PARTITION | PREWHERE | PRIMARY | QUARTER | RIGHT | SAMPLE
+    | SECOND | SEMI | SET | SETTINGS | SHOW | TABLE | TABLES | TEMPORARY | THEN | TIES | TOTALS | TRAILING | TRIM | TO | TTL | UNION | USE
+    | VALUES | VOLUME | WEEK | WHEN | WITH | YEAR
+    ;
+identifier: IDENTIFIER | INTERVAL_TYPE | keyword; // TODO: not complete!
+unaryOp: DASH | NOT;
+binaryOp
+    : CONCAT
+    | ASTERISK
+    | SLASH
+    | PLUS
+    | DASH
+    | PERCENT
+    | EQ_DOUBLE
+    | EQ_SINGLE
+    | NOT_EQ
+    | LE
+    | GE
+    | LT
+    | GT
+    | AND
+    | OR
+    | NOT? LIKE
+    | GLOBAL? NOT? IN
+    ;
+enumValue: STRING_LITERAL EQ_SINGLE INTEGER_LITERAL;

@@ -32,7 +32,7 @@ data class DcTable(
         var partitionColumns: List<DcColumn>?,
         var columns: List<DcColumn>?,
         var properties: Map<String, String>?,
-        var fileFormate: String?,
+        var fileFormat: String?,
         var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
         var ifExists: Boolean = false,
         var external: Boolean = false,
@@ -54,6 +54,8 @@ data class DcTable(
     constructor(databaseName: String?,
                 tableName: String): this(databaseName,
             tableName, null, null, null, null, null, null, false, false, false)
+
+    var token: CommonToken? = null
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -130,6 +132,9 @@ data class DcRenameTable(
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + oldName else oldName
     }
+
+    var oldToken: CommonToken? = null
+    var newToken: CommonToken? = null
 }
 
 data class DcRenameView(
@@ -155,18 +160,27 @@ data class DcColumn(
         val name: String,
         val type: String? = null,
         val comment: String? = null,
-        val oldName: String? = null) : Statement()
+        val oldName: String? = null,
+        val position: String? = null,
+        val afterCol: String? = null) : Statement() {
+    constructor(name: String, type: String?, comment: String?): this(name, type, comment, null, null, null)
+}
 
 data class DcAlterColumn(
         val databaseName: String?,
         val tableName: String,
         val oldName: String?,
         val newName: String?,
-        val comment: String?) : Statement() {
+        val comment: String? = null) : Statement() {
+
+    constructor(databaseName: String?, tableName: String):
+            this(databaseName, tableName, null, null, null);
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
     }
+
+    var token: CommonToken? = null
 }
 
 data class DcFunction(
@@ -341,3 +355,8 @@ data class AddTablePartition(
         return if (databaseName != null) databaseName + "." + tableName else tableName
     }
 }
+
+data class ArithmeticData(
+        val variables: java.util.HashSet<String> = HashSet(),
+        val functions: java.util.HashSet<String> = HashSet()
+): Statement()

@@ -36,7 +36,6 @@ object PostgreSQLHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = PostgreSQLParser(tokenStream)
-        parser.addParseListener(PostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL

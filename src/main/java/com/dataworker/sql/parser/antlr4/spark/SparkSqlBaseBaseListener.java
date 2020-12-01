@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/spark/SparkSqlBase.g4 by ANTLR 4.7.2
+// Generated from com/dataworker/sql/parser/antlr4/spark/SparkSqlBase.g4 by ANTLR 4.7.1
 package com.dataworker.sql.parser.antlr4.spark;
 
 import org.antlr.v4.runtime.ParserRuleContext;

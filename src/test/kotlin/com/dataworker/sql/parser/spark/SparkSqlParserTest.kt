@@ -94,7 +94,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("test", name)
             Assert.assertFalse(statement.location)
             Assert.assertFalse(statement.external)
-            Assert.assertEquals(statement.fileFormate, "ORC")
+            Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertFalse(statement.temporary)
             Assert.assertEquals(7, statement.lifeCycle)
         } else {
@@ -195,22 +195,28 @@ class SparkSqlParserTest {
 
     @Test
     fun createTableSelectTest() {
-        val sql = "create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as select * from `bigdata`.`users` a left outer join address b on a.addr_id = b.id"
+        val sql = "create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as select * from bigdata.users a left outer join address b on a.addr_id = b.id"
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DcTable) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
-            Assert.assertEquals(statement.fileFormate, "ORC")
+            Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", name)
-            Assert.assertEquals("select * from `bigdata`.`users` a left outer join address b on a.addr_id = b.id", statement.querySql)
+            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
             Assert.assertEquals(2, statement.tableData?.inputTables?.size)
             Assert.assertEquals("users", statement.tableData?.inputTables?.get(0)?.tableName)
             Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)
         } else {
             Assert.fail()
         }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("bigdata.users" to "iceberg_spark.bigdata.users", "address" to "iceberg_spark.bigdata.address"))
+        Assert.assertEquals("create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as " +
+                "select * from iceberg_spark.bigdata.users a left outer join iceberg_spark.bigdata.address b on a.addr_id = b.id",
+                sql1);
     }
 
     @Test
@@ -250,6 +256,11 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("users" to "iceberg_users", "address" to "iceberg_address"))
+        Assert.assertEquals("create table \nIF NOT EXISTS tdl_users_1 using parquet as (select * from iceberg_users a left outer join iceberg_address b on a.addr_id = b.id)",
+            sql1);
     }
 
     @Test
@@ -395,17 +406,136 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun addColumnTest() {
+    fun addColumnsTest() {
         val sql = "alter table test.sale_detail add columns (col_name1 string comment 'col_name1', col_name2 string comment 'col_name2')"
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DcTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_ADD_COLS, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sale_detail", name)
+            Assert.assertEquals(2, statement.columns?.size)
         } else {
             Assert.fail()
         }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("test.sale_detail" to "iceberg_spark.test.sale_detail"))
+        Assert.assertEquals("alter table iceberg_spark.test.sale_detail add columns " +
+                "(col_name1 string comment 'col_name1', col_name2 string comment 'col_name2')",
+                sql1);
+    }
+
+    @Test
+    fun addColumnTest() {
+        val sql = "ALTER TABLE db.sample ADD COLUMN age int FIRST"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_ADD_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+            Assert.assertEquals(1, statement.columns?.size)
+        } else {
+            Assert.fail()
+        }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("db.sample" to "iceberg_spark.db.sample"))
+        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample ADD COLUMN age int FIRST", sql1);
+    }
+
+    @Test
+    fun renameColumnTest() {
+        val sql = "ALTER TABLE db.sample RENAME COLUMN data TO payload"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_RENAME_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+            Assert.assertEquals("payload", statement.newName)
+        } else {
+            Assert.fail()
+        }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("db.sample" to "iceberg_spark.db.sample"))
+        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample RENAME COLUMN data TO payload", sql1);
+    }
+
+    @Test
+    fun changeColumnTest() {
+        var sql = "ALTER TABLE db.sample ALTER COLUMN location.lat TYPE double"
+        var statementData = SparkSQLHelper.getStatementData(sql)
+        var statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "ALTER TABLE db.sample ALTER COLUMN id DROP NOT NULL"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "ALTER TABLE db.sample ALTER COLUMN point.z AFTER y"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "ALTER TABLE db.sample ALTER COLUMN id COMMENT 'unique id'"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+            Assert.assertEquals("unique id", statement.comment)
+        } else {
+            Assert.fail()
+        }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("db.sample" to "iceberg_spark.db.sample"))
+        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample ALTER COLUMN id COMMENT 'unique id'", sql1);
+    }
+
+    @Test
+    fun dropColumnTest() {
+        val sql = "ALTER TABLE db.sample DROP COLUMN id"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_DROP_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("sample", name)
+        } else {
+            Assert.fail()
+        }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("db.sample" to "iceberg_spark.db.sample"))
+        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample DROP COLUMN id", sql1);
     }
 
     @Test
@@ -792,6 +922,10 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("users" to "iceberg_users"))
+        Assert.assertEquals("insert OVERWRITE TABLE iceberg_users PARTITION(ds) values('libinsong', '20170220')", sql1);
     }
 
     @Test
@@ -812,6 +946,12 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
+
+        val sql1 = SparkSQLHelper.replaceSql(sql,
+                mapOf("users" to "iceberg_spark.bigdata.users", "account" to "iceberg_spark.bigdata.account"))
+        Assert.assertEquals("insert INTO iceberg_spark.bigdata.users PARTITION(ds='20170220') " +
+                "select * from iceberg_spark.bigdata.account a join address b on a.addr_id=b.id",
+                sql1);
     }
 
     @Test
@@ -1298,7 +1438,7 @@ class SparkSqlParserTest {
                         name string comment '',
                         name2 String comment ''
                     )
-                    TBLPROPERTIES ('compression'='ZSTD', 'fileFormate'='orc', 'encryption'='0', "orc.encrypt"="hz_admin_key:name2", "orc.mask"='nullify:name')
+                    TBLPROPERTIES ('compression'='ZSTD', 'fileFormat'='orc', 'encryption'='0', "orc.encrypt"="hz_admin_key:name2", "orc.mask"='nullify:name')
                     STORED AS orc
                     comment 'orc测试'
                     lifecycle 7

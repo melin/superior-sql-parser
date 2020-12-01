@@ -1,6 +1,6 @@
 ### 介绍
 
-基于antlr4 statement 解析器，支持spark3.0 sql, mysql sql, Presto, PG, T-SQL, jar 运行命令解析
+基于antlr4 statement 解析器，支持spark sql, tidb sql, flink sql, Spark/flink jar 运行命令解析
 
 ###
 1. [MySQL](https://github.com/antlr/grammars-v4/tree/master/sql/mysql)
@@ -8,6 +8,8 @@
 3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
 4. [Spark 3.0](https://github.com/apache/spark/tree/master/sql/catalyst/src/main/antlr4/org/apache/spark/sql/catalyst/parser)
 5. [T-SQL](https://github.com/antlr/grammars-v4/tree/master/sql/tsql)
+6. [ClickHouse](https://github.com/abyss7/ClickHouse/blob/antlr-grammar/src/Parsers/New)
+
 
 ### Spark Structed Streaming sql
 ```sql

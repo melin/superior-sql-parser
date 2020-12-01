@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/spark/SparkSqlBase.g4 by ANTLR 4.7.2
+// Generated from com/dataworker/sql/parser/antlr4/spark/SparkSqlBase.g4 by ANTLR 4.7.1
 package com.dataworker.sql.parser.antlr4.spark;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SparkSqlBaseParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -114,147 +114,137 @@ public class SparkSqlBaseParser extends Parser {
 		RULE_identifier = 130, RULE_strictIdentifier = 131, RULE_quotedIdentifier = 132, 
 		RULE_number = 133, RULE_alterColumnAction = 134, RULE_ansiNonReserved = 135, 
 		RULE_strictNonReserved = 136, RULE_nonReserved = 137;
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"singleStatement", "singleExpression", "singleTableIdentifier", "singleMultipartIdentifier", 
-			"singleFunctionIdentifier", "singleDataType", "singleTableSchema", "statement", 
-			"dataSource", "unsupportedHiveNativeCommands", "createTableHeader", "replaceTableHeader", 
-			"bucketSpec", "skewSpec", "locationSpec", "commentSpec", "query", "insertInto", 
-			"partitionSpecLocation", "partitionSpec", "partitionVal", "namespace", 
-			"describeFuncName", "describeColName", "ctes", "namedQuery", "tableProvider", 
-			"createTableClauses", "tablePropertyList", "tableProperty", "tablePropertyKey", 
-			"tablePropertyValue", "constantList", "nestedConstantList", "createFileFormat", 
-			"fileFormat", "storageHandler", "resource", "dmlStatementNoWith", "queryOrganization", 
-			"multiInsertQueryBody", "queryTerm", "queryPrimary", "sortItem", "fromStatement", 
-			"fromStatementBody", "querySpecification", "transformClause", "selectClause", 
-			"setClause", "matchedClause", "notMatchedClause", "matchedAction", "notMatchedAction", 
-			"assignmentList", "assignment", "whereClause", "havingClause", "hint", 
-			"hintStatement", "fromClause", "aggregationClause", "groupingSet", "pivotClause", 
-			"pivotColumn", "pivotValue", "lateralView", "setQuantifier", "relation", 
-			"joinRelation", "joinType", "joinCriteria", "sample", "sampleMethod", 
-			"identifierList", "identifierSeq", "orderedIdentifierList", "orderedIdentifier", 
-			"identifierCommentList", "identifierComment", "relationPrimary", "inlineTable", 
-			"functionTable", "tableAlias", "rowFormat", "multipartIdentifierList", 
-			"multipartIdentifier", "tableIdentifier", "functionIdentifier", "namedExpression", 
-			"namedExpressionSeq", "transformList", "transform", "transformArgument", 
-			"expression", "booleanExpression", "predicate", "valueExpression", "primaryExpression", 
-			"constant", "comparisonOperator", "arithmeticOperator", "predicateOperator", 
-			"booleanValue", "interval", "errorCapturingMultiUnitsInterval", "multiUnitsInterval", 
-			"errorCapturingUnitToUnitInterval", "unitToUnitInterval", "intervalValue", 
-			"intervalUnit", "colPosition", "dataType", "qualifiedColTypeWithPositionList", 
-			"qualifiedColTypeWithPosition", "colTypeList", "colType", "complexColTypeList", 
-			"complexColType", "whenClause", "windowClause", "namedWindow", "windowSpec", 
-			"windowFrame", "frameBound", "qualifiedNameList", "functionName", "qualifiedName", 
-			"errorCapturingIdentifier", "errorCapturingIdentifierExtra", "identifier", 
-			"strictIdentifier", "quotedIdentifier", "number", "alterColumnAction", 
-			"ansiNonReserved", "strictNonReserved", "nonReserved"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
+	public static final String[] ruleNames = {
+		"singleStatement", "singleExpression", "singleTableIdentifier", "singleMultipartIdentifier", 
+		"singleFunctionIdentifier", "singleDataType", "singleTableSchema", "statement", 
+		"dataSource", "unsupportedHiveNativeCommands", "createTableHeader", "replaceTableHeader", 
+		"bucketSpec", "skewSpec", "locationSpec", "commentSpec", "query", "insertInto", 
+		"partitionSpecLocation", "partitionSpec", "partitionVal", "namespace", 
+		"describeFuncName", "describeColName", "ctes", "namedQuery", "tableProvider", 
+		"createTableClauses", "tablePropertyList", "tableProperty", "tablePropertyKey", 
+		"tablePropertyValue", "constantList", "nestedConstantList", "createFileFormat", 
+		"fileFormat", "storageHandler", "resource", "dmlStatementNoWith", "queryOrganization", 
+		"multiInsertQueryBody", "queryTerm", "queryPrimary", "sortItem", "fromStatement", 
+		"fromStatementBody", "querySpecification", "transformClause", "selectClause", 
+		"setClause", "matchedClause", "notMatchedClause", "matchedAction", "notMatchedAction", 
+		"assignmentList", "assignment", "whereClause", "havingClause", "hint", 
+		"hintStatement", "fromClause", "aggregationClause", "groupingSet", "pivotClause", 
+		"pivotColumn", "pivotValue", "lateralView", "setQuantifier", "relation", 
+		"joinRelation", "joinType", "joinCriteria", "sample", "sampleMethod", 
+		"identifierList", "identifierSeq", "orderedIdentifierList", "orderedIdentifier", 
+		"identifierCommentList", "identifierComment", "relationPrimary", "inlineTable", 
+		"functionTable", "tableAlias", "rowFormat", "multipartIdentifierList", 
+		"multipartIdentifier", "tableIdentifier", "functionIdentifier", "namedExpression", 
+		"namedExpressionSeq", "transformList", "transform", "transformArgument", 
+		"expression", "booleanExpression", "predicate", "valueExpression", "primaryExpression", 
+		"constant", "comparisonOperator", "arithmeticOperator", "predicateOperator", 
+		"booleanValue", "interval", "errorCapturingMultiUnitsInterval", "multiUnitsInterval", 
+		"errorCapturingUnitToUnitInterval", "unitToUnitInterval", "intervalValue", 
+		"intervalUnit", "colPosition", "dataType", "qualifiedColTypeWithPositionList", 
+		"qualifiedColTypeWithPosition", "colTypeList", "colType", "complexColTypeList", 
+		"complexColType", "whenClause", "windowClause", "namedWindow", "windowSpec", 
+		"windowFrame", "frameBound", "qualifiedNameList", "functionName", "qualifiedName", 
+		"errorCapturingIdentifier", "errorCapturingIdentifierExtra", "identifier", 
+		"strictIdentifier", "quotedIdentifier", "number", "alterColumnAction", 
+		"ansiNonReserved", "strictNonReserved", "nonReserved"
+	};
 
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, "';'", "'('", "')'", "','", "'.'", "'/*+'", "'*/'", "'->'", "'['", 
-			"']'", "':'", "'ADD'", "'AFTER'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", 
-			"'ANTI'", "'ANY'", "'ARCHIVE'", "'ARRAY'", "'AS'", "'ASC'", "'AT'", "'AUTHORIZATION'", 
-			"'BETWEEN'", "'BOTH'", "'BUCKET'", "'BUCKETS'", "'BY'", "'CACHE'", "'CASCADE'", 
-			"'CASE'", "'CAST'", "'CHANGE'", "'CHECK'", "'CLEAR'", "'CLUSTER'", "'CLUSTERED'", 
-			"'CODEGEN'", "'COLLATE'", "'COLLECTION'", "'COLUMN'", "'COLUMNS'", "'COMMENT'", 
-			"'COMMIT'", "'COMPACT'", "'COMPACTIONS'", "'COMPUTE'", "'CONCATENATE'", 
-			"'CONSTRAINT'", "'CONVERT'", "'COST'", "'CREATE'", "'CROSS'", "'CUBE'", 
-			"'CURRENT'", "'CURRENT_DATE'", "'CURRENT_TIME'", "'CURRENT_TIMESTAMP'", 
-			"'CURRENT_USER'", "'DATA'", "'DATABASE'", null, "'DAY'", "'DBPROPERTIES'", 
-			"'DEFINED'", "'DELETE'", "'DELIMITED'", "'DELTA'", "'DESC'", "'DESCRIBE'", 
-			"'DETAIL'", "'DFS'", "'DIRECTORIES'", "'DIRECTORY'", "'DISTINCT'", "'DISTRIBUTE'", 
-			"'DROP'", "'DRY'", "'ELSE'", "'END'", "'ESCAPE'", "'ESCAPED'", "'EXCEPT'", 
-			"'EXCHANGE'", "'EXISTS'", "'EXPLAIN'", "'EXPORT'", "'EXTENDED'", "'EXTERNAL'", 
-			"'EXTRACT'", "'FALSE'", "'FETCH'", "'FIELDS'", "'FILTER'", "'FILEFORMAT'", 
-			"'FIRST'", "'FOLLOWING'", "'FOR'", "'FOREIGN'", "'FORMAT'", "'FORMATTED'", 
-			"'FROM'", "'FULL'", "'FUNCTION'", "'FUNCTIONS'", "'GLOBAL'", "'GRANT'", 
-			"'GROUP'", "'GROUPING'", "'HAVING'", "'HOUR'", "'HOURS'", "'HISTORY'", 
-			"'IF'", "'IGNORE'", "'IMPORT'", "'IN'", "'INDEX'", "'INDEXES'", "'INNER'", 
-			"'INPATH'", "'INPUTFORMAT'", "'INSERT'", "'INTERSECT'", "'INTERVAL'", 
-			"'INTO'", "'IS'", "'ITEMS'", "'JOIN'", "'KEYS'", "'LAST'", "'LATERAL'", 
-			"'LAZY'", "'LEADING'", "'LEFT'", "'LIKE'", "'LIMIT'", "'LINES'", "'LIST'", 
-			"'LIFECYCLE'", "'LOAD'", "'LOCAL'", "'LOCATION'", "'LOCK'", "'LOCKS'", 
-			"'LOGICAL'", "'MACRO'", "'MAP'", "'MATCHED'", "'MERGE'", "'MINUTE'", 
-			"'MONTH'", "'MSCK'", "'NAMESPACE'", "'NAMESPACES'", "'NATURAL'", "'NO'", 
-			null, "'NULL'", "'NULLS'", "'OF'", "'ON'", "'ONLY'", "'OPTION'", "'OPTIONS'", 
-			"'OR'", "'ORDER'", "'OUT'", "'OUTER'", "'OUTPUTFORMAT'", "'OVER'", "'OVERLAPS'", 
-			"'OVERLAY'", "'OVERWRITE'", "'PARTITION'", "'PARTITIONED'", "'PARTITIONS'", 
-			"'PARQUET'", "'PERCENT'", "'PIVOT'", "'PLACING'", "'POSITION'", "'PRECEDING'", 
-			"'PRIMARY'", "'PRINCIPALS'", "'PROPERTIES'", "'PURGE'", "'QUERY'", "'RANGE'", 
-			"'RECORDREADER'", "'RECORDWRITER'", "'RECOVER'", "'REDUCE'", "'REFERENCES'", 
-			"'REFRESH'", "'RENAME'", "'REPAIR'", "'REPLACE'", "'RESET'", "'RESTRICT'", 
-			"'REVOKE'", "'RETAIN'", "'RIGHT'", null, "'ROLE'", "'ROLES'", "'ROLLBACK'", 
-			"'ROLLUP'", "'ROW'", "'ROWS'", "'RUN'", "'SCHEMA'", "'SECOND'", "'SELECT'", 
-			"'SEMI'", "'SEPARATED'", "'SERDE'", "'SERDEPROPERTIES'", "'SESSION_USER'", 
-			"'SET'", "'MINUS'", "'SETS'", "'SHOW'", "'SKEWED'", "'SOME'", "'SORT'", 
-			"'SORTED'", "'START'", "'STATISTICS'", "'STORED'", "'STRATIFY'", "'STRUCT'", 
-			"'SUBSTR'", "'SUBSTRING'", "'TABLE'", "'TABLES'", "'TABLESAMPLE'", "'TBLPROPERTIES'", 
-			null, "'TERMINATED'", "'THEN'", "'TO'", "'TOUCH'", "'TRAILING'", "'TRANSACTION'", 
-			"'TRANSACTIONS'", "'TRANSFORM'", "'TRIM'", "'TRUE'", "'TRUNCATE'", "'TYPE'", 
-			"'UNARCHIVE'", "'UNBOUNDED'", "'UNCACHE'", "'UNION'", "'UNIQUE'", "'UNKNOWN'", 
-			"'UNLOCK'", "'UNSET'", "'UPDATE'", "'USE'", "'USER'", "'USING'", "'VALUES'", 
-			"'VACUUM'", "'VIEW'", "'VIEWS'", "'WHEN'", "'WHERE'", "'WINDOW'", "'WITH'", 
-			"'YEAR'", "'KILL'", "'READ'", "'JOB'", "'ADDJAR'", "'COMPRESS'", "'FILE'", 
-			"'DISTCP'", "'CLICKHOUSE'", null, "'<=>'", "'<>'", "'!='", "'<'", null, 
-			"'>'", null, "'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", 
-			"'|'", "'||'", "'^'", null, null, null, null, null, null, null, null, 
-			null, null, null, null, "'/**/'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			"ADD", "AFTER", "ALL", "ALTER", "ANALYZE", "AND", "ANTI", "ANY", "ARCHIVE", 
-			"ARRAY", "AS", "ASC", "AT", "AUTHORIZATION", "BETWEEN", "BOTH", "BUCKET", 
-			"BUCKETS", "BY", "CACHE", "CASCADE", "CASE", "CAST", "CHANGE", "CHECK", 
-			"CLEAR", "CLUSTER", "CLUSTERED", "CODEGEN", "COLLATE", "COLLECTION", 
-			"COLUMN", "COLUMNS", "COMMENT", "COMMIT", "COMPACT", "COMPACTIONS", "COMPUTE", 
-			"CONCATENATE", "CONSTRAINT", "CONVERT", "COST", "CREATE", "CROSS", "CUBE", 
-			"CURRENT", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER", 
-			"DATA", "DATABASE", "DATABASES", "DAY", "DBPROPERTIES", "DEFINED", "DELETE", 
-			"DELIMITED", "DELTA", "DESC", "DESCRIBE", "DETAIL", "DFS", "DIRECTORIES", 
-			"DIRECTORY", "DISTINCT", "DISTRIBUTE", "DROP", "DRY", "ELSE", "END", 
-			"ESCAPE", "ESCAPED", "EXCEPT", "EXCHANGE", "EXISTS", "EXPLAIN", "EXPORT", 
-			"EXTENDED", "EXTERNAL", "EXTRACT", "FALSE", "FETCH", "FIELDS", "FILTER", 
-			"FILEFORMAT", "FIRST", "FOLLOWING", "FOR", "FOREIGN", "FORMAT", "FORMATTED", 
-			"FROM", "FULL", "FUNCTION", "FUNCTIONS", "GLOBAL", "GRANT", "GROUP", 
-			"GROUPING", "HAVING", "HOUR", "HOURS", "HISTORY", "IF", "IGNORE", "IMPORT", 
-			"IN", "INDEX", "INDEXES", "INNER", "INPATH", "INPUTFORMAT", "INSERT", 
-			"INTERSECT", "INTERVAL", "INTO", "IS", "ITEMS", "JOIN", "KEYS", "LAST", 
-			"LATERAL", "LAZY", "LEADING", "LEFT", "LIKE", "LIMIT", "LINES", "LIST", 
-			"LIFECYCLE", "LOAD", "LOCAL", "LOCATION", "LOCK", "LOCKS", "LOGICAL", 
-			"MACRO", "MAP", "MATCHED", "MERGE", "MINUTE", "MONTH", "MSCK", "NAMESPACE", 
-			"NAMESPACES", "NATURAL", "NO", "NOT", "NULL", "NULLS", "OF", "ON", "ONLY", 
-			"OPTION", "OPTIONS", "OR", "ORDER", "OUT", "OUTER", "OUTPUTFORMAT", "OVER", 
-			"OVERLAPS", "OVERLAY", "OVERWRITE", "PARTITION", "PARTITIONED", "PARTITIONS", 
-			"PARQUET", "PERCENTLIT", "PIVOT", "PLACING", "POSITION", "PRECEDING", 
-			"PRIMARY", "PRINCIPALS", "PROPERTIES", "PURGE", "QUERY", "RANGE", "RECORDREADER", 
-			"RECORDWRITER", "RECOVER", "REDUCE", "REFERENCES", "REFRESH", "RENAME", 
-			"REPAIR", "REPLACE", "RESET", "RESTRICT", "REVOKE", "RETAIN", "RIGHT", 
-			"RLIKE", "ROLE", "ROLES", "ROLLBACK", "ROLLUP", "ROW", "ROWS", "RUN", 
-			"SCHEMA", "SECOND", "SELECT", "SEMI", "SEPARATED", "SERDE", "SERDEPROPERTIES", 
-			"SESSION_USER", "SET", "SETMINUS", "SETS", "SHOW", "SKEWED", "SOME", 
-			"SORT", "SORTED", "START", "STATISTICS", "STORED", "STRATIFY", "STRUCT", 
-			"SUBSTR", "SUBSTRING", "TABLE", "TABLES", "TABLESAMPLE", "TBLPROPERTIES", 
-			"TEMPORARY", "TERMINATED", "THEN", "TO", "TOUCH", "TRAILING", "TRANSACTION", 
-			"TRANSACTIONS", "TRANSFORM", "TRIM", "TRUE", "TRUNCATE", "TYPE", "UNARCHIVE", 
-			"UNBOUNDED", "UNCACHE", "UNION", "UNIQUE", "UNKNOWN", "UNLOCK", "UNSET", 
-			"UPDATE", "USE", "USER", "USING", "VALUES", "VACUUM", "VIEW", "VIEWS", 
-			"WHEN", "WHERE", "WINDOW", "WITH", "YEAR", "KILL", "READ", "JOB", "ADDJAR", 
-			"COMPRESS", "FILE", "DISTCP", "CLICKHOUSE", "EQ", "NSEQ", "NEQ", "NEQJ", 
-			"LT", "LTE", "GT", "GTE", "PLUS", "MINUS", "ASTERISK", "SLASH", "PERCENT", 
-			"DIV", "TILDE", "AMPERSAND", "PIPE", "CONCAT_PIPE", "HAT", "STRING", 
-			"BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", "INTEGER_VALUE", 
-			"EXPONENT_VALUE", "DECIMAL_VALUE", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", 
-			"IDENTIFIER", "BACKQUOTED_IDENTIFIER", "SIMPLE_COMMENT", "BRACKETED_EMPTY_COMMENT", 
-			"BRACKETED_COMMENT", "WS", "UNRECOGNIZED"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+	private static final String[] _LITERAL_NAMES = {
+		null, "';'", "'('", "')'", "','", "'.'", "'/*+'", "'*/'", "'->'", "'['", 
+		"']'", "':'", "'ADD'", "'AFTER'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", 
+		"'ANTI'", "'ANY'", "'ARCHIVE'", "'ARRAY'", "'AS'", "'ASC'", "'AT'", "'AUTHORIZATION'", 
+		"'BETWEEN'", "'BOTH'", "'BUCKET'", "'BUCKETS'", "'BY'", "'CACHE'", "'CASCADE'", 
+		"'CASE'", "'CAST'", "'CHANGE'", "'CHECK'", "'CLEAR'", "'CLUSTER'", "'CLUSTERED'", 
+		"'CODEGEN'", "'COLLATE'", "'COLLECTION'", "'COLUMN'", "'COLUMNS'", "'COMMENT'", 
+		"'COMMIT'", "'COMPACT'", "'COMPACTIONS'", "'COMPUTE'", "'CONCATENATE'", 
+		"'CONSTRAINT'", "'CONVERT'", "'COST'", "'CREATE'", "'CROSS'", "'CUBE'", 
+		"'CURRENT'", "'CURRENT_DATE'", "'CURRENT_TIME'", "'CURRENT_TIMESTAMP'", 
+		"'CURRENT_USER'", "'DATA'", "'DATABASE'", null, "'DAY'", "'DBPROPERTIES'", 
+		"'DEFINED'", "'DELETE'", "'DELIMITED'", "'DELTA'", "'DESC'", "'DESCRIBE'", 
+		"'DETAIL'", "'DFS'", "'DIRECTORIES'", "'DIRECTORY'", "'DISTINCT'", "'DISTRIBUTE'", 
+		"'DROP'", "'DRY'", "'ELSE'", "'END'", "'ESCAPE'", "'ESCAPED'", "'EXCEPT'", 
+		"'EXCHANGE'", "'EXISTS'", "'EXPLAIN'", "'EXPORT'", "'EXTENDED'", "'EXTERNAL'", 
+		"'EXTRACT'", "'FALSE'", "'FETCH'", "'FIELDS'", "'FILTER'", "'FILEFORMAT'", 
+		"'FIRST'", "'FOLLOWING'", "'FOR'", "'FOREIGN'", "'FORMAT'", "'FORMATTED'", 
+		"'FROM'", "'FULL'", "'FUNCTION'", "'FUNCTIONS'", "'GLOBAL'", "'GRANT'", 
+		"'GROUP'", "'GROUPING'", "'HAVING'", "'HOUR'", "'HOURS'", "'HISTORY'", 
+		"'IF'", "'IGNORE'", "'IMPORT'", "'IN'", "'INDEX'", "'INDEXES'", "'INNER'", 
+		"'INPATH'", "'INPUTFORMAT'", "'INSERT'", "'INTERSECT'", "'INTERVAL'", 
+		"'INTO'", "'IS'", "'ITEMS'", "'JOIN'", "'KEYS'", "'LAST'", "'LATERAL'", 
+		"'LAZY'", "'LEADING'", "'LEFT'", "'LIKE'", "'LIMIT'", "'LINES'", "'LIST'", 
+		"'LIFECYCLE'", "'LOAD'", "'LOCAL'", "'LOCATION'", "'LOCK'", "'LOCKS'", 
+		"'LOGICAL'", "'MACRO'", "'MAP'", "'MATCHED'", "'MERGE'", "'MINUTE'", "'MONTH'", 
+		"'MSCK'", "'NAMESPACE'", "'NAMESPACES'", "'NATURAL'", "'NO'", null, "'NULL'", 
+		"'NULLS'", "'OF'", "'ON'", "'ONLY'", "'OPTION'", "'OPTIONS'", "'OR'", 
+		"'ORDER'", "'OUT'", "'OUTER'", "'OUTPUTFORMAT'", "'OVER'", "'OVERLAPS'", 
+		"'OVERLAY'", "'OVERWRITE'", "'PARTITION'", "'PARTITIONED'", "'PARTITIONS'", 
+		"'PARQUET'", "'PERCENT'", "'PIVOT'", "'PLACING'", "'POSITION'", "'PRECEDING'", 
+		"'PRIMARY'", "'PRINCIPALS'", "'PROPERTIES'", "'PURGE'", "'QUERY'", "'RANGE'", 
+		"'RECORDREADER'", "'RECORDWRITER'", "'RECOVER'", "'REDUCE'", "'REFERENCES'", 
+		"'REFRESH'", "'RENAME'", "'REPAIR'", "'REPLACE'", "'RESET'", "'RESTRICT'", 
+		"'REVOKE'", "'RETAIN'", "'RIGHT'", null, "'ROLE'", "'ROLES'", "'ROLLBACK'", 
+		"'ROLLUP'", "'ROW'", "'ROWS'", "'RUN'", "'SCHEMA'", "'SECOND'", "'SELECT'", 
+		"'SEMI'", "'SEPARATED'", "'SERDE'", "'SERDEPROPERTIES'", "'SESSION_USER'", 
+		"'SET'", "'MINUS'", "'SETS'", "'SHOW'", "'SKEWED'", "'SOME'", "'SORT'", 
+		"'SORTED'", "'START'", "'STATISTICS'", "'STORED'", "'STRATIFY'", "'STRUCT'", 
+		"'SUBSTR'", "'SUBSTRING'", "'TABLE'", "'TABLES'", "'TABLESAMPLE'", "'TBLPROPERTIES'", 
+		null, "'TERMINATED'", "'THEN'", "'TO'", "'TOUCH'", "'TRAILING'", "'TRANSACTION'", 
+		"'TRANSACTIONS'", "'TRANSFORM'", "'TRIM'", "'TRUE'", "'TRUNCATE'", "'TYPE'", 
+		"'UNARCHIVE'", "'UNBOUNDED'", "'UNCACHE'", "'UNION'", "'UNIQUE'", "'UNKNOWN'", 
+		"'UNLOCK'", "'UNSET'", "'UPDATE'", "'USE'", "'USER'", "'USING'", "'VALUES'", 
+		"'VACUUM'", "'VIEW'", "'VIEWS'", "'WHEN'", "'WHERE'", "'WINDOW'", "'WITH'", 
+		"'YEAR'", "'KILL'", "'READ'", "'JOB'", "'ADDJAR'", "'COMPRESS'", "'FILE'", 
+		"'DISTCP'", "'CLICKHOUSE'", null, "'<=>'", "'<>'", "'!='", "'<'", null, 
+		"'>'", null, "'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", 
+		"'|'", "'||'", "'^'", null, null, null, null, null, null, null, null, 
+		null, null, null, null, "'/**/'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		"ADD", "AFTER", "ALL", "ALTER", "ANALYZE", "AND", "ANTI", "ANY", "ARCHIVE", 
+		"ARRAY", "AS", "ASC", "AT", "AUTHORIZATION", "BETWEEN", "BOTH", "BUCKET", 
+		"BUCKETS", "BY", "CACHE", "CASCADE", "CASE", "CAST", "CHANGE", "CHECK", 
+		"CLEAR", "CLUSTER", "CLUSTERED", "CODEGEN", "COLLATE", "COLLECTION", "COLUMN", 
+		"COLUMNS", "COMMENT", "COMMIT", "COMPACT", "COMPACTIONS", "COMPUTE", "CONCATENATE", 
+		"CONSTRAINT", "CONVERT", "COST", "CREATE", "CROSS", "CUBE", "CURRENT", 
+		"CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER", "DATA", 
+		"DATABASE", "DATABASES", "DAY", "DBPROPERTIES", "DEFINED", "DELETE", "DELIMITED", 
+		"DELTA", "DESC", "DESCRIBE", "DETAIL", "DFS", "DIRECTORIES", "DIRECTORY", 
+		"DISTINCT", "DISTRIBUTE", "DROP", "DRY", "ELSE", "END", "ESCAPE", "ESCAPED", 
+		"EXCEPT", "EXCHANGE", "EXISTS", "EXPLAIN", "EXPORT", "EXTENDED", "EXTERNAL", 
+		"EXTRACT", "FALSE", "FETCH", "FIELDS", "FILTER", "FILEFORMAT", "FIRST", 
+		"FOLLOWING", "FOR", "FOREIGN", "FORMAT", "FORMATTED", "FROM", "FULL", 
+		"FUNCTION", "FUNCTIONS", "GLOBAL", "GRANT", "GROUP", "GROUPING", "HAVING", 
+		"HOUR", "HOURS", "HISTORY", "IF", "IGNORE", "IMPORT", "IN", "INDEX", "INDEXES", 
+		"INNER", "INPATH", "INPUTFORMAT", "INSERT", "INTERSECT", "INTERVAL", "INTO", 
+		"IS", "ITEMS", "JOIN", "KEYS", "LAST", "LATERAL", "LAZY", "LEADING", "LEFT", 
+		"LIKE", "LIMIT", "LINES", "LIST", "LIFECYCLE", "LOAD", "LOCAL", "LOCATION", 
+		"LOCK", "LOCKS", "LOGICAL", "MACRO", "MAP", "MATCHED", "MERGE", "MINUTE", 
+		"MONTH", "MSCK", "NAMESPACE", "NAMESPACES", "NATURAL", "NO", "NOT", "NULL", 
+		"NULLS", "OF", "ON", "ONLY", "OPTION", "OPTIONS", "OR", "ORDER", "OUT", 
+		"OUTER", "OUTPUTFORMAT", "OVER", "OVERLAPS", "OVERLAY", "OVERWRITE", "PARTITION", 
+		"PARTITIONED", "PARTITIONS", "PARQUET", "PERCENTLIT", "PIVOT", "PLACING", 
+		"POSITION", "PRECEDING", "PRIMARY", "PRINCIPALS", "PROPERTIES", "PURGE", 
+		"QUERY", "RANGE", "RECORDREADER", "RECORDWRITER", "RECOVER", "REDUCE", 
+		"REFERENCES", "REFRESH", "RENAME", "REPAIR", "REPLACE", "RESET", "RESTRICT", 
+		"REVOKE", "RETAIN", "RIGHT", "RLIKE", "ROLE", "ROLES", "ROLLBACK", "ROLLUP", 
+		"ROW", "ROWS", "RUN", "SCHEMA", "SECOND", "SELECT", "SEMI", "SEPARATED", 
+		"SERDE", "SERDEPROPERTIES", "SESSION_USER", "SET", "SETMINUS", "SETS", 
+		"SHOW", "SKEWED", "SOME", "SORT", "SORTED", "START", "STATISTICS", "STORED", 
+		"STRATIFY", "STRUCT", "SUBSTR", "SUBSTRING", "TABLE", "TABLES", "TABLESAMPLE", 
+		"TBLPROPERTIES", "TEMPORARY", "TERMINATED", "THEN", "TO", "TOUCH", "TRAILING", 
+		"TRANSACTION", "TRANSACTIONS", "TRANSFORM", "TRIM", "TRUE", "TRUNCATE", 
+		"TYPE", "UNARCHIVE", "UNBOUNDED", "UNCACHE", "UNION", "UNIQUE", "UNKNOWN", 
+		"UNLOCK", "UNSET", "UPDATE", "USE", "USER", "USING", "VALUES", "VACUUM", 
+		"VIEW", "VIEWS", "WHEN", "WHERE", "WINDOW", "WITH", "YEAR", "KILL", "READ", 
+		"JOB", "ADDJAR", "COMPRESS", "FILE", "DISTCP", "CLICKHOUSE", "EQ", "NSEQ", 
+		"NEQ", "NEQJ", "LT", "LTE", "GT", "GTE", "PLUS", "MINUS", "ASTERISK", 
+		"SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", "CONCAT_PIPE", 
+		"HAT", "STRING", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", 
+		"INTEGER_VALUE", "EXPONENT_VALUE", "DECIMAL_VALUE", "DOUBLE_LITERAL", 
+		"BIGDECIMAL_LITERAL", "IDENTIFIER", "BACKQUOTED_IDENTIFIER", "SIMPLE_COMMENT", 
+		"BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", "WS", "UNRECOGNIZED"
+	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -350,7 +340,6 @@ public class SparkSqlBaseParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-
 	public static class SingleStatementContext extends ParserRuleContext {
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
@@ -2713,13 +2702,14 @@ public class SparkSqlBaseParser extends Parser {
 		}
 	}
 	public static class DropTableColumnsContext extends StatementContext {
+		public MultipartIdentifierContext table;
 		public MultipartIdentifierListContext columns;
 		public TerminalNode ALTER() { return getToken(SparkSqlBaseParser.ALTER, 0); }
 		public TerminalNode TABLE() { return getToken(SparkSqlBaseParser.TABLE, 0); }
+		public TerminalNode DROP() { return getToken(SparkSqlBaseParser.DROP, 0); }
 		public MultipartIdentifierContext multipartIdentifier() {
 			return getRuleContext(MultipartIdentifierContext.class,0);
 		}
-		public TerminalNode DROP() { return getToken(SparkSqlBaseParser.DROP, 0); }
 		public TerminalNode COLUMN() { return getToken(SparkSqlBaseParser.COLUMN, 0); }
 		public TerminalNode COLUMNS() { return getToken(SparkSqlBaseParser.COLUMNS, 0); }
 		public MultipartIdentifierListContext multipartIdentifierList() {
@@ -3707,7 +3697,7 @@ public class SparkSqlBaseParser extends Parser {
 				setState(518);
 				match(TABLE);
 				setState(519);
-				multipartIdentifier();
+				((DropTableColumnsContext)_localctx).table = multipartIdentifier();
 				setState(520);
 				match(DROP);
 				setState(521);
@@ -3737,7 +3727,7 @@ public class SparkSqlBaseParser extends Parser {
 				setState(527);
 				match(TABLE);
 				setState(528);
-				multipartIdentifier();
+				((DropTableColumnsContext)_localctx).table = multipartIdentifier();
 				setState(529);
 				match(DROP);
 				setState(530);
@@ -17834,14 +17824,12 @@ public class SparkSqlBaseParser extends Parser {
 	}
 	public static class ComplexDataTypeContext extends DataTypeContext {
 		public Token complex;
-		public TerminalNode LT() { return getToken(SparkSqlBaseParser.LT, 0); }
 		public List<DataTypeContext> dataType() {
 			return getRuleContexts(DataTypeContext.class);
 		}
 		public DataTypeContext dataType(int i) {
 			return getRuleContext(DataTypeContext.class,i);
 		}
-		public TerminalNode GT() { return getToken(SparkSqlBaseParser.GT, 0); }
 		public TerminalNode ARRAY() { return getToken(SparkSqlBaseParser.ARRAY, 0); }
 		public TerminalNode MAP() { return getToken(SparkSqlBaseParser.MAP, 0); }
 		public TerminalNode STRUCT() { return getToken(SparkSqlBaseParser.STRUCT, 0); }

@@ -72,8 +72,7 @@ object SqlUtils {
         }
     }
 
-    private fun parserSql(dbType: String, sql: String): ArrayList<TableSource> {
-        val dbType = JdbcConstants.ORACLE
+    private fun parserSql(dbType: com.alibaba.druid.DbType, sql: String): ArrayList<TableSource> {
         val stmtList = SQLUtils.parseStatements(sql, dbType)
         val stmt = stmtList[0]
         val statVisitor = SQLUtils.createSchemaStatVisitor(dbType)

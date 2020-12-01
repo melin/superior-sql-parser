@@ -148,10 +148,10 @@ statement
     | ALTER TABLE table=multipartIdentifier
         RENAME COLUMN
         from=multipartIdentifier TO to=errorCapturingIdentifier        #renameTableColumn
-    | ALTER TABLE multipartIdentifier
+    | ALTER TABLE table=multipartIdentifier
         DROP (COLUMN | COLUMNS)
         '(' columns=multipartIdentifierList ')'                        #dropTableColumns
-    | ALTER TABLE multipartIdentifier
+    | ALTER TABLE table=multipartIdentifier
         DROP (COLUMN | COLUMNS) columns=multipartIdentifierList        #dropTableColumns
     | ALTER (TABLE | VIEW) from=multipartIdentifier
         RENAME TO to=multipartIdentifier                               #renameTable

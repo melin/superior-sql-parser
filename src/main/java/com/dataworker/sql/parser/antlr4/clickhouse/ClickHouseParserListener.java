@@ -8,15 +8,25 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface ClickHouseParserListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#parse}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#queryList}.
 	 * @param ctx the parse tree
 	 */
-	void enterParse(ClickHouseParser.ParseContext ctx);
+	void enterQueryList(ClickHouseParser.QueryListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#parse}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#queryList}.
 	 * @param ctx the parse tree
 	 */
-	void exitParse(ClickHouseParser.ParseContext ctx);
+	void exitQueryList(ClickHouseParser.QueryListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#queryStmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterQueryStmt(ClickHouseParser.QueryStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#queryStmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitQueryStmt(ClickHouseParser.QueryStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ClickHouseParser#query}.
 	 * @param ctx the parse tree
@@ -28,1109 +38,1209 @@ public interface ClickHouseParserListener extends ParseTreeListener {
 	 */
 	void exitQuery(ClickHouseParser.QueryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_query}.
+	 * Enter a parse tree produced by the {@code AlterTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#alterStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_query(ClickHouseParser.Select_queryContext ctx);
+	void enterAlterTableStmt(ClickHouseParser.AlterTableStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_query}.
+	 * Exit a parse tree produced by the {@code AlterTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#alterStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_query(ClickHouseParser.Select_queryContext ctx);
+	void exitAlterTableStmt(ClickHouseParser.AlterTableStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_query_main}.
+	 * Enter a parse tree produced by the {@code AlterTableAddClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_query_main(ClickHouseParser.Select_query_mainContext ctx);
+	void enterAlterTableAddClause(ClickHouseParser.AlterTableAddClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_query_main}.
+	 * Exit a parse tree produced by the {@code AlterTableAddClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_query_main(ClickHouseParser.Select_query_mainContext ctx);
+	void exitAlterTableAddClause(ClickHouseParser.AlterTableAddClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_with_step}.
+	 * Enter a parse tree produced by the {@code AlterTableDropClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_with_step(ClickHouseParser.Select_with_stepContext ctx);
+	void enterAlterTableDropClause(ClickHouseParser.AlterTableDropClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_with_step}.
+	 * Exit a parse tree produced by the {@code AlterTableDropClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_with_step(ClickHouseParser.Select_with_stepContext ctx);
+	void exitAlterTableDropClause(ClickHouseParser.AlterTableDropClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_select_step}.
+	 * Enter a parse tree produced by the {@code AlterTableModifyClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_select_step(ClickHouseParser.Select_select_stepContext ctx);
+	void enterAlterTableModifyClause(ClickHouseParser.AlterTableModifyClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_select_step}.
+	 * Exit a parse tree produced by the {@code AlterTableModifyClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_select_step(ClickHouseParser.Select_select_stepContext ctx);
+	void exitAlterTableModifyClause(ClickHouseParser.AlterTableModifyClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_from_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#checkStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_from_step(ClickHouseParser.Select_from_stepContext ctx);
+	void enterCheckStmt(ClickHouseParser.CheckStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_from_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#checkStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_from_step(ClickHouseParser.Select_from_stepContext ctx);
+	void exitCheckStmt(ClickHouseParser.CheckStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_array_join_step}.
+	 * Enter a parse tree produced by the {@code createDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_array_join_step(ClickHouseParser.Select_array_join_stepContext ctx);
+	void enterCreateDatabaseStmt(ClickHouseParser.CreateDatabaseStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_array_join_step}.
+	 * Exit a parse tree produced by the {@code createDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_array_join_step(ClickHouseParser.Select_array_join_stepContext ctx);
+	void exitCreateDatabaseStmt(ClickHouseParser.CreateDatabaseStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_sample_step}.
+	 * Enter a parse tree produced by the {@code createTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_sample_step(ClickHouseParser.Select_sample_stepContext ctx);
+	void enterCreateTableStmt(ClickHouseParser.CreateTableStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_sample_step}.
+	 * Exit a parse tree produced by the {@code createTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_sample_step(ClickHouseParser.Select_sample_stepContext ctx);
+	void exitCreateTableStmt(ClickHouseParser.CreateTableStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#sample_ratio}.
+	 * Enter a parse tree produced by the {@code SchemaDescriptionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSample_ratio(ClickHouseParser.Sample_ratioContext ctx);
+	void enterSchemaDescriptionClause(ClickHouseParser.SchemaDescriptionClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#sample_ratio}.
+	 * Exit a parse tree produced by the {@code SchemaDescriptionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSample_ratio(ClickHouseParser.Sample_ratioContext ctx);
+	void exitSchemaDescriptionClause(ClickHouseParser.SchemaDescriptionClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_join_step}.
+	 * Enter a parse tree produced by the {@code SchemaAsSubqueryClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_join_step(ClickHouseParser.Select_join_stepContext ctx);
+	void enterSchemaAsSubqueryClause(ClickHouseParser.SchemaAsSubqueryClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_join_step}.
+	 * Exit a parse tree produced by the {@code SchemaAsSubqueryClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_join_step(ClickHouseParser.Select_join_stepContext ctx);
+	void exitSchemaAsSubqueryClause(ClickHouseParser.SchemaAsSubqueryClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_join_right_part}.
+	 * Enter a parse tree produced by the {@code SchemaAsTableClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_join_right_part(ClickHouseParser.Select_join_right_partContext ctx);
+	void enterSchemaAsTableClause(ClickHouseParser.SchemaAsTableClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_join_right_part}.
+	 * Exit a parse tree produced by the {@code SchemaAsTableClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_join_right_part(ClickHouseParser.Select_join_right_partContext ctx);
+	void exitSchemaAsTableClause(ClickHouseParser.SchemaAsTableClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_prewhere_step}.
+	 * Enter a parse tree produced by the {@code SchemaAsFunctionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_prewhere_step(ClickHouseParser.Select_prewhere_stepContext ctx);
+	void enterSchemaAsFunctionClause(ClickHouseParser.SchemaAsFunctionClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_prewhere_step}.
+	 * Exit a parse tree produced by the {@code SchemaAsFunctionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_prewhere_step(ClickHouseParser.Select_prewhere_stepContext ctx);
+	void exitSchemaAsFunctionClause(ClickHouseParser.SchemaAsFunctionClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_where_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#engineClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_where_step(ClickHouseParser.Select_where_stepContext ctx);
+	void enterEngineClause(ClickHouseParser.EngineClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_where_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#engineClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_where_step(ClickHouseParser.Select_where_stepContext ctx);
+	void exitEngineClause(ClickHouseParser.EngineClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_groupby_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#partitionByClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_groupby_step(ClickHouseParser.Select_groupby_stepContext ctx);
+	void enterPartitionByClause(ClickHouseParser.PartitionByClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_groupby_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#partitionByClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_groupby_step(ClickHouseParser.Select_groupby_stepContext ctx);
+	void exitPartitionByClause(ClickHouseParser.PartitionByClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_having_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#primaryKeyClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_having_step(ClickHouseParser.Select_having_stepContext ctx);
+	void enterPrimaryKeyClause(ClickHouseParser.PrimaryKeyClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_having_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#primaryKeyClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_having_step(ClickHouseParser.Select_having_stepContext ctx);
+	void exitPrimaryKeyClause(ClickHouseParser.PrimaryKeyClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_orderby_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#sampleByClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_orderby_step(ClickHouseParser.Select_orderby_stepContext ctx);
+	void enterSampleByClause(ClickHouseParser.SampleByClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_orderby_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#sampleByClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_orderby_step(ClickHouseParser.Select_orderby_stepContext ctx);
+	void exitSampleByClause(ClickHouseParser.SampleByClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_limit_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#ttlClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_limit_step(ClickHouseParser.Select_limit_stepContext ctx);
+	void enterTtlClause(ClickHouseParser.TtlClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_limit_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#ttlClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_limit_step(ClickHouseParser.Select_limit_stepContext ctx);
+	void exitTtlClause(ClickHouseParser.TtlClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_limitby_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#engineExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_limitby_step(ClickHouseParser.Select_limitby_stepContext ctx);
+	void enterEngineExpr(ClickHouseParser.EngineExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_limitby_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#engineExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_limitby_step(ClickHouseParser.Select_limitby_stepContext ctx);
+	void exitEngineExpr(ClickHouseParser.EngineExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_settings_step}.
+	 * Enter a parse tree produced by the {@code TableElementExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#tableElementExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_settings_step(ClickHouseParser.Select_settings_stepContext ctx);
+	void enterTableElementExprColumn(ClickHouseParser.TableElementExprColumnContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_settings_step}.
+	 * Exit a parse tree produced by the {@code TableElementExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#tableElementExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_settings_step(ClickHouseParser.Select_settings_stepContext ctx);
+	void exitTableElementExprColumn(ClickHouseParser.TableElementExprColumnContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_format_step}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#tableColumnDfnt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_format_step(ClickHouseParser.Select_format_stepContext ctx);
+	void enterTableColumnDfnt(ClickHouseParser.TableColumnDfntContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_format_step}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#tableColumnDfnt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_format_step(ClickHouseParser.Select_format_stepContext ctx);
+	void exitTableColumnDfnt(ClickHouseParser.TableColumnDfntContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#insert_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#tableColumnPropertyExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterInsert_query(ClickHouseParser.Insert_queryContext ctx);
+	void enterTableColumnPropertyExpr(ClickHouseParser.TableColumnPropertyExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#insert_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#tableColumnPropertyExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitInsert_query(ClickHouseParser.Insert_queryContext ctx);
+	void exitTableColumnPropertyExpr(ClickHouseParser.TableColumnPropertyExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#create_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#ttlExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterCreate_query(ClickHouseParser.Create_queryContext ctx);
+	void enterTtlExpr(ClickHouseParser.TtlExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#create_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#ttlExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitCreate_query(ClickHouseParser.Create_queryContext ctx);
+	void exitTtlExpr(ClickHouseParser.TtlExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#rename_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#describeStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterRename_query(ClickHouseParser.Rename_queryContext ctx);
+	void enterDescribeStmt(ClickHouseParser.DescribeStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#rename_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#describeStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitRename_query(ClickHouseParser.Rename_queryContext ctx);
+	void exitDescribeStmt(ClickHouseParser.DescribeStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#drop_query}.
+	 * Enter a parse tree produced by the {@code DropDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterDrop_query(ClickHouseParser.Drop_queryContext ctx);
+	void enterDropDatabaseStmt(ClickHouseParser.DropDatabaseStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#drop_query}.
+	 * Exit a parse tree produced by the {@code DropDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitDrop_query(ClickHouseParser.Drop_queryContext ctx);
+	void exitDropDatabaseStmt(ClickHouseParser.DropDatabaseStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#alter_query}.
+	 * Enter a parse tree produced by the {@code DropTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterAlter_query(ClickHouseParser.Alter_queryContext ctx);
+	void enterDropTableStmt(ClickHouseParser.DropTableStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#alter_query}.
+	 * Exit a parse tree produced by the {@code DropTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitAlter_query(ClickHouseParser.Alter_queryContext ctx);
+	void exitDropTableStmt(ClickHouseParser.DropTableStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#alter_query_element}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#insertStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterAlter_query_element(ClickHouseParser.Alter_query_elementContext ctx);
+	void enterInsertStmt(ClickHouseParser.InsertStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#alter_query_element}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#insertStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitAlter_query_element(ClickHouseParser.Alter_query_elementContext ctx);
+	void exitInsertStmt(ClickHouseParser.InsertStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#clickhouse_type}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#valuesClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterClickhouse_type(ClickHouseParser.Clickhouse_typeContext ctx);
+	void enterValuesClause(ClickHouseParser.ValuesClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#clickhouse_type}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#valuesClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitClickhouse_type(ClickHouseParser.Clickhouse_typeContext ctx);
+	void exitValuesClause(ClickHouseParser.ValuesClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#simple_type}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#valueTupleExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterSimple_type(ClickHouseParser.Simple_typeContext ctx);
+	void enterValueTupleExpr(ClickHouseParser.ValueTupleExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#simple_type}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#valueTupleExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitSimple_type(ClickHouseParser.Simple_typeContext ctx);
+	void exitValueTupleExpr(ClickHouseParser.ValueTupleExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#enum_entry}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#optimizeStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterEnum_entry(ClickHouseParser.Enum_entryContext ctx);
+	void enterOptimizeStmt(ClickHouseParser.OptimizeStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#enum_entry}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#optimizeStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitEnum_entry(ClickHouseParser.Enum_entryContext ctx);
+	void exitOptimizeStmt(ClickHouseParser.OptimizeStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#use_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#partitionClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterUse_query(ClickHouseParser.Use_queryContext ctx);
+	void enterPartitionClause(ClickHouseParser.PartitionClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#use_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#partitionClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitUse_query(ClickHouseParser.Use_queryContext ctx);
+	void exitPartitionClause(ClickHouseParser.PartitionClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#set_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#selectUnionStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSet_query(ClickHouseParser.Set_queryContext ctx);
+	void enterSelectUnionStmt(ClickHouseParser.SelectUnionStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#set_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#selectUnionStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSet_query(ClickHouseParser.Set_queryContext ctx);
+	void exitSelectUnionStmt(ClickHouseParser.SelectUnionStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#assignment_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#selectStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignment_list(ClickHouseParser.Assignment_listContext ctx);
+	void enterSelectStmt(ClickHouseParser.SelectStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#assignment_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#selectStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignment_list(ClickHouseParser.Assignment_listContext ctx);
+	void exitSelectStmt(ClickHouseParser.SelectStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#assignment}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#withClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignment(ClickHouseParser.AssignmentContext ctx);
+	void enterWithClause(ClickHouseParser.WithClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#assignment}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#withClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignment(ClickHouseParser.AssignmentContext ctx);
+	void exitWithClause(ClickHouseParser.WithClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#kill_query_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#fromClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterKill_query_query(ClickHouseParser.Kill_query_queryContext ctx);
+	void enterFromClause(ClickHouseParser.FromClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#kill_query_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#fromClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitKill_query_query(ClickHouseParser.Kill_query_queryContext ctx);
+	void exitFromClause(ClickHouseParser.FromClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#optimize_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#sampleClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterOptimize_query(ClickHouseParser.Optimize_queryContext ctx);
+	void enterSampleClause(ClickHouseParser.SampleClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#optimize_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#sampleClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitOptimize_query(ClickHouseParser.Optimize_queryContext ctx);
+	void exitSampleClause(ClickHouseParser.SampleClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#table_properties_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#arrayJoinClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterTable_properties_query(ClickHouseParser.Table_properties_queryContext ctx);
+	void enterArrayJoinClause(ClickHouseParser.ArrayJoinClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#table_properties_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#arrayJoinClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitTable_properties_query(ClickHouseParser.Table_properties_queryContext ctx);
+	void exitArrayJoinClause(ClickHouseParser.ArrayJoinClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#show_tables_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#prewhereClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterShow_tables_query(ClickHouseParser.Show_tables_queryContext ctx);
+	void enterPrewhereClause(ClickHouseParser.PrewhereClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#show_tables_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#prewhereClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitShow_tables_query(ClickHouseParser.Show_tables_queryContext ctx);
+	void exitPrewhereClause(ClickHouseParser.PrewhereClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#show_processlist_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#whereClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterShow_processlist_query(ClickHouseParser.Show_processlist_queryContext ctx);
+	void enterWhereClause(ClickHouseParser.WhereClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#show_processlist_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#whereClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitShow_processlist_query(ClickHouseParser.Show_processlist_queryContext ctx);
+	void exitWhereClause(ClickHouseParser.WhereClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#check_query}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#groupByClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterCheck_query(ClickHouseParser.Check_queryContext ctx);
+	void enterGroupByClause(ClickHouseParser.GroupByClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#check_query}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#groupByClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitCheck_query(ClickHouseParser.Check_queryContext ctx);
+	void exitGroupByClause(ClickHouseParser.GroupByClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#full_table_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#havingClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterFull_table_name(ClickHouseParser.Full_table_nameContext ctx);
+	void enterHavingClause(ClickHouseParser.HavingClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#full_table_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#havingClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitFull_table_name(ClickHouseParser.Full_table_nameContext ctx);
+	void exitHavingClause(ClickHouseParser.HavingClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#partition_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#orderByClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterPartition_name(ClickHouseParser.Partition_nameContext ctx);
+	void enterOrderByClause(ClickHouseParser.OrderByClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#partition_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#orderByClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitPartition_name(ClickHouseParser.Partition_nameContext ctx);
+	void exitOrderByClause(ClickHouseParser.OrderByClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#cluster_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#limitByClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterCluster_name(ClickHouseParser.Cluster_nameContext ctx);
+	void enterLimitByClause(ClickHouseParser.LimitByClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#cluster_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#limitByClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitCluster_name(ClickHouseParser.Cluster_nameContext ctx);
+	void exitLimitByClause(ClickHouseParser.LimitByClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#database_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#limitClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterDatabase_name(ClickHouseParser.Database_nameContext ctx);
+	void enterLimitClause(ClickHouseParser.LimitClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#database_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#limitClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitDatabase_name(ClickHouseParser.Database_nameContext ctx);
+	void exitLimitClause(ClickHouseParser.LimitClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#table_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#settingsClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterTable_name(ClickHouseParser.Table_nameContext ctx);
+	void enterSettingsClause(ClickHouseParser.SettingsClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#table_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#settingsClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitTable_name(ClickHouseParser.Table_nameContext ctx);
+	void exitSettingsClause(ClickHouseParser.SettingsClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#format_name}.
+	 * Enter a parse tree produced by the {@code JoinExprOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFormat_name(ClickHouseParser.Format_nameContext ctx);
+	void enterJoinExprOp(ClickHouseParser.JoinExprOpContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#format_name}.
+	 * Exit a parse tree produced by the {@code JoinExprOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFormat_name(ClickHouseParser.Format_nameContext ctx);
+	void exitJoinExprOp(ClickHouseParser.JoinExprOpContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#query_outfile_step}.
+	 * Enter a parse tree produced by the {@code JoinExprTable}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterQuery_outfile_step(ClickHouseParser.Query_outfile_stepContext ctx);
+	void enterJoinExprTable(ClickHouseParser.JoinExprTableContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#query_outfile_step}.
+	 * Exit a parse tree produced by the {@code JoinExprTable}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitQuery_outfile_step(ClickHouseParser.Query_outfile_stepContext ctx);
+	void exitJoinExprTable(ClickHouseParser.JoinExprTableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#engine}.
+	 * Enter a parse tree produced by the {@code JoinExprParens}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterEngine(ClickHouseParser.EngineContext ctx);
+	void enterJoinExprParens(ClickHouseParser.JoinExprParensContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#engine}.
+	 * Exit a parse tree produced by the {@code JoinExprParens}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitEngine(ClickHouseParser.EngineContext ctx);
+	void exitJoinExprParens(ClickHouseParser.JoinExprParensContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#identifier_with_optional_parameters}.
+	 * Enter a parse tree produced by the {@code JoinExprCrossOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterIdentifier_with_optional_parameters(ClickHouseParser.Identifier_with_optional_parametersContext ctx);
+	void enterJoinExprCrossOp(ClickHouseParser.JoinExprCrossOpContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#identifier_with_optional_parameters}.
+	 * Exit a parse tree produced by the {@code JoinExprCrossOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitIdentifier_with_optional_parameters(ClickHouseParser.Identifier_with_optional_parametersContext ctx);
+	void exitJoinExprCrossOp(ClickHouseParser.JoinExprCrossOpContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#identifier_with_parameters}.
+	 * Enter a parse tree produced by the {@code JoinOpInner}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void enterIdentifier_with_parameters(ClickHouseParser.Identifier_with_parametersContext ctx);
+	void enterJoinOpInner(ClickHouseParser.JoinOpInnerContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#identifier_with_parameters}.
+	 * Exit a parse tree produced by the {@code JoinOpInner}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void exitIdentifier_with_parameters(ClickHouseParser.Identifier_with_parametersContext ctx);
+	void exitJoinOpInner(ClickHouseParser.JoinOpInnerContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#order_by_expression_list}.
+	 * Enter a parse tree produced by the {@code JoinOpLeftRight}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void enterOrder_by_expression_list(ClickHouseParser.Order_by_expression_listContext ctx);
+	void enterJoinOpLeftRight(ClickHouseParser.JoinOpLeftRightContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#order_by_expression_list}.
+	 * Exit a parse tree produced by the {@code JoinOpLeftRight}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void exitOrder_by_expression_list(ClickHouseParser.Order_by_expression_listContext ctx);
+	void exitJoinOpLeftRight(ClickHouseParser.JoinOpLeftRightContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#order_by_element}.
+	 * Enter a parse tree produced by the {@code JoinOpFull}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void enterOrder_by_element(ClickHouseParser.Order_by_elementContext ctx);
+	void enterJoinOpFull(ClickHouseParser.JoinOpFullContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#order_by_element}.
+	 * Exit a parse tree produced by the {@code JoinOpFull}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 */
-	void exitOrder_by_element(ClickHouseParser.Order_by_elementContext ctx);
+	void exitJoinOpFull(ClickHouseParser.JoinOpFullContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#nested_table}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#joinOpCross}.
 	 * @param ctx the parse tree
 	 */
-	void enterNested_table(ClickHouseParser.Nested_tableContext ctx);
+	void enterJoinOpCross(ClickHouseParser.JoinOpCrossContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#nested_table}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#joinOpCross}.
 	 * @param ctx the parse tree
 	 */
-	void exitNested_table(ClickHouseParser.Nested_tableContext ctx);
+	void exitJoinOpCross(ClickHouseParser.JoinOpCrossContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#name_type_pair_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#joinConstraintClause}.
 	 * @param ctx the parse tree
 	 */
-	void enterName_type_pair_list(ClickHouseParser.Name_type_pair_listContext ctx);
+	void enterJoinConstraintClause(ClickHouseParser.JoinConstraintClauseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#name_type_pair_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#joinConstraintClause}.
 	 * @param ctx the parse tree
 	 */
-	void exitName_type_pair_list(ClickHouseParser.Name_type_pair_listContext ctx);
+	void exitJoinConstraintClause(ClickHouseParser.JoinConstraintClauseContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#name_type_pair}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#limitExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterName_type_pair(ClickHouseParser.Name_type_pairContext ctx);
+	void enterLimitExpr(ClickHouseParser.LimitExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#name_type_pair}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#limitExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitName_type_pair(ClickHouseParser.Name_type_pairContext ctx);
+	void exitLimitExpr(ClickHouseParser.LimitExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#compound_name_type_pair}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#orderExprList}.
 	 * @param ctx the parse tree
 	 */
-	void enterCompound_name_type_pair(ClickHouseParser.Compound_name_type_pairContext ctx);
+	void enterOrderExprList(ClickHouseParser.OrderExprListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#compound_name_type_pair}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#orderExprList}.
 	 * @param ctx the parse tree
 	 */
-	void exitCompound_name_type_pair(ClickHouseParser.Compound_name_type_pairContext ctx);
+	void exitOrderExprList(ClickHouseParser.OrderExprListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#column_declaration_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#orderExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterColumn_declaration_list(ClickHouseParser.Column_declaration_listContext ctx);
+	void enterOrderExpr(ClickHouseParser.OrderExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#column_declaration_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#orderExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitColumn_declaration_list(ClickHouseParser.Column_declaration_listContext ctx);
+	void exitOrderExpr(ClickHouseParser.OrderExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#column_declaration}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#ratioExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterColumn_declaration(ClickHouseParser.Column_declarationContext ctx);
+	void enterRatioExpr(ClickHouseParser.RatioExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#column_declaration}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#ratioExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitColumn_declaration(ClickHouseParser.Column_declarationContext ctx);
+	void exitRatioExpr(ClickHouseParser.RatioExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#column_name}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#settingExprList}.
 	 * @param ctx the parse tree
 	 */
-	void enterColumn_name(ClickHouseParser.Column_nameContext ctx);
+	void enterSettingExprList(ClickHouseParser.SettingExprListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#column_name}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#settingExprList}.
 	 * @param ctx the parse tree
 	 */
-	void exitColumn_name(ClickHouseParser.Column_nameContext ctx);
+	void exitSettingExprList(ClickHouseParser.SettingExprListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#column_type}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#settingExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterColumn_type(ClickHouseParser.Column_typeContext ctx);
+	void enterSettingExpr(ClickHouseParser.SettingExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#column_type}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#settingExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitColumn_type(ClickHouseParser.Column_typeContext ctx);
+	void exitSettingExpr(ClickHouseParser.SettingExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#column_name_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#setStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterColumn_name_list(ClickHouseParser.Column_name_listContext ctx);
+	void enterSetStmt(ClickHouseParser.SetStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#column_name_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#setStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitColumn_name_list(ClickHouseParser.Column_name_listContext ctx);
+	void exitSetStmt(ClickHouseParser.SetStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_expr_list}.
+	 * Enter a parse tree produced by the {@code showCreateTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_expr_list(ClickHouseParser.Select_expr_listContext ctx);
+	void enterShowCreateTableStmt(ClickHouseParser.ShowCreateTableStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_expr_list}.
+	 * Exit a parse tree produced by the {@code showCreateTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_expr_list(ClickHouseParser.Select_expr_listContext ctx);
+	void exitShowCreateTableStmt(ClickHouseParser.ShowCreateTableStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_expr}.
+	 * Enter a parse tree produced by the {@code showTablesStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_expr(ClickHouseParser.Select_exprContext ctx);
+	void enterShowTablesStmt(ClickHouseParser.ShowTablesStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_expr}.
+	 * Exit a parse tree produced by the {@code showTablesStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_expr(ClickHouseParser.Select_exprContext ctx);
+	void exitShowTablesStmt(ClickHouseParser.ShowTablesStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#select_alias}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#useStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect_alias(ClickHouseParser.Select_aliasContext ctx);
+	void enterUseStmt(ClickHouseParser.UseStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#select_alias}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#useStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect_alias(ClickHouseParser.Select_aliasContext ctx);
+	void exitUseStmt(ClickHouseParser.UseStmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#alias}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#valueExprList}.
 	 * @param ctx the parse tree
 	 */
-	void enterAlias(ClickHouseParser.AliasContext ctx);
+	void enterValueExprList(ClickHouseParser.ValueExprListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#alias}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#valueExprList}.
 	 * @param ctx the parse tree
 	 */
-	void exitAlias(ClickHouseParser.AliasContext ctx);
+	void exitValueExprList(ClickHouseParser.ValueExprListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#alias_name}.
+	 * Enter a parse tree produced by the {@code ValueExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterAlias_name(ClickHouseParser.Alias_nameContext ctx);
+	void enterValueExprLiteral(ClickHouseParser.ValueExprLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#alias_name}.
+	 * Exit a parse tree produced by the {@code ValueExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitAlias_name(ClickHouseParser.Alias_nameContext ctx);
+	void exitValueExprLiteral(ClickHouseParser.ValueExprLiteralContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#table_function}.
+	 * Enter a parse tree produced by the {@code ValueExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterTable_function(ClickHouseParser.Table_functionContext ctx);
+	void enterValueExprTuple(ClickHouseParser.ValueExprTupleContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#table_function}.
+	 * Exit a parse tree produced by the {@code ValueExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitTable_function(ClickHouseParser.Table_functionContext ctx);
+	void exitValueExprTuple(ClickHouseParser.ValueExprTupleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#subquery}.
+	 * Enter a parse tree produced by the {@code ValueExprArray}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterSubquery(ClickHouseParser.SubqueryContext ctx);
+	void enterValueExprArray(ClickHouseParser.ValueExprArrayContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#subquery}.
+	 * Exit a parse tree produced by the {@code ValueExprArray}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitSubquery(ClickHouseParser.SubqueryContext ctx);
+	void exitValueExprArray(ClickHouseParser.ValueExprArrayContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#expression_with_optional_alias}.
+	 * Enter a parse tree produced by the {@code ColumnTypeExprSimple}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression_with_optional_alias(ClickHouseParser.Expression_with_optional_aliasContext ctx);
+	void enterColumnTypeExprSimple(ClickHouseParser.ColumnTypeExprSimpleContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#expression_with_optional_alias}.
+	 * Exit a parse tree produced by the {@code ColumnTypeExprSimple}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression_with_optional_alias(ClickHouseParser.Expression_with_optional_aliasContext ctx);
+	void exitColumnTypeExprSimple(ClickHouseParser.ColumnTypeExprSimpleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprConcat}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnTypeExprParam}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprConcat(ClickHouseParser.ExprConcatContext ctx);
+	void enterColumnTypeExprParam(ClickHouseParser.ColumnTypeExprParamContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprConcat}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnTypeExprParam}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprConcat(ClickHouseParser.ExprConcatContext ctx);
+	void exitColumnTypeExprParam(ClickHouseParser.ColumnTypeExprParamContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprCase}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnTypeExprEnum}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprCase(ClickHouseParser.ExprCaseContext ctx);
+	void enterColumnTypeExprEnum(ClickHouseParser.ColumnTypeExprEnumContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprCase}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnTypeExprEnum}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprCase(ClickHouseParser.ExprCaseContext ctx);
+	void exitColumnTypeExprEnum(ClickHouseParser.ColumnTypeExprEnumContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprTupleElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnTypeExprComplex}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprTupleElement(ClickHouseParser.ExprTupleElementContext ctx);
+	void enterColumnTypeExprComplex(ClickHouseParser.ColumnTypeExprComplexContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprTupleElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnTypeExprComplex}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprTupleElement(ClickHouseParser.ExprTupleElementContext ctx);
+	void exitColumnTypeExprComplex(ClickHouseParser.ColumnTypeExprComplexContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprNot}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnTypeExprNested}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprNot(ClickHouseParser.ExprNotContext ctx);
+	void enterColumnTypeExprNested(ClickHouseParser.ColumnTypeExprNestedContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprNot}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnTypeExprNested}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprNot(ClickHouseParser.ExprNotContext ctx);
+	void exitColumnTypeExprNested(ClickHouseParser.ColumnTypeExprNestedContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprArray}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnExprList}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprArray(ClickHouseParser.ExprArrayContext ctx);
+	void enterColumnExprList(ClickHouseParser.ColumnExprListContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprArray}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnExprList}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprArray(ClickHouseParser.ExprArrayContext ctx);
+	void exitColumnExprList(ClickHouseParser.ColumnExprListContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprWithAlias}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnsExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprWithAlias(ClickHouseParser.ExprWithAliasContext ctx);
+	void enterColumnsExprAsterisk(ClickHouseParser.ColumnsExprAsteriskContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprWithAlias}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnsExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprWithAlias(ClickHouseParser.ExprWithAliasContext ctx);
+	void exitColumnsExprAsterisk(ClickHouseParser.ColumnsExprAsteriskContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprLogical}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnsExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprLogical(ClickHouseParser.ExprLogicalContext ctx);
+	void enterColumnsExprSubquery(ClickHouseParser.ColumnsExprSubqueryContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprLogical}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnsExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprLogical(ClickHouseParser.ExprLogicalContext ctx);
+	void exitColumnsExprSubquery(ClickHouseParser.ColumnsExprSubqueryContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprIn}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnsExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprIn(ClickHouseParser.ExprInContext ctx);
+	void enterColumnsExprColumn(ClickHouseParser.ColumnsExprColumnContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprIn}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnsExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprIn(ClickHouseParser.ExprInContext ctx);
+	void exitColumnsExprColumn(ClickHouseParser.ColumnsExprColumnContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprCast}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprTernaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprCast(ClickHouseParser.ExprCastContext ctx);
+	void enterColumnExprTernaryOp(ClickHouseParser.ColumnExprTernaryOpContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprCast}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprTernaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprCast(ClickHouseParser.ExprCastContext ctx);
+	void exitColumnExprTernaryOp(ClickHouseParser.ColumnExprTernaryOpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprOr}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprOr(ClickHouseParser.ExprOrContext ctx);
+	void enterColumnExprAlias(ClickHouseParser.ColumnExprAliasContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprOr}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprOr(ClickHouseParser.ExprOrContext ctx);
+	void exitColumnExprAlias(ClickHouseParser.ColumnExprAliasContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprFunction}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprExtract}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprFunction(ClickHouseParser.ExprFunctionContext ctx);
+	void enterColumnExprExtract(ClickHouseParser.ColumnExprExtractContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprFunction}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprExtract}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprFunction(ClickHouseParser.ExprFunctionContext ctx);
+	void exitColumnExprExtract(ClickHouseParser.ColumnExprExtractContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprMul}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprMul(ClickHouseParser.ExprMulContext ctx);
+	void enterColumnExprSubquery(ClickHouseParser.ColumnExprSubqueryContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprMul}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprMul(ClickHouseParser.ExprMulContext ctx);
+	void exitColumnExprSubquery(ClickHouseParser.ColumnExprSubqueryContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprId}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprTrim}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprId(ClickHouseParser.ExprIdContext ctx);
+	void enterColumnExprTrim(ClickHouseParser.ColumnExprTrimContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprId}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprTrim}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprId(ClickHouseParser.ExprIdContext ctx);
+	void exitColumnExprTrim(ClickHouseParser.ColumnExprTrimContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprLambda}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprLambda(ClickHouseParser.ExprLambdaContext ctx);
+	void enterColumnExprLiteral(ClickHouseParser.ColumnExprLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprLambda}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprLambda(ClickHouseParser.ExprLambdaContext ctx);
+	void exitColumnExprLiteral(ClickHouseParser.ColumnExprLiteralContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprTernary}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprArray}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprTernary(ClickHouseParser.ExprTernaryContext ctx);
+	void enterColumnExprArray(ClickHouseParser.ColumnExprArrayContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprTernary}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprArray}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprTernary(ClickHouseParser.ExprTernaryContext ctx);
+	void exitColumnExprArray(ClickHouseParser.ColumnExprArrayContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprParen}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprParen(ClickHouseParser.ExprParenContext ctx);
+	void enterColumnExprTuple(ClickHouseParser.ColumnExprTupleContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprParen}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprParen(ClickHouseParser.ExprParenContext ctx);
+	void exitColumnExprTuple(ClickHouseParser.ColumnExprTupleContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprBetween}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprArrayAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprBetween(ClickHouseParser.ExprBetweenContext ctx);
+	void enterColumnExprArrayAccess(ClickHouseParser.ColumnExprArrayAccessContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprBetween}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprArrayAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprBetween(ClickHouseParser.ExprBetweenContext ctx);
+	void exitColumnExprArrayAccess(ClickHouseParser.ColumnExprArrayAccessContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprSubquery}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprBetween}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprSubquery(ClickHouseParser.ExprSubqueryContext ctx);
+	void enterColumnExprBetween(ClickHouseParser.ColumnExprBetweenContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprSubquery}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprBetween}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprSubquery(ClickHouseParser.ExprSubqueryContext ctx);
+	void exitColumnExprBetween(ClickHouseParser.ColumnExprBetweenContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprStar}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprParens}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprStar(ClickHouseParser.ExprStarContext ctx);
+	void enterColumnExprParens(ClickHouseParser.ColumnExprParensContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprStar}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprParens}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprStar(ClickHouseParser.ExprStarContext ctx);
+	void exitColumnExprParens(ClickHouseParser.ColumnExprParensContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprInterval}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprUnaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprInterval(ClickHouseParser.ExprIntervalContext ctx);
+	void enterColumnExprUnaryOp(ClickHouseParser.ColumnExprUnaryOpContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprInterval}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprUnaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprInterval(ClickHouseParser.ExprIntervalContext ctx);
+	void exitColumnExprUnaryOp(ClickHouseParser.ColumnExprUnaryOpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprAnd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprTupleAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprAnd(ClickHouseParser.ExprAndContext ctx);
+	void enterColumnExprTupleAccess(ClickHouseParser.ColumnExprTupleAccessContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprAnd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprTupleAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprAnd(ClickHouseParser.ExprAndContext ctx);
+	void exitColumnExprTupleAccess(ClickHouseParser.ColumnExprTupleAccessContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprArrayElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprCase}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprArrayElement(ClickHouseParser.ExprArrayElementContext ctx);
+	void enterColumnExprCase(ClickHouseParser.ColumnExprCaseContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprArrayElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprCase}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprArrayElement(ClickHouseParser.ExprArrayElementContext ctx);
+	void exitColumnExprCase(ClickHouseParser.ColumnExprCaseContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprIsNull}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprInterval}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprIsNull(ClickHouseParser.ExprIsNullContext ctx);
+	void enterColumnExprInterval(ClickHouseParser.ColumnExprIntervalContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprIsNull}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprInterval}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprIsNull(ClickHouseParser.ExprIsNullContext ctx);
+	void exitColumnExprInterval(ClickHouseParser.ColumnExprIntervalContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprList}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprIsNull}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprList(ClickHouseParser.ExprListContext ctx);
+	void enterColumnExprIsNull(ClickHouseParser.ColumnExprIsNullContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprList}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprIsNull}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprList(ClickHouseParser.ExprListContext ctx);
+	void exitColumnExprIsNull(ClickHouseParser.ColumnExprIsNullContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprLiteral}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprLiteral(ClickHouseParser.ExprLiteralContext ctx);
+	void enterColumnExprIdentifier(ClickHouseParser.ColumnExprIdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprLiteral}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprLiteral(ClickHouseParser.ExprLiteralContext ctx);
+	void exitColumnExprIdentifier(ClickHouseParser.ColumnExprIdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprUnaryMinus}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprBinaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprUnaryMinus(ClickHouseParser.ExprUnaryMinusContext ctx);
+	void enterColumnExprBinaryOp(ClickHouseParser.ColumnExprBinaryOpContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprUnaryMinus}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprBinaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprUnaryMinus(ClickHouseParser.ExprUnaryMinusContext ctx);
+	void exitColumnExprBinaryOp(ClickHouseParser.ColumnExprBinaryOpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprAdd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Enter a parse tree produced by the {@code ColumnExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExprAdd(ClickHouseParser.ExprAddContext ctx);
+	void enterColumnExprAsterisk(ClickHouseParser.ColumnExprAsteriskContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ExprAdd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Exit a parse tree produced by the {@code ColumnExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExprAdd(ClickHouseParser.ExprAddContext ctx);
+	void exitColumnExprAsterisk(ClickHouseParser.ColumnExprAsteriskContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#interval_unit}.
+	 * Enter a parse tree produced by the {@code ColumnExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterInterval_unit(ClickHouseParser.Interval_unitContext ctx);
+	void enterColumnExprFunction(ClickHouseParser.ColumnExprFunctionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#interval_unit}.
+	 * Exit a parse tree produced by the {@code ColumnExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitInterval_unit(ClickHouseParser.Interval_unitContext ctx);
+	void exitColumnExprFunction(ClickHouseParser.ColumnExprFunctionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#expression_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnParamList}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression_list(ClickHouseParser.Expression_listContext ctx);
+	void enterColumnParamList(ClickHouseParser.ColumnParamListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#expression_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnParamList}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression_list(ClickHouseParser.Expression_listContext ctx);
+	void exitColumnParamList(ClickHouseParser.ColumnParamListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#not_empty_expression_list}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnArgList}.
 	 * @param ctx the parse tree
 	 */
-	void enterNot_empty_expression_list(ClickHouseParser.Not_empty_expression_listContext ctx);
+	void enterColumnArgList(ClickHouseParser.ColumnArgListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#not_empty_expression_list}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnArgList}.
 	 * @param ctx the parse tree
 	 */
-	void exitNot_empty_expression_list(ClickHouseParser.Not_empty_expression_listContext ctx);
+	void exitColumnArgList(ClickHouseParser.ColumnArgListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#array}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnArgExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterArray(ClickHouseParser.ArrayContext ctx);
+	void enterColumnArgExpr(ClickHouseParser.ColumnArgExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#array}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnArgExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitArray(ClickHouseParser.ArrayContext ctx);
+	void exitColumnArgExpr(ClickHouseParser.ColumnArgExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#function}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnLambdaExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction(ClickHouseParser.FunctionContext ctx);
+	void enterColumnLambdaExpr(ClickHouseParser.ColumnLambdaExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#function}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnLambdaExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction(ClickHouseParser.FunctionContext ctx);
+	void exitColumnLambdaExpr(ClickHouseParser.ColumnLambdaExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#function_parameters}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#columnIdentifier}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction_parameters(ClickHouseParser.Function_parametersContext ctx);
+	void enterColumnIdentifier(ClickHouseParser.ColumnIdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#function_parameters}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#columnIdentifier}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction_parameters(ClickHouseParser.Function_parametersContext ctx);
+	void exitColumnIdentifier(ClickHouseParser.ColumnIdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#function_arguments}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#commentExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction_arguments(ClickHouseParser.Function_argumentsContext ctx);
+	void enterCommentExpr(ClickHouseParser.CommentExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#function_arguments}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#commentExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction_arguments(ClickHouseParser.Function_argumentsContext ctx);
+	void exitCommentExpr(ClickHouseParser.CommentExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#function_name}.
+	 * Enter a parse tree produced by the {@code TableExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunction_name(ClickHouseParser.Function_nameContext ctx);
+	void enterTableExprIdentifier(ClickHouseParser.TableExprIdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#function_name}.
+	 * Exit a parse tree produced by the {@code TableExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunction_name(ClickHouseParser.Function_nameContext ctx);
+	void exitTableExprIdentifier(ClickHouseParser.TableExprIdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * Enter a parse tree produced by the {@code TableExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterIdentifier(ClickHouseParser.IdentifierContext ctx);
+	void enterTableExprSubquery(ClickHouseParser.TableExprSubqueryContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * Exit a parse tree produced by the {@code TableExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitIdentifier(ClickHouseParser.IdentifierContext ctx);
+	void exitTableExprSubquery(ClickHouseParser.TableExprSubqueryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#keyword}.
+	 * Enter a parse tree produced by the {@code TableExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterKeyword(ClickHouseParser.KeywordContext ctx);
+	void enterTableExprAlias(ClickHouseParser.TableExprAliasContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#keyword}.
+	 * Exit a parse tree produced by the {@code TableExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitKeyword(ClickHouseParser.KeywordContext ctx);
+	void exitTableExprAlias(ClickHouseParser.TableExprAliasContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#compound_identifier}.
+	 * Enter a parse tree produced by the {@code TableExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterCompound_identifier(ClickHouseParser.Compound_identifierContext ctx);
+	void enterTableExprFunction(ClickHouseParser.TableExprFunctionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#compound_identifier}.
+	 * Exit a parse tree produced by the {@code TableExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitCompound_identifier(ClickHouseParser.Compound_identifierContext ctx);
+	void exitTableExprFunction(ClickHouseParser.TableExprFunctionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#tableIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableIdentifier(ClickHouseParser.TableIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#tableIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableIdentifier(ClickHouseParser.TableIdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#tableArgList}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableArgList(ClickHouseParser.TableArgListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#tableArgList}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableArgList(ClickHouseParser.TableArgListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#tableArgExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterTableArgExpr(ClickHouseParser.TableArgExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#tableArgExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitTableArgExpr(ClickHouseParser.TableArgExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#databaseIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterDatabaseIdentifier(ClickHouseParser.DatabaseIdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#databaseIdentifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitDatabaseIdentifier(ClickHouseParser.DatabaseIdentifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ClickHouseParser#literal}.
 	 * @param ctx the parse tree
@@ -1142,13 +1252,53 @@ public interface ClickHouseParserListener extends ParseTreeListener {
 	 */
 	void exitLiteral(ClickHouseParser.LiteralContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ClickHouseParser#err}.
+	 * Enter a parse tree produced by {@link ClickHouseParser#keyword}.
 	 * @param ctx the parse tree
 	 */
-	void enterErr(ClickHouseParser.ErrContext ctx);
+	void enterKeyword(ClickHouseParser.KeywordContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ClickHouseParser#err}.
+	 * Exit a parse tree produced by {@link ClickHouseParser#keyword}.
 	 * @param ctx the parse tree
 	 */
-	void exitErr(ClickHouseParser.ErrContext ctx);
+	void exitKeyword(ClickHouseParser.KeywordContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdentifier(ClickHouseParser.IdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdentifier(ClickHouseParser.IdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#unaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnaryOp(ClickHouseParser.UnaryOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#unaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnaryOp(ClickHouseParser.UnaryOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#binaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryOp(ClickHouseParser.BinaryOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#binaryOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryOp(ClickHouseParser.BinaryOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ClickHouseParser#enumValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumValue(ClickHouseParser.EnumValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ClickHouseParser#enumValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumValue(ClickHouseParser.EnumValueContext ctx);
 }

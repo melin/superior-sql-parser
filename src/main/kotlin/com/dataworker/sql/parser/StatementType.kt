@@ -28,7 +28,7 @@ enum class StatementType: Serializable {
     ALTER_TABLE_RENAME,
     ALTER_TABLE_ADD_COLS,
     ALTER_TABLE_ADD_COL,//mysql
-    ALTER_TABLE_DROP_COL,//mysql
+    ALTER_TABLE_DROP_COL,//mysql, iceberg
     ALTER_TABLE_RENAME_COL,
     ALTER_TABLE_CHANGE_COL,
     ALTER_TABLE_MODIFY_COL, //mysql
@@ -104,6 +104,9 @@ enum class StatementType: Serializable {
     DESC_DETAIL,
     DESC_HISTORY,
     DELTA_CONVERT,
+
+    ARITHMETIC,
+    OPTIMIZE, // clickhouse
 
     UNKOWN;
 }

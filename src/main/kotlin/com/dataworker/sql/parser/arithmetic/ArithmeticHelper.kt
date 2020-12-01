@@ -1,63 +1,49 @@
-package com.dataworker.sql.parser.clickhouse
+package com.dataworker.sql.parser.arithmetic
 
 import com.dataworker.sql.parser.model.StatementData
-import com.dataworker.sql.parser.StatementType
-import com.dataworker.sql.parser.StatementType.*
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import com.dataworker.sql.parser.antlr4.ParseException
-import com.dataworker.sql.parser.antlr4.clickhouse.ClickHouseLexer
-import com.dataworker.sql.parser.antlr4.clickhouse.ClickHouseParser
+import com.dataworker.sql.parser.antlr4.arithmetic.ArithmeticLexer
+import com.dataworker.sql.parser.antlr4.arithmetic.ArithmeticParser
 
 /**
  *
  * Created by libinsong on 2018/1/10.
  */
-object ClickHouseHelper {
-
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            CREATE_TABLE,
-            CREATE_TABLE_AS_SELECT,
-            DROP_TABLE,
-
-            SELECT,
-            SHOW_CREATE_TABLE,
-
-            OPTIMIZE
-
-            -> true
-            else -> false
-        }
-    }
+object ArithmeticHelper {
 
     @JvmStatic fun getStatementData(command: String) : StatementData? {
+        return getStatementData(command, true)
+    }
+
+    @JvmStatic fun getStatementData(command: String, bracketEnbled: Boolean) : StatementData? {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = CharStreams.fromString(trimCmd);
-        val lexer = ClickHouseLexer(charStream)
+        val lexer = ArithmeticLexer(charStream)
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = ClickHouseParser(tokenStream)
-        parser.interpreter.predictionMode = PredictionMode.LL
+        val parser = ArithmeticParser(tokenStream)
+        parser.bracket_enbled = bracketEnbled
+        parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = ClickHouseAntlr4Visitor()
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = ArithmeticAntlr4Visitor(bracketEnbled)
 
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.queryList())
+                return sqlVisitor.visit(parser.expression())
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.queryList())
+                return sqlVisitor.visit(parser.expression())
             }
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {

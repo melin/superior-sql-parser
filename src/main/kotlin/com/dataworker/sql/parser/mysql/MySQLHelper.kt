@@ -62,7 +62,6 @@ object MySQLHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = MySQLParser(tokenStream)
-        parser.addParseListener(PostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.LL

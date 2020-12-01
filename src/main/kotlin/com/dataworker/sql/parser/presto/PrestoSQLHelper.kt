@@ -37,7 +37,6 @@ object PrestoSQLHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = PrestoSqlBaseParser(tokenStream)
-        parser.addParseListener(PostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL

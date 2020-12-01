@@ -11,11 +11,17 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface ClickHouseParserVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#parse}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#queryList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParse(ClickHouseParser.ParseContext ctx);
+	T visitQueryList(ClickHouseParser.QueryListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#queryStmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQueryStmt(ClickHouseParser.QueryStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ClickHouseParser#query}.
 	 * @param ctx the parse tree
@@ -23,662 +29,716 @@ public interface ClickHouseParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuery(ClickHouseParser.QueryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_query}.
+	 * Visit a parse tree produced by the {@code AlterTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#alterStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_query(ClickHouseParser.Select_queryContext ctx);
+	T visitAlterTableStmt(ClickHouseParser.AlterTableStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_query_main}.
+	 * Visit a parse tree produced by the {@code AlterTableAddClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_query_main(ClickHouseParser.Select_query_mainContext ctx);
+	T visitAlterTableAddClause(ClickHouseParser.AlterTableAddClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_with_step}.
+	 * Visit a parse tree produced by the {@code AlterTableDropClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_with_step(ClickHouseParser.Select_with_stepContext ctx);
+	T visitAlterTableDropClause(ClickHouseParser.AlterTableDropClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_select_step}.
+	 * Visit a parse tree produced by the {@code AlterTableModifyClause}
+	 * labeled alternative in {@link ClickHouseParser#alterTableClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_select_step(ClickHouseParser.Select_select_stepContext ctx);
+	T visitAlterTableModifyClause(ClickHouseParser.AlterTableModifyClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_from_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#checkStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_from_step(ClickHouseParser.Select_from_stepContext ctx);
+	T visitCheckStmt(ClickHouseParser.CheckStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_array_join_step}.
+	 * Visit a parse tree produced by the {@code createDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_array_join_step(ClickHouseParser.Select_array_join_stepContext ctx);
+	T visitCreateDatabaseStmt(ClickHouseParser.CreateDatabaseStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_sample_step}.
+	 * Visit a parse tree produced by the {@code createTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#createStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_sample_step(ClickHouseParser.Select_sample_stepContext ctx);
+	T visitCreateTableStmt(ClickHouseParser.CreateTableStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#sample_ratio}.
+	 * Visit a parse tree produced by the {@code SchemaDescriptionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSample_ratio(ClickHouseParser.Sample_ratioContext ctx);
+	T visitSchemaDescriptionClause(ClickHouseParser.SchemaDescriptionClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_join_step}.
+	 * Visit a parse tree produced by the {@code SchemaAsSubqueryClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_join_step(ClickHouseParser.Select_join_stepContext ctx);
+	T visitSchemaAsSubqueryClause(ClickHouseParser.SchemaAsSubqueryClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_join_right_part}.
+	 * Visit a parse tree produced by the {@code SchemaAsTableClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_join_right_part(ClickHouseParser.Select_join_right_partContext ctx);
+	T visitSchemaAsTableClause(ClickHouseParser.SchemaAsTableClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_prewhere_step}.
+	 * Visit a parse tree produced by the {@code SchemaAsFunctionClause}
+	 * labeled alternative in {@link ClickHouseParser#schemaClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_prewhere_step(ClickHouseParser.Select_prewhere_stepContext ctx);
+	T visitSchemaAsFunctionClause(ClickHouseParser.SchemaAsFunctionClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_where_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#engineClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_where_step(ClickHouseParser.Select_where_stepContext ctx);
+	T visitEngineClause(ClickHouseParser.EngineClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_groupby_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#partitionByClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_groupby_step(ClickHouseParser.Select_groupby_stepContext ctx);
+	T visitPartitionByClause(ClickHouseParser.PartitionByClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_having_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#primaryKeyClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_having_step(ClickHouseParser.Select_having_stepContext ctx);
+	T visitPrimaryKeyClause(ClickHouseParser.PrimaryKeyClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_orderby_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#sampleByClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_orderby_step(ClickHouseParser.Select_orderby_stepContext ctx);
+	T visitSampleByClause(ClickHouseParser.SampleByClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_limit_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#ttlClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_limit_step(ClickHouseParser.Select_limit_stepContext ctx);
+	T visitTtlClause(ClickHouseParser.TtlClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_limitby_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#engineExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_limitby_step(ClickHouseParser.Select_limitby_stepContext ctx);
+	T visitEngineExpr(ClickHouseParser.EngineExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_settings_step}.
+	 * Visit a parse tree produced by the {@code TableElementExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#tableElementExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_settings_step(ClickHouseParser.Select_settings_stepContext ctx);
+	T visitTableElementExprColumn(ClickHouseParser.TableElementExprColumnContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_format_step}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#tableColumnDfnt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_format_step(ClickHouseParser.Select_format_stepContext ctx);
+	T visitTableColumnDfnt(ClickHouseParser.TableColumnDfntContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#insert_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#tableColumnPropertyExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInsert_query(ClickHouseParser.Insert_queryContext ctx);
+	T visitTableColumnPropertyExpr(ClickHouseParser.TableColumnPropertyExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#create_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#ttlExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCreate_query(ClickHouseParser.Create_queryContext ctx);
+	T visitTtlExpr(ClickHouseParser.TtlExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#rename_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#describeStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRename_query(ClickHouseParser.Rename_queryContext ctx);
+	T visitDescribeStmt(ClickHouseParser.DescribeStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#drop_query}.
+	 * Visit a parse tree produced by the {@code DropDatabaseStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDrop_query(ClickHouseParser.Drop_queryContext ctx);
+	T visitDropDatabaseStmt(ClickHouseParser.DropDatabaseStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#alter_query}.
+	 * Visit a parse tree produced by the {@code DropTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#dropStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAlter_query(ClickHouseParser.Alter_queryContext ctx);
+	T visitDropTableStmt(ClickHouseParser.DropTableStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#alter_query_element}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#insertStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAlter_query_element(ClickHouseParser.Alter_query_elementContext ctx);
+	T visitInsertStmt(ClickHouseParser.InsertStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#clickhouse_type}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#valuesClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitClickhouse_type(ClickHouseParser.Clickhouse_typeContext ctx);
+	T visitValuesClause(ClickHouseParser.ValuesClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#simple_type}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#valueTupleExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSimple_type(ClickHouseParser.Simple_typeContext ctx);
+	T visitValueTupleExpr(ClickHouseParser.ValueTupleExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#enum_entry}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#optimizeStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEnum_entry(ClickHouseParser.Enum_entryContext ctx);
+	T visitOptimizeStmt(ClickHouseParser.OptimizeStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#use_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#partitionClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUse_query(ClickHouseParser.Use_queryContext ctx);
+	T visitPartitionClause(ClickHouseParser.PartitionClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#set_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#selectUnionStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSet_query(ClickHouseParser.Set_queryContext ctx);
+	T visitSelectUnionStmt(ClickHouseParser.SelectUnionStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#assignment_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#selectStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignment_list(ClickHouseParser.Assignment_listContext ctx);
+	T visitSelectStmt(ClickHouseParser.SelectStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#assignment}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#withClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignment(ClickHouseParser.AssignmentContext ctx);
+	T visitWithClause(ClickHouseParser.WithClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#kill_query_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#fromClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKill_query_query(ClickHouseParser.Kill_query_queryContext ctx);
+	T visitFromClause(ClickHouseParser.FromClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#optimize_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#sampleClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOptimize_query(ClickHouseParser.Optimize_queryContext ctx);
+	T visitSampleClause(ClickHouseParser.SampleClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#table_properties_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#arrayJoinClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTable_properties_query(ClickHouseParser.Table_properties_queryContext ctx);
+	T visitArrayJoinClause(ClickHouseParser.ArrayJoinClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#show_tables_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#prewhereClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitShow_tables_query(ClickHouseParser.Show_tables_queryContext ctx);
+	T visitPrewhereClause(ClickHouseParser.PrewhereClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#show_processlist_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#whereClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitShow_processlist_query(ClickHouseParser.Show_processlist_queryContext ctx);
+	T visitWhereClause(ClickHouseParser.WhereClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#check_query}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#groupByClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCheck_query(ClickHouseParser.Check_queryContext ctx);
+	T visitGroupByClause(ClickHouseParser.GroupByClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#full_table_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#havingClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFull_table_name(ClickHouseParser.Full_table_nameContext ctx);
+	T visitHavingClause(ClickHouseParser.HavingClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#partition_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#orderByClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPartition_name(ClickHouseParser.Partition_nameContext ctx);
+	T visitOrderByClause(ClickHouseParser.OrderByClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#cluster_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#limitByClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCluster_name(ClickHouseParser.Cluster_nameContext ctx);
+	T visitLimitByClause(ClickHouseParser.LimitByClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#database_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#limitClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDatabase_name(ClickHouseParser.Database_nameContext ctx);
+	T visitLimitClause(ClickHouseParser.LimitClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#table_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#settingsClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTable_name(ClickHouseParser.Table_nameContext ctx);
+	T visitSettingsClause(ClickHouseParser.SettingsClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#format_name}.
+	 * Visit a parse tree produced by the {@code JoinExprOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFormat_name(ClickHouseParser.Format_nameContext ctx);
+	T visitJoinExprOp(ClickHouseParser.JoinExprOpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#query_outfile_step}.
+	 * Visit a parse tree produced by the {@code JoinExprTable}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitQuery_outfile_step(ClickHouseParser.Query_outfile_stepContext ctx);
+	T visitJoinExprTable(ClickHouseParser.JoinExprTableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#engine}.
+	 * Visit a parse tree produced by the {@code JoinExprParens}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEngine(ClickHouseParser.EngineContext ctx);
+	T visitJoinExprParens(ClickHouseParser.JoinExprParensContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#identifier_with_optional_parameters}.
+	 * Visit a parse tree produced by the {@code JoinExprCrossOp}
+	 * labeled alternative in {@link ClickHouseParser#joinExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifier_with_optional_parameters(ClickHouseParser.Identifier_with_optional_parametersContext ctx);
+	T visitJoinExprCrossOp(ClickHouseParser.JoinExprCrossOpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#identifier_with_parameters}.
+	 * Visit a parse tree produced by the {@code JoinOpInner}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifier_with_parameters(ClickHouseParser.Identifier_with_parametersContext ctx);
+	T visitJoinOpInner(ClickHouseParser.JoinOpInnerContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#order_by_expression_list}.
+	 * Visit a parse tree produced by the {@code JoinOpLeftRight}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOrder_by_expression_list(ClickHouseParser.Order_by_expression_listContext ctx);
+	T visitJoinOpLeftRight(ClickHouseParser.JoinOpLeftRightContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#order_by_element}.
+	 * Visit a parse tree produced by the {@code JoinOpFull}
+	 * labeled alternative in {@link ClickHouseParser#joinOp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOrder_by_element(ClickHouseParser.Order_by_elementContext ctx);
+	T visitJoinOpFull(ClickHouseParser.JoinOpFullContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#nested_table}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#joinOpCross}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNested_table(ClickHouseParser.Nested_tableContext ctx);
+	T visitJoinOpCross(ClickHouseParser.JoinOpCrossContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#name_type_pair_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#joinConstraintClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitName_type_pair_list(ClickHouseParser.Name_type_pair_listContext ctx);
+	T visitJoinConstraintClause(ClickHouseParser.JoinConstraintClauseContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#name_type_pair}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#limitExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitName_type_pair(ClickHouseParser.Name_type_pairContext ctx);
+	T visitLimitExpr(ClickHouseParser.LimitExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#compound_name_type_pair}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#orderExprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCompound_name_type_pair(ClickHouseParser.Compound_name_type_pairContext ctx);
+	T visitOrderExprList(ClickHouseParser.OrderExprListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#column_declaration_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#orderExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitColumn_declaration_list(ClickHouseParser.Column_declaration_listContext ctx);
+	T visitOrderExpr(ClickHouseParser.OrderExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#column_declaration}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#ratioExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitColumn_declaration(ClickHouseParser.Column_declarationContext ctx);
+	T visitRatioExpr(ClickHouseParser.RatioExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#column_name}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#settingExprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitColumn_name(ClickHouseParser.Column_nameContext ctx);
+	T visitSettingExprList(ClickHouseParser.SettingExprListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#column_type}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#settingExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitColumn_type(ClickHouseParser.Column_typeContext ctx);
+	T visitSettingExpr(ClickHouseParser.SettingExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#column_name_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#setStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitColumn_name_list(ClickHouseParser.Column_name_listContext ctx);
+	T visitSetStmt(ClickHouseParser.SetStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_expr_list}.
+	 * Visit a parse tree produced by the {@code showCreateTableStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_expr_list(ClickHouseParser.Select_expr_listContext ctx);
+	T visitShowCreateTableStmt(ClickHouseParser.ShowCreateTableStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_expr}.
+	 * Visit a parse tree produced by the {@code showTablesStmt}
+	 * labeled alternative in {@link ClickHouseParser#showStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_expr(ClickHouseParser.Select_exprContext ctx);
+	T visitShowTablesStmt(ClickHouseParser.ShowTablesStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#select_alias}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#useStmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect_alias(ClickHouseParser.Select_aliasContext ctx);
+	T visitUseStmt(ClickHouseParser.UseStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#alias}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#valueExprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAlias(ClickHouseParser.AliasContext ctx);
+	T visitValueExprList(ClickHouseParser.ValueExprListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#alias_name}.
+	 * Visit a parse tree produced by the {@code ValueExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAlias_name(ClickHouseParser.Alias_nameContext ctx);
+	T visitValueExprLiteral(ClickHouseParser.ValueExprLiteralContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#table_function}.
+	 * Visit a parse tree produced by the {@code ValueExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTable_function(ClickHouseParser.Table_functionContext ctx);
+	T visitValueExprTuple(ClickHouseParser.ValueExprTupleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#subquery}.
+	 * Visit a parse tree produced by the {@code ValueExprArray}
+	 * labeled alternative in {@link ClickHouseParser#valueExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSubquery(ClickHouseParser.SubqueryContext ctx);
+	T visitValueExprArray(ClickHouseParser.ValueExprArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#expression_with_optional_alias}.
+	 * Visit a parse tree produced by the {@code ColumnTypeExprSimple}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression_with_optional_alias(ClickHouseParser.Expression_with_optional_aliasContext ctx);
+	T visitColumnTypeExprSimple(ClickHouseParser.ColumnTypeExprSimpleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprConcat}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnTypeExprParam}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprConcat(ClickHouseParser.ExprConcatContext ctx);
+	T visitColumnTypeExprParam(ClickHouseParser.ColumnTypeExprParamContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprCase}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnTypeExprEnum}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprCase(ClickHouseParser.ExprCaseContext ctx);
+	T visitColumnTypeExprEnum(ClickHouseParser.ColumnTypeExprEnumContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprTupleElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnTypeExprComplex}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprTupleElement(ClickHouseParser.ExprTupleElementContext ctx);
+	T visitColumnTypeExprComplex(ClickHouseParser.ColumnTypeExprComplexContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprNot}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnTypeExprNested}
+	 * labeled alternative in {@link ClickHouseParser#columnTypeExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprNot(ClickHouseParser.ExprNotContext ctx);
+	T visitColumnTypeExprNested(ClickHouseParser.ColumnTypeExprNestedContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprArray}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnExprList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprArray(ClickHouseParser.ExprArrayContext ctx);
+	T visitColumnExprList(ClickHouseParser.ColumnExprListContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprWithAlias}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnsExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprWithAlias(ClickHouseParser.ExprWithAliasContext ctx);
+	T visitColumnsExprAsterisk(ClickHouseParser.ColumnsExprAsteriskContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprLogical}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnsExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprLogical(ClickHouseParser.ExprLogicalContext ctx);
+	T visitColumnsExprSubquery(ClickHouseParser.ColumnsExprSubqueryContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprIn}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnsExprColumn}
+	 * labeled alternative in {@link ClickHouseParser#columnsExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprIn(ClickHouseParser.ExprInContext ctx);
+	T visitColumnsExprColumn(ClickHouseParser.ColumnsExprColumnContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprCast}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprTernaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprCast(ClickHouseParser.ExprCastContext ctx);
+	T visitColumnExprTernaryOp(ClickHouseParser.ColumnExprTernaryOpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprOr}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprOr(ClickHouseParser.ExprOrContext ctx);
+	T visitColumnExprAlias(ClickHouseParser.ColumnExprAliasContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprFunction}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprExtract}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprFunction(ClickHouseParser.ExprFunctionContext ctx);
+	T visitColumnExprExtract(ClickHouseParser.ColumnExprExtractContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprMul}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprMul(ClickHouseParser.ExprMulContext ctx);
+	T visitColumnExprSubquery(ClickHouseParser.ColumnExprSubqueryContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprId}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprTrim}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprId(ClickHouseParser.ExprIdContext ctx);
+	T visitColumnExprTrim(ClickHouseParser.ColumnExprTrimContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprLambda}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprLiteral}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprLambda(ClickHouseParser.ExprLambdaContext ctx);
+	T visitColumnExprLiteral(ClickHouseParser.ColumnExprLiteralContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprTernary}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprArray}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprTernary(ClickHouseParser.ExprTernaryContext ctx);
+	T visitColumnExprArray(ClickHouseParser.ColumnExprArrayContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprParen}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprTuple}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprParen(ClickHouseParser.ExprParenContext ctx);
+	T visitColumnExprTuple(ClickHouseParser.ColumnExprTupleContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprBetween}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprArrayAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprBetween(ClickHouseParser.ExprBetweenContext ctx);
+	T visitColumnExprArrayAccess(ClickHouseParser.ColumnExprArrayAccessContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprSubquery}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprBetween}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprSubquery(ClickHouseParser.ExprSubqueryContext ctx);
+	T visitColumnExprBetween(ClickHouseParser.ColumnExprBetweenContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprStar}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprParens}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprStar(ClickHouseParser.ExprStarContext ctx);
+	T visitColumnExprParens(ClickHouseParser.ColumnExprParensContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprInterval}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprUnaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprInterval(ClickHouseParser.ExprIntervalContext ctx);
+	T visitColumnExprUnaryOp(ClickHouseParser.ColumnExprUnaryOpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprAnd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprTupleAccess}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprAnd(ClickHouseParser.ExprAndContext ctx);
+	T visitColumnExprTupleAccess(ClickHouseParser.ColumnExprTupleAccessContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprArrayElement}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprCase}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprArrayElement(ClickHouseParser.ExprArrayElementContext ctx);
+	T visitColumnExprCase(ClickHouseParser.ColumnExprCaseContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprIsNull}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprInterval}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprIsNull(ClickHouseParser.ExprIsNullContext ctx);
+	T visitColumnExprInterval(ClickHouseParser.ColumnExprIntervalContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprList}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprIsNull}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprList(ClickHouseParser.ExprListContext ctx);
+	T visitColumnExprIsNull(ClickHouseParser.ColumnExprIsNullContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprLiteral}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprLiteral(ClickHouseParser.ExprLiteralContext ctx);
+	T visitColumnExprIdentifier(ClickHouseParser.ColumnExprIdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprUnaryMinus}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprBinaryOp}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprUnaryMinus(ClickHouseParser.ExprUnaryMinusContext ctx);
+	T visitColumnExprBinaryOp(ClickHouseParser.ColumnExprBinaryOpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprAdd}
-	 * labeled alternative in {@link ClickHouseParser#expr}.
+	 * Visit a parse tree produced by the {@code ColumnExprAsterisk}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExprAdd(ClickHouseParser.ExprAddContext ctx);
+	T visitColumnExprAsterisk(ClickHouseParser.ColumnExprAsteriskContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#interval_unit}.
+	 * Visit a parse tree produced by the {@code ColumnExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#columnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitInterval_unit(ClickHouseParser.Interval_unitContext ctx);
+	T visitColumnExprFunction(ClickHouseParser.ColumnExprFunctionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#expression_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnParamList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression_list(ClickHouseParser.Expression_listContext ctx);
+	T visitColumnParamList(ClickHouseParser.ColumnParamListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#not_empty_expression_list}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnArgList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNot_empty_expression_list(ClickHouseParser.Not_empty_expression_listContext ctx);
+	T visitColumnArgList(ClickHouseParser.ColumnArgListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#array}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnArgExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArray(ClickHouseParser.ArrayContext ctx);
+	T visitColumnArgExpr(ClickHouseParser.ColumnArgExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#function}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnLambdaExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction(ClickHouseParser.FunctionContext ctx);
+	T visitColumnLambdaExpr(ClickHouseParser.ColumnLambdaExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#function_parameters}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#columnIdentifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction_parameters(ClickHouseParser.Function_parametersContext ctx);
+	T visitColumnIdentifier(ClickHouseParser.ColumnIdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#function_arguments}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#commentExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction_arguments(ClickHouseParser.Function_argumentsContext ctx);
+	T visitCommentExpr(ClickHouseParser.CommentExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#function_name}.
+	 * Visit a parse tree produced by the {@code TableExprIdentifier}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunction_name(ClickHouseParser.Function_nameContext ctx);
+	T visitTableExprIdentifier(ClickHouseParser.TableExprIdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * Visit a parse tree produced by the {@code TableExprSubquery}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifier(ClickHouseParser.IdentifierContext ctx);
+	T visitTableExprSubquery(ClickHouseParser.TableExprSubqueryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#keyword}.
+	 * Visit a parse tree produced by the {@code TableExprAlias}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKeyword(ClickHouseParser.KeywordContext ctx);
+	T visitTableExprAlias(ClickHouseParser.TableExprAliasContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#compound_identifier}.
+	 * Visit a parse tree produced by the {@code TableExprFunction}
+	 * labeled alternative in {@link ClickHouseParser#tableExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCompound_identifier(ClickHouseParser.Compound_identifierContext ctx);
+	T visitTableExprFunction(ClickHouseParser.TableExprFunctionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#tableIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableIdentifier(ClickHouseParser.TableIdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#tableArgList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableArgList(ClickHouseParser.TableArgListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#tableArgExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableArgExpr(ClickHouseParser.TableArgExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#databaseIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDatabaseIdentifier(ClickHouseParser.DatabaseIdentifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ClickHouseParser#literal}.
 	 * @param ctx the parse tree
@@ -686,9 +746,33 @@ public interface ClickHouseParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiteral(ClickHouseParser.LiteralContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ClickHouseParser#err}.
+	 * Visit a parse tree produced by {@link ClickHouseParser#keyword}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitErr(ClickHouseParser.ErrContext ctx);
+	T visitKeyword(ClickHouseParser.KeywordContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#identifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdentifier(ClickHouseParser.IdentifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#unaryOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryOp(ClickHouseParser.UnaryOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#binaryOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryOp(ClickHouseParser.BinaryOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ClickHouseParser#enumValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumValue(ClickHouseParser.EnumValueContext ctx);
 }
