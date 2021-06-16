@@ -51,11 +51,13 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         this.command = command
     }
 
-    fun parseTableName(ctx: SparkSqlBaseParser.MultipartIdentifierContext): Pair<String?, String> {
-        if (ctx.parts.size == 2) {
-            return Pair(ctx.parts.get(0).text, ctx.parts.get(1).text)
+    fun parseTableName(ctx: SparkSqlBaseParser.MultipartIdentifierContext): Triple<String?, String, String?> {
+        if (ctx.parts.size == 3) {
+            return Triple(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+        } else if (ctx.parts.size == 2) {
+            return Triple(ctx.parts.get(0).text, ctx.parts.get(1).text, null)
         } else if (ctx.parts.size == 1) {
-            return Pair(null, ctx.parts.get(0).text)
+            return Triple(null, ctx.parts.get(0).text, null)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -958,7 +960,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         if (currentOptType == null) {
             return null
         }
-        var (databaseName, tableName) = parseTableName(ctx)
+        var (databaseName, tableName, metaAction) = parseTableName(ctx)
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
                 currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.INSERT_SELECT ||
@@ -972,7 +974,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 }
             }
 
-            val tableSource = TableSource(databaseName, tableName)
+            val tableSource = TableSource(databaseName, tableName, metaAction)
             val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
 
             val index = statementData.inputTables.indexOf(tableSource)
@@ -983,7 +985,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 statementData.inputTables.get(index).tokens.add(token)
             }
         } else if (currentOptType == StatementType.MULTI_INSERT) {
-            val tableSource = TableSource(databaseName, tableName)
+            val tableSource = TableSource(databaseName, tableName, metaAction)
             val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
             tableSource.tokens.add(token)
             if ("from" == multiInsertToken) {

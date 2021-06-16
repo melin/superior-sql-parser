@@ -1467,16 +1467,41 @@ class SparkSqlParserTest {
         }
     }
 
-    //@Test
-    fun queryNamespaceTest0() {
-        val sql = "select * from tidb.dc.user limit 101"
+    @Test
+    fun queryLakeTableMetaTest0() {
+        val sql = "select * from dc.user.history limit 101"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is TableData) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals("user", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
             Assert.assertEquals(101, statement.limit)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryLakeTableMetaTest1() {
+        val sql = """
+            select h.made_current_at, s.operation, h.snapshot_id, h.is_current_ancestor, s.summary['spark.app.id']
+            from db.table.history h
+            join db.table.snapshots s on h.snapshot_id = s.snapshot_id
+            order by made_current_at
+        """.trimIndent()
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is TableData) {
+            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals("table", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
+
+            Assert.assertEquals("table", statement.inputTables.get(1).tableName)
+            Assert.assertEquals("snapshots", statement.inputTables.get(1).metaAction)
         } else {
             Assert.fail()
         }

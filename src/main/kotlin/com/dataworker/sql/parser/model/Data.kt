@@ -109,6 +109,7 @@ data class TableData(
 data class TableSource(
         var databaseName: String?,
         var tableName: String,
+        var metaAction: String?,
         var column: DcColumn? = null,
         var columns: List<String>? = ArrayList()
 ): Statement() {
