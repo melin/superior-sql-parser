@@ -170,20 +170,21 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val lifeCycle = ctx.lifecycle?.text?.toInt()
 
         var partitionColumns: List<DcColumn>? = null
-        var partitionColumnNames: List<String>? = null
+        var partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
         if (ctx.query() == null) {
             if (ctx.partitionColumns != null) {
                 partitionColumns = ctx.partitionColumns.children
-                        .filter { it is SparkSqlBaseParser.ColTypeContext }.map { item ->
-                            val column = item as SparkSqlBaseParser.ColTypeContext
-                            val colName = column.colName.text
-                            var dataType = column.dataType().text
-                            checkPartitionDataType(dataType)
+                    .filter { it is SparkSqlBaseParser.ColTypeContext }.map { item ->
+                        val column = item as SparkSqlBaseParser.ColTypeContext
+                        val colName = column.colName.text
+                        var dataType = column.dataType().text
+                        checkPartitionDataType(dataType)
 
-                            val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().STRING().text) else null
-                            DcColumn(colName, dataType, colComment)
-                        }
+                        partitionColumnNames.add(colName)
+                        val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().STRING().text) else null
+                        DcColumn(colName, dataType, colComment)
+                    }
             }
 
             if (ctx.columns != null) {

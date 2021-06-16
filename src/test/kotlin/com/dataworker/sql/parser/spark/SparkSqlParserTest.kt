@@ -97,6 +97,9 @@ class SparkSqlParserTest {
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertFalse(statement.temporary)
             Assert.assertEquals(7, statement.lifeCycle)
+
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
         } else {
             Assert.fail()
         }
@@ -121,6 +124,10 @@ class SparkSqlParserTest {
             Assert.assertEquals("platformtool", name)
             Assert.assertEquals(7, statement.lifeCycle)
             Assert.assertEquals("姓名", statement.columns?.get(0)?.comment)
+
+            Assert.assertEquals(2, statement.partitionColumnNames?.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals("event_type", statement.partitionColumnNames?.get(1))
         } else {
             Assert.fail()
         }
@@ -146,6 +153,30 @@ class SparkSqlParserTest {
             Assert.assertEquals("dc_cluster_compute", name)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("数据中心", statement.columns?.get(1)?.comment)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTableTest3() {
+        val sql = """
+            CREATE TABLE bigdata.iceberg_test_dt (
+            id bigint,
+            data string)
+            stored as iceberg
+            PARTITIONED BY (ds string)
+            lifecycle 100;
+            """
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("iceberg_test_dt", name)
+            Assert.assertEquals(100, statement.lifeCycle)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
         } else {
             Assert.fail()
         }
