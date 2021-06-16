@@ -862,7 +862,7 @@ errorCapturingMultiUnitsInterval
     ;
 
 multiUnitsInterval
-    : (intervalValue intervalUnit)+
+    : (intervalValue unit+=identifier)+
     ;
 
 errorCapturingUnitToUnitInterval
@@ -870,22 +870,12 @@ errorCapturingUnitToUnitInterval
     ;
 
 unitToUnitInterval
-    : value=intervalValue from=intervalUnit TO to=intervalUnit
+    : value=intervalValue from=identifier TO to=identifier
     ;
 
 intervalValue
     : (PLUS | MINUS)? (INTEGER_VALUE | DECIMAL_VALUE)
     | STRING
-    ;
-
-intervalUnit
-    : DAY
-    | HOUR
-    | MINUTE
-    | MONTH
-    | SECOND
-    | YEAR
-    | identifier
     ;
 
 colPosition
@@ -1313,7 +1303,6 @@ nonReserved
     | DATA
     | DATABASE
     | DATABASES
-    | DAY
     | DBPROPERTIES
     | DEFINED
     | DELETE
@@ -1360,7 +1349,6 @@ nonReserved
     | GROUP
     | GROUPING
     | HAVING
-    | HOUR
     | HOURS
     | HISTORY
     | IF
@@ -1395,8 +1383,6 @@ nonReserved
     | MAP
     | MATCHED
     | MERGE
-    | MINUTE
-    | MONTH
     | MSCK
     | NAMESPACE
     | NAMESPACES
@@ -1454,7 +1440,6 @@ nonReserved
     | ROWS
     | RUN
     | SCHEMA
-    | SECOND
     | SELECT
     | SEPARATED
     | SERDE
@@ -1509,7 +1494,6 @@ nonReserved
     | WHERE
     | WINDOW
     | WITH
-    | YEAR
     | KILL
     | READ
     | JOB
@@ -1581,7 +1565,6 @@ CURRENT_USER: 'CURRENT_USER';
 DATA: 'DATA';
 DATABASE: 'DATABASE';
 DATABASES: 'DATABASES' | 'SCHEMAS';
-DAY: 'DAY';
 DBPROPERTIES: 'DBPROPERTIES';
 DEFINED: 'DEFINED';
 DELETE: 'DELETE';
@@ -1595,6 +1578,7 @@ DIRECTORIES: 'DIRECTORIES';
 DIRECTORY: 'DIRECTORY';
 DISTINCT: 'DISTINCT';
 DISTRIBUTE: 'DISTRIBUTE';
+DIV: 'DIV';
 DROP: 'DROP';
 DRY: 'DRY';
 ELSE: 'ELSE';
@@ -1629,7 +1613,6 @@ GRANT: 'GRANT';
 GROUP: 'GROUP';
 GROUPING: 'GROUPING';
 HAVING: 'HAVING';
-HOUR: 'HOUR';
 HOURS: 'HOURS';
 HISTORY: 'HISTORY';
 IF: 'IF';
@@ -1669,8 +1652,6 @@ MACRO: 'MACRO';
 MAP: 'MAP';
 MATCHED: 'MATCHED';
 MERGE: 'MERGE';
-MINUTE: 'MINUTE';
-MONTH: 'MONTH';
 MSCK: 'MSCK';
 NAMESPACE: 'NAMESPACE';
 NAMESPACES: 'NAMESPACES';
@@ -1731,7 +1712,6 @@ ROW: 'ROW';
 ROWS: 'ROWS';
 RUN: 'RUN';
 SCHEMA: 'SCHEMA';
-SECOND: 'SECOND';
 SELECT: 'SELECT';
 SEMI: 'SEMI';
 SEPARATED: 'SEPARATED';
@@ -1790,7 +1770,6 @@ WHEN: 'WHEN';
 WHERE: 'WHERE';
 WINDOW: 'WINDOW';
 WITH: 'WITH';
-YEAR: 'YEAR';
 
 KILL: 'KILL';
 READ: 'READ';
@@ -1819,7 +1798,6 @@ MINUS: '-';
 ASTERISK: '*';
 SLASH: '/';
 PERCENT: '%';
-DIV: 'DIV';
 TILDE: '~';
 AMPERSAND: '&';
 PIPE: '|';
