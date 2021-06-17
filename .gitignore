@@ -1,7 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 target
 .idea
-bigdata-sql-parser.iml
+dataworker-sql-parser.iml
 metastore_db
 derby.log
 .DS_Store
