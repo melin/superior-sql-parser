@@ -69,7 +69,7 @@ enum class StatementType: Serializable {
     SHOW_COLUMNS,
     SHOW_PARTITIONS,
     SHOW_TABLES,
-    SHOW_TABLE,
+    SHOW_TABLE_EXTENDED,
     SHOW_TABLE_PROPERTIES,
     SHOW_CREATE_TABLE,
 

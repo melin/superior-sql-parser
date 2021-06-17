@@ -473,7 +473,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitShowTable(ctx: SparkSqlBaseParser.ShowTableContext): StatementData {
-        return StatementData(StatementType.SHOW_TABLE)
+        return StatementData(StatementType.SHOW_TABLE_EXTENDED)
     }
 
     override fun visitShowTblProperties(ctx: SparkSqlBaseParser.ShowTblPropertiesContext): StatementData {
