@@ -32,7 +32,7 @@ data class DcTable(
         var partitionColumns: List<DcColumn>?,
         var columns: List<DcColumn>?,
         var properties: Map<String, String>?,
-        var fileFormat: String?,
+        var fileFormat: String? = null,
         var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
         var ifExists: Boolean = false,
         var external: Boolean = false,

@@ -136,9 +136,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 properties.put(key, value)
             }
         }
-        val fileFormat = "PARQUET"
 
-        val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, fileFormat)
+        val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, null)
         dcTable.ifNotExists = ctx.createTableHeader().NOT() != null
         dcTable.external = ctx.createTableHeader().EXTERNAL() != null
         dcTable.temporary = ctx.createTableHeader().TEMPORARY() != null
@@ -224,7 +223,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             }
         }
 
-        var fileFormat = "PARQUET"
+        var fileFormat: String? = null
         if (ctx.createFileFormat().size == 1) {
             fileFormat = ctx.createFileFormat().get(0).fileFormat().text
         }
