@@ -1,6 +1,7 @@
 package com.dataworker.sql.parser.model
 
 import com.dataworker.sql.parser.StatementType
+import com.google.common.collect.Maps
 import java.io.Serializable
 
 /**
@@ -202,66 +203,62 @@ data class CompressTableData(val databaseName: String?,
 
 data class CompressFileData(val path: String) : Statement()
 
-data class DistcpTableData(
-        val datasource: String,
-        val srcTable: TableSource,
-        val partitionVals: List<String>?,
-        val destTable: TableSource,
-        var properties: Map<String, String>,
-        val cte: Boolean = false,
-        var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
-        var cteTempTables: ArrayList<String>? = null) : Statement()
+data class DataxExpr(
+    val srcType: String,
+    var srcOptions: Map<String, String>,
+    val distType: String,
+    var distOptions: Map<String, String>) : Statement()
 
 data class ReadData(val databaseName: String?,
-                    val tableName: String,
-                    val partitionVals: List<String>?,
-                    val limit: Int) : Statement()
+    val tableName: String,
+    val partitionVals: List<String>?,
+    val limit: Int) : Statement()
 
 data class KillData(val jobGroupId: String) : Statement()
 
 data class LoadData(val databaseName: String?,
-                    val tableName: String,
-                    val loadMode: String? = null,
-                    val resourceName: String? = null,
-                    val partitionVals: List<String>? = null) : Statement()
+    val tableName: String,
+    val loadMode: String? = null,
+    val resourceName: String? = null,
+    val partitionVals: List<String>? = null) : Statement()
 
 data class ExportData(val databaseName: String?,
-                      val tableName: String,
-                      val cte: Boolean = false,
-                      var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
-                      var cteTempTables: ArrayList<String>? = null) : Statement()
+    val tableName: String,
+    val cte: Boolean = false,
+    var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
+    var cteTempTables: ArrayList<String>? = null) : Statement()
 
 data class RefreshData(val databaseName: String?,
-                     val tableName: String) : Statement()
+    val tableName: String) : Statement()
 
 data class SetData(val key: String,
-                       val value: String?) : Statement()
+    val value: String?) : Statement()
 
 data class UnSetData(val key: String) : Statement()
 
 data class JobData(val resourceName: String,
-                   val className: String,
-                   val params: List<String>?) : Statement()
+    val className: String,
+    val params: List<String>?) : Statement()
 
 @DefaultConstructor
 data class StreamStreamTable(
-        var tableName: String,
-        var columns: List<StreamColumn>,
-        var properties: Map<String, String>
+    var tableName: String,
+    var columns: List<StreamColumn>,
+    var properties: Map<String, String>
 ) : Statement()
 
 data class StreamColumn(
-        val name: String,
-        val type: String? = null,
-        val comment: String? = null,
-        val jsonPath: String? = null,
-        val pattern: String? = null) : Statement()
+    val name: String,
+    val type: String? = null,
+    val comment: String? = null,
+    val jsonPath: String? = null,
+    val pattern: String? = null) : Statement()
 
 @DefaultConstructor
 data class StreamInsertStatement(
-        val databaseName: String?,
-        val tableName: String,
-        var querySql: String? = null
+    val databaseName: String?,
+    val tableName: String,
+    var querySql: String? = null
 ) : Statement()
 
 enum class InsertMode: Serializable {
@@ -269,9 +266,9 @@ enum class InsertMode: Serializable {
 }
 
 data class DeleteTable(
-        val databaseName: String?,
-        val tableName: String,
-        val where: String? = null) : Statement() {
+    val databaseName: String?,
+    val tableName: String,
+    val where: String? = null) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -279,10 +276,10 @@ data class DeleteTable(
 }
 
 data class UpdateTable(
-        val databaseName: String?,
-        val tableName: String,
-        val upset: Map<String, String>? = null,
-        val where: String? = null) : Statement() {
+    val databaseName: String?,
+    val tableName: String,
+    val upset: Map<String, String>? = null,
+    val where: String? = null) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -290,9 +287,9 @@ data class UpdateTable(
 }
 
 data class VacuumTable(
-        val databaseName: String?,
-        val tableName: String,
-        val retain: Int? = null) : Statement() {
+    val databaseName: String?,
+    val tableName: String,
+    val retain: Int? = null) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -300,8 +297,8 @@ data class VacuumTable(
 }
 
 data class DetailTable(
-        val databaseName: String?,
-        val tableName: String) : Statement() {
+    val databaseName: String?,
+    val tableName: String) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -309,9 +306,9 @@ data class DetailTable(
 }
 
 data class HistoryTable(
-        val databaseName: String?,
-        val tableName: String,
-        val limit: Int? = null) : Statement() {
+    val databaseName: String?,
+    val tableName: String,
+    val limit: Int? = null) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -319,14 +316,14 @@ data class HistoryTable(
 }
 
 data class DeltaMerge(
-        var sourceTables: java.util.HashSet<TableSource> = HashSet(),
-        var targetTable: TableSource
+    var sourceTables: java.util.HashSet<TableSource> = HashSet(),
+    var targetTable: TableSource
 ): Statement()
 
 data class DeltaConvert(
-        val databaseName: String?,
-        val tableName: String,
-        val format: String
+    val databaseName: String?,
+    val tableName: String,
+    val format: String
 ): Statement() {
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -334,10 +331,10 @@ data class DeltaConvert(
 }
 
 data class DropTablePartition(
-        val databaseName: String?,
-        val tableName: String,
-        var ifExists: Boolean = false,
-        var partitionSpecs: List<String>
+    val databaseName: String?,
+    val tableName: String,
+    var ifExists: Boolean = false,
+    var partitionSpecs: List<String>
 ): Statement() {
 
     fun getFullTableName(): String {
@@ -346,10 +343,10 @@ data class DropTablePartition(
 }
 
 data class AddTablePartition(
-        val databaseName: String?,
-        val tableName: String,
-        var ifNotExists: Boolean = false,
-        var partitionSpecs: List<String>
+    val databaseName: String?,
+    val tableName: String,
+    var ifNotExists: Boolean = false,
+    var partitionSpecs: List<String>
 ): Statement() {
 
     fun getFullTableName(): String {
@@ -358,6 +355,6 @@ data class AddTablePartition(
 }
 
 data class ArithmeticData(
-        val variables: java.util.HashSet<String> = HashSet(),
-        val functions: java.util.HashSet<String> = HashSet()
+    val variables: java.util.HashSet<String> = HashSet(),
+    val functions: java.util.HashSet<String> = HashSet()
 ): Statement()

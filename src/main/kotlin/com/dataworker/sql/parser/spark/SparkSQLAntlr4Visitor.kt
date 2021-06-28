@@ -502,51 +502,33 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.COMPRESS_FILE, null)
     }
 
-    override fun visitDistcpDatasource(ctx: SparkSqlBaseParser.DistcpDatasourceContext): StatementData {
-        val (srcDatabaseName, srcTableName) = parseTableName(ctx.srcTable)
-        val srcTable = TableSource(srcDatabaseName, srcTableName)
 
-        var datasource = ctx.ds.text
+    override fun visitDataxExpr(ctx: SparkSqlBaseParser.DataxExprContext): StatementData {
+        val srcType = StringUtil.cleanQuote(ctx.srcName.text)
+        val distType = StringUtil.cleanQuote(ctx.distName.text)
 
-        val (destDatabaseName, destTableName) = parseTableName(ctx.srcTable)
-        val destTable = TableSource(destDatabaseName, destTableName)
-
-        val partitionVals = ctx.partitionSpec()?.partitionVal()
-                ?.map { partitionValContext -> partitionValContext.text }?.toList()
-
-        var properties = HashMap<String, String>()
-        if (ctx.options != null) {
-            ctx.options.tableProperty().map { item ->
+        var srcOptions = HashMap<String, String>()
+        if (ctx.readOpts != null) {
+            ctx.readOpts.tableProperty().map { item ->
                 val property = item as SparkSqlBaseParser.TablePropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
-                properties.put(key, value)
+                srcOptions.put(key, value)
             }
         }
 
-        val data = if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
-            isCTE = true
-            DistcpTableData(datasource, srcTable, partitionVals, destTable, properties)
-        } else {
-            DistcpTableData(datasource, srcTable, partitionVals, destTable, properties)
-        }
-
-        super.visitDistcpDatasource(ctx)
-
-        if (isCTE) {
-            cteTempTables.forEach { tableName ->
-                for ((index, table) in statementData.inputTables.withIndex()) {
-                    if (table.databaseName.isNullOrBlank() && tableName == table.tableName) {
-                        statementData.inputTables.removeAt(index)
-                        break
-                    }
-                }
+        var distOptions = HashMap<String, String>()
+        if (ctx.writeOpts != null) {
+            ctx.writeOpts.tableProperty().map { item ->
+                val property = item as SparkSqlBaseParser.TablePropertyContext
+                val key = StringUtil.cleanQuote(property.key.text)
+                val value = StringUtil.cleanQuote(property.value.text)
+                distOptions.put(key, value)
             }
-            statementData.inputTables.remove(srcTable)
-            data.inputTables.addAll(statementData.inputTables)
-            data.cteTempTables = cteTempTables
         }
-        return StatementData(StatementType.DISTCP_DATASOURCE, data)
+
+        val data = DataxExpr(srcType, srcOptions, distType, distOptions)
+        return StatementData(StatementType.DATAX, data)
     }
 
     //-----------------------------------partition-------------------------------------------------
@@ -966,13 +948,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 currentOptType == StatementType.INSERT_SELECT ||
                 currentOptType == StatementType.MERGE_INTO_TABLE ||
                 currentOptType == StatementType.EXPORT_TABLE ||
-                currentOptType == StatementType.DISTCP_DATASOURCE) {
-
-            if (StringUtils.isBlank(databaseName)) {
-                if (StringUtils.equalsIgnoreCase("druid", ctx.getChild(0).text)) {
-                    databaseName = "druid"
-                }
-            }
+                currentOptType == StatementType.DATAX) {
 
             val tableSource = TableSource(databaseName, tableName, metaAction)
             val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)

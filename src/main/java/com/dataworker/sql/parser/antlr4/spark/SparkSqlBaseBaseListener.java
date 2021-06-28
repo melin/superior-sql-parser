@@ -964,13 +964,13 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx) { }
+	@Override public void enterDataxExpr(SparkSqlBaseParser.DataxExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx) { }
+	@Override public void exitDataxExpr(SparkSqlBaseParser.DataxExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2879,18 +2879,6 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIntervalValue(SparkSqlBaseParser.IntervalValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

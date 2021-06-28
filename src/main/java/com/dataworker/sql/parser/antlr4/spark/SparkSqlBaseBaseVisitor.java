@@ -570,7 +570,7 @@ public class SparkSqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx) { return visitChildren(ctx); }
+	@Override public T visitDataxExpr(SparkSqlBaseParser.DataxExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1684,13 +1684,6 @@ public class SparkSqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitIntervalValue(SparkSqlBaseParser.IntervalValueContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

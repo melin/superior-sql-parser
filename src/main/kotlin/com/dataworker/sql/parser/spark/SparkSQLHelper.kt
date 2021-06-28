@@ -86,7 +86,7 @@ object SparkSQLHelper {
             COMPRESS_TABLE,
             COMPRESS_FILE,
 
-            DISTCP_DATASOURCE,
+            DATAX,
 
             DELETE,
             UPDATE,

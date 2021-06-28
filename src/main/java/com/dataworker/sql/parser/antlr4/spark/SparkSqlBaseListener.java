@@ -942,17 +942,17 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitCompressFile(SparkSqlBaseParser.CompressFileContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code distcpDatasource}
+	 * Enter a parse tree produced by the {@code dataxExpr}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	void enterDataxExpr(SparkSqlBaseParser.DataxExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code distcpDatasource}
+	 * Exit a parse tree produced by the {@code dataxExpr}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	void exitDataxExpr(SparkSqlBaseParser.DataxExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code vacuumTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
@@ -2685,16 +2685,6 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIntervalValue(SparkSqlBaseParser.IntervalValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SparkSqlBaseParser#intervalUnit}.
-	 * @param ctx the parse tree
-	 */
-	void enterIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SparkSqlBaseParser#intervalUnit}.
-	 * @param ctx the parse tree
-	 */
-	void exitIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#colPosition}.
 	 * @param ctx the parse tree

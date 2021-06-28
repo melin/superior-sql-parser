@@ -557,12 +557,12 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCompressFile(SparkSqlBaseParser.CompressFileContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code distcpDatasource}
+	 * Visit a parse tree produced by the {@code dataxExpr}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDistcpDatasource(SparkSqlBaseParser.DistcpDatasourceContext ctx);
+	T visitDataxExpr(SparkSqlBaseParser.DataxExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code vacuumTable}
 	 * labeled alternative in {@link SparkSqlBaseParser#statement}.
@@ -1588,12 +1588,6 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIntervalValue(SparkSqlBaseParser.IntervalValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SparkSqlBaseParser#intervalUnit}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIntervalUnit(SparkSqlBaseParser.IntervalUnitContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#colPosition}.
 	 * @param ctx the parse tree

@@ -97,7 +97,7 @@ enum class StatementType: Serializable {
     COMPRESS_FILE,
     COMPRESS_TABLE,
 
-    DISTCP_DATASOURCE,
+    DATAX,
 
     //Delta
     VACUUM,

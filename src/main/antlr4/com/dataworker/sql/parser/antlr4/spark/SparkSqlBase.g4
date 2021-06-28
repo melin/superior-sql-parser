@@ -251,9 +251,8 @@ statement
     | COMPRESS TABLE multipartIdentifier partitionSpec?
         (OPTIONS options=tablePropertyList)?                           #compressTable
     | COMPRESS FILE path=constant (OPTIONS options=tablePropertyList)? #compressFile
-    | ctes? DISTCP ds=dataSource srcTable=multipartIdentifier
-        partitionSpec? TO destTable=multipartIdentifier
-        (OPTIONS options=tablePropertyList)?                           #distcpDatasource
+    | DATAX READER '(' srcName=STRING ')' OPTIONS readOpts=tablePropertyList
+        WRITER '(' distName=STRING ')' OPTIONS writeOpts=tablePropertyList    #dataxExpr
 
     | VACUUM table=multipartIdentifier
         (RETAIN num=number HOURS)? (DRY RUN)?                          #vacuumTable
@@ -1219,8 +1218,9 @@ ansiNonReserved
     | ADDJAR
     | COMPRESS
     | FILE
-    | DISTCP
-    | CLICKHOUSE
+    | DATAX
+    | READER
+    | WRITER
     ;
 //--ANSI-NON-RESERVED-END
 
@@ -1500,8 +1500,9 @@ nonReserved
     | ADDJAR
     | COMPRESS
     | FILE
-    | DISTCP
-    | CLICKHOUSE
+    | DATAX
+    | READER
+    | WRITER
     ;
 
 // NOTE: If you add a new token in the list below, you should update the list of keywords
@@ -1777,8 +1778,9 @@ JOB: 'JOB';
 ADDJAR: 'ADDJAR';
 COMPRESS: 'COMPRESS';
 FILE: 'FILE';
-DISTCP: 'DISTCP';
-CLICKHOUSE: 'CLICKHOUSE';
+DATAX: 'DATAX';
+READER: 'READER';
+WRITER: 'WRITER';
 //--SPARK-KEYWORD-LIST-END
 //============================
 // End of the keywords list
