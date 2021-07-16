@@ -10,11 +10,11 @@ object StringUtil {
     fun cleanQuote(value: String) : String {
         var result = value;
         if (StringUtils.startsWith(result, "'") && StringUtils.endsWith(result, "'")) {
-            result = StringUtils.substringBetween(result, "'", "'")
+            result = StringUtils.substring(result, 1, -1)
         }
 
         if (StringUtils.startsWith(result, "\"") && StringUtils.endsWith(result, "\"")) {
-            result = StringUtils.substringBetween(result, "\"", "\"")
+            result = StringUtils.substring(result, 1, -1)
         }
         return result
     }
@@ -24,7 +24,7 @@ object StringUtil {
             return ""
 
         if (StringUtils.startsWith(value, "`") && StringUtils.endsWith(value, "`")) {
-            return StringUtils.substringBetween(value, "`", "`")
+            return StringUtils.substring(value, 1, -1)
         } else {
             return value
         }
