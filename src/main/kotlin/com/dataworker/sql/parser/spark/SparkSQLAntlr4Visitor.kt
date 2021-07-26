@@ -111,17 +111,17 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
                 DcColumn(colName, dataType, colComment)
             }
-        } else {
-            if (ctx.createTableClauses().partitioning != null) {
-                partitionColumnNames = arrayListOf<String>()
-                val identityTransformContext = ctx.createTableClauses().partitioning.getChild(1) as SparkSqlBaseParser.IdentityTransformContext
-                identityTransformContext.children.map { item ->
-                    if (item is SparkSqlBaseParser.QualifiedNameContext) {
-                        val value = item.getChild(0)
-                        if (value is SparkSqlBaseParser.IdentifierContext) {
-                            val part = value.getChild(0).text
-                            partitionColumnNames.add(part)
-                        }
+        }
+
+        if (ctx.createTableClauses().partitioning != null) {
+            partitionColumnNames = arrayListOf()
+            val identityTransformContext = ctx.createTableClauses().partitioning.getChild(1) as SparkSqlBaseParser.IdentityTransformContext
+            identityTransformContext.children.map { item ->
+                if (item is SparkSqlBaseParser.QualifiedNameContext) {
+                    val value = item.getChild(0)
+                    if (value is SparkSqlBaseParser.IdentifierContext) {
+                        val part = value.getChild(0).text
+                        partitionColumnNames.add(part)
                     }
                 }
             }
@@ -137,7 +137,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             }
         }
 
-        val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, null)
+        var fileFormat: String? = ctx?.tableProvider()?.multipartIdentifier()?.text
+
+        val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, fileFormat)
         dcTable.ifNotExists = ctx.createTableHeader().NOT() != null
         dcTable.external = ctx.createTableHeader().EXTERNAL() != null
         dcTable.temporary = ctx.createTableHeader().TEMPORARY() != null

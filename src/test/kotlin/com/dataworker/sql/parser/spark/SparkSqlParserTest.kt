@@ -183,6 +183,34 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createTableTest4() {
+        val sql = """
+            CREATE TABLE `bigdata`.`export_test_dt` (
+            `message` STRING COMMENT '',
+            `collect_time` TIMESTAMP COMMENT '',
+            `ds` STRING COMMENT '')
+            USING orc
+            PARTITIONED BY (ds)
+            TBLPROPERTIES (
+            'transient_lastDdlTime' = '1627281671')
+            lifeCycle 100
+            """
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("export_test_dt", name)
+            Assert.assertEquals(100, statement.lifeCycle)
+            Assert.assertEquals("orc", statement.fileFormat)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun descTableTest0() {
         var sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
