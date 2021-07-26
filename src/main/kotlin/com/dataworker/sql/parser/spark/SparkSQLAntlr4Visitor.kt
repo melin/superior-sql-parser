@@ -115,13 +115,15 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
         if (ctx.createTableClauses().partitioning != null) {
             partitionColumnNames = arrayListOf()
-            val identityTransformContext = ctx.createTableClauses().partitioning.getChild(1) as SparkSqlBaseParser.IdentityTransformContext
-            identityTransformContext.children.map { item ->
-                if (item is SparkSqlBaseParser.QualifiedNameContext) {
-                    val value = item.getChild(0)
-                    if (value is SparkSqlBaseParser.IdentifierContext) {
-                        val part = value.getChild(0).text
-                        partitionColumnNames.add(part)
+            ctx.createTableClauses().partitioning.transforms.forEach { it ->
+                val identityTransformContext = it as SparkSqlBaseParser.IdentityTransformContext
+                identityTransformContext.children.map { item ->
+                    if (item is SparkSqlBaseParser.QualifiedNameContext) {
+                        val value = item.getChild(0)
+                        if (value is SparkSqlBaseParser.IdentifierContext) {
+                            val part = value.getChild(0).text
+                            partitionColumnNames.add(part)
+                        }
                     }
                 }
             }
