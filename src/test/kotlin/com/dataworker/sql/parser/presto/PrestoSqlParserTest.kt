@@ -43,4 +43,21 @@ class PrestoSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun queryLimitTest() {
+        val sql = """
+            select * from preso_table limit 10
+        """.trimIndent()
+
+        val statementData = PrestoSQLHelper.getStatementData(sql)
+        val statement = statementData?.statement
+        if (statement is TableData) {
+            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(10, statement.limit)
+        } else {
+            Assert.fail()
+        }
+    }
 }

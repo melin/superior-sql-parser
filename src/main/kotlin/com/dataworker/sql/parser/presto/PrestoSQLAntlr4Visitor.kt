@@ -39,7 +39,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
 
-            statementData.limit = limit
+            statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
             data = StatementData(StatementType.SELECT, statementData)
             return data
         } else {
