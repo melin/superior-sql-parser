@@ -58,6 +58,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             querySql = StringUtils.substringBetween(querySql, "(", ")")
         }
 
+        table?.lifeCycle = 7
         table?.querySql = querySql
         statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
 
