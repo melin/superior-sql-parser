@@ -1,6 +1,7 @@
 package com.dataworker.sql.parser.presto
 
 import com.dataworker.sql.parser.StatementType
+import com.dataworker.sql.parser.model.DcTable
 import com.dataworker.sql.parser.model.TableData
 import org.junit.Assert
 import org.junit.Test
@@ -69,11 +70,11 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableData) {
+        if (statement is DcTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(1, statement.outpuTables.size)
-            Assert.assertEquals(1, statement.limit)
+            Assert.assertEquals("dd_s_s", statement.tableName)
+            Assert.assertEquals(1, statement.tableData?.inputTables?.size)
+            Assert.assertEquals(1, statement.tableData?.limit)
         } else {
             Assert.fail()
         }

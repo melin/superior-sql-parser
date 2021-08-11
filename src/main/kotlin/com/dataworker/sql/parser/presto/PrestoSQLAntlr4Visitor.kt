@@ -16,6 +16,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private val statementData = TableData();
+    private var table: DcTable? = null
     private var limit:Int? = null
     private var command: String? = null
     private var data: StatementData? = null
@@ -50,12 +51,20 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableSource = createTableSource(ctx.qualifiedName())
-        statementData.outpuTables.add(tableSource)
+        table = DcTable(tableSource.databaseName, tableSource.tableName)
 
-        super.visitQuery(ctx.query())
+        var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
+        if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
+            querySql = StringUtils.substringBetween(querySql, "(", ")")
+        }
+
+        table?.querySql = querySql
         statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
 
-        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, statementData)
+        super.visitQuery(ctx.query())
+
+        table?.tableData = statementData
+        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, table)
         return data;
     }
 
@@ -68,7 +77,10 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             return null
         }
 
-        if (currentOptType == StatementType.SELECT || currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
+        if (currentOptType == StatementType.SELECT) {
+            val tableSource = createTableSource(ctx)
+            statementData.inputTables.add(tableSource)
+        } else if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
             val tableSource = createTableSource(ctx)
             statementData.inputTables.add(tableSource)
         }
