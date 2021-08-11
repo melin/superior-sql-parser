@@ -9,7 +9,6 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import com.dataworker.sql.parser.antlr4.ParseErrorListener
 import com.dataworker.sql.parser.antlr4.ParseException
-import com.dataworker.sql.parser.antlr4.PostProcessor
 import com.dataworker.sql.parser.antlr4.presto.PrestoSqlBaseLexer
 import com.dataworker.sql.parser.antlr4.presto.PrestoSqlBaseParser
 import com.dataworker.sql.parser.antlr4.presto.CaseInsensitiveStream
@@ -23,6 +22,7 @@ object PrestoSQLHelper {
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
             StatementType.SELECT -> true
+            StatementType.CREATE_TABLE_AS_SELECT -> true
             else -> false
         }
     }

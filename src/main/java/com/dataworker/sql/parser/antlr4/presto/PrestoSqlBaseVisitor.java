@@ -35,6 +35,12 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStandaloneType(PrestoSqlBaseParser.StandaloneTypeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#standaloneRowPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStandaloneRowPattern(PrestoSqlBaseParser.StandaloneRowPatternContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code statementDefault}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -154,6 +160,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAddColumn(PrestoSqlBaseParser.AddColumnContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code setTableAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetTableAuthorization(PrestoSqlBaseParser.SetTableAuthorizationContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code analyze}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -161,12 +174,33 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAnalyze(PrestoSqlBaseParser.AnalyzeContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code createMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCreateMaterializedView(PrestoSqlBaseParser.CreateMaterializedViewContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code createView}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCreateView(PrestoSqlBaseParser.CreateViewContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code refreshMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRefreshMaterializedView(PrestoSqlBaseParser.RefreshMaterializedViewContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code dropMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDropMaterializedView(PrestoSqlBaseParser.DropMaterializedViewContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code dropView}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -181,6 +215,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitRenameView(PrestoSqlBaseParser.RenameViewContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code setViewAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetViewAuthorization(PrestoSqlBaseParser.SetViewAuthorizationContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code call}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -252,6 +293,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExplain(PrestoSqlBaseParser.ExplainContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code explainAnalyze}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExplainAnalyze(PrestoSqlBaseParser.ExplainAnalyzeContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code showCreateTable}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -272,6 +320,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitShowCreateView(PrestoSqlBaseParser.ShowCreateViewContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code showCreateMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitShowCreateMaterializedView(PrestoSqlBaseParser.ShowCreateMaterializedViewContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code showTables}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -420,6 +475,27 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSetPath(PrestoSqlBaseParser.SetPathContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code setTimeZone}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetTimeZone(PrestoSqlBaseParser.SetTimeZoneContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code update}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdate(PrestoSqlBaseParser.UpdateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code merge}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMerge(PrestoSqlBaseParser.MergeContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -467,6 +543,18 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitQueryNoWith(PrestoSqlBaseParser.QueryNoWithContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLimitRowCount(PrestoSqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRowCount(PrestoSqlBaseParser.RowCountContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code queryTermDefault}
 	 * labeled alternative in {@link PrestoSqlBaseParser#queryTerm}.
@@ -562,6 +650,18 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGroupingSet(PrestoSqlBaseParser.GroupingSetContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#windowDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWindowDefinition(PrestoSqlBaseParser.WindowDefinitionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#windowSpecification}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWindowSpecification(PrestoSqlBaseParser.WindowSpecificationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#namedQuery}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -625,6 +725,48 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSampleType(PrestoSqlBaseParser.SampleTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#patternRecognition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPatternRecognition(PrestoSqlBaseParser.PatternRecognitionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#measureDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMeasureDefinition(PrestoSqlBaseParser.MeasureDefinitionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#rowsPerMatch}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRowsPerMatch(PrestoSqlBaseParser.RowsPerMatchContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#emptyMatchHandling}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyMatchHandling(PrestoSqlBaseParser.EmptyMatchHandlingContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#skipTo}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSkipTo(PrestoSqlBaseParser.SkipToContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#subsetDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubsetDefinition(PrestoSqlBaseParser.SubsetDefinitionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#variableDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDefinition(PrestoSqlBaseParser.VariableDefinitionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#aliasedRelation}.
 	 * @param ctx the parse tree
@@ -938,6 +1080,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCurrentUser(PrestoSqlBaseParser.CurrentUserContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code measure}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMeasure(PrestoSqlBaseParser.MeasureContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code extract}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -966,6 +1115,13 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionCall(PrestoSqlBaseParser.FunctionCallContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code currentSchema}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCurrentSchema(PrestoSqlBaseParser.CurrentSchemaContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code exists}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -987,12 +1143,25 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSearchedCase(PrestoSqlBaseParser.SearchedCaseContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code currentCatalog}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCurrentCatalog(PrestoSqlBaseParser.CurrentCatalogContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code groupingOperation}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitGroupingOperation(PrestoSqlBaseParser.GroupingOperationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#processingMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProcessingMode(PrestoSqlBaseParser.ProcessingModeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#nullTreatment}.
 	 * @param ctx the parse tree
@@ -1144,6 +1313,27 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFilter(PrestoSqlBaseParser.FilterContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code mergeUpdate}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeUpdate(PrestoSqlBaseParser.MergeUpdateContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code mergeDelete}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeDelete(PrestoSqlBaseParser.MergeDeleteContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code mergeInsert}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeInsert(PrestoSqlBaseParser.MergeInsertContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#over}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -1155,6 +1345,12 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWindowFrame(PrestoSqlBaseParser.WindowFrameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#frameExtent}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFrameExtent(PrestoSqlBaseParser.FrameExtentContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code unboundedFrame}
 	 * labeled alternative in {@link PrestoSqlBaseParser#frameBound}.
@@ -1176,6 +1372,110 @@ public interface PrestoSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBoundedFrame(PrestoSqlBaseParser.BoundedFrameContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code quantifiedPrimary}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQuantifiedPrimary(PrestoSqlBaseParser.QuantifiedPrimaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code patternConcatenation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPatternConcatenation(PrestoSqlBaseParser.PatternConcatenationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code patternAlternation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPatternAlternation(PrestoSqlBaseParser.PatternAlternationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code patternVariable}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPatternVariable(PrestoSqlBaseParser.PatternVariableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code emptyPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEmptyPattern(PrestoSqlBaseParser.EmptyPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code patternPermutation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPatternPermutation(PrestoSqlBaseParser.PatternPermutationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code groupedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGroupedPattern(PrestoSqlBaseParser.GroupedPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code partitionStartAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPartitionStartAnchor(PrestoSqlBaseParser.PartitionStartAnchorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code partitionEndAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPartitionEndAnchor(PrestoSqlBaseParser.PartitionEndAnchorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code excludedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExcludedPattern(PrestoSqlBaseParser.ExcludedPatternContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code zeroOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZeroOrMoreQuantifier(PrestoSqlBaseParser.ZeroOrMoreQuantifierContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code oneOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOneOrMoreQuantifier(PrestoSqlBaseParser.OneOrMoreQuantifierContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code zeroOrOneQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZeroOrOneQuantifier(PrestoSqlBaseParser.ZeroOrOneQuantifierContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code rangeQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRangeQuantifier(PrestoSqlBaseParser.RangeQuantifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link PrestoSqlBaseParser#updateAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdateAssignment(PrestoSqlBaseParser.UpdateAssignmentContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code explainFormat}
 	 * labeled alternative in {@link PrestoSqlBaseParser#explainOption}.

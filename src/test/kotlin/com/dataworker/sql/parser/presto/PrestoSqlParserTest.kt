@@ -60,4 +60,22 @@ class PrestoSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun createTableSelectTest() {
+        val sql = """
+            create table dd_s_s as select * from bigdata.test_demo_test limit 1
+        """.trimIndent()
+
+        val statementData = PrestoSQLHelper.getStatementData(sql)
+        val statement = statementData?.statement
+        if (statement is TableData) {
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.outpuTables.size)
+            Assert.assertEquals(1, statement.limit)
+        } else {
+            Assert.fail()
+        }
+    }
 }

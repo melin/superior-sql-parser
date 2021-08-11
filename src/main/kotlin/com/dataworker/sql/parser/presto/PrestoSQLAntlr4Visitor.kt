@@ -47,6 +47,18 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         }
     }
 
+    override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
+        currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+        val tableSource = createTableSource(ctx.qualifiedName())
+        statementData.outpuTables.add(tableSource)
+
+        super.visitQuery(ctx.query())
+        statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
+
+        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, statementData)
+        return data;
+    }
+
     override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): StatementData? {
         if (currentOptType == null) {
             return null
@@ -56,22 +68,26 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             return null
         }
 
-        if (currentOptType == StatementType.SELECT) {
-            val list = ctx.identifier()
-
-            var db: String? = null
-            val text = if (list.size == 1) {
-                ctx.text
-            } else {
-                val index = StringUtils.lastIndexOf(ctx.text, ".")
-                db = StringUtils.substring(ctx.text, 0, index)
-
-                StringUtils.substring(ctx.text, index + 1)
-            }
-            val tableSource = TableSource(db, text)
+        if (currentOptType == StatementType.SELECT || currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
+            val tableSource = createTableSource(ctx)
             statementData.inputTables.add(tableSource)
         }
         return null
     }
 
+    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableSource {
+        val list = ctx.identifier()
+
+        var db: String? = null
+        val text = if (list.size == 1) {
+            ctx.text
+        } else {
+            val index = StringUtils.lastIndexOf(ctx.text, ".")
+            db = StringUtils.substring(ctx.text, 0, index)
+
+            StringUtils.substring(ctx.text, index + 1)
+        }
+
+        return TableSource(db, text)
+    }
 }

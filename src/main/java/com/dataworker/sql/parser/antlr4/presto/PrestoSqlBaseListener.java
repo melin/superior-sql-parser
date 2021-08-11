@@ -48,6 +48,16 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitStandaloneType(PrestoSqlBaseParser.StandaloneTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#standaloneRowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterStandaloneRowPattern(PrestoSqlBaseParser.StandaloneRowPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#standaloneRowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitStandaloneRowPattern(PrestoSqlBaseParser.StandaloneRowPatternContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code statementDefault}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -252,6 +262,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitAddColumn(PrestoSqlBaseParser.AddColumnContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code setTableAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetTableAuthorization(PrestoSqlBaseParser.SetTableAuthorizationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code setTableAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetTableAuthorization(PrestoSqlBaseParser.SetTableAuthorizationContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code analyze}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -264,6 +286,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitAnalyze(PrestoSqlBaseParser.AnalyzeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code createMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterCreateMaterializedView(PrestoSqlBaseParser.CreateMaterializedViewContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code createMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitCreateMaterializedView(PrestoSqlBaseParser.CreateMaterializedViewContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code createView}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -275,6 +309,30 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCreateView(PrestoSqlBaseParser.CreateViewContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code refreshMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterRefreshMaterializedView(PrestoSqlBaseParser.RefreshMaterializedViewContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code refreshMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitRefreshMaterializedView(PrestoSqlBaseParser.RefreshMaterializedViewContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code dropMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDropMaterializedView(PrestoSqlBaseParser.DropMaterializedViewContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dropMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDropMaterializedView(PrestoSqlBaseParser.DropMaterializedViewContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code dropView}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -299,6 +357,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRenameView(PrestoSqlBaseParser.RenameViewContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code setViewAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetViewAuthorization(PrestoSqlBaseParser.SetViewAuthorizationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code setViewAuthorization}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetViewAuthorization(PrestoSqlBaseParser.SetViewAuthorizationContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code call}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -420,6 +490,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitExplain(PrestoSqlBaseParser.ExplainContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code explainAnalyze}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterExplainAnalyze(PrestoSqlBaseParser.ExplainAnalyzeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code explainAnalyze}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitExplainAnalyze(PrestoSqlBaseParser.ExplainAnalyzeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code showCreateTable}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
 	 * @param ctx the parse tree
@@ -455,6 +537,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitShowCreateView(PrestoSqlBaseParser.ShowCreateViewContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code showCreateMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterShowCreateMaterializedView(PrestoSqlBaseParser.ShowCreateMaterializedViewContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code showCreateMaterializedView}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitShowCreateMaterializedView(PrestoSqlBaseParser.ShowCreateMaterializedViewContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code showTables}
 	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
@@ -708,6 +802,42 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitSetPath(PrestoSqlBaseParser.SetPathContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code setTimeZone}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterSetTimeZone(PrestoSqlBaseParser.SetTimeZoneContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code setTimeZone}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitSetTimeZone(PrestoSqlBaseParser.SetTimeZoneContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code update}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdate(PrestoSqlBaseParser.UpdateContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code update}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdate(PrestoSqlBaseParser.UpdateContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code merge}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterMerge(PrestoSqlBaseParser.MergeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code merge}
+	 * labeled alternative in {@link PrestoSqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitMerge(PrestoSqlBaseParser.MergeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 */
@@ -787,6 +917,26 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitQueryNoWith(PrestoSqlBaseParser.QueryNoWithContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 */
+	void enterLimitRowCount(PrestoSqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 */
+	void exitLimitRowCount(PrestoSqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 */
+	void enterRowCount(PrestoSqlBaseParser.RowCountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 */
+	void exitRowCount(PrestoSqlBaseParser.RowCountContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code queryTermDefault}
 	 * labeled alternative in {@link PrestoSqlBaseParser#queryTerm}.
@@ -948,6 +1098,26 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitGroupingSet(PrestoSqlBaseParser.GroupingSetContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#windowDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterWindowDefinition(PrestoSqlBaseParser.WindowDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#windowDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitWindowDefinition(PrestoSqlBaseParser.WindowDefinitionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#windowSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void enterWindowSpecification(PrestoSqlBaseParser.WindowSpecificationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#windowSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void exitWindowSpecification(PrestoSqlBaseParser.WindowSpecificationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#namedQuery}.
 	 * @param ctx the parse tree
 	 */
@@ -1055,6 +1225,76 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSampleType(PrestoSqlBaseParser.SampleTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#patternRecognition}.
+	 * @param ctx the parse tree
+	 */
+	void enterPatternRecognition(PrestoSqlBaseParser.PatternRecognitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#patternRecognition}.
+	 * @param ctx the parse tree
+	 */
+	void exitPatternRecognition(PrestoSqlBaseParser.PatternRecognitionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#measureDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterMeasureDefinition(PrestoSqlBaseParser.MeasureDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#measureDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitMeasureDefinition(PrestoSqlBaseParser.MeasureDefinitionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#rowsPerMatch}.
+	 * @param ctx the parse tree
+	 */
+	void enterRowsPerMatch(PrestoSqlBaseParser.RowsPerMatchContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#rowsPerMatch}.
+	 * @param ctx the parse tree
+	 */
+	void exitRowsPerMatch(PrestoSqlBaseParser.RowsPerMatchContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#emptyMatchHandling}.
+	 * @param ctx the parse tree
+	 */
+	void enterEmptyMatchHandling(PrestoSqlBaseParser.EmptyMatchHandlingContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#emptyMatchHandling}.
+	 * @param ctx the parse tree
+	 */
+	void exitEmptyMatchHandling(PrestoSqlBaseParser.EmptyMatchHandlingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#skipTo}.
+	 * @param ctx the parse tree
+	 */
+	void enterSkipTo(PrestoSqlBaseParser.SkipToContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#skipTo}.
+	 * @param ctx the parse tree
+	 */
+	void exitSkipTo(PrestoSqlBaseParser.SkipToContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#subsetDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterSubsetDefinition(PrestoSqlBaseParser.SubsetDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#subsetDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitSubsetDefinition(PrestoSqlBaseParser.SubsetDefinitionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#variableDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableDefinition(PrestoSqlBaseParser.VariableDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#variableDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableDefinition(PrestoSqlBaseParser.VariableDefinitionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#aliasedRelation}.
 	 * @param ctx the parse tree
@@ -1590,6 +1830,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitCurrentUser(PrestoSqlBaseParser.CurrentUserContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code measure}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMeasure(PrestoSqlBaseParser.MeasureContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code measure}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMeasure(PrestoSqlBaseParser.MeasureContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code extract}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1638,6 +1890,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitFunctionCall(PrestoSqlBaseParser.FunctionCallContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code currentSchema}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCurrentSchema(PrestoSqlBaseParser.CurrentSchemaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code currentSchema}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCurrentSchema(PrestoSqlBaseParser.CurrentSchemaContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exists}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1674,6 +1938,18 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitSearchedCase(PrestoSqlBaseParser.SearchedCaseContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code currentCatalog}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterCurrentCatalog(PrestoSqlBaseParser.CurrentCatalogContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code currentCatalog}
+	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitCurrentCatalog(PrestoSqlBaseParser.CurrentCatalogContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code groupingOperation}
 	 * labeled alternative in {@link PrestoSqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -1685,6 +1961,16 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitGroupingOperation(PrestoSqlBaseParser.GroupingOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#processingMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterProcessingMode(PrestoSqlBaseParser.ProcessingModeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#processingMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitProcessingMode(PrestoSqlBaseParser.ProcessingModeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#nullTreatment}.
 	 * @param ctx the parse tree
@@ -1940,6 +2226,42 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitFilter(PrestoSqlBaseParser.FilterContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code mergeUpdate}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeUpdate(PrestoSqlBaseParser.MergeUpdateContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeUpdate}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeUpdate(PrestoSqlBaseParser.MergeUpdateContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mergeDelete}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeDelete(PrestoSqlBaseParser.MergeDeleteContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeDelete}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeDelete(PrestoSqlBaseParser.MergeDeleteContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mergeInsert}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeInsert(PrestoSqlBaseParser.MergeInsertContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeInsert}
+	 * labeled alternative in {@link PrestoSqlBaseParser#mergeCase}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeInsert(PrestoSqlBaseParser.MergeInsertContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#over}.
 	 * @param ctx the parse tree
 	 */
@@ -1959,6 +2281,16 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWindowFrame(PrestoSqlBaseParser.WindowFrameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#frameExtent}.
+	 * @param ctx the parse tree
+	 */
+	void enterFrameExtent(PrestoSqlBaseParser.FrameExtentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#frameExtent}.
+	 * @param ctx the parse tree
+	 */
+	void exitFrameExtent(PrestoSqlBaseParser.FrameExtentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code unboundedFrame}
 	 * labeled alternative in {@link PrestoSqlBaseParser#frameBound}.
@@ -1995,6 +2327,184 @@ public interface PrestoSqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoundedFrame(PrestoSqlBaseParser.BoundedFrameContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code quantifiedPrimary}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterQuantifiedPrimary(PrestoSqlBaseParser.QuantifiedPrimaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code quantifiedPrimary}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitQuantifiedPrimary(PrestoSqlBaseParser.QuantifiedPrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code patternConcatenation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterPatternConcatenation(PrestoSqlBaseParser.PatternConcatenationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code patternConcatenation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitPatternConcatenation(PrestoSqlBaseParser.PatternConcatenationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code patternAlternation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterPatternAlternation(PrestoSqlBaseParser.PatternAlternationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code patternAlternation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#rowPattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitPatternAlternation(PrestoSqlBaseParser.PatternAlternationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code patternVariable}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterPatternVariable(PrestoSqlBaseParser.PatternVariableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code patternVariable}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitPatternVariable(PrestoSqlBaseParser.PatternVariableContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code emptyPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterEmptyPattern(PrestoSqlBaseParser.EmptyPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code emptyPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitEmptyPattern(PrestoSqlBaseParser.EmptyPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code patternPermutation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterPatternPermutation(PrestoSqlBaseParser.PatternPermutationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code patternPermutation}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitPatternPermutation(PrestoSqlBaseParser.PatternPermutationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code groupedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterGroupedPattern(PrestoSqlBaseParser.GroupedPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code groupedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitGroupedPattern(PrestoSqlBaseParser.GroupedPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code partitionStartAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterPartitionStartAnchor(PrestoSqlBaseParser.PartitionStartAnchorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code partitionStartAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitPartitionStartAnchor(PrestoSqlBaseParser.PartitionStartAnchorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code partitionEndAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterPartitionEndAnchor(PrestoSqlBaseParser.PartitionEndAnchorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code partitionEndAnchor}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitPartitionEndAnchor(PrestoSqlBaseParser.PartitionEndAnchorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code excludedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterExcludedPattern(PrestoSqlBaseParser.ExcludedPatternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code excludedPattern}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitExcludedPattern(PrestoSqlBaseParser.ExcludedPatternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code zeroOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterZeroOrMoreQuantifier(PrestoSqlBaseParser.ZeroOrMoreQuantifierContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code zeroOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitZeroOrMoreQuantifier(PrestoSqlBaseParser.ZeroOrMoreQuantifierContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code oneOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterOneOrMoreQuantifier(PrestoSqlBaseParser.OneOrMoreQuantifierContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code oneOrMoreQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitOneOrMoreQuantifier(PrestoSqlBaseParser.OneOrMoreQuantifierContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code zeroOrOneQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterZeroOrOneQuantifier(PrestoSqlBaseParser.ZeroOrOneQuantifierContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code zeroOrOneQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitZeroOrOneQuantifier(PrestoSqlBaseParser.ZeroOrOneQuantifierContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code rangeQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterRangeQuantifier(PrestoSqlBaseParser.RangeQuantifierContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code rangeQuantifier}
+	 * labeled alternative in {@link PrestoSqlBaseParser#patternQuantifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitRangeQuantifier(PrestoSqlBaseParser.RangeQuantifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PrestoSqlBaseParser#updateAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdateAssignment(PrestoSqlBaseParser.UpdateAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PrestoSqlBaseParser#updateAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdateAssignment(PrestoSqlBaseParser.UpdateAssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code explainFormat}
 	 * labeled alternative in {@link PrestoSqlBaseParser#explainOption}.

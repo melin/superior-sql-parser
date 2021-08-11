@@ -64,6 +64,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStandaloneRowPattern(PrestoSqlBaseParser.StandaloneRowPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStandaloneRowPattern(PrestoSqlBaseParser.StandaloneRowPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterStatementDefault(PrestoSqlBaseParser.StatementDefaultContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -268,6 +280,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSetTableAuthorization(PrestoSqlBaseParser.SetTableAuthorizationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetTableAuthorization(PrestoSqlBaseParser.SetTableAuthorizationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAnalyze(PrestoSqlBaseParser.AnalyzeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -280,6 +304,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCreateMaterializedView(PrestoSqlBaseParser.CreateMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCreateMaterializedView(PrestoSqlBaseParser.CreateMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCreateView(PrestoSqlBaseParser.CreateViewContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -287,6 +323,30 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCreateView(PrestoSqlBaseParser.CreateViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRefreshMaterializedView(PrestoSqlBaseParser.RefreshMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRefreshMaterializedView(PrestoSqlBaseParser.RefreshMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDropMaterializedView(PrestoSqlBaseParser.DropMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDropMaterializedView(PrestoSqlBaseParser.DropMaterializedViewContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -311,6 +371,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRenameView(PrestoSqlBaseParser.RenameViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSetViewAuthorization(PrestoSqlBaseParser.SetViewAuthorizationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetViewAuthorization(PrestoSqlBaseParser.SetViewAuthorizationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -436,6 +508,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExplainAnalyze(PrestoSqlBaseParser.ExplainAnalyzeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExplainAnalyze(PrestoSqlBaseParser.ExplainAnalyzeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterShowCreateTable(PrestoSqlBaseParser.ShowCreateTableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -467,6 +551,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitShowCreateView(PrestoSqlBaseParser.ShowCreateViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterShowCreateMaterializedView(PrestoSqlBaseParser.ShowCreateMaterializedViewContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitShowCreateMaterializedView(PrestoSqlBaseParser.ShowCreateMaterializedViewContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -724,6 +820,42 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSetTimeZone(PrestoSqlBaseParser.SetTimeZoneContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSetTimeZone(PrestoSqlBaseParser.SetTimeZoneContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUpdate(PrestoSqlBaseParser.UpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdate(PrestoSqlBaseParser.UpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMerge(PrestoSqlBaseParser.MergeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMerge(PrestoSqlBaseParser.MergeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterQuery(PrestoSqlBaseParser.QueryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -815,6 +947,30 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitQueryNoWith(PrestoSqlBaseParser.QueryNoWithContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLimitRowCount(PrestoSqlBaseParser.LimitRowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLimitRowCount(PrestoSqlBaseParser.LimitRowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRowCount(PrestoSqlBaseParser.RowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRowCount(PrestoSqlBaseParser.RowCountContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -988,6 +1144,30 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterWindowDefinition(PrestoSqlBaseParser.WindowDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWindowDefinition(PrestoSqlBaseParser.WindowDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWindowSpecification(PrestoSqlBaseParser.WindowSpecificationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWindowSpecification(PrestoSqlBaseParser.WindowSpecificationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterNamedQuery(PrestoSqlBaseParser.NamedQueryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1103,6 +1283,90 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSampleType(PrestoSqlBaseParser.SampleTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPatternRecognition(PrestoSqlBaseParser.PatternRecognitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPatternRecognition(PrestoSqlBaseParser.PatternRecognitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMeasureDefinition(PrestoSqlBaseParser.MeasureDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMeasureDefinition(PrestoSqlBaseParser.MeasureDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRowsPerMatch(PrestoSqlBaseParser.RowsPerMatchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRowsPerMatch(PrestoSqlBaseParser.RowsPerMatchContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEmptyMatchHandling(PrestoSqlBaseParser.EmptyMatchHandlingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEmptyMatchHandling(PrestoSqlBaseParser.EmptyMatchHandlingContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSkipTo(PrestoSqlBaseParser.SkipToContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSkipTo(PrestoSqlBaseParser.SkipToContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSubsetDefinition(PrestoSqlBaseParser.SubsetDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSubsetDefinition(PrestoSqlBaseParser.SubsetDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVariableDefinition(PrestoSqlBaseParser.VariableDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVariableDefinition(PrestoSqlBaseParser.VariableDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1648,6 +1912,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMeasure(PrestoSqlBaseParser.MeasureContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMeasure(PrestoSqlBaseParser.MeasureContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExtract(PrestoSqlBaseParser.ExtractContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1696,6 +1972,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCurrentSchema(PrestoSqlBaseParser.CurrentSchemaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCurrentSchema(PrestoSqlBaseParser.CurrentSchemaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExists(PrestoSqlBaseParser.ExistsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1732,6 +2020,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCurrentCatalog(PrestoSqlBaseParser.CurrentCatalogContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCurrentCatalog(PrestoSqlBaseParser.CurrentCatalogContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGroupingOperation(PrestoSqlBaseParser.GroupingOperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1739,6 +2039,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGroupingOperation(PrestoSqlBaseParser.GroupingOperationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterProcessingMode(PrestoSqlBaseParser.ProcessingModeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitProcessingMode(PrestoSqlBaseParser.ProcessingModeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2020,6 +2332,42 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMergeUpdate(PrestoSqlBaseParser.MergeUpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeUpdate(PrestoSqlBaseParser.MergeUpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMergeDelete(PrestoSqlBaseParser.MergeDeleteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeDelete(PrestoSqlBaseParser.MergeDeleteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMergeInsert(PrestoSqlBaseParser.MergeInsertContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeInsert(PrestoSqlBaseParser.MergeInsertContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterOver(PrestoSqlBaseParser.OverContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2039,6 +2387,18 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitWindowFrame(PrestoSqlBaseParser.WindowFrameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFrameExtent(PrestoSqlBaseParser.FrameExtentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFrameExtent(PrestoSqlBaseParser.FrameExtentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2075,6 +2435,186 @@ public class PrestoSqlBaseBaseListener implements PrestoSqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBoundedFrame(PrestoSqlBaseParser.BoundedFrameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterQuantifiedPrimary(PrestoSqlBaseParser.QuantifiedPrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitQuantifiedPrimary(PrestoSqlBaseParser.QuantifiedPrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPatternConcatenation(PrestoSqlBaseParser.PatternConcatenationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPatternConcatenation(PrestoSqlBaseParser.PatternConcatenationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPatternAlternation(PrestoSqlBaseParser.PatternAlternationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPatternAlternation(PrestoSqlBaseParser.PatternAlternationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPatternVariable(PrestoSqlBaseParser.PatternVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPatternVariable(PrestoSqlBaseParser.PatternVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEmptyPattern(PrestoSqlBaseParser.EmptyPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEmptyPattern(PrestoSqlBaseParser.EmptyPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPatternPermutation(PrestoSqlBaseParser.PatternPermutationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPatternPermutation(PrestoSqlBaseParser.PatternPermutationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGroupedPattern(PrestoSqlBaseParser.GroupedPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGroupedPattern(PrestoSqlBaseParser.GroupedPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPartitionStartAnchor(PrestoSqlBaseParser.PartitionStartAnchorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPartitionStartAnchor(PrestoSqlBaseParser.PartitionStartAnchorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPartitionEndAnchor(PrestoSqlBaseParser.PartitionEndAnchorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPartitionEndAnchor(PrestoSqlBaseParser.PartitionEndAnchorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExcludedPattern(PrestoSqlBaseParser.ExcludedPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExcludedPattern(PrestoSqlBaseParser.ExcludedPatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterZeroOrMoreQuantifier(PrestoSqlBaseParser.ZeroOrMoreQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitZeroOrMoreQuantifier(PrestoSqlBaseParser.ZeroOrMoreQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOneOrMoreQuantifier(PrestoSqlBaseParser.OneOrMoreQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOneOrMoreQuantifier(PrestoSqlBaseParser.OneOrMoreQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterZeroOrOneQuantifier(PrestoSqlBaseParser.ZeroOrOneQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitZeroOrOneQuantifier(PrestoSqlBaseParser.ZeroOrOneQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRangeQuantifier(PrestoSqlBaseParser.RangeQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRangeQuantifier(PrestoSqlBaseParser.RangeQuantifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUpdateAssignment(PrestoSqlBaseParser.UpdateAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdateAssignment(PrestoSqlBaseParser.UpdateAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
