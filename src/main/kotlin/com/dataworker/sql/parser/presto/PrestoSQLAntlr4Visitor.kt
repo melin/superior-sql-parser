@@ -48,11 +48,12 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData {
+    override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
         val dcTable = DcTable(tableSource.databaseName, tableSource.tableName)
-        return StatementData(StatementType.SHOW_CREATE_TABLE, dcTable)
+        data = StatementData(StatementType.SHOW_CREATE_TABLE, dcTable)
+        return data
     }
 
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
@@ -76,18 +77,20 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return data;
     }
 
-    override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData {
+    override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
         val dcTable = DcTable(tableSource.databaseName, tableSource.tableName)
         val token = CommonToken(ctx.qualifiedName().start.startIndex, ctx.qualifiedName().stop.stopIndex)
         dcTable.ifExists = ctx.EXISTS() != null
         dcTable.token = token
-        return StatementData(StatementType.DROP_TABLE, dcTable)
+        data = StatementData(StatementType.DROP_TABLE, dcTable)
+        return data
     }
 
-    override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): StatementData {
-        return StatementData(StatementType.EXPLAIN)
+    override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): StatementData? {
+        data = StatementData(StatementType.EXPLAIN)
+        return data
     }
 
     override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): StatementData? {

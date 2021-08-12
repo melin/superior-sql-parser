@@ -79,4 +79,21 @@ class PrestoSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun dropTableTest() {
+        val sql = """
+            drop table if exists bigdata.tdl_small_files_2
+        """.trimIndent()
+
+        val statementData = PrestoSQLHelper.getStatementData(sql)
+        val statement = statementData?.statement
+        if (statement is DcTable) {
+            Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
+            Assert.assertEquals("bigdata", statement.databaseName)
+            Assert.assertEquals("tdl_small_files_2", statement.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
 }
