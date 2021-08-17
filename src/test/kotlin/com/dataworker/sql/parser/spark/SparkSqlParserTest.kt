@@ -1612,4 +1612,15 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun notSupportSql() {
+        val sql = "insert overwrite directory '/user/ahao' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t' select * from nlp_dev.all_category_sample"
+        try {
+            SparkSQLHelper.getStatementData(sql)
+            Assert.fail()
+        } catch (e: SQLParserException) {
+            Assert.assertTrue(true)
+        }
+    }
 }

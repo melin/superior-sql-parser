@@ -2,15 +2,12 @@ package com.dataworker.sql.parser.spark
 
 import com.dataworker.sql.parser.SQLParserException
 import com.dataworker.sql.parser.StatementType
-import com.dataworker.sql.parser.model.*
 import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseBaseVisitor
 import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseParser
+import com.dataworker.sql.parser.model.*
 import com.dataworker.sql.parser.util.StringUtil
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.List
 
 /**
  *
@@ -807,8 +804,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
             val multipartIdentifier: SparkSqlBaseParser.MultipartIdentifierContext = if (tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
                 tableContext.multipartIdentifier()
+            } else if (tableContext is SparkSqlBaseParser.InsertOverwriteTableContext) {
+                tableContext.multipartIdentifier()
             } else {
-                (tableContext as SparkSqlBaseParser.InsertOverwriteTableContext).multipartIdentifier()
+                throw SQLParserException("不支持SQL");
             }
 
             val (databaseName, tableName) = parseTableName(multipartIdentifier)
