@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/tsql/TSqlParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/tsql/TSqlParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.tsql;
 
 import org.antlr.v4.runtime.ParserRuleContext;

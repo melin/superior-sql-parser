@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/presto/PrestoSqlBase.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/presto/PrestoSqlBase.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.presto;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 

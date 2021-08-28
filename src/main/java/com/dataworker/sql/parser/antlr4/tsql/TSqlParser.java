@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/tsql/TSqlParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/tsql/TSqlParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.tsql;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class TSqlParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -354,446 +354,460 @@ public class TSqlParser extends Parser {
 		RULE_default_value = 479, RULE_constant = 480, RULE_sign = 481, RULE_id = 482, 
 		RULE_simple_id = 483, RULE_comparison_operator = 484, RULE_assignment_operator = 485, 
 		RULE_file_size = 486;
-	public static final String[] ruleNames = {
-		"tsql_file", "batch", "sql_clauses", "sql_clause", "dml_clause", "ddl_clause", 
-		"backup_statement", "cfl_statement", "block_statement", "break_statement", 
-		"continue_statement", "goto_statement", "return_statement", "if_statement", 
-		"throw_statement", "throw_error_number", "throw_message", "throw_state", 
-		"try_catch_statement", "waitfor_statement", "while_statement", "print_statement", 
-		"raiseerror_statement", "empty_statement", "another_statement", "alter_application_role", 
-		"create_application_role", "drop_aggregate", "drop_application_role", 
-		"alter_assembly", "alter_assembly_start", "alter_assembly_clause", "alter_assembly_from_clause", 
-		"alter_assembly_from_clause_start", "alter_assembly_drop_clause", "alter_assembly_drop_multiple_files", 
-		"alter_assembly_drop", "alter_assembly_add_clause", "alter_asssembly_add_clause_start", 
-		"alter_assembly_client_file_clause", "alter_assembly_file_name", "alter_assembly_file_bits", 
-		"alter_assembly_as", "alter_assembly_with_clause", "alter_assembly_with", 
-		"client_assembly_specifier", "assembly_option", "network_file_share", 
-		"network_computer", "network_file_start", "file_path", "file_directory_path_separator", 
-		"local_file", "local_drive", "multiple_local_files", "multiple_local_file_start", 
-		"create_assembly", "drop_assembly", "alter_asymmetric_key", "alter_asymmetric_key_start", 
-		"asymmetric_key_option", "asymmetric_key_option_start", "asymmetric_key_password_change_option", 
-		"create_asymmetric_key", "drop_asymmetric_key", "alter_authorization", 
-		"authorization_grantee", "entity_to", "colon_colon", "alter_authorization_start", 
-		"alter_authorization_for_sql_database", "alter_authorization_for_azure_dw", 
-		"alter_authorization_for_parallel_dw", "class_type", "class_type_for_sql_database", 
-		"class_type_for_azure_dw", "class_type_for_parallel_dw", "drop_availability_group", 
-		"alter_availability_group", "alter_availability_group_start", "alter_availability_group_options", 
-		"create_or_alter_broker_priority", "drop_broker_priority", "alter_certificate", 
-		"alter_column_encryption_key", "create_column_encryption_key", "drop_certificate", 
-		"drop_column_encryption_key", "drop_column_master_key", "drop_contract", 
-		"drop_credential", "drop_cryptograhic_provider", "drop_database", "drop_database_audit_specification", 
-		"drop_database_scoped_credential", "drop_default", "drop_endpoint", "drop_external_data_source", 
-		"drop_external_file_format", "drop_external_library", "drop_external_resource_pool", 
-		"drop_external_table", "drop_event_notifications", "drop_event_session", 
-		"drop_fulltext_catalog", "drop_fulltext_index", "drop_fulltext_stoplist", 
-		"drop_login", "drop_master_key", "drop_message_type", "drop_partition_function", 
-		"drop_partition_scheme", "drop_queue", "drop_remote_service_binding", 
-		"drop_resource_pool", "drop_db_role", "drop_route", "drop_rule", "drop_schema", 
-		"drop_search_property_list", "drop_security_policy", "drop_sequence", 
-		"drop_server_audit", "drop_server_audit_specification", "drop_server_role", 
-		"drop_service", "drop_signature", "drop_statistics_name_azure_dw_and_pdw", 
-		"drop_symmetric_key", "drop_synonym", "drop_user", "drop_workload_group", 
-		"drop_xml_schema_collection", "disable_trigger", "enable_trigger", "lock_table", 
-		"truncate_table", "create_column_master_key", "alter_credential", "create_credential", 
-		"alter_cryptographic_provider", "create_cryptographic_provider", "create_event_notification", 
-		"create_or_alter_event_session", "event_session_predicate_expression", 
-		"event_session_predicate_factor", "event_session_predicate_leaf", "alter_external_data_source", 
-		"alter_external_library", "create_external_library", "alter_external_resource_pool", 
-		"create_external_resource_pool", "alter_fulltext_catalog", "create_fulltext_catalog", 
-		"alter_fulltext_stoplist", "create_fulltext_stoplist", "alter_login_sql_server", 
-		"create_login_sql_server", "alter_login_azure_sql", "create_login_azure_sql", 
-		"alter_login_azure_sql_dw_and_pdw", "create_login_pdw", "alter_master_key_sql_server", 
-		"create_master_key_sql_server", "alter_master_key_azure_sql", "create_master_key_azure_sql", 
-		"alter_message_type", "alter_partition_function", "alter_partition_scheme", 
-		"alter_remote_service_binding", "create_remote_service_binding", "create_resource_pool", 
-		"alter_resource_governor", "alter_db_role", "create_db_role", "create_route", 
-		"create_rule", "alter_schema_sql", "create_schema", "create_schema_azure_sql_dw_and_pdw", 
-		"alter_schema_azure_sql_dw_and_pdw", "create_search_property_list", "create_security_policy", 
-		"alter_sequence", "create_sequence", "alter_server_audit", "create_server_audit", 
-		"alter_server_audit_specification", "create_server_audit_specification", 
-		"alter_server_configuration", "alter_server_role", "create_server_role", 
-		"alter_server_role_pdw", "alter_service", "create_service", "alter_service_master_key", 
-		"alter_symmetric_key", "create_symmetric_key", "create_synonym", "alter_user", 
-		"create_user", "create_user_azure_sql_dw", "alter_user_azure_sql", "alter_workload_group", 
-		"create_workload_group", "create_xml_schema_collection", "create_queue", 
-		"queue_settings", "alter_queue", "queue_action", "queue_rebuild_options", 
-		"create_contract", "conversation_statement", "message_statement", "merge_statement", 
-		"merge_matched", "merge_not_matched", "delete_statement", "delete_statement_from", 
-		"insert_statement", "insert_statement_value", "receive_statement", "select_statement", 
-		"time", "update_statement", "output_clause", "output_dml_list_elem", "output_column_name", 
-		"create_database", "create_index", "create_or_alter_procedure", "create_or_alter_trigger", 
-		"create_or_alter_dml_trigger", "dml_trigger_option", "dml_trigger_operation", 
-		"create_or_alter_ddl_trigger", "ddl_trigger_operation", "create_or_alter_function", 
-		"func_body_returns_select", "func_body_returns_table", "func_body_returns_scalar", 
-		"procedure_param", "procedure_option", "function_option", "create_statistics", 
-		"update_statistics", "create_table", "table_options", "create_view", "view_attribute", 
-		"alter_table", "alter_database", "database_optionspec", "auto_option", 
-		"change_tracking_option", "change_tracking_option_list", "containment_option", 
-		"cursor_option", "alter_endpoint", "database_mirroring_option", "mirroring_set_option", 
-		"mirroring_partner", "mirroring_witness", "witness_partner_equal", "partner_option", 
-		"witness_option", "witness_server", "partner_server", "mirroring_host_port_seperator", 
-		"partner_server_tcp_prefix", "port_number", "host", "date_correlation_optimization_option", 
-		"db_encryption_option", "db_state_option", "db_update_option", "db_user_access_option", 
-		"delayed_durability_option", "external_access_option", "hadr_options", 
-		"mixed_page_allocation_option", "parameterization_option", "recovery_option", 
-		"service_broker_option", "snapshot_option", "sql_option", "target_recovery_time_option", 
-		"termination", "drop_index", "drop_relational_or_xml_or_spatial_index", 
-		"drop_backward_compatible_index", "drop_procedure", "drop_trigger", "drop_dml_trigger", 
-		"drop_ddl_trigger", "drop_function", "drop_statistics", "drop_table", 
-		"drop_view", "create_type", "drop_type", "rowset_function_limited", "openquery", 
-		"opendatasource", "declare_statement", "cursor_statement", "backup_database", 
-		"backup_log", "backup_certificate", "backup_master_key", "backup_service_master_key", 
-		"kill_statement", "kill_process", "kill_query_notification", "kill_stats_job", 
-		"execute_statement", "execute_body", "execute_statement_arg", "execute_var_string", 
-		"security_statement", "create_certificate", "existing_keys", "private_key_options", 
-		"generate_new_keys", "date_options", "open_key", "close_key", "create_key", 
-		"key_options", "algorithm", "encryption_mechanism", "decryption_mechanism", 
-		"grant_permission", "set_statement", "transaction_statement", "go_statement", 
-		"use_statement", "setuser_statement", "reconfigure_statement", "shutdown_statement", 
-		"dbcc_clause", "dbcc_options", "execute_clause", "declare_local", "table_type_definition", 
-		"xml_type_definition", "xml_schema_collection", "column_def_table_constraints", 
-		"column_def_table_constraint", "column_definition", "materialized_column_definition", 
-		"column_constraint", "table_constraint", "on_delete", "on_update", "index_options", 
-		"index_option", "declare_cursor", "declare_set_cursor_common", "declare_set_cursor_common_partial", 
-		"fetch_cursor", "set_special", "constant_LOCAL_ID", "expression", "primitive_expression", 
-		"case_expression", "unary_operator_expression", "bracket_expression", 
-		"constant_expression", "subquery", "with_expression", "common_table_expression", 
-		"update_elem", "search_condition_list", "search_condition", "search_condition_and", 
-		"search_condition_not", "predicate", "query_expression", "sql_union", 
-		"query_specification", "top_clause", "top_percent", "top_count", "order_by_clause", 
-		"for_clause", "xml_common_directives", "order_by_expression", "group_by_item", 
-		"option_clause", "option", "optimize_for_arg", "select_list", "udt_method_arguments", 
-		"asterisk", "column_elem", "udt_elem", "expression_elem", "select_list_elem", 
-		"table_sources", "table_source", "table_source_item_joined", "table_source_item", 
-		"open_xml", "schema_declaration", "column_declaration", "change_table", 
-		"join_part", "pivot_clause", "unpivot_clause", "full_column_name_list", 
-		"table_name_with_hint", "rowset_function", "bulk_option", "derived_table", 
-		"function_call", "xml_data_type_methods", "value_method", "query_method", 
-		"exist_method", "modify_method", "nodes_method", "switch_section", "switch_search_condition_section", 
-		"as_column_alias", "as_table_alias", "table_alias", "with_table_hints", 
-		"insert_with_table_hints", "table_hint", "index_value", "column_alias_list", 
-		"column_alias", "table_value_constructor", "expression_list", "ranking_windowed_function", 
-		"aggregate_windowed_function", "analytic_windowed_function", "all_distinct_expression", 
-		"over_clause", "row_or_range_clause", "window_frame_extent", "window_frame_bound", 
-		"window_frame_preceding", "window_frame_following", "create_database_option", 
-		"database_filestream_option", "database_file_spec", "file_group", "file_spec", 
-		"entity_name", "entity_name_for_azure_dw", "entity_name_for_parallel_dw", 
-		"full_table_name", "table_name", "simple_name", "func_proc_name_schema", 
-		"func_proc_name_database_schema", "func_proc_name_server_database_schema", 
-		"ddl_object", "full_column_name", "column_name_list_with_order", "column_name_list", 
-		"cursor_name", "on_off", "clustered", "null_notnull", "null_or_default", 
-		"scalar_function_name", "begin_conversation_timer", "begin_conversation_dialog", 
-		"contract_name", "service_name", "end_conversation", "waitfor_conversation", 
-		"get_conversation", "queue_id", "send_conversation", "data_type", "default_value", 
-		"constant", "sign", "id", "simple_id", "comparison_operator", "assignment_operator", 
-		"file_size"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"tsql_file", "batch", "sql_clauses", "sql_clause", "dml_clause", "ddl_clause", 
+			"backup_statement", "cfl_statement", "block_statement", "break_statement", 
+			"continue_statement", "goto_statement", "return_statement", "if_statement", 
+			"throw_statement", "throw_error_number", "throw_message", "throw_state", 
+			"try_catch_statement", "waitfor_statement", "while_statement", "print_statement", 
+			"raiseerror_statement", "empty_statement", "another_statement", "alter_application_role", 
+			"create_application_role", "drop_aggregate", "drop_application_role", 
+			"alter_assembly", "alter_assembly_start", "alter_assembly_clause", "alter_assembly_from_clause", 
+			"alter_assembly_from_clause_start", "alter_assembly_drop_clause", "alter_assembly_drop_multiple_files", 
+			"alter_assembly_drop", "alter_assembly_add_clause", "alter_asssembly_add_clause_start", 
+			"alter_assembly_client_file_clause", "alter_assembly_file_name", "alter_assembly_file_bits", 
+			"alter_assembly_as", "alter_assembly_with_clause", "alter_assembly_with", 
+			"client_assembly_specifier", "assembly_option", "network_file_share", 
+			"network_computer", "network_file_start", "file_path", "file_directory_path_separator", 
+			"local_file", "local_drive", "multiple_local_files", "multiple_local_file_start", 
+			"create_assembly", "drop_assembly", "alter_asymmetric_key", "alter_asymmetric_key_start", 
+			"asymmetric_key_option", "asymmetric_key_option_start", "asymmetric_key_password_change_option", 
+			"create_asymmetric_key", "drop_asymmetric_key", "alter_authorization", 
+			"authorization_grantee", "entity_to", "colon_colon", "alter_authorization_start", 
+			"alter_authorization_for_sql_database", "alter_authorization_for_azure_dw", 
+			"alter_authorization_for_parallel_dw", "class_type", "class_type_for_sql_database", 
+			"class_type_for_azure_dw", "class_type_for_parallel_dw", "drop_availability_group", 
+			"alter_availability_group", "alter_availability_group_start", "alter_availability_group_options", 
+			"create_or_alter_broker_priority", "drop_broker_priority", "alter_certificate", 
+			"alter_column_encryption_key", "create_column_encryption_key", "drop_certificate", 
+			"drop_column_encryption_key", "drop_column_master_key", "drop_contract", 
+			"drop_credential", "drop_cryptograhic_provider", "drop_database", "drop_database_audit_specification", 
+			"drop_database_scoped_credential", "drop_default", "drop_endpoint", "drop_external_data_source", 
+			"drop_external_file_format", "drop_external_library", "drop_external_resource_pool", 
+			"drop_external_table", "drop_event_notifications", "drop_event_session", 
+			"drop_fulltext_catalog", "drop_fulltext_index", "drop_fulltext_stoplist", 
+			"drop_login", "drop_master_key", "drop_message_type", "drop_partition_function", 
+			"drop_partition_scheme", "drop_queue", "drop_remote_service_binding", 
+			"drop_resource_pool", "drop_db_role", "drop_route", "drop_rule", "drop_schema", 
+			"drop_search_property_list", "drop_security_policy", "drop_sequence", 
+			"drop_server_audit", "drop_server_audit_specification", "drop_server_role", 
+			"drop_service", "drop_signature", "drop_statistics_name_azure_dw_and_pdw", 
+			"drop_symmetric_key", "drop_synonym", "drop_user", "drop_workload_group", 
+			"drop_xml_schema_collection", "disable_trigger", "enable_trigger", "lock_table", 
+			"truncate_table", "create_column_master_key", "alter_credential", "create_credential", 
+			"alter_cryptographic_provider", "create_cryptographic_provider", "create_event_notification", 
+			"create_or_alter_event_session", "event_session_predicate_expression", 
+			"event_session_predicate_factor", "event_session_predicate_leaf", "alter_external_data_source", 
+			"alter_external_library", "create_external_library", "alter_external_resource_pool", 
+			"create_external_resource_pool", "alter_fulltext_catalog", "create_fulltext_catalog", 
+			"alter_fulltext_stoplist", "create_fulltext_stoplist", "alter_login_sql_server", 
+			"create_login_sql_server", "alter_login_azure_sql", "create_login_azure_sql", 
+			"alter_login_azure_sql_dw_and_pdw", "create_login_pdw", "alter_master_key_sql_server", 
+			"create_master_key_sql_server", "alter_master_key_azure_sql", "create_master_key_azure_sql", 
+			"alter_message_type", "alter_partition_function", "alter_partition_scheme", 
+			"alter_remote_service_binding", "create_remote_service_binding", "create_resource_pool", 
+			"alter_resource_governor", "alter_db_role", "create_db_role", "create_route", 
+			"create_rule", "alter_schema_sql", "create_schema", "create_schema_azure_sql_dw_and_pdw", 
+			"alter_schema_azure_sql_dw_and_pdw", "create_search_property_list", "create_security_policy", 
+			"alter_sequence", "create_sequence", "alter_server_audit", "create_server_audit", 
+			"alter_server_audit_specification", "create_server_audit_specification", 
+			"alter_server_configuration", "alter_server_role", "create_server_role", 
+			"alter_server_role_pdw", "alter_service", "create_service", "alter_service_master_key", 
+			"alter_symmetric_key", "create_symmetric_key", "create_synonym", "alter_user", 
+			"create_user", "create_user_azure_sql_dw", "alter_user_azure_sql", "alter_workload_group", 
+			"create_workload_group", "create_xml_schema_collection", "create_queue", 
+			"queue_settings", "alter_queue", "queue_action", "queue_rebuild_options", 
+			"create_contract", "conversation_statement", "message_statement", "merge_statement", 
+			"merge_matched", "merge_not_matched", "delete_statement", "delete_statement_from", 
+			"insert_statement", "insert_statement_value", "receive_statement", "select_statement", 
+			"time", "update_statement", "output_clause", "output_dml_list_elem", 
+			"output_column_name", "create_database", "create_index", "create_or_alter_procedure", 
+			"create_or_alter_trigger", "create_or_alter_dml_trigger", "dml_trigger_option", 
+			"dml_trigger_operation", "create_or_alter_ddl_trigger", "ddl_trigger_operation", 
+			"create_or_alter_function", "func_body_returns_select", "func_body_returns_table", 
+			"func_body_returns_scalar", "procedure_param", "procedure_option", "function_option", 
+			"create_statistics", "update_statistics", "create_table", "table_options", 
+			"create_view", "view_attribute", "alter_table", "alter_database", "database_optionspec", 
+			"auto_option", "change_tracking_option", "change_tracking_option_list", 
+			"containment_option", "cursor_option", "alter_endpoint", "database_mirroring_option", 
+			"mirroring_set_option", "mirroring_partner", "mirroring_witness", "witness_partner_equal", 
+			"partner_option", "witness_option", "witness_server", "partner_server", 
+			"mirroring_host_port_seperator", "partner_server_tcp_prefix", "port_number", 
+			"host", "date_correlation_optimization_option", "db_encryption_option", 
+			"db_state_option", "db_update_option", "db_user_access_option", "delayed_durability_option", 
+			"external_access_option", "hadr_options", "mixed_page_allocation_option", 
+			"parameterization_option", "recovery_option", "service_broker_option", 
+			"snapshot_option", "sql_option", "target_recovery_time_option", "termination", 
+			"drop_index", "drop_relational_or_xml_or_spatial_index", "drop_backward_compatible_index", 
+			"drop_procedure", "drop_trigger", "drop_dml_trigger", "drop_ddl_trigger", 
+			"drop_function", "drop_statistics", "drop_table", "drop_view", "create_type", 
+			"drop_type", "rowset_function_limited", "openquery", "opendatasource", 
+			"declare_statement", "cursor_statement", "backup_database", "backup_log", 
+			"backup_certificate", "backup_master_key", "backup_service_master_key", 
+			"kill_statement", "kill_process", "kill_query_notification", "kill_stats_job", 
+			"execute_statement", "execute_body", "execute_statement_arg", "execute_var_string", 
+			"security_statement", "create_certificate", "existing_keys", "private_key_options", 
+			"generate_new_keys", "date_options", "open_key", "close_key", "create_key", 
+			"key_options", "algorithm", "encryption_mechanism", "decryption_mechanism", 
+			"grant_permission", "set_statement", "transaction_statement", "go_statement", 
+			"use_statement", "setuser_statement", "reconfigure_statement", "shutdown_statement", 
+			"dbcc_clause", "dbcc_options", "execute_clause", "declare_local", "table_type_definition", 
+			"xml_type_definition", "xml_schema_collection", "column_def_table_constraints", 
+			"column_def_table_constraint", "column_definition", "materialized_column_definition", 
+			"column_constraint", "table_constraint", "on_delete", "on_update", "index_options", 
+			"index_option", "declare_cursor", "declare_set_cursor_common", "declare_set_cursor_common_partial", 
+			"fetch_cursor", "set_special", "constant_LOCAL_ID", "expression", "primitive_expression", 
+			"case_expression", "unary_operator_expression", "bracket_expression", 
+			"constant_expression", "subquery", "with_expression", "common_table_expression", 
+			"update_elem", "search_condition_list", "search_condition", "search_condition_and", 
+			"search_condition_not", "predicate", "query_expression", "sql_union", 
+			"query_specification", "top_clause", "top_percent", "top_count", "order_by_clause", 
+			"for_clause", "xml_common_directives", "order_by_expression", "group_by_item", 
+			"option_clause", "option", "optimize_for_arg", "select_list", "udt_method_arguments", 
+			"asterisk", "column_elem", "udt_elem", "expression_elem", "select_list_elem", 
+			"table_sources", "table_source", "table_source_item_joined", "table_source_item", 
+			"open_xml", "schema_declaration", "column_declaration", "change_table", 
+			"join_part", "pivot_clause", "unpivot_clause", "full_column_name_list", 
+			"table_name_with_hint", "rowset_function", "bulk_option", "derived_table", 
+			"function_call", "xml_data_type_methods", "value_method", "query_method", 
+			"exist_method", "modify_method", "nodes_method", "switch_section", "switch_search_condition_section", 
+			"as_column_alias", "as_table_alias", "table_alias", "with_table_hints", 
+			"insert_with_table_hints", "table_hint", "index_value", "column_alias_list", 
+			"column_alias", "table_value_constructor", "expression_list", "ranking_windowed_function", 
+			"aggregate_windowed_function", "analytic_windowed_function", "all_distinct_expression", 
+			"over_clause", "row_or_range_clause", "window_frame_extent", "window_frame_bound", 
+			"window_frame_preceding", "window_frame_following", "create_database_option", 
+			"database_filestream_option", "database_file_spec", "file_group", "file_spec", 
+			"entity_name", "entity_name_for_azure_dw", "entity_name_for_parallel_dw", 
+			"full_table_name", "table_name", "simple_name", "func_proc_name_schema", 
+			"func_proc_name_database_schema", "func_proc_name_server_database_schema", 
+			"ddl_object", "full_column_name", "column_name_list_with_order", "column_name_list", 
+			"cursor_name", "on_off", "clustered", "null_notnull", "null_or_default", 
+			"scalar_function_name", "begin_conversation_timer", "begin_conversation_dialog", 
+			"contract_name", "service_name", "end_conversation", "waitfor_conversation", 
+			"get_conversation", "queue_id", "send_conversation", "data_type", "default_value", 
+			"constant", "sign", "id", "simple_id", "comparison_operator", "assignment_operator", 
+			"file_size"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'ABSENT'", "'ADD'", "'AES'", "'ALL'", "'ALLOW_CONNECTIONS'", "'ALLOW_MULTIPLE_EVENT_LOSS'", 
-		"'ALLOW_SINGLE_EVENT_LOSS'", "'ALTER'", "'AND'", "'ANONYMOUS'", "'ANY'", 
-		"'APPEND'", "'APPLICATION'", "'AS'", "'ASC'", "'ASYMMETRIC'", "'ASYNCHRONOUS_COMMIT'", 
-		"'AUTHORIZATION'", "'AUTHENTICATION'", "'AUTOMATED_BACKUP_PREFERENCE'", 
-		"'AUTOMATIC'", "'AVAILABILITY_MODE'", "'\\'", "'BACKUP'", "'BEFORE'", 
-		"'BEGIN'", "'BETWEEN'", "'BLOCK'", "'BLOCKSIZE'", "'BLOCKING_HIERARCHY'", 
-		"'BREAK'", "'BROWSE'", "'BUFFER'", "'BUFFERCOUNT'", "'BULK'", "'BY'", 
-		"'CACHE'", "'CALLED'", "'CASCADE'", "'CASE'", "'CERTIFICATE'", "'CHANGETABLE'", 
-		"'CHANGES'", "'CHECK'", "'CHECKPOINT'", "'CHECK_POLICY'", "'CHECK_EXPIRATION'", 
-		"'CLASSIFIER_FUNCTION'", "'CLOSE'", "'CLUSTER'", "'CLUSTERED'", "'COALESCE'", 
-		"'COLLATE'", "'COLUMN'", "'COMPRESSION'", "'COMMIT'", "'COMPUTE'", "'CONFIGURATION'", 
-		"'CONSTRAINT'", "'CONTAINMENT'", "'CONTAINS'", "'CONTAINSTABLE'", "'CONTEXT'", 
-		"'CONTINUE'", "'CONTINUE_AFTER_ERROR'", "'CONTRACT'", "'CONTRACT_NAME'", 
-		"'CONVERSATION'", null, "'COPY_ONLY'", "'CREATE'", "'CROSS'", "'CURRENT'", 
-		"'CURRENT_DATE'", "'CURRENT_TIME'", "'CURRENT_TIMESTAMP'", "'CURRENT_USER'", 
-		"'CURSOR'", "'CYCLE'", "'DATA_COMPRESSION'", "'DATA_SOURCE'", "'DATABASE'", 
-		"'DATABASE_MIRRORING'", "'DBCC'", "'DEALLOCATE'", "'DECLARE'", "'DEFAULT'", 
-		"'DEFAULT_DATABASE'", "'DEFAULT_SCHEMA'", "'DELETE'", "'DENY'", "'DESC'", 
-		"'DIAGNOSTICS'", "'DIFFERENTIAL'", "'DISK'", "'DISTINCT'", "'DISTRIBUTED'", 
-		"'DOUBLE'", "'\\\\'", "'//'", "'DROP'", "'DTC_SUPPORT'", "'DUMP'", "'ELSE'", 
-		"'ENABLED'", "'END'", "'ENDPOINT'", "'ERRLVL'", "'ESCAPE'", "'ERROR'", 
-		"'EVENT'", null, "'EVENT_RETENTION_MODE'", "'EXCEPT'", "'EXECUTABLE_FILE'", 
-		null, "'EXISTS'", "'EXPIREDATE'", "'EXIT'", "'EXTENSION'", "'EXTERNAL'", 
-		"'EXTERNAL_ACCESS'", "'FAILOVER'", "'FAILURECONDITIONLEVEL'", "'FAN_IN'", 
-		"'FETCH'", "'FILE'", "'FILENAME'", "'FILLFACTOR'", "'FILE_SNAPSHOT'", 
-		"'FOR'", "'FORCESEEK'", "'FORCE_SERVICE_ALLOW_DATA_LOSS'", "'FOREIGN'", 
-		"'FREETEXT'", "'FREETEXTTABLE'", "'FROM'", "'FULL'", "'FUNCTION'", "'GET'", 
-		"'GOTO'", "'GOVERNOR'", "'GRANT'", "'GROUP'", "'HAVING'", "'HASHED'", 
-		"'HEALTHCHECKTIMEOUT'", "'IDENTITY'", "'IDENTITYCOL'", "'IDENTITY_INSERT'", 
-		"'IF'", "'IIF'", "'IN'", "'INCLUDE'", "'INCREMENT'", "'INDEX'", "'INFINITE'", 
-		"'INIT'", "'INNER'", "'INSERT'", "'INSTEAD'", "'INTERSECT'", "'INTO'", 
-		null, null, "'IS'", "'ISNULL'", "'JOIN'", "'KERBEROS'", "'KEY'", "'KEY_PATH'", 
-		"'KEY_STORE_PROVIDER_NAME'", "'KILL'", "'LANGUAGE'", "'LEFT'", "'LIBRARY'", 
-		"'LIFETIME'", "'LIKE'", "'LINENO'", "'LINUX'", "'LISTENER_IP'", "'LISTENER_PORT'", 
-		"'LOAD'", "'LOCAL_SERVICE_NAME'", "'LOG'", "'MATCHED'", "'MASTER'", "'MAX_MEMORY'", 
-		"'MAXTRANSFER'", "'MAXVALUE'", "'MAX_DISPATCH_LATENCY'", "'MAX_EVENT_SIZE'", 
-		"'MAX_SIZE'", "'MAX_OUTSTANDING_IO_PER_VOLUME'", "'MEDIADESCRIPTION'", 
-		"'MEDIANAME'", "'MEMBER'", "'MEMORY_PARTITION_MODE'", "'MERGE'", "'MESSAGE_FORWARDING'", 
-		"'MESSAGE_FORWARD_SIZE'", "'MINVALUE'", "'MIRROR'", "'MUST_CHANGE'", "'NATIONAL'", 
-		"'NEGOTIATE'", "'NOCHECK'", "'NOFORMAT'", "'NOINIT'", "'NONCLUSTERED'", 
-		"'NONE'", "'NOREWIND'", "'NOSKIP'", "'NOUNLOAD'", "'NO_CHECKSUM'", "'NO_COMPRESSION'", 
-		"'NO_EVENT_LOSS'", "'NOT'", "'NOTIFICATION'", "'NTLM'", "'NULL'", "'NULLIF'", 
-		"'OF'", "'OFF'", "'OFFSETS'", "'OLD_PASSWORD'", "'ON'", "'ON_FAILURE'", 
-		"'OPEN'", "'OPENDATASOURCE'", "'OPENQUERY'", "'OPENROWSET'", "'OPENXML'", 
-		"'OPTION'", "'OR'", "'ORDER'", "'OUTER'", "'OVER'", "'PAGE'", "'PARAM_NODE'", 
-		"'PARTIAL'", "'PASSWORD'", "'PERCENT'", "'PERMISSION_SET'", "'PER_CPU'", 
-		"'PER_DB'", "'PER_NODE'", "'PIVOT'", "'PLAN'", "'PLATFORM'", "'POLICY'", 
-		"'PRECISION'", "'PREDICATE'", "'PRIMARY'", "'PRINT'", "'PROC'", "'PROCEDURE'", 
-		"'PROCESS'", "'PUBLIC'", "'PYTHON'", "'R'", "'RAISERROR'", "'RAW'", "'READ'", 
-		"'READTEXT'", "'READ_WRITE_FILEGROUPS'", "'RECONFIGURE'", "'REFERENCES'", 
-		"'REGENERATE'", "'RELATED_CONVERSATION'", "'RELATED_CONVERSATION_GROUP'", 
-		"'REPLICATION'", "'REQUIRED'", "'RESET'", "'RESTART'", "'RESTORE'", "'RESTRICT'", 
-		"'RESUME'", "'RETAINDAYS'", "'RETURN'", "'RETURNS'", "'REVERT'", "'REVOKE'", 
-		"'REWIND'", "'RIGHT'", "'ROLLBACK'", "'ROLE'", "'ROWCOUNT'", "'ROWGUIDCOL'", 
-		"'RSA_512'", "'RSA_1024'", "'RSA_2048'", "'RSA_3072'", "'RSA_4096'", "'SAFETY'", 
-		"'RULE'", "'SAFE'", "'SAVE'", "'SCHEDULER'", "'SCHEMA'", "'SCHEME'", "'SECURITYAUDIT'", 
-		"'SELECT'", "'SEMANTICKEYPHRASETABLE'", "'SEMANTICSIMILARITYDETAILSTABLE'", 
-		"'SEMANTICSIMILARITYTABLE'", "'SERVER'", "'SERVICE'", "'SERVICE_BROKER'", 
-		"'SERVICE_NAME'", "'SESSION'", "'SESSION_USER'", "'SET'", "'SETUSER'", 
-		"'SHUTDOWN'", "'SID'", "'SKIP'", "'SOFTNUMA'", "'SOME'", "'SOURCE'", "'SPECIFICATION'", 
-		"'SPLIT'", "'SQLDUMPERFLAGS'", "'SQLDUMPERPATH'", "'SQLDUMPERTIMEOUTS'", 
-		"'STATISTICS'", "'STATE'", "'STATS'", "'START'", "'STARTED'", "'STARTUP_STATE'", 
-		"'STOP'", "'STOPPED'", "'STOP_ON_ERROR'", "'SUPPORTED'", "'SYSTEM_USER'", 
-		"'TABLE'", "'TABLESAMPLE'", "'TAPE'", "'TARGET'", "'TCP'", "'TEXTSIZE'", 
-		"'THEN'", "'TO'", "'TOP'", "'TRACK_CAUSALITY'", "'TRAN'", "'TRANSACTION'", 
-		"'TRANSFER'", "'TRIGGER'", "'TRUNCATE'", "'TSEQUAL'", "'UNCHECKED'", "'UNION'", 
-		"'UNIQUE'", "'UNLOCK'", "'UNPIVOT'", "'UNSAFE'", "'UPDATE'", "'UPDATETEXT'", 
-		"'URL'", "'USE'", "'USED'", "'USER'", "'VALUES'", "'VARYING'", "'VERBOSELOGGING'", 
-		"'VIEW'", "'VISIBILITY'", "'WAITFOR'", "'WHEN'", "'WHERE'", "'WHILE'", 
-		"'WINDOWS'", "'WITH'", "'WITHIN'", "'WITHOUT'", "'WITNESS'", "'WRITETEXT'", 
-		"'ABSOLUTE'", "'ACCENT_SENSITIVITY'", "'ACTION'", "'ACTIVATION'", "'ACTIVE'", 
-		"'ADDRESS'", "'AES_128'", "'AES_192'", "'AES_256'", "'AFFINITY'", "'AFTER'", 
-		"'AGGREGATE'", "'ALGORITHM'", "'ALLOW_ENCRYPTED_VALUE_MODIFICATIONS'", 
-		"'ALLOW_SNAPSHOT_ISOLATION'", "'ALLOWED'", "'ANSI_NULL_DEFAULT'", "'ANSI_NULLS'", 
-		"'ANSI_PADDING'", "'ANSI_WARNINGS'", "'APPLICATION_LOG'", "'APPLY'", "'ARITHABORT'", 
-		"'ASSEMBLY'", "'AUDIT'", "'AUDIT_GUID'", "'AUTO'", "'AUTO_CLEANUP'", "'AUTO_CLOSE'", 
-		"'AUTO_CREATE_STATISTICS'", "'AUTO_SHRINK'", "'AUTO_UPDATE_STATISTICS'", 
-		"'AUTO_UPDATE_STATISTICS_ASYNC'", "'AVAILABILITY'", "'AVG'", "'BACKUP_PRIORITY'", 
-		"'BEGIN_DIALOG'", "'BIGINT'", "'BINARY BASE64'", "'BINARY_CHECKSUM'", 
-		"'BINDING'", "'BLOB_STORAGE'", "'BROKER'", "'BROKER_INSTANCE'", "'BULK_LOGGED'", 
-		"'CALLER'", "'CAP_CPU_PERCENT'", null, "'CATALOG'", "'CATCH'", "'CHANGE_RETENTION'", 
-		"'CHANGE_TRACKING'", "'CHECKSUM'", "'CHECKSUM_AGG'", "'CLEANUP'", "'COLLECTION'", 
-		"'COLUMN_MASTER_KEY'", "'COMMITTED'", "'COMPATIBILITY_LEVEL'", "'CONCAT'", 
-		"'CONCAT_NULL_YIELDS_NULL'", "'CONTENT'", "'CONTROL'", "'COOKIE'", "'COUNT'", 
-		"'COUNT_BIG'", "'COUNTER'", "'CPU'", "'CREATE_NEW'", "'CREATION_DISPOSITION'", 
-		"'CREDENTIAL'", "'CRYPTOGRAPHIC'", "'CURSOR_CLOSE_ON_COMMIT'", "'CURSOR_DEFAULT'", 
-		"'DATA'", "'DATE_CORRELATION_OPTIMIZATION'", "'DATEADD'", "'DATEDIFF'", 
-		"'DATENAME'", "'DATEPART'", "'DAYS'", "'DB_CHAINING'", "'DB_FAILOVER'", 
-		"'DECRYPTION'", null, "'DEFAULT_FULLTEXT_LANGUAGE'", "'DEFAULT_LANGUAGE'", 
-		"'DELAY'", "'DELAYED_DURABILITY'", "'DELETED'", "'DENSE_RANK'", "'DEPENDENTS'", 
-		"'DES'", "'DESCRIPTION'", "'DESX'", "'DHCP'", "'DIALOG'", "'DIRECTORY_NAME'", 
-		"'DISABLE'", "'DISABLE_BROKER'", "'DISABLED'", null, "'DOCUMENT'", "'DYNAMIC'", 
-		"'ELEMENTS'", "'EMERGENCY'", "'EMPTY'", "'ENABLE'", "'ENABLE_BROKER'", 
-		"'ENCRYPTED_VALUE'", "'ENCRYPTION'", "'ENDPOINT_URL'", "'ERROR_BROKER_CONVERSATIONS'", 
-		"'EXCLUSIVE'", "'EXECUTABLE'", "'EXIST'", "'EXPAND'", "'EXPIRY_DATE'", 
-		"'EXPLICIT'", "'FAIL_OPERATION'", "'FAILOVER_MODE'", "'FAILURE'", "'FAILURE_CONDITION_LEVEL'", 
-		"'FAST'", "'FAST_FORWARD'", "'FILEGROUP'", "'FILEGROWTH'", "'FILEPATH'", 
-		"'FILESTREAM'", "'FILTER'", "'FIRST'", "'FIRST_VALUE'", "'FOLLOWING'", 
-		"'FORCE'", "'FORCE_FAILOVER_ALLOW_DATA_LOSS'", "'FORCED'", "'FORMAT'", 
-		"'FORWARD_ONLY'", "'FULLSCAN'", "'FULLTEXT'", "'GB'", "'GETDATE'", "'GETUTCDATE'", 
-		"'GLOBAL'", "'GO'", "'GROUP_MAX_REQUESTS'", "'GROUPING'", "'GROUPING_ID'", 
-		"'HADR'", "'HASH'", "'HEALTH_CHECK_TIMEOUT'", "'HIGH'", "'HONOR_BROKER_PRIORITY'", 
-		"'HOURS'", "'IDENTITY_VALUE'", "'IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX'", 
-		"'IMMEDIATE'", "'IMPERSONATE'", "'IMPORTANCE'", "'INCLUDE_NULL_VALUES'", 
-		"'INCREMENTAL'", "'INITIATOR'", "'INPUT'", "'INSENSITIVE'", "'INSERTED'", 
-		"'INT'", "'IP'", "'ISOLATION'", "'JOB'", "'JSON'", "'KB'", "'KEEP'", "'KEEPFIXED'", 
-		"'KEY_SOURCE'", "'KEYS'", "'KEYSET'", "'LAG'", "'LAST'", "'LAST_VALUE'", 
-		"'LEAD'", "'LEVEL'", "'LIST'", "'LISTENER'", "'LISTENER_URL'", "'LOB_COMPACTION'", 
-		"'LOCAL'", "'LOCATION'", "'LOCK'", "'LOCK_ESCALATION'", "'LOGIN'", "'LOOP'", 
-		"'LOW'", "'MANUAL'", "'MARK'", "'MATERIALIZED'", "'MAX'", "'MAX_CPU_PERCENT'", 
-		"'MAX_DOP'", "'MAX_FILES'", "'MAX_IOPS_PER_VOLUME'", "'MAX_MEMORY_PERCENT'", 
-		"'MAX_PROCESSES'", "'MAX_QUEUE_READERS'", "'MAX_ROLLOVER_FILES'", "'MAXDOP'", 
-		"'MAXRECURSION'", "'MAXSIZE'", "'MB'", "'MEDIUM'", "'MEMORY_OPTIMIZED_DATA'", 
-		"'MESSAGE'", "'MIN'", "'MIN_ACTIVE_ROWVERSION'", "'MIN_CPU_PERCENT'", 
-		"'MIN_IOPS_PER_VOLUME'", "'MIN_MEMORY_PERCENT'", "'MINUTES'", "'MIRROR_ADDRESS'", 
-		"'MIXED_PAGE_ALLOCATION'", "'MODE'", "'MODIFY'", "'MOVE'", "'MULTI_USER'", 
-		"'NAME'", "'NESTED_TRIGGERS'", "'NEW_ACCOUNT'", "'NEW_BROKER'", "'NEW_PASSWORD'", 
-		"'NEXT'", "'NO'", "'NO_TRUNCATE'", "'NO_WAIT'", "'NOCOUNT'", "'NODES'", 
-		"'NOEXPAND'", "'NON_TRANSACTED_ACCESS'", "'NORECOMPUTE'", "'NORECOVERY'", 
-		"'NOWAIT'", "'NTILE'", "'NUMANODE'", "'NUMBER'", "'NUMERIC_ROUNDABORT'", 
-		"'OBJECT'", "'OFFLINE'", "'OFFSET'", "'OLD_ACCOUNT'", "'ONLINE'", "'ONLY'", 
-		"'OPEN_EXISTING'", "'OPTIMISTIC'", "'OPTIMIZE'", "'OUT'", "'OUTPUT'", 
-		"'OVERRIDE'", "'OWNER'", "'PAGE_VERIFY'", "'PARAMETERIZATION'", "'PARTITION'", 
-		"'PARTITIONS'", "'PARTNER'", "'PATH'", "'POISON_MESSAGE_HANDLING'", "'POOL'", 
-		"'PORT'", "'PRECEDING'", "'PRIMARY_ROLE'", "'PRIOR'", "'PRIORITY'", "'PRIORITY_LEVEL'", 
-		"'PRIVATE'", "'PRIVATE_KEY'", "'PRIVILEGES'", "'PROCEDURE_NAME'", "'PROPERTY'", 
-		"'PROVIDER'", "'PROVIDER_KEY_NAME'", "'QUERY'", "'QUEUE'", "'QUEUE_DELAY'", 
-		"'QUOTED_IDENTIFIER'", "'RANGE'", "'RANK'", "'RC2'", "'RC4'", "'RC4_128'", 
-		"'READ_COMMITTED_SNAPSHOT'", "'READ_ONLY'", "'READ_ONLY_ROUTING_LIST'", 
-		"'READ_WRITE'", "'READONLY'", "'REBUILD'", "'RECEIVE'", "'RECOMPILE'", 
-		"'RECOVERY'", "'RECURSIVE_TRIGGERS'", "'RELATIVE'", "'REMOTE'", "'REMOTE_SERVICE_NAME'", 
-		"'REMOVE'", "'REORGANIZE'", "'REPEATABLE'", "'REPLICA'", "'REQUEST_MAX_CPU_TIME_SEC'", 
-		"'REQUEST_MAX_MEMORY_GRANT_PERCENT'", "'REQUEST_MEMORY_GRANT_TIMEOUT_SEC'", 
-		"'REQUIRED_SYNCHRONIZED_SECONDARIES_TO_COMMIT'", "'RESERVE_DISK_SPACE'", 
-		"'RESOURCE'", "'RESOURCE_MANAGER_LOCATION'", "'RESTRICTED_USER'", "'RETENTION'", 
-		"'ROBUST'", "'ROOT'", "'ROUTE'", "'ROW'", "'ROW_NUMBER'", "'ROWGUID'", 
-		"'ROWS'", "'SAMPLE'", "'SCHEMABINDING'", "'SCOPED'", "'SCROLL'", "'SCROLL_LOCKS'", 
-		"'SEARCH'", "'SECONDARY'", "'SECONDARY_ONLY'", "'SECONDARY_ROLE'", "'SECONDS'", 
-		"'SECRET'", "'SECURITY'", "'SECURITY_LOG'", "'SEEDING_MODE'", "'SELF'", 
-		"'SEMI_SENSITIVE'", "'SEND'", "'SENT'", "'SEQUENCE'", "'SERIALIZABLE'", 
-		"'SESSION_TIMEOUT'", "'SETERROR'", "'SHARE'", "'SHOWPLAN'", "'SIGNATURE'", 
-		"'SIMPLE'", "'SINGLE_USER'", "'SIZE'", "'SMALLINT'", "'SNAPSHOT'", "'SPATIAL_WINDOW_MAX_CELLS'", 
-		"'STANDBY'", "'START_DATE'", "'STATIC'", "'STATS_STREAM'", "'STATUS'", 
-		"'STATUSONLY'", "'STDEV'", "'STDEVP'", "'STOPLIST'", "'STRING_AGG'", "'STUFF'", 
-		"'SUBJECT'", "'SUBSCRIPTION'", "'SUM'", "'SUSPEND'", "'SYMMETRIC'", "'SYNCHRONOUS_COMMIT'", 
-		"'SYNONYM'", "'SYSTEM'", "'TAKE'", "'TARGET_RECOVERY_TIME'", "'TB'", "'TEXTIMAGE_ON'", 
-		"'THROW'", "'TIES'", "'TIME'", "'TIMEOUT'", "'TIMER'", "'TINYINT'", "'TORN_PAGE_DETECTION'", 
-		"'TRANSFORM_NOISE_WORDS'", "'TRIPLE_DES'", "'TRIPLE_DES_3KEY'", "'TRUSTWORTHY'", 
-		"'TRY'", "'TSQL'", "'TWO_DIGIT_YEAR_CUTOFF'", "'TYPE'", "'TYPE_WARNING'", 
-		"'UNBOUNDED'", "'UNCOMMITTED'", "'UNKNOWN'", "'UNLIMITED'", "'UOW'", "'USING'", 
-		"'VALID_XML'", "'VALIDATION'", "'VALUE'", "'VAR'", "'VARP'", "'VIEW_METADATA'", 
-		"'VIEWS'", "'WAIT'", "'WELL_FORMED_XML'", "'WITHOUT_ARRAY_WRAPPER'", "'WORK'", 
-		"'WORKLOAD'", "'XML'", "'XMLDATA'", "'XMLNAMESPACES'", "'XMLSCHEMA'", 
-		"'XSINIL'", "'$ACTION'", null, null, null, null, "'''", null, null, null, 
-		null, null, null, null, null, null, null, "'='", "'>'", "'<'", "'!'", 
-		"'+='", "'-='", "'*='", "'/='", "'%='", "'&='", "'^='", "'|='", "'||'", 
-		"'.'", "'_'", "'@'", "'#'", "'$'", "'('", "')'", "','", "';'", "':'", 
-		"'*'", "'/'", "'%'", "'+'", "'-'", "'~'", "'|'", "'&'", "'^'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "ABSENT", "ADD", "AES", "ALL", "ALLOW_CONNECTIONS", "ALLOW_MULTIPLE_EVENT_LOSS", 
-		"ALLOW_SINGLE_EVENT_LOSS", "ALTER", "AND", "ANONYMOUS", "ANY", "APPEND", 
-		"APPLICATION", "AS", "ASC", "ASYMMETRIC", "ASYNCHRONOUS_COMMIT", "AUTHORIZATION", 
-		"AUTHENTICATION", "AUTOMATED_BACKUP_PREFERENCE", "AUTOMATIC", "AVAILABILITY_MODE", 
-		"BACKSLASH", "BACKUP", "BEFORE", "BEGIN", "BETWEEN", "BLOCK", "BLOCKSIZE", 
-		"BLOCKING_HIERARCHY", "BREAK", "BROWSE", "BUFFER", "BUFFERCOUNT", "BULK", 
-		"BY", "CACHE", "CALLED", "CASCADE", "CASE", "CERTIFICATE", "CHANGETABLE", 
-		"CHANGES", "CHECK", "CHECKPOINT", "CHECK_POLICY", "CHECK_EXPIRATION", 
-		"CLASSIFIER_FUNCTION", "CLOSE", "CLUSTER", "CLUSTERED", "COALESCE", "COLLATE", 
-		"COLUMN", "COMPRESSION", "COMMIT", "COMPUTE", "CONFIGURATION", "CONSTRAINT", 
-		"CONTAINMENT", "CONTAINS", "CONTAINSTABLE", "CONTEXT", "CONTINUE", "CONTINUE_AFTER_ERROR", 
-		"CONTRACT", "CONTRACT_NAME", "CONVERSATION", "CONVERT", "COPY_ONLY", "CREATE", 
-		"CROSS", "CURRENT", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", 
-		"CURRENT_USER", "CURSOR", "CYCLE", "DATA_COMPRESSION", "DATA_SOURCE", 
-		"DATABASE", "DATABASE_MIRRORING", "DBCC", "DEALLOCATE", "DECLARE", "DEFAULT", 
-		"DEFAULT_DATABASE", "DEFAULT_SCHEMA", "DELETE", "DENY", "DESC", "DIAGNOSTICS", 
-		"DIFFERENTIAL", "DISK", "DISTINCT", "DISTRIBUTED", "DOUBLE", "DOUBLE_BACK_SLASH", 
-		"DOUBLE_FORWARD_SLASH", "DROP", "DTC_SUPPORT", "DUMP", "ELSE", "ENABLED", 
-		"END", "ENDPOINT", "ERRLVL", "ESCAPE", "ERROR", "EVENT", "EVENTDATA", 
-		"EVENT_RETENTION_MODE", "EXCEPT", "EXECUTABLE_FILE", "EXECUTE", "EXISTS", 
-		"EXPIREDATE", "EXIT", "EXTENSION", "EXTERNAL", "EXTERNAL_ACCESS", "FAILOVER", 
-		"FAILURECONDITIONLEVEL", "FAN_IN", "FETCH", "FILE", "FILENAME", "FILLFACTOR", 
-		"FILE_SNAPSHOT", "FOR", "FORCESEEK", "FORCE_SERVICE_ALLOW_DATA_LOSS", 
-		"FOREIGN", "FREETEXT", "FREETEXTTABLE", "FROM", "FULL", "FUNCTION", "GET", 
-		"GOTO", "GOVERNOR", "GRANT", "GROUP", "HAVING", "HASHED", "HEALTHCHECKTIMEOUT", 
-		"IDENTITY", "IDENTITYCOL", "IDENTITY_INSERT", "IF", "IIF", "IN", "INCLUDE", 
-		"INCREMENT", "INDEX", "INFINITE", "INIT", "INNER", "INSERT", "INSTEAD", 
-		"INTERSECT", "INTO", "IPV4_ADDR", "IPV6_ADDR", "IS", "ISNULL", "JOIN", 
-		"KERBEROS", "KEY", "KEY_PATH", "KEY_STORE_PROVIDER_NAME", "KILL", "LANGUAGE", 
-		"LEFT", "LIBRARY", "LIFETIME", "LIKE", "LINENO", "LINUX", "LISTENER_IP", 
-		"LISTENER_PORT", "LOAD", "LOCAL_SERVICE_NAME", "LOG", "MATCHED", "MASTER", 
-		"MAX_MEMORY", "MAXTRANSFER", "MAXVALUE", "MAX_DISPATCH_LATENCY", "MAX_EVENT_SIZE", 
-		"MAX_SIZE", "MAX_OUTSTANDING_IO_PER_VOLUME", "MEDIADESCRIPTION", "MEDIANAME", 
-		"MEMBER", "MEMORY_PARTITION_MODE", "MERGE", "MESSAGE_FORWARDING", "MESSAGE_FORWARD_SIZE", 
-		"MINVALUE", "MIRROR", "MUST_CHANGE", "NATIONAL", "NEGOTIATE", "NOCHECK", 
-		"NOFORMAT", "NOINIT", "NONCLUSTERED", "NONE", "NOREWIND", "NOSKIP", "NOUNLOAD", 
-		"NO_CHECKSUM", "NO_COMPRESSION", "NO_EVENT_LOSS", "NOT", "NOTIFICATION", 
-		"NTLM", "NULL", "NULLIF", "OF", "OFF", "OFFSETS", "OLD_PASSWORD", "ON", 
-		"ON_FAILURE", "OPEN", "OPENDATASOURCE", "OPENQUERY", "OPENROWSET", "OPENXML", 
-		"OPTION", "OR", "ORDER", "OUTER", "OVER", "PAGE", "PARAM_NODE", "PARTIAL", 
-		"PASSWORD", "PERCENT", "PERMISSION_SET", "PER_CPU", "PER_DB", "PER_NODE", 
-		"PIVOT", "PLAN", "PLATFORM", "POLICY", "PRECISION", "PREDICATE", "PRIMARY", 
-		"PRINT", "PROC", "PROCEDURE", "PROCESS", "PUBLIC", "PYTHON", "R", "RAISERROR", 
-		"RAW", "READ", "READTEXT", "READ_WRITE_FILEGROUPS", "RECONFIGURE", "REFERENCES", 
-		"REGENERATE", "RELATED_CONVERSATION", "RELATED_CONVERSATION_GROUP", "REPLICATION", 
-		"REQUIRED", "RESET", "RESTART", "RESTORE", "RESTRICT", "RESUME", "RETAINDAYS", 
-		"RETURN", "RETURNS", "REVERT", "REVOKE", "REWIND", "RIGHT", "ROLLBACK", 
-		"ROLE", "ROWCOUNT", "ROWGUIDCOL", "RSA_512", "RSA_1024", "RSA_2048", "RSA_3072", 
-		"RSA_4096", "SAFETY", "RULE", "SAFE", "SAVE", "SCHEDULER", "SCHEMA", "SCHEME", 
-		"SECURITYAUDIT", "SELECT", "SEMANTICKEYPHRASETABLE", "SEMANTICSIMILARITYDETAILSTABLE", 
-		"SEMANTICSIMILARITYTABLE", "SERVER", "SERVICE", "SERVICE_BROKER", "SERVICE_NAME", 
-		"SESSION", "SESSION_USER", "SET", "SETUSER", "SHUTDOWN", "SID", "SKIP_KEYWORD", 
-		"SOFTNUMA", "SOME", "SOURCE", "SPECIFICATION", "SPLIT", "SQLDUMPERFLAGS", 
-		"SQLDUMPERPATH", "SQLDUMPERTIMEOUT", "STATISTICS", "STATE", "STATS", "START", 
-		"STARTED", "STARTUP_STATE", "STOP", "STOPPED", "STOP_ON_ERROR", "SUPPORTED", 
-		"SYSTEM_USER", "TABLE", "TABLESAMPLE", "TAPE", "TARGET", "TCP", "TEXTSIZE", 
-		"THEN", "TO", "TOP", "TRACK_CAUSALITY", "TRAN", "TRANSACTION", "TRANSFER", 
-		"TRIGGER", "TRUNCATE", "TSEQUAL", "UNCHECKED", "UNION", "UNIQUE", "UNLOCK", 
-		"UNPIVOT", "UNSAFE", "UPDATE", "UPDATETEXT", "URL", "USE", "USED", "USER", 
-		"VALUES", "VARYING", "VERBOSELOGGING", "VIEW", "VISIBILITY", "WAITFOR", 
-		"WHEN", "WHERE", "WHILE", "WINDOWS", "WITH", "WITHIN", "WITHOUT", "WITNESS", 
-		"WRITETEXT", "ABSOLUTE", "ACCENT_SENSITIVITY", "ACTION", "ACTIVATION", 
-		"ACTIVE", "ADDRESS", "AES_128", "AES_192", "AES_256", "AFFINITY", "AFTER", 
-		"AGGREGATE", "ALGORITHM", "ALLOW_ENCRYPTED_VALUE_MODIFICATIONS", "ALLOW_SNAPSHOT_ISOLATION", 
-		"ALLOWED", "ANSI_NULL_DEFAULT", "ANSI_NULLS", "ANSI_PADDING", "ANSI_WARNINGS", 
-		"APPLICATION_LOG", "APPLY", "ARITHABORT", "ASSEMBLY", "AUDIT", "AUDIT_GUID", 
-		"AUTO", "AUTO_CLEANUP", "AUTO_CLOSE", "AUTO_CREATE_STATISTICS", "AUTO_SHRINK", 
-		"AUTO_UPDATE_STATISTICS", "AUTO_UPDATE_STATISTICS_ASYNC", "AVAILABILITY", 
-		"AVG", "BACKUP_PRIORITY", "BEGIN_DIALOG", "BIGINT", "BINARY_BASE64", "BINARY_CHECKSUM", 
-		"BINDING", "BLOB_STORAGE", "BROKER", "BROKER_INSTANCE", "BULK_LOGGED", 
-		"CALLER", "CAP_CPU_PERCENT", "CAST", "CATALOG", "CATCH", "CHANGE_RETENTION", 
-		"CHANGE_TRACKING", "CHECKSUM", "CHECKSUM_AGG", "CLEANUP", "COLLECTION", 
-		"COLUMN_MASTER_KEY", "COMMITTED", "COMPATIBILITY_LEVEL", "CONCAT", "CONCAT_NULL_YIELDS_NULL", 
-		"CONTENT", "CONTROL", "COOKIE", "COUNT", "COUNT_BIG", "COUNTER", "CPU", 
-		"CREATE_NEW", "CREATION_DISPOSITION", "CREDENTIAL", "CRYPTOGRAPHIC", "CURSOR_CLOSE_ON_COMMIT", 
-		"CURSOR_DEFAULT", "DATA", "DATE_CORRELATION_OPTIMIZATION", "DATEADD", 
-		"DATEDIFF", "DATENAME", "DATEPART", "DAYS", "DB_CHAINING", "DB_FAILOVER", 
-		"DECRYPTION", "DEFAULT_DOUBLE_QUOTE", "DEFAULT_FULLTEXT_LANGUAGE", "DEFAULT_LANGUAGE", 
-		"DELAY", "DELAYED_DURABILITY", "DELETED", "DENSE_RANK", "DEPENDENTS", 
-		"DES", "DESCRIPTION", "DESX", "DHCP", "DIALOG", "DIRECTORY_NAME", "DISABLE", 
-		"DISABLE_BROKER", "DISABLED", "DISK_DRIVE", "DOCUMENT", "DYNAMIC", "ELEMENTS", 
-		"EMERGENCY", "EMPTY", "ENABLE", "ENABLE_BROKER", "ENCRYPTED_VALUE", "ENCRYPTION", 
-		"ENDPOINT_URL", "ERROR_BROKER_CONVERSATIONS", "EXCLUSIVE", "EXECUTABLE", 
-		"EXIST", "EXPAND", "EXPIRY_DATE", "EXPLICIT", "FAIL_OPERATION", "FAILOVER_MODE", 
-		"FAILURE", "FAILURE_CONDITION_LEVEL", "FAST", "FAST_FORWARD", "FILEGROUP", 
-		"FILEGROWTH", "FILEPATH", "FILESTREAM", "FILTER", "FIRST", "FIRST_VALUE", 
-		"FOLLOWING", "FORCE", "FORCE_FAILOVER_ALLOW_DATA_LOSS", "FORCED", "FORMAT", 
-		"FORWARD_ONLY", "FULLSCAN", "FULLTEXT", "GB", "GETDATE", "GETUTCDATE", 
-		"GLOBAL", "GO", "GROUP_MAX_REQUESTS", "GROUPING", "GROUPING_ID", "HADR", 
-		"HASH", "HEALTH_CHECK_TIMEOUT", "HIGH", "HONOR_BROKER_PRIORITY", "HOURS", 
-		"IDENTITY_VALUE", "IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX", "IMMEDIATE", 
-		"IMPERSONATE", "IMPORTANCE", "INCLUDE_NULL_VALUES", "INCREMENTAL", "INITIATOR", 
-		"INPUT", "INSENSITIVE", "INSERTED", "INT", "IP", "ISOLATION", "JOB", "JSON", 
-		"KB", "KEEP", "KEEPFIXED", "KEY_SOURCE", "KEYS", "KEYSET", "LAG", "LAST", 
-		"LAST_VALUE", "LEAD", "LEVEL", "LIST", "LISTENER", "LISTENER_URL", "LOB_COMPACTION", 
-		"LOCAL", "LOCATION", "LOCK", "LOCK_ESCALATION", "LOGIN", "LOOP", "LOW", 
-		"MANUAL", "MARK", "MATERIALIZED", "MAX", "MAX_CPU_PERCENT", "MAX_DOP", 
-		"MAX_FILES", "MAX_IOPS_PER_VOLUME", "MAX_MEMORY_PERCENT", "MAX_PROCESSES", 
-		"MAX_QUEUE_READERS", "MAX_ROLLOVER_FILES", "MAXDOP", "MAXRECURSION", "MAXSIZE", 
-		"MB", "MEDIUM", "MEMORY_OPTIMIZED_DATA", "MESSAGE", "MIN", "MIN_ACTIVE_ROWVERSION", 
-		"MIN_CPU_PERCENT", "MIN_IOPS_PER_VOLUME", "MIN_MEMORY_PERCENT", "MINUTES", 
-		"MIRROR_ADDRESS", "MIXED_PAGE_ALLOCATION", "MODE", "MODIFY", "MOVE", "MULTI_USER", 
-		"NAME", "NESTED_TRIGGERS", "NEW_ACCOUNT", "NEW_BROKER", "NEW_PASSWORD", 
-		"NEXT", "NO", "NO_TRUNCATE", "NO_WAIT", "NOCOUNT", "NODES", "NOEXPAND", 
-		"NON_TRANSACTED_ACCESS", "NORECOMPUTE", "NORECOVERY", "NOWAIT", "NTILE", 
-		"NUMANODE", "NUMBER", "NUMERIC_ROUNDABORT", "OBJECT", "OFFLINE", "OFFSET", 
-		"OLD_ACCOUNT", "ONLINE", "ONLY", "OPEN_EXISTING", "OPTIMISTIC", "OPTIMIZE", 
-		"OUT", "OUTPUT", "OVERRIDE", "OWNER", "PAGE_VERIFY", "PARAMETERIZATION", 
-		"PARTITION", "PARTITIONS", "PARTNER", "PATH", "POISON_MESSAGE_HANDLING", 
-		"POOL", "PORT", "PRECEDING", "PRIMARY_ROLE", "PRIOR", "PRIORITY", "PRIORITY_LEVEL", 
-		"PRIVATE", "PRIVATE_KEY", "PRIVILEGES", "PROCEDURE_NAME", "PROPERTY", 
-		"PROVIDER", "PROVIDER_KEY_NAME", "QUERY", "QUEUE", "QUEUE_DELAY", "QUOTED_IDENTIFIER", 
-		"RANGE", "RANK", "RC2", "RC4", "RC4_128", "READ_COMMITTED_SNAPSHOT", "READ_ONLY", 
-		"READ_ONLY_ROUTING_LIST", "READ_WRITE", "READONLY", "REBUILD", "RECEIVE", 
-		"RECOMPILE", "RECOVERY", "RECURSIVE_TRIGGERS", "RELATIVE", "REMOTE", "REMOTE_SERVICE_NAME", 
-		"REMOVE", "REORGANIZE", "REPEATABLE", "REPLICA", "REQUEST_MAX_CPU_TIME_SEC", 
-		"REQUEST_MAX_MEMORY_GRANT_PERCENT", "REQUEST_MEMORY_GRANT_TIMEOUT_SEC", 
-		"REQUIRED_SYNCHRONIZED_SECONDARIES_TO_COMMIT", "RESERVE_DISK_SPACE", "RESOURCE", 
-		"RESOURCE_MANAGER_LOCATION", "RESTRICTED_USER", "RETENTION", "ROBUST", 
-		"ROOT", "ROUTE", "ROW", "ROW_NUMBER", "ROWGUID", "ROWS", "SAMPLE", "SCHEMABINDING", 
-		"SCOPED", "SCROLL", "SCROLL_LOCKS", "SEARCH", "SECONDARY", "SECONDARY_ONLY", 
-		"SECONDARY_ROLE", "SECONDS", "SECRET", "SECURITY", "SECURITY_LOG", "SEEDING_MODE", 
-		"SELF", "SEMI_SENSITIVE", "SEND", "SENT", "SEQUENCE", "SERIALIZABLE", 
-		"SESSION_TIMEOUT", "SETERROR", "SHARE", "SHOWPLAN", "SIGNATURE", "SIMPLE", 
-		"SINGLE_USER", "SIZE", "SMALLINT", "SNAPSHOT", "SPATIAL_WINDOW_MAX_CELLS", 
-		"STANDBY", "START_DATE", "STATIC", "STATS_STREAM", "STATUS", "STATUSONLY", 
-		"STDEV", "STDEVP", "STOPLIST", "STRING_AGG", "STUFF", "SUBJECT", "SUBSCRIPTION", 
-		"SUM", "SUSPEND", "SYMMETRIC", "SYNCHRONOUS_COMMIT", "SYNONYM", "SYSTEM", 
-		"TAKE", "TARGET_RECOVERY_TIME", "TB", "TEXTIMAGE_ON", "THROW", "TIES", 
-		"TIME", "TIMEOUT", "TIMER", "TINYINT", "TORN_PAGE_DETECTION", "TRANSFORM_NOISE_WORDS", 
-		"TRIPLE_DES", "TRIPLE_DES_3KEY", "TRUSTWORTHY", "TRY", "TSQL", "TWO_DIGIT_YEAR_CUTOFF", 
-		"TYPE", "TYPE_WARNING", "UNBOUNDED", "UNCOMMITTED", "UNKNOWN", "UNLIMITED", 
-		"UOW", "USING", "VALID_XML", "VALIDATION", "VALUE", "VAR", "VARP", "VIEW_METADATA", 
-		"VIEWS", "WAIT", "WELL_FORMED_XML", "WITHOUT_ARRAY_WRAPPER", "WORK", "WORKLOAD", 
-		"XML", "XMLDATA", "XMLNAMESPACES", "XMLSCHEMA", "XSINIL", "DOLLAR_ACTION", 
-		"SPACE", "COMMENT", "LINE_COMMENT", "DOUBLE_QUOTE_ID", "SINGLE_QUOTE", 
-		"SQUARE_BRACKET_ID", "LOCAL_ID", "DECIMAL", "ID", "QUOTED_URL", "QUOTED_HOST_AND_PORT", 
-		"STRING", "BINARY", "FLOAT", "REAL", "EQUAL", "GREATER", "LESS", "EXCLAMATION", 
-		"PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", 
-		"AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN", "DOUBLE_BAR", "DOT", "UNDERLINE", 
-		"AT", "SHARP", "DOLLAR", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", 
-		"COLON", "STAR", "DIVIDE", "MODULE", "PLUS", "MINUS", "BIT_NOT", "BIT_OR", 
-		"BIT_AND", "BIT_XOR", "IPV4_OCTECT"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'ABSENT'", "'ADD'", "'AES'", "'ALL'", "'ALLOW_CONNECTIONS'", "'ALLOW_MULTIPLE_EVENT_LOSS'", 
+			"'ALLOW_SINGLE_EVENT_LOSS'", "'ALTER'", "'AND'", "'ANONYMOUS'", "'ANY'", 
+			"'APPEND'", "'APPLICATION'", "'AS'", "'ASC'", "'ASYMMETRIC'", "'ASYNCHRONOUS_COMMIT'", 
+			"'AUTHORIZATION'", "'AUTHENTICATION'", "'AUTOMATED_BACKUP_PREFERENCE'", 
+			"'AUTOMATIC'", "'AVAILABILITY_MODE'", "'\\'", "'BACKUP'", "'BEFORE'", 
+			"'BEGIN'", "'BETWEEN'", "'BLOCK'", "'BLOCKSIZE'", "'BLOCKING_HIERARCHY'", 
+			"'BREAK'", "'BROWSE'", "'BUFFER'", "'BUFFERCOUNT'", "'BULK'", "'BY'", 
+			"'CACHE'", "'CALLED'", "'CASCADE'", "'CASE'", "'CERTIFICATE'", "'CHANGETABLE'", 
+			"'CHANGES'", "'CHECK'", "'CHECKPOINT'", "'CHECK_POLICY'", "'CHECK_EXPIRATION'", 
+			"'CLASSIFIER_FUNCTION'", "'CLOSE'", "'CLUSTER'", "'CLUSTERED'", "'COALESCE'", 
+			"'COLLATE'", "'COLUMN'", "'COMPRESSION'", "'COMMIT'", "'COMPUTE'", "'CONFIGURATION'", 
+			"'CONSTRAINT'", "'CONTAINMENT'", "'CONTAINS'", "'CONTAINSTABLE'", "'CONTEXT'", 
+			"'CONTINUE'", "'CONTINUE_AFTER_ERROR'", "'CONTRACT'", "'CONTRACT_NAME'", 
+			"'CONVERSATION'", null, "'COPY_ONLY'", "'CREATE'", "'CROSS'", "'CURRENT'", 
+			"'CURRENT_DATE'", "'CURRENT_TIME'", "'CURRENT_TIMESTAMP'", "'CURRENT_USER'", 
+			"'CURSOR'", "'CYCLE'", "'DATA_COMPRESSION'", "'DATA_SOURCE'", "'DATABASE'", 
+			"'DATABASE_MIRRORING'", "'DBCC'", "'DEALLOCATE'", "'DECLARE'", "'DEFAULT'", 
+			"'DEFAULT_DATABASE'", "'DEFAULT_SCHEMA'", "'DELETE'", "'DENY'", "'DESC'", 
+			"'DIAGNOSTICS'", "'DIFFERENTIAL'", "'DISK'", "'DISTINCT'", "'DISTRIBUTED'", 
+			"'DOUBLE'", "'\\\\'", "'//'", "'DROP'", "'DTC_SUPPORT'", "'DUMP'", "'ELSE'", 
+			"'ENABLED'", "'END'", "'ENDPOINT'", "'ERRLVL'", "'ESCAPE'", "'ERROR'", 
+			"'EVENT'", null, "'EVENT_RETENTION_MODE'", "'EXCEPT'", "'EXECUTABLE_FILE'", 
+			null, "'EXISTS'", "'EXPIREDATE'", "'EXIT'", "'EXTENSION'", "'EXTERNAL'", 
+			"'EXTERNAL_ACCESS'", "'FAILOVER'", "'FAILURECONDITIONLEVEL'", "'FAN_IN'", 
+			"'FETCH'", "'FILE'", "'FILENAME'", "'FILLFACTOR'", "'FILE_SNAPSHOT'", 
+			"'FOR'", "'FORCESEEK'", "'FORCE_SERVICE_ALLOW_DATA_LOSS'", "'FOREIGN'", 
+			"'FREETEXT'", "'FREETEXTTABLE'", "'FROM'", "'FULL'", "'FUNCTION'", "'GET'", 
+			"'GOTO'", "'GOVERNOR'", "'GRANT'", "'GROUP'", "'HAVING'", "'HASHED'", 
+			"'HEALTHCHECKTIMEOUT'", "'IDENTITY'", "'IDENTITYCOL'", "'IDENTITY_INSERT'", 
+			"'IF'", "'IIF'", "'IN'", "'INCLUDE'", "'INCREMENT'", "'INDEX'", "'INFINITE'", 
+			"'INIT'", "'INNER'", "'INSERT'", "'INSTEAD'", "'INTERSECT'", "'INTO'", 
+			null, null, "'IS'", "'ISNULL'", "'JOIN'", "'KERBEROS'", "'KEY'", "'KEY_PATH'", 
+			"'KEY_STORE_PROVIDER_NAME'", "'KILL'", "'LANGUAGE'", "'LEFT'", "'LIBRARY'", 
+			"'LIFETIME'", "'LIKE'", "'LINENO'", "'LINUX'", "'LISTENER_IP'", "'LISTENER_PORT'", 
+			"'LOAD'", "'LOCAL_SERVICE_NAME'", "'LOG'", "'MATCHED'", "'MASTER'", "'MAX_MEMORY'", 
+			"'MAXTRANSFER'", "'MAXVALUE'", "'MAX_DISPATCH_LATENCY'", "'MAX_EVENT_SIZE'", 
+			"'MAX_SIZE'", "'MAX_OUTSTANDING_IO_PER_VOLUME'", "'MEDIADESCRIPTION'", 
+			"'MEDIANAME'", "'MEMBER'", "'MEMORY_PARTITION_MODE'", "'MERGE'", "'MESSAGE_FORWARDING'", 
+			"'MESSAGE_FORWARD_SIZE'", "'MINVALUE'", "'MIRROR'", "'MUST_CHANGE'", 
+			"'NATIONAL'", "'NEGOTIATE'", "'NOCHECK'", "'NOFORMAT'", "'NOINIT'", "'NONCLUSTERED'", 
+			"'NONE'", "'NOREWIND'", "'NOSKIP'", "'NOUNLOAD'", "'NO_CHECKSUM'", "'NO_COMPRESSION'", 
+			"'NO_EVENT_LOSS'", "'NOT'", "'NOTIFICATION'", "'NTLM'", "'NULL'", "'NULLIF'", 
+			"'OF'", "'OFF'", "'OFFSETS'", "'OLD_PASSWORD'", "'ON'", "'ON_FAILURE'", 
+			"'OPEN'", "'OPENDATASOURCE'", "'OPENQUERY'", "'OPENROWSET'", "'OPENXML'", 
+			"'OPTION'", "'OR'", "'ORDER'", "'OUTER'", "'OVER'", "'PAGE'", "'PARAM_NODE'", 
+			"'PARTIAL'", "'PASSWORD'", "'PERCENT'", "'PERMISSION_SET'", "'PER_CPU'", 
+			"'PER_DB'", "'PER_NODE'", "'PIVOT'", "'PLAN'", "'PLATFORM'", "'POLICY'", 
+			"'PRECISION'", "'PREDICATE'", "'PRIMARY'", "'PRINT'", "'PROC'", "'PROCEDURE'", 
+			"'PROCESS'", "'PUBLIC'", "'PYTHON'", "'R'", "'RAISERROR'", "'RAW'", "'READ'", 
+			"'READTEXT'", "'READ_WRITE_FILEGROUPS'", "'RECONFIGURE'", "'REFERENCES'", 
+			"'REGENERATE'", "'RELATED_CONVERSATION'", "'RELATED_CONVERSATION_GROUP'", 
+			"'REPLICATION'", "'REQUIRED'", "'RESET'", "'RESTART'", "'RESTORE'", "'RESTRICT'", 
+			"'RESUME'", "'RETAINDAYS'", "'RETURN'", "'RETURNS'", "'REVERT'", "'REVOKE'", 
+			"'REWIND'", "'RIGHT'", "'ROLLBACK'", "'ROLE'", "'ROWCOUNT'", "'ROWGUIDCOL'", 
+			"'RSA_512'", "'RSA_1024'", "'RSA_2048'", "'RSA_3072'", "'RSA_4096'", 
+			"'SAFETY'", "'RULE'", "'SAFE'", "'SAVE'", "'SCHEDULER'", "'SCHEMA'", 
+			"'SCHEME'", "'SECURITYAUDIT'", "'SELECT'", "'SEMANTICKEYPHRASETABLE'", 
+			"'SEMANTICSIMILARITYDETAILSTABLE'", "'SEMANTICSIMILARITYTABLE'", "'SERVER'", 
+			"'SERVICE'", "'SERVICE_BROKER'", "'SERVICE_NAME'", "'SESSION'", "'SESSION_USER'", 
+			"'SET'", "'SETUSER'", "'SHUTDOWN'", "'SID'", "'SKIP'", "'SOFTNUMA'", 
+			"'SOME'", "'SOURCE'", "'SPECIFICATION'", "'SPLIT'", "'SQLDUMPERFLAGS'", 
+			"'SQLDUMPERPATH'", "'SQLDUMPERTIMEOUTS'", "'STATISTICS'", "'STATE'", 
+			"'STATS'", "'START'", "'STARTED'", "'STARTUP_STATE'", "'STOP'", "'STOPPED'", 
+			"'STOP_ON_ERROR'", "'SUPPORTED'", "'SYSTEM_USER'", "'TABLE'", "'TABLESAMPLE'", 
+			"'TAPE'", "'TARGET'", "'TCP'", "'TEXTSIZE'", "'THEN'", "'TO'", "'TOP'", 
+			"'TRACK_CAUSALITY'", "'TRAN'", "'TRANSACTION'", "'TRANSFER'", "'TRIGGER'", 
+			"'TRUNCATE'", "'TSEQUAL'", "'UNCHECKED'", "'UNION'", "'UNIQUE'", "'UNLOCK'", 
+			"'UNPIVOT'", "'UNSAFE'", "'UPDATE'", "'UPDATETEXT'", "'URL'", "'USE'", 
+			"'USED'", "'USER'", "'VALUES'", "'VARYING'", "'VERBOSELOGGING'", "'VIEW'", 
+			"'VISIBILITY'", "'WAITFOR'", "'WHEN'", "'WHERE'", "'WHILE'", "'WINDOWS'", 
+			"'WITH'", "'WITHIN'", "'WITHOUT'", "'WITNESS'", "'WRITETEXT'", "'ABSOLUTE'", 
+			"'ACCENT_SENSITIVITY'", "'ACTION'", "'ACTIVATION'", "'ACTIVE'", "'ADDRESS'", 
+			"'AES_128'", "'AES_192'", "'AES_256'", "'AFFINITY'", "'AFTER'", "'AGGREGATE'", 
+			"'ALGORITHM'", "'ALLOW_ENCRYPTED_VALUE_MODIFICATIONS'", "'ALLOW_SNAPSHOT_ISOLATION'", 
+			"'ALLOWED'", "'ANSI_NULL_DEFAULT'", "'ANSI_NULLS'", "'ANSI_PADDING'", 
+			"'ANSI_WARNINGS'", "'APPLICATION_LOG'", "'APPLY'", "'ARITHABORT'", "'ASSEMBLY'", 
+			"'AUDIT'", "'AUDIT_GUID'", "'AUTO'", "'AUTO_CLEANUP'", "'AUTO_CLOSE'", 
+			"'AUTO_CREATE_STATISTICS'", "'AUTO_SHRINK'", "'AUTO_UPDATE_STATISTICS'", 
+			"'AUTO_UPDATE_STATISTICS_ASYNC'", "'AVAILABILITY'", "'AVG'", "'BACKUP_PRIORITY'", 
+			"'BEGIN_DIALOG'", "'BIGINT'", "'BINARY BASE64'", "'BINARY_CHECKSUM'", 
+			"'BINDING'", "'BLOB_STORAGE'", "'BROKER'", "'BROKER_INSTANCE'", "'BULK_LOGGED'", 
+			"'CALLER'", "'CAP_CPU_PERCENT'", null, "'CATALOG'", "'CATCH'", "'CHANGE_RETENTION'", 
+			"'CHANGE_TRACKING'", "'CHECKSUM'", "'CHECKSUM_AGG'", "'CLEANUP'", "'COLLECTION'", 
+			"'COLUMN_MASTER_KEY'", "'COMMITTED'", "'COMPATIBILITY_LEVEL'", "'CONCAT'", 
+			"'CONCAT_NULL_YIELDS_NULL'", "'CONTENT'", "'CONTROL'", "'COOKIE'", "'COUNT'", 
+			"'COUNT_BIG'", "'COUNTER'", "'CPU'", "'CREATE_NEW'", "'CREATION_DISPOSITION'", 
+			"'CREDENTIAL'", "'CRYPTOGRAPHIC'", "'CURSOR_CLOSE_ON_COMMIT'", "'CURSOR_DEFAULT'", 
+			"'DATA'", "'DATE_CORRELATION_OPTIMIZATION'", "'DATEADD'", "'DATEDIFF'", 
+			"'DATENAME'", "'DATEPART'", "'DAYS'", "'DB_CHAINING'", "'DB_FAILOVER'", 
+			"'DECRYPTION'", null, "'DEFAULT_FULLTEXT_LANGUAGE'", "'DEFAULT_LANGUAGE'", 
+			"'DELAY'", "'DELAYED_DURABILITY'", "'DELETED'", "'DENSE_RANK'", "'DEPENDENTS'", 
+			"'DES'", "'DESCRIPTION'", "'DESX'", "'DHCP'", "'DIALOG'", "'DIRECTORY_NAME'", 
+			"'DISABLE'", "'DISABLE_BROKER'", "'DISABLED'", null, "'DOCUMENT'", "'DYNAMIC'", 
+			"'ELEMENTS'", "'EMERGENCY'", "'EMPTY'", "'ENABLE'", "'ENABLE_BROKER'", 
+			"'ENCRYPTED_VALUE'", "'ENCRYPTION'", "'ENDPOINT_URL'", "'ERROR_BROKER_CONVERSATIONS'", 
+			"'EXCLUSIVE'", "'EXECUTABLE'", "'EXIST'", "'EXPAND'", "'EXPIRY_DATE'", 
+			"'EXPLICIT'", "'FAIL_OPERATION'", "'FAILOVER_MODE'", "'FAILURE'", "'FAILURE_CONDITION_LEVEL'", 
+			"'FAST'", "'FAST_FORWARD'", "'FILEGROUP'", "'FILEGROWTH'", "'FILEPATH'", 
+			"'FILESTREAM'", "'FILTER'", "'FIRST'", "'FIRST_VALUE'", "'FOLLOWING'", 
+			"'FORCE'", "'FORCE_FAILOVER_ALLOW_DATA_LOSS'", "'FORCED'", "'FORMAT'", 
+			"'FORWARD_ONLY'", "'FULLSCAN'", "'FULLTEXT'", "'GB'", "'GETDATE'", "'GETUTCDATE'", 
+			"'GLOBAL'", "'GO'", "'GROUP_MAX_REQUESTS'", "'GROUPING'", "'GROUPING_ID'", 
+			"'HADR'", "'HASH'", "'HEALTH_CHECK_TIMEOUT'", "'HIGH'", "'HONOR_BROKER_PRIORITY'", 
+			"'HOURS'", "'IDENTITY_VALUE'", "'IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX'", 
+			"'IMMEDIATE'", "'IMPERSONATE'", "'IMPORTANCE'", "'INCLUDE_NULL_VALUES'", 
+			"'INCREMENTAL'", "'INITIATOR'", "'INPUT'", "'INSENSITIVE'", "'INSERTED'", 
+			"'INT'", "'IP'", "'ISOLATION'", "'JOB'", "'JSON'", "'KB'", "'KEEP'", 
+			"'KEEPFIXED'", "'KEY_SOURCE'", "'KEYS'", "'KEYSET'", "'LAG'", "'LAST'", 
+			"'LAST_VALUE'", "'LEAD'", "'LEVEL'", "'LIST'", "'LISTENER'", "'LISTENER_URL'", 
+			"'LOB_COMPACTION'", "'LOCAL'", "'LOCATION'", "'LOCK'", "'LOCK_ESCALATION'", 
+			"'LOGIN'", "'LOOP'", "'LOW'", "'MANUAL'", "'MARK'", "'MATERIALIZED'", 
+			"'MAX'", "'MAX_CPU_PERCENT'", "'MAX_DOP'", "'MAX_FILES'", "'MAX_IOPS_PER_VOLUME'", 
+			"'MAX_MEMORY_PERCENT'", "'MAX_PROCESSES'", "'MAX_QUEUE_READERS'", "'MAX_ROLLOVER_FILES'", 
+			"'MAXDOP'", "'MAXRECURSION'", "'MAXSIZE'", "'MB'", "'MEDIUM'", "'MEMORY_OPTIMIZED_DATA'", 
+			"'MESSAGE'", "'MIN'", "'MIN_ACTIVE_ROWVERSION'", "'MIN_CPU_PERCENT'", 
+			"'MIN_IOPS_PER_VOLUME'", "'MIN_MEMORY_PERCENT'", "'MINUTES'", "'MIRROR_ADDRESS'", 
+			"'MIXED_PAGE_ALLOCATION'", "'MODE'", "'MODIFY'", "'MOVE'", "'MULTI_USER'", 
+			"'NAME'", "'NESTED_TRIGGERS'", "'NEW_ACCOUNT'", "'NEW_BROKER'", "'NEW_PASSWORD'", 
+			"'NEXT'", "'NO'", "'NO_TRUNCATE'", "'NO_WAIT'", "'NOCOUNT'", "'NODES'", 
+			"'NOEXPAND'", "'NON_TRANSACTED_ACCESS'", "'NORECOMPUTE'", "'NORECOVERY'", 
+			"'NOWAIT'", "'NTILE'", "'NUMANODE'", "'NUMBER'", "'NUMERIC_ROUNDABORT'", 
+			"'OBJECT'", "'OFFLINE'", "'OFFSET'", "'OLD_ACCOUNT'", "'ONLINE'", "'ONLY'", 
+			"'OPEN_EXISTING'", "'OPTIMISTIC'", "'OPTIMIZE'", "'OUT'", "'OUTPUT'", 
+			"'OVERRIDE'", "'OWNER'", "'PAGE_VERIFY'", "'PARAMETERIZATION'", "'PARTITION'", 
+			"'PARTITIONS'", "'PARTNER'", "'PATH'", "'POISON_MESSAGE_HANDLING'", "'POOL'", 
+			"'PORT'", "'PRECEDING'", "'PRIMARY_ROLE'", "'PRIOR'", "'PRIORITY'", "'PRIORITY_LEVEL'", 
+			"'PRIVATE'", "'PRIVATE_KEY'", "'PRIVILEGES'", "'PROCEDURE_NAME'", "'PROPERTY'", 
+			"'PROVIDER'", "'PROVIDER_KEY_NAME'", "'QUERY'", "'QUEUE'", "'QUEUE_DELAY'", 
+			"'QUOTED_IDENTIFIER'", "'RANGE'", "'RANK'", "'RC2'", "'RC4'", "'RC4_128'", 
+			"'READ_COMMITTED_SNAPSHOT'", "'READ_ONLY'", "'READ_ONLY_ROUTING_LIST'", 
+			"'READ_WRITE'", "'READONLY'", "'REBUILD'", "'RECEIVE'", "'RECOMPILE'", 
+			"'RECOVERY'", "'RECURSIVE_TRIGGERS'", "'RELATIVE'", "'REMOTE'", "'REMOTE_SERVICE_NAME'", 
+			"'REMOVE'", "'REORGANIZE'", "'REPEATABLE'", "'REPLICA'", "'REQUEST_MAX_CPU_TIME_SEC'", 
+			"'REQUEST_MAX_MEMORY_GRANT_PERCENT'", "'REQUEST_MEMORY_GRANT_TIMEOUT_SEC'", 
+			"'REQUIRED_SYNCHRONIZED_SECONDARIES_TO_COMMIT'", "'RESERVE_DISK_SPACE'", 
+			"'RESOURCE'", "'RESOURCE_MANAGER_LOCATION'", "'RESTRICTED_USER'", "'RETENTION'", 
+			"'ROBUST'", "'ROOT'", "'ROUTE'", "'ROW'", "'ROW_NUMBER'", "'ROWGUID'", 
+			"'ROWS'", "'SAMPLE'", "'SCHEMABINDING'", "'SCOPED'", "'SCROLL'", "'SCROLL_LOCKS'", 
+			"'SEARCH'", "'SECONDARY'", "'SECONDARY_ONLY'", "'SECONDARY_ROLE'", "'SECONDS'", 
+			"'SECRET'", "'SECURITY'", "'SECURITY_LOG'", "'SEEDING_MODE'", "'SELF'", 
+			"'SEMI_SENSITIVE'", "'SEND'", "'SENT'", "'SEQUENCE'", "'SERIALIZABLE'", 
+			"'SESSION_TIMEOUT'", "'SETERROR'", "'SHARE'", "'SHOWPLAN'", "'SIGNATURE'", 
+			"'SIMPLE'", "'SINGLE_USER'", "'SIZE'", "'SMALLINT'", "'SNAPSHOT'", "'SPATIAL_WINDOW_MAX_CELLS'", 
+			"'STANDBY'", "'START_DATE'", "'STATIC'", "'STATS_STREAM'", "'STATUS'", 
+			"'STATUSONLY'", "'STDEV'", "'STDEVP'", "'STOPLIST'", "'STRING_AGG'", 
+			"'STUFF'", "'SUBJECT'", "'SUBSCRIPTION'", "'SUM'", "'SUSPEND'", "'SYMMETRIC'", 
+			"'SYNCHRONOUS_COMMIT'", "'SYNONYM'", "'SYSTEM'", "'TAKE'", "'TARGET_RECOVERY_TIME'", 
+			"'TB'", "'TEXTIMAGE_ON'", "'THROW'", "'TIES'", "'TIME'", "'TIMEOUT'", 
+			"'TIMER'", "'TINYINT'", "'TORN_PAGE_DETECTION'", "'TRANSFORM_NOISE_WORDS'", 
+			"'TRIPLE_DES'", "'TRIPLE_DES_3KEY'", "'TRUSTWORTHY'", "'TRY'", "'TSQL'", 
+			"'TWO_DIGIT_YEAR_CUTOFF'", "'TYPE'", "'TYPE_WARNING'", "'UNBOUNDED'", 
+			"'UNCOMMITTED'", "'UNKNOWN'", "'UNLIMITED'", "'UOW'", "'USING'", "'VALID_XML'", 
+			"'VALIDATION'", "'VALUE'", "'VAR'", "'VARP'", "'VIEW_METADATA'", "'VIEWS'", 
+			"'WAIT'", "'WELL_FORMED_XML'", "'WITHOUT_ARRAY_WRAPPER'", "'WORK'", "'WORKLOAD'", 
+			"'XML'", "'XMLDATA'", "'XMLNAMESPACES'", "'XMLSCHEMA'", "'XSINIL'", "'$ACTION'", 
+			null, null, null, null, "'''", null, null, null, null, null, null, null, 
+			null, null, null, "'='", "'>'", "'<'", "'!'", "'+='", "'-='", "'*='", 
+			"'/='", "'%='", "'&='", "'^='", "'|='", "'||'", "'.'", "'_'", "'@'", 
+			"'#'", "'$'", "'('", "')'", "','", "';'", "':'", "'*'", "'/'", "'%'", 
+			"'+'", "'-'", "'~'", "'|'", "'&'", "'^'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "ABSENT", "ADD", "AES", "ALL", "ALLOW_CONNECTIONS", "ALLOW_MULTIPLE_EVENT_LOSS", 
+			"ALLOW_SINGLE_EVENT_LOSS", "ALTER", "AND", "ANONYMOUS", "ANY", "APPEND", 
+			"APPLICATION", "AS", "ASC", "ASYMMETRIC", "ASYNCHRONOUS_COMMIT", "AUTHORIZATION", 
+			"AUTHENTICATION", "AUTOMATED_BACKUP_PREFERENCE", "AUTOMATIC", "AVAILABILITY_MODE", 
+			"BACKSLASH", "BACKUP", "BEFORE", "BEGIN", "BETWEEN", "BLOCK", "BLOCKSIZE", 
+			"BLOCKING_HIERARCHY", "BREAK", "BROWSE", "BUFFER", "BUFFERCOUNT", "BULK", 
+			"BY", "CACHE", "CALLED", "CASCADE", "CASE", "CERTIFICATE", "CHANGETABLE", 
+			"CHANGES", "CHECK", "CHECKPOINT", "CHECK_POLICY", "CHECK_EXPIRATION", 
+			"CLASSIFIER_FUNCTION", "CLOSE", "CLUSTER", "CLUSTERED", "COALESCE", "COLLATE", 
+			"COLUMN", "COMPRESSION", "COMMIT", "COMPUTE", "CONFIGURATION", "CONSTRAINT", 
+			"CONTAINMENT", "CONTAINS", "CONTAINSTABLE", "CONTEXT", "CONTINUE", "CONTINUE_AFTER_ERROR", 
+			"CONTRACT", "CONTRACT_NAME", "CONVERSATION", "CONVERT", "COPY_ONLY", 
+			"CREATE", "CROSS", "CURRENT", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", 
+			"CURRENT_USER", "CURSOR", "CYCLE", "DATA_COMPRESSION", "DATA_SOURCE", 
+			"DATABASE", "DATABASE_MIRRORING", "DBCC", "DEALLOCATE", "DECLARE", "DEFAULT", 
+			"DEFAULT_DATABASE", "DEFAULT_SCHEMA", "DELETE", "DENY", "DESC", "DIAGNOSTICS", 
+			"DIFFERENTIAL", "DISK", "DISTINCT", "DISTRIBUTED", "DOUBLE", "DOUBLE_BACK_SLASH", 
+			"DOUBLE_FORWARD_SLASH", "DROP", "DTC_SUPPORT", "DUMP", "ELSE", "ENABLED", 
+			"END", "ENDPOINT", "ERRLVL", "ESCAPE", "ERROR", "EVENT", "EVENTDATA", 
+			"EVENT_RETENTION_MODE", "EXCEPT", "EXECUTABLE_FILE", "EXECUTE", "EXISTS", 
+			"EXPIREDATE", "EXIT", "EXTENSION", "EXTERNAL", "EXTERNAL_ACCESS", "FAILOVER", 
+			"FAILURECONDITIONLEVEL", "FAN_IN", "FETCH", "FILE", "FILENAME", "FILLFACTOR", 
+			"FILE_SNAPSHOT", "FOR", "FORCESEEK", "FORCE_SERVICE_ALLOW_DATA_LOSS", 
+			"FOREIGN", "FREETEXT", "FREETEXTTABLE", "FROM", "FULL", "FUNCTION", "GET", 
+			"GOTO", "GOVERNOR", "GRANT", "GROUP", "HAVING", "HASHED", "HEALTHCHECKTIMEOUT", 
+			"IDENTITY", "IDENTITYCOL", "IDENTITY_INSERT", "IF", "IIF", "IN", "INCLUDE", 
+			"INCREMENT", "INDEX", "INFINITE", "INIT", "INNER", "INSERT", "INSTEAD", 
+			"INTERSECT", "INTO", "IPV4_ADDR", "IPV6_ADDR", "IS", "ISNULL", "JOIN", 
+			"KERBEROS", "KEY", "KEY_PATH", "KEY_STORE_PROVIDER_NAME", "KILL", "LANGUAGE", 
+			"LEFT", "LIBRARY", "LIFETIME", "LIKE", "LINENO", "LINUX", "LISTENER_IP", 
+			"LISTENER_PORT", "LOAD", "LOCAL_SERVICE_NAME", "LOG", "MATCHED", "MASTER", 
+			"MAX_MEMORY", "MAXTRANSFER", "MAXVALUE", "MAX_DISPATCH_LATENCY", "MAX_EVENT_SIZE", 
+			"MAX_SIZE", "MAX_OUTSTANDING_IO_PER_VOLUME", "MEDIADESCRIPTION", "MEDIANAME", 
+			"MEMBER", "MEMORY_PARTITION_MODE", "MERGE", "MESSAGE_FORWARDING", "MESSAGE_FORWARD_SIZE", 
+			"MINVALUE", "MIRROR", "MUST_CHANGE", "NATIONAL", "NEGOTIATE", "NOCHECK", 
+			"NOFORMAT", "NOINIT", "NONCLUSTERED", "NONE", "NOREWIND", "NOSKIP", "NOUNLOAD", 
+			"NO_CHECKSUM", "NO_COMPRESSION", "NO_EVENT_LOSS", "NOT", "NOTIFICATION", 
+			"NTLM", "NULL", "NULLIF", "OF", "OFF", "OFFSETS", "OLD_PASSWORD", "ON", 
+			"ON_FAILURE", "OPEN", "OPENDATASOURCE", "OPENQUERY", "OPENROWSET", "OPENXML", 
+			"OPTION", "OR", "ORDER", "OUTER", "OVER", "PAGE", "PARAM_NODE", "PARTIAL", 
+			"PASSWORD", "PERCENT", "PERMISSION_SET", "PER_CPU", "PER_DB", "PER_NODE", 
+			"PIVOT", "PLAN", "PLATFORM", "POLICY", "PRECISION", "PREDICATE", "PRIMARY", 
+			"PRINT", "PROC", "PROCEDURE", "PROCESS", "PUBLIC", "PYTHON", "R", "RAISERROR", 
+			"RAW", "READ", "READTEXT", "READ_WRITE_FILEGROUPS", "RECONFIGURE", "REFERENCES", 
+			"REGENERATE", "RELATED_CONVERSATION", "RELATED_CONVERSATION_GROUP", "REPLICATION", 
+			"REQUIRED", "RESET", "RESTART", "RESTORE", "RESTRICT", "RESUME", "RETAINDAYS", 
+			"RETURN", "RETURNS", "REVERT", "REVOKE", "REWIND", "RIGHT", "ROLLBACK", 
+			"ROLE", "ROWCOUNT", "ROWGUIDCOL", "RSA_512", "RSA_1024", "RSA_2048", 
+			"RSA_3072", "RSA_4096", "SAFETY", "RULE", "SAFE", "SAVE", "SCHEDULER", 
+			"SCHEMA", "SCHEME", "SECURITYAUDIT", "SELECT", "SEMANTICKEYPHRASETABLE", 
+			"SEMANTICSIMILARITYDETAILSTABLE", "SEMANTICSIMILARITYTABLE", "SERVER", 
+			"SERVICE", "SERVICE_BROKER", "SERVICE_NAME", "SESSION", "SESSION_USER", 
+			"SET", "SETUSER", "SHUTDOWN", "SID", "SKIP_KEYWORD", "SOFTNUMA", "SOME", 
+			"SOURCE", "SPECIFICATION", "SPLIT", "SQLDUMPERFLAGS", "SQLDUMPERPATH", 
+			"SQLDUMPERTIMEOUT", "STATISTICS", "STATE", "STATS", "START", "STARTED", 
+			"STARTUP_STATE", "STOP", "STOPPED", "STOP_ON_ERROR", "SUPPORTED", "SYSTEM_USER", 
+			"TABLE", "TABLESAMPLE", "TAPE", "TARGET", "TCP", "TEXTSIZE", "THEN", 
+			"TO", "TOP", "TRACK_CAUSALITY", "TRAN", "TRANSACTION", "TRANSFER", "TRIGGER", 
+			"TRUNCATE", "TSEQUAL", "UNCHECKED", "UNION", "UNIQUE", "UNLOCK", "UNPIVOT", 
+			"UNSAFE", "UPDATE", "UPDATETEXT", "URL", "USE", "USED", "USER", "VALUES", 
+			"VARYING", "VERBOSELOGGING", "VIEW", "VISIBILITY", "WAITFOR", "WHEN", 
+			"WHERE", "WHILE", "WINDOWS", "WITH", "WITHIN", "WITHOUT", "WITNESS", 
+			"WRITETEXT", "ABSOLUTE", "ACCENT_SENSITIVITY", "ACTION", "ACTIVATION", 
+			"ACTIVE", "ADDRESS", "AES_128", "AES_192", "AES_256", "AFFINITY", "AFTER", 
+			"AGGREGATE", "ALGORITHM", "ALLOW_ENCRYPTED_VALUE_MODIFICATIONS", "ALLOW_SNAPSHOT_ISOLATION", 
+			"ALLOWED", "ANSI_NULL_DEFAULT", "ANSI_NULLS", "ANSI_PADDING", "ANSI_WARNINGS", 
+			"APPLICATION_LOG", "APPLY", "ARITHABORT", "ASSEMBLY", "AUDIT", "AUDIT_GUID", 
+			"AUTO", "AUTO_CLEANUP", "AUTO_CLOSE", "AUTO_CREATE_STATISTICS", "AUTO_SHRINK", 
+			"AUTO_UPDATE_STATISTICS", "AUTO_UPDATE_STATISTICS_ASYNC", "AVAILABILITY", 
+			"AVG", "BACKUP_PRIORITY", "BEGIN_DIALOG", "BIGINT", "BINARY_BASE64", 
+			"BINARY_CHECKSUM", "BINDING", "BLOB_STORAGE", "BROKER", "BROKER_INSTANCE", 
+			"BULK_LOGGED", "CALLER", "CAP_CPU_PERCENT", "CAST", "CATALOG", "CATCH", 
+			"CHANGE_RETENTION", "CHANGE_TRACKING", "CHECKSUM", "CHECKSUM_AGG", "CLEANUP", 
+			"COLLECTION", "COLUMN_MASTER_KEY", "COMMITTED", "COMPATIBILITY_LEVEL", 
+			"CONCAT", "CONCAT_NULL_YIELDS_NULL", "CONTENT", "CONTROL", "COOKIE", 
+			"COUNT", "COUNT_BIG", "COUNTER", "CPU", "CREATE_NEW", "CREATION_DISPOSITION", 
+			"CREDENTIAL", "CRYPTOGRAPHIC", "CURSOR_CLOSE_ON_COMMIT", "CURSOR_DEFAULT", 
+			"DATA", "DATE_CORRELATION_OPTIMIZATION", "DATEADD", "DATEDIFF", "DATENAME", 
+			"DATEPART", "DAYS", "DB_CHAINING", "DB_FAILOVER", "DECRYPTION", "DEFAULT_DOUBLE_QUOTE", 
+			"DEFAULT_FULLTEXT_LANGUAGE", "DEFAULT_LANGUAGE", "DELAY", "DELAYED_DURABILITY", 
+			"DELETED", "DENSE_RANK", "DEPENDENTS", "DES", "DESCRIPTION", "DESX", 
+			"DHCP", "DIALOG", "DIRECTORY_NAME", "DISABLE", "DISABLE_BROKER", "DISABLED", 
+			"DISK_DRIVE", "DOCUMENT", "DYNAMIC", "ELEMENTS", "EMERGENCY", "EMPTY", 
+			"ENABLE", "ENABLE_BROKER", "ENCRYPTED_VALUE", "ENCRYPTION", "ENDPOINT_URL", 
+			"ERROR_BROKER_CONVERSATIONS", "EXCLUSIVE", "EXECUTABLE", "EXIST", "EXPAND", 
+			"EXPIRY_DATE", "EXPLICIT", "FAIL_OPERATION", "FAILOVER_MODE", "FAILURE", 
+			"FAILURE_CONDITION_LEVEL", "FAST", "FAST_FORWARD", "FILEGROUP", "FILEGROWTH", 
+			"FILEPATH", "FILESTREAM", "FILTER", "FIRST", "FIRST_VALUE", "FOLLOWING", 
+			"FORCE", "FORCE_FAILOVER_ALLOW_DATA_LOSS", "FORCED", "FORMAT", "FORWARD_ONLY", 
+			"FULLSCAN", "FULLTEXT", "GB", "GETDATE", "GETUTCDATE", "GLOBAL", "GO", 
+			"GROUP_MAX_REQUESTS", "GROUPING", "GROUPING_ID", "HADR", "HASH", "HEALTH_CHECK_TIMEOUT", 
+			"HIGH", "HONOR_BROKER_PRIORITY", "HOURS", "IDENTITY_VALUE", "IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX", 
+			"IMMEDIATE", "IMPERSONATE", "IMPORTANCE", "INCLUDE_NULL_VALUES", "INCREMENTAL", 
+			"INITIATOR", "INPUT", "INSENSITIVE", "INSERTED", "INT", "IP", "ISOLATION", 
+			"JOB", "JSON", "KB", "KEEP", "KEEPFIXED", "KEY_SOURCE", "KEYS", "KEYSET", 
+			"LAG", "LAST", "LAST_VALUE", "LEAD", "LEVEL", "LIST", "LISTENER", "LISTENER_URL", 
+			"LOB_COMPACTION", "LOCAL", "LOCATION", "LOCK", "LOCK_ESCALATION", "LOGIN", 
+			"LOOP", "LOW", "MANUAL", "MARK", "MATERIALIZED", "MAX", "MAX_CPU_PERCENT", 
+			"MAX_DOP", "MAX_FILES", "MAX_IOPS_PER_VOLUME", "MAX_MEMORY_PERCENT", 
+			"MAX_PROCESSES", "MAX_QUEUE_READERS", "MAX_ROLLOVER_FILES", "MAXDOP", 
+			"MAXRECURSION", "MAXSIZE", "MB", "MEDIUM", "MEMORY_OPTIMIZED_DATA", "MESSAGE", 
+			"MIN", "MIN_ACTIVE_ROWVERSION", "MIN_CPU_PERCENT", "MIN_IOPS_PER_VOLUME", 
+			"MIN_MEMORY_PERCENT", "MINUTES", "MIRROR_ADDRESS", "MIXED_PAGE_ALLOCATION", 
+			"MODE", "MODIFY", "MOVE", "MULTI_USER", "NAME", "NESTED_TRIGGERS", "NEW_ACCOUNT", 
+			"NEW_BROKER", "NEW_PASSWORD", "NEXT", "NO", "NO_TRUNCATE", "NO_WAIT", 
+			"NOCOUNT", "NODES", "NOEXPAND", "NON_TRANSACTED_ACCESS", "NORECOMPUTE", 
+			"NORECOVERY", "NOWAIT", "NTILE", "NUMANODE", "NUMBER", "NUMERIC_ROUNDABORT", 
+			"OBJECT", "OFFLINE", "OFFSET", "OLD_ACCOUNT", "ONLINE", "ONLY", "OPEN_EXISTING", 
+			"OPTIMISTIC", "OPTIMIZE", "OUT", "OUTPUT", "OVERRIDE", "OWNER", "PAGE_VERIFY", 
+			"PARAMETERIZATION", "PARTITION", "PARTITIONS", "PARTNER", "PATH", "POISON_MESSAGE_HANDLING", 
+			"POOL", "PORT", "PRECEDING", "PRIMARY_ROLE", "PRIOR", "PRIORITY", "PRIORITY_LEVEL", 
+			"PRIVATE", "PRIVATE_KEY", "PRIVILEGES", "PROCEDURE_NAME", "PROPERTY", 
+			"PROVIDER", "PROVIDER_KEY_NAME", "QUERY", "QUEUE", "QUEUE_DELAY", "QUOTED_IDENTIFIER", 
+			"RANGE", "RANK", "RC2", "RC4", "RC4_128", "READ_COMMITTED_SNAPSHOT", 
+			"READ_ONLY", "READ_ONLY_ROUTING_LIST", "READ_WRITE", "READONLY", "REBUILD", 
+			"RECEIVE", "RECOMPILE", "RECOVERY", "RECURSIVE_TRIGGERS", "RELATIVE", 
+			"REMOTE", "REMOTE_SERVICE_NAME", "REMOVE", "REORGANIZE", "REPEATABLE", 
+			"REPLICA", "REQUEST_MAX_CPU_TIME_SEC", "REQUEST_MAX_MEMORY_GRANT_PERCENT", 
+			"REQUEST_MEMORY_GRANT_TIMEOUT_SEC", "REQUIRED_SYNCHRONIZED_SECONDARIES_TO_COMMIT", 
+			"RESERVE_DISK_SPACE", "RESOURCE", "RESOURCE_MANAGER_LOCATION", "RESTRICTED_USER", 
+			"RETENTION", "ROBUST", "ROOT", "ROUTE", "ROW", "ROW_NUMBER", "ROWGUID", 
+			"ROWS", "SAMPLE", "SCHEMABINDING", "SCOPED", "SCROLL", "SCROLL_LOCKS", 
+			"SEARCH", "SECONDARY", "SECONDARY_ONLY", "SECONDARY_ROLE", "SECONDS", 
+			"SECRET", "SECURITY", "SECURITY_LOG", "SEEDING_MODE", "SELF", "SEMI_SENSITIVE", 
+			"SEND", "SENT", "SEQUENCE", "SERIALIZABLE", "SESSION_TIMEOUT", "SETERROR", 
+			"SHARE", "SHOWPLAN", "SIGNATURE", "SIMPLE", "SINGLE_USER", "SIZE", "SMALLINT", 
+			"SNAPSHOT", "SPATIAL_WINDOW_MAX_CELLS", "STANDBY", "START_DATE", "STATIC", 
+			"STATS_STREAM", "STATUS", "STATUSONLY", "STDEV", "STDEVP", "STOPLIST", 
+			"STRING_AGG", "STUFF", "SUBJECT", "SUBSCRIPTION", "SUM", "SUSPEND", "SYMMETRIC", 
+			"SYNCHRONOUS_COMMIT", "SYNONYM", "SYSTEM", "TAKE", "TARGET_RECOVERY_TIME", 
+			"TB", "TEXTIMAGE_ON", "THROW", "TIES", "TIME", "TIMEOUT", "TIMER", "TINYINT", 
+			"TORN_PAGE_DETECTION", "TRANSFORM_NOISE_WORDS", "TRIPLE_DES", "TRIPLE_DES_3KEY", 
+			"TRUSTWORTHY", "TRY", "TSQL", "TWO_DIGIT_YEAR_CUTOFF", "TYPE", "TYPE_WARNING", 
+			"UNBOUNDED", "UNCOMMITTED", "UNKNOWN", "UNLIMITED", "UOW", "USING", "VALID_XML", 
+			"VALIDATION", "VALUE", "VAR", "VARP", "VIEW_METADATA", "VIEWS", "WAIT", 
+			"WELL_FORMED_XML", "WITHOUT_ARRAY_WRAPPER", "WORK", "WORKLOAD", "XML", 
+			"XMLDATA", "XMLNAMESPACES", "XMLSCHEMA", "XSINIL", "DOLLAR_ACTION", "SPACE", 
+			"COMMENT", "LINE_COMMENT", "DOUBLE_QUOTE_ID", "SINGLE_QUOTE", "SQUARE_BRACKET_ID", 
+			"LOCAL_ID", "DECIMAL", "ID", "QUOTED_URL", "QUOTED_HOST_AND_PORT", "STRING", 
+			"BINARY", "FLOAT", "REAL", "EQUAL", "GREATER", "LESS", "EXCLAMATION", 
+			"PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", 
+			"AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN", "DOUBLE_BAR", "DOT", "UNDERLINE", 
+			"AT", "SHARP", "DOLLAR", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", 
+			"COLON", "STAR", "DIVIDE", "MODULE", "PLUS", "MINUS", "BIT_NOT", "BIT_OR", 
+			"BIT_AND", "BIT_XOR", "IPV4_OCTECT"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -843,6 +857,7 @@ public class TSqlParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class Tsql_fileContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(TSqlParser.EOF, 0); }
 		public List<BatchContext> batch() {
@@ -3178,6 +3193,10 @@ public class TSqlParser extends Parser {
 	public static class Block_statementContext extends ParserRuleContext {
 		public TerminalNode BEGIN() { return getToken(TSqlParser.BEGIN, 0); }
 		public TerminalNode END() { return getToken(TSqlParser.END, 0); }
+		public List<TerminalNode> SEMI() { return getTokens(TSqlParser.SEMI); }
+		public TerminalNode SEMI(int i) {
+			return getToken(TSqlParser.SEMI, i);
+		}
 		public Sql_clausesContext sql_clauses() {
 			return getRuleContext(Sql_clausesContext.class,0);
 		}
@@ -3255,6 +3274,7 @@ public class TSqlParser extends Parser {
 
 	public static class Break_statementContext extends ParserRuleContext {
 		public TerminalNode BREAK() { return getToken(TSqlParser.BREAK, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Break_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3307,6 +3327,7 @@ public class TSqlParser extends Parser {
 
 	public static class Continue_statementContext extends ParserRuleContext {
 		public TerminalNode CONTINUE() { return getToken(TSqlParser.CONTINUE, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Continue_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3362,6 +3383,8 @@ public class TSqlParser extends Parser {
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
+		public TerminalNode COLON() { return getToken(TSqlParser.COLON, 0); }
 		public Goto_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3874,6 +3897,7 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Return_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3946,6 +3970,7 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Sql_clauseContext.class,i);
 		}
 		public TerminalNode ELSE() { return getToken(TSqlParser.ELSE, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public If_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4017,12 +4042,17 @@ public class TSqlParser extends Parser {
 		public Throw_error_numberContext throw_error_number() {
 			return getRuleContext(Throw_error_numberContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Throw_messageContext throw_message() {
 			return getRuleContext(Throw_messageContext.class,0);
 		}
 		public Throw_stateContext throw_state() {
 			return getRuleContext(Throw_stateContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Throw_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4266,6 +4296,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode CATCH(int i) {
 			return getToken(TSqlParser.CATCH, i);
 		}
+		public List<TerminalNode> SEMI() { return getTokens(TSqlParser.SEMI); }
+		public TerminalNode SEMI(int i) {
+			return getToken(TSqlParser.SEMI, i);
+		}
 		public List<Sql_clausesContext> sql_clauses() {
 			return getRuleContexts(Sql_clausesContext.class);
 		}
@@ -4392,12 +4426,14 @@ public class TSqlParser extends Parser {
 		public Receive_statementContext receive_statement() {
 			return getRuleContext(Receive_statementContext.class,0);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public TimeContext time() {
 			return getRuleContext(TimeContext.class,0);
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode DELAY() { return getToken(TSqlParser.DELAY, 0); }
 		public TerminalNode TIME() { return getToken(TSqlParser.TIME, 0); }
 		public TerminalNode TIMEOUT() { return getToken(TSqlParser.TIMEOUT, 0); }
@@ -4512,6 +4548,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode BREAK() { return getToken(TSqlParser.BREAK, 0); }
 		public TerminalNode CONTINUE() { return getToken(TSqlParser.CONTINUE, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public While_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4602,10 +4639,15 @@ public class TSqlParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode DOUBLE_QUOTE_ID() { return getToken(TSqlParser.DOUBLE_QUOTE_ID, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<TerminalNode> LOCAL_ID() { return getTokens(TSqlParser.LOCAL_ID); }
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(TSqlParser.LOCAL_ID, i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Print_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4696,6 +4738,12 @@ public class TSqlParser extends Parser {
 		public Token formatstring;
 		public Token argument;
 		public TerminalNode RAISERROR() { return getToken(TSqlParser.RAISERROR, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<Constant_LOCAL_IDContext> constant_LOCAL_ID() {
 			return getRuleContexts(Constant_LOCAL_IDContext.class);
 		}
@@ -4715,6 +4763,7 @@ public class TSqlParser extends Parser {
 			return getToken(TSqlParser.LOCAL_ID, i);
 		}
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode LOG() { return getToken(TSqlParser.LOG, 0); }
 		public TerminalNode SETERROR() { return getToken(TSqlParser.SETERROR, 0); }
 		public TerminalNode DOUBLE_QUOTE_ID() { return getToken(TSqlParser.DOUBLE_QUOTE_ID, 0); }
@@ -4880,6 +4929,7 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Empty_statementContext extends ParserRuleContext {
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Empty_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -7210,6 +7260,7 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class File_directory_path_separatorContext extends ParserRuleContext {
+		public TerminalNode BACKSLASH() { return getToken(TSqlParser.BACKSLASH, 0); }
 		public File_directory_path_separatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -18331,6 +18382,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode EXCLUSIVE() { return getToken(TSqlParser.EXCLUSIVE, 0); }
 		public TerminalNode WAIT() { return getToken(TSqlParser.WAIT, 0); }
 		public TerminalNode NOWAIT() { return getToken(TSqlParser.NOWAIT, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public Lock_tableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -38688,13 +38740,16 @@ public class TSqlParser extends Parser {
 		public Search_conditionContext search_condition(int i) {
 			return getRuleContext(Search_conditionContext.class,i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public With_expressionContext with_expression() {
 			return getRuleContext(With_expressionContext.class,0);
 		}
 		public TerminalNode TOP() { return getToken(TSqlParser.TOP, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode INTO() { return getToken(TSqlParser.INTO, 0); }
 		public Insert_with_table_hintsContext insert_with_table_hints() {
 			return getRuleContext(Insert_with_table_hintsContext.class,0);
@@ -39010,6 +39065,10 @@ public class TSqlParser extends Parser {
 		public Update_elemContext update_elem(int i) {
 			return getRuleContext(Update_elemContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode DELETE() { return getToken(TSqlParser.DELETE, 0); }
 		public Merge_matchedContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -39094,9 +39153,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode DEFAULT() { return getToken(TSqlParser.DEFAULT, 0); }
 		public TerminalNode VALUES() { return getToken(TSqlParser.VALUES, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_name_listContext column_name_list() {
 			return getRuleContext(Column_name_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Merge_not_matchedContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -39182,9 +39243,11 @@ public class TSqlParser extends Parser {
 			return getRuleContext(With_expressionContext.class,0);
 		}
 		public TerminalNode TOP() { return getToken(TSqlParser.TOP, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public List<TerminalNode> FROM() { return getTokens(TSqlParser.FROM); }
 		public TerminalNode FROM(int i) {
@@ -39206,6 +39269,7 @@ public class TSqlParser extends Parser {
 		public Option_clauseContext option_clause() {
 			return getRuleContext(Option_clauseContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Search_conditionContext search_condition() {
 			return getRuleContext(Search_conditionContext.class,0);
 		}
@@ -39984,8 +40048,16 @@ public class TSqlParser extends Parser {
 			return getRuleContext(With_expressionContext.class,0);
 		}
 		public TerminalNode TOP() { return getToken(TSqlParser.TOP, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public TerminalNode INTO() { return getToken(TSqlParser.INTO, 0); }
 		public Insert_with_table_hintsContext insert_with_table_hints() {
@@ -40003,6 +40075,7 @@ public class TSqlParser extends Parser {
 		public Option_clauseContext option_clause() {
 			return getRuleContext(Option_clauseContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode PERCENT() { return getToken(TSqlParser.PERCENT, 0); }
 		public Insert_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -40699,9 +40772,15 @@ public class TSqlParser extends Parser {
 		public Top_clauseContext top_clause() {
 			return getRuleContext(Top_clauseContext.class,0);
 		}
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<TerminalNode> LOCAL_ID() { return getTokens(TSqlParser.LOCAL_ID); }
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(TSqlParser.LOCAL_ID, i);
+		}
+		public List<TerminalNode> EQUAL() { return getTokens(TSqlParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(TSqlParser.EQUAL, i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -40710,10 +40789,15 @@ public class TSqlParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public TerminalNode INTO() { return getToken(TSqlParser.INTO, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
 		public TerminalNode WHERE() { return getToken(TSqlParser.WHERE, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Search_conditionContext search_condition() {
 			return getRuleContext(Search_conditionContext.class,0);
 		}
@@ -40874,6 +40958,7 @@ public class TSqlParser extends Parser {
 		public Option_clauseContext option_clause() {
 			return getRuleContext(Option_clauseContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Select_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -41053,11 +41138,17 @@ public class TSqlParser extends Parser {
 			return getRuleContext(With_expressionContext.class,0);
 		}
 		public TerminalNode TOP() { return getToken(TSqlParser.TOP, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public With_table_hintsContext with_table_hints() {
 			return getRuleContext(With_table_hintsContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Output_clauseContext output_clause() {
 			return getRuleContext(Output_clauseContext.class,0);
@@ -41073,6 +41164,7 @@ public class TSqlParser extends Parser {
 		public Option_clauseContext option_clause() {
 			return getRuleContext(Option_clauseContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Search_condition_listContext search_condition_list() {
 			return getRuleContext(Search_condition_listContext.class,0);
 		}
@@ -42213,14 +42305,20 @@ public class TSqlParser extends Parser {
 		public Output_dml_list_elemContext output_dml_list_elem(int i) {
 			return getRuleContext(Output_dml_list_elemContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode INTO() { return getToken(TSqlParser.INTO, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_name_listContext column_name_list() {
 			return getRuleContext(Column_name_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Output_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -42826,11 +42924,13 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Output_column_nameContext extends ParserRuleContext {
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode DELETED() { return getToken(TSqlParser.DELETED, 0); }
 		public TerminalNode INSERTED() { return getToken(TSqlParser.INSERTED, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
@@ -43799,6 +43899,7 @@ public class TSqlParser extends Parser {
 			return getRuleContext(IdContext.class,i);
 		}
 		public TerminalNode CONTAINMENT() { return getToken(TSqlParser.CONTAINMENT, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public List<TerminalNode> ON() { return getTokens(TSqlParser.ON); }
 		public TerminalNode ON(int i) {
 			return getToken(TSqlParser.ON, i);
@@ -43821,6 +43922,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode NONE() { return getToken(TSqlParser.NONE, 0); }
 		public TerminalNode PARTIAL() { return getToken(TSqlParser.PARTIAL, 0); }
 		public TerminalNode PRIMARY() { return getToken(TSqlParser.PRIMARY, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Create_databaseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -44015,8 +44120,16 @@ public class TSqlParser extends Parser {
 		public Table_name_with_hintContext table_name_with_hint() {
 			return getRuleContext(Table_name_with_hintContext.class,0);
 		}
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public Column_name_list_with_orderContext column_name_list_with_order() {
 			return getRuleContext(Column_name_list_with_orderContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public TerminalNode UNIQUE() { return getToken(TSqlParser.UNIQUE, 0); }
 		public ClusteredContext clustered() {
@@ -44030,6 +44143,7 @@ public class TSqlParser extends Parser {
 		public Index_optionsContext index_options() {
 			return getRuleContext(Index_optionsContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Search_conditionContext search_condition() {
 			return getRuleContext(Search_conditionContext.class,0);
 		}
@@ -44180,6 +44294,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode ALTER() { return getToken(TSqlParser.ALTER, 0); }
 		public TerminalNode PROC() { return getToken(TSqlParser.PROC, 0); }
 		public TerminalNode PROCEDURE() { return getToken(TSqlParser.PROCEDURE, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public List<Procedure_paramContext> procedure_param() {
 			return getRuleContexts(Procedure_paramContext.class);
@@ -44197,6 +44312,12 @@ public class TSqlParser extends Parser {
 		public TerminalNode FOR() { return getToken(TSqlParser.FOR, 0); }
 		public TerminalNode REPLICATION() { return getToken(TSqlParser.REPLICATION, 0); }
 		public TerminalNode CREATE() { return getToken(TSqlParser.CREATE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode OR() { return getToken(TSqlParser.OR, 0); }
 		public Create_or_alter_procedureContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -44480,6 +44601,10 @@ public class TSqlParser extends Parser {
 		}
 		public Dml_trigger_optionContext dml_trigger_option(int i) {
 			return getRuleContext(Dml_trigger_optionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode APPEND() { return getToken(TSqlParser.APPEND, 0); }
 		public TerminalNode NOT() { return getToken(TSqlParser.NOT, 0); }
@@ -44806,6 +44931,10 @@ public class TSqlParser extends Parser {
 		public Dml_trigger_optionContext dml_trigger_option(int i) {
 			return getRuleContext(Dml_trigger_optionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<Dml_trigger_operationContext> dml_trigger_operation() {
 			return getRuleContexts(Dml_trigger_operationContext.class);
 		}
@@ -45021,6 +45150,8 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Func_proc_name_schemaContext.class,0);
 		}
 		public TerminalNode ALTER() { return getToken(TSqlParser.ALTER, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Func_body_returns_selectContext func_body_returns_select() {
 			return getRuleContext(Func_body_returns_selectContext.class,0);
 		}
@@ -45030,6 +45161,7 @@ public class TSqlParser extends Parser {
 		public Func_body_returns_scalarContext func_body_returns_scalar() {
 			return getRuleContext(Func_body_returns_scalarContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode CREATE() { return getToken(TSqlParser.CREATE, 0); }
 		public List<Procedure_paramContext> procedure_param() {
 			return getRuleContexts(Procedure_paramContext.class);
@@ -45038,6 +45170,10 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Procedure_paramContext.class,i);
 		}
 		public TerminalNode OR() { return getToken(TSqlParser.OR, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Create_or_alter_functionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -45189,9 +45325,11 @@ public class TSqlParser extends Parser {
 		public TerminalNode RETURNS() { return getToken(TSqlParser.RETURNS, 0); }
 		public TerminalNode TABLE() { return getToken(TSqlParser.TABLE, 0); }
 		public TerminalNode RETURN() { return getToken(TSqlParser.RETURN, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Select_statementContext select_statement() {
 			return getRuleContext(Select_statementContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public List<Function_optionContext> function_option() {
 			return getRuleContexts(Function_optionContext.class);
@@ -45200,6 +45338,10 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Function_optionContext.class,i);
 		}
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Func_body_returns_selectContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -45325,6 +45467,14 @@ public class TSqlParser extends Parser {
 		}
 		public Sql_clauseContext sql_clause(int i) {
 			return getRuleContext(Sql_clauseContext.class,i);
+		}
+		public List<TerminalNode> SEMI() { return getTokens(TSqlParser.SEMI); }
+		public TerminalNode SEMI(int i) {
+			return getToken(TSqlParser.SEMI, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Func_body_returns_tableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -45478,6 +45628,11 @@ public class TSqlParser extends Parser {
 		public Sql_clauseContext sql_clause(int i) {
 			return getRuleContext(Sql_clauseContext.class,i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Func_body_returns_scalarContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -45603,8 +45758,10 @@ public class TSqlParser extends Parser {
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
 		public TerminalNode VARYING() { return getToken(TSqlParser.VARYING, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public Default_valueContext default_value() {
 			return getRuleContext(Default_valueContext.class,0);
 		}
@@ -45898,16 +46055,23 @@ public class TSqlParser extends Parser {
 		public Table_name_with_hintContext table_name_with_hint() {
 			return getRuleContext(Table_name_with_hintContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_name_listContext column_name_list() {
 			return getRuleContext(Column_name_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode FULLSCAN() { return getToken(TSqlParser.FULLSCAN, 0); }
 		public TerminalNode SAMPLE() { return getToken(TSqlParser.SAMPLE, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public TerminalNode STATS_STREAM() { return getToken(TSqlParser.STATS_STREAM, 0); }
 		public TerminalNode PERCENT() { return getToken(TSqlParser.PERCENT, 0); }
 		public TerminalNode ROWS() { return getToken(TSqlParser.ROWS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode NORECOMPUTE() { return getToken(TSqlParser.NORECOMPUTE, 0); }
 		public TerminalNode INCREMENTAL() { return getToken(TSqlParser.INCREMENTAL, 0); }
 		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
@@ -46160,9 +46324,12 @@ public class TSqlParser extends Parser {
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_def_table_constraintsContext column_def_table_constraints() {
 			return getRuleContext(Column_def_table_constraintsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public TerminalNode LOCK() { return getToken(TSqlParser.LOCK, 0); }
 		public Simple_idContext simple_id() {
 			return getRuleContext(Simple_idContext.class,0);
@@ -46185,6 +46352,7 @@ public class TSqlParser extends Parser {
 			return getToken(TSqlParser.DEFAULT, i);
 		}
 		public TerminalNode TEXTIMAGE_ON() { return getToken(TSqlParser.TEXTIMAGE_ON, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Create_tableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -46323,11 +46491,17 @@ public class TSqlParser extends Parser {
 
 	public static class Table_optionsContext extends ParserRuleContext {
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Index_optionContext> index_option() {
 			return getRuleContexts(Index_optionContext.class);
 		}
 		public Index_optionContext index_option(int i) {
 			return getRuleContext(Index_optionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Table_optionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -46860,9 +47034,11 @@ public class TSqlParser extends Parser {
 		public Select_statementContext select_statement() {
 			return getRuleContext(Select_statementContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_name_listContext column_name_list() {
 			return getRuleContext(Column_name_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<TerminalNode> WITH() { return getTokens(TSqlParser.WITH); }
 		public TerminalNode WITH(int i) {
 			return getToken(TSqlParser.WITH, i);
@@ -46875,6 +47051,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode CHECK() { return getToken(TSqlParser.CHECK, 0); }
 		public TerminalNode OPTION() { return getToken(TSqlParser.OPTION, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Create_viewContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -47062,7 +47243,16 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Table_nameContext.class,i);
 		}
 		public TerminalNode SET() { return getToken(TSqlParser.SET, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public TerminalNode LOCK_ESCALATION() { return getToken(TSqlParser.LOCK_ESCALATION, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
+		}
 		public TerminalNode ADD() { return getToken(TSqlParser.ADD, 0); }
 		public Column_def_table_constraintContext column_def_table_constraint() {
 			return getRuleContext(Column_def_table_constraintContext.class,0);
@@ -47095,6 +47285,7 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Column_name_listContext.class,i);
 		}
 		public TerminalNode ENABLE() { return getToken(TSqlParser.ENABLE, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Alter_tableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -47303,6 +47494,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode CURRENT() { return getToken(TSqlParser.CURRENT, 0); }
 		public TerminalNode MODIFY() { return getToken(TSqlParser.MODIFY, 0); }
 		public TerminalNode NAME() { return getToken(TSqlParser.NAME, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode COLLATE() { return getToken(TSqlParser.COLLATE, 0); }
 		public TerminalNode SET() { return getToken(TSqlParser.SET, 0); }
 		public Database_optionspecContext database_optionspec() {
@@ -47314,6 +47506,7 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminationContext termination() {
 			return getRuleContext(TerminationContext.class,0);
@@ -48275,6 +48468,10 @@ public class TSqlParser extends Parser {
 		}
 		public Change_tracking_option_listContext change_tracking_option_list(int i) {
 			return getRuleContext(Change_tracking_option_listContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Change_tracking_optionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -52109,6 +52306,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Drop_indexContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52279,6 +52481,10 @@ public class TSqlParser extends Parser {
 		public IdContext owner_name;
 		public IdContext table_or_view_name;
 		public IdContext index_name;
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public List<IdContext> id() {
 			return getRuleContexts(IdContext.class);
 		}
@@ -52354,6 +52560,11 @@ public class TSqlParser extends Parser {
 		public TerminalNode PROCEDURE() { return getToken(TSqlParser.PROCEDURE, 0); }
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_procedureContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52517,6 +52728,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_dml_triggerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52615,6 +52831,11 @@ public class TSqlParser extends Parser {
 		public TerminalNode SERVER() { return getToken(TSqlParser.SERVER, 0); }
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_ddl_triggerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52731,6 +52952,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_functionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52818,6 +53044,7 @@ public class TSqlParser extends Parser {
 		public IdContext name;
 		public TerminalNode DROP() { return getToken(TSqlParser.DROP, 0); }
 		public TerminalNode STATISTICS() { return getToken(TSqlParser.STATISTICS, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public List<IdContext> id() {
 			return getRuleContexts(IdContext.class);
 		}
@@ -52833,6 +53060,10 @@ public class TSqlParser extends Parser {
 		}
 		public Table_nameContext table_name(int i) {
 			return getRuleContext(Table_nameContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
 		}
 		public Drop_statisticsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -52923,6 +53154,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_tableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -53001,6 +53233,11 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode IF() { return getToken(TSqlParser.IF, 0); }
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Drop_viewContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -53314,6 +53551,9 @@ public class TSqlParser extends Parser {
 		public IdContext linked_server;
 		public Token query;
 		public TerminalNode OPENQUERY() { return getToken(TSqlParser.OPENQUERY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
@@ -53375,6 +53615,13 @@ public class TSqlParser extends Parser {
 		public IdContext scheme;
 		public IdContext table;
 		public TerminalNode OPENDATASOURCE() { return getToken(TSqlParser.OPENDATASOURCE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(TSqlParser.STRING, i);
@@ -53474,20 +53721,27 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Table_type_definitionContext.class,0);
 		}
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public List<Declare_localContext> declare_local() {
 			return getRuleContexts(Declare_localContext.class);
 		}
 		public Declare_localContext declare_local(int i) {
 			return getRuleContext(Declare_localContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Xml_type_definitionContext xml_type_definition() {
 			return getRuleContext(Xml_type_definitionContext.class,0);
 		}
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode XMLNAMESPACES() { return getToken(TSqlParser.XMLNAMESPACES, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public Declare_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -53671,6 +53925,7 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Cursor_nameContext.class,0);
 		}
 		public TerminalNode GLOBAL() { return getToken(TSqlParser.GLOBAL, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode DEALLOCATE() { return getToken(TSqlParser.DEALLOCATE, 0); }
 		public TerminalNode CURSOR() { return getToken(TSqlParser.CURSOR, 0); }
 		public Declare_cursorContext declare_cursor() {
@@ -64751,18 +65006,30 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public List<Execute_statement_argContext> execute_statement_arg() {
 			return getRuleContexts(Execute_statement_argContext.class);
 		}
 		public Execute_statement_argContext execute_statement_arg(int i) {
 			return getRuleContext(Execute_statement_argContext.class,i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Execute_var_stringContext> execute_var_string() {
 			return getRuleContexts(Execute_var_stringContext.class);
 		}
 		public Execute_var_stringContext execute_var_string(int i) {
 			return getRuleContext(Execute_var_stringContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> PLUS() { return getTokens(TSqlParser.PLUS); }
+		public TerminalNode PLUS(int i) {
+			return getToken(TSqlParser.PLUS, i);
 		}
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public TerminalNode LOGIN() { return getToken(TSqlParser.LOGIN, 0); }
@@ -64950,6 +65217,7 @@ public class TSqlParser extends Parser {
 		public Token parameter;
 		public TerminalNode DEFAULT() { return getToken(TSqlParser.DEFAULT, 0); }
 		public TerminalNode NULL() { return getToken(TSqlParser.NULL, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public Constant_LOCAL_IDContext constant_LOCAL_ID() {
 			return getRuleContext(Constant_LOCAL_IDContext.class,0);
@@ -66001,6 +66269,7 @@ public class TSqlParser extends Parser {
 		public Execute_clauseContext execute_clause() {
 			return getRuleContext(Execute_clauseContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public List<TerminalNode> GRANT() { return getTokens(TSqlParser.GRANT); }
 		public TerminalNode GRANT(int i) {
 			return getToken(TSqlParser.GRANT, i);
@@ -66017,6 +66286,10 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode OPTION() { return getToken(TSqlParser.OPTION, 0); }
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
@@ -66024,11 +66297,14 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Table_nameContext.class,0);
 		}
 		public TerminalNode PRIVILEGES() { return getToken(TSqlParser.PRIVILEGES, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_name_listContext column_name_list() {
 			return getRuleContext(Column_name_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode REVERT() { return getToken(TSqlParser.REVERT, 0); }
 		public TerminalNode COOKIE() { return getToken(TSqlParser.COOKIE, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public Open_keyContext open_key() {
 			return getRuleContext(Open_keyContext.class,0);
@@ -66318,6 +66594,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode FOR() { return getToken(TSqlParser.FOR, 0); }
 		public TerminalNode BEGIN() { return getToken(TSqlParser.BEGIN, 0); }
 		public TerminalNode DIALOG() { return getToken(TSqlParser.DIALOG, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode ON() { return getToken(TSqlParser.ON, 0); }
 		public TerminalNode OFF() { return getToken(TSqlParser.OFF, 0); }
 		public Create_certificateContext(ParserRuleContext parent, int invokingState) {
@@ -66440,9 +66717,11 @@ public class TSqlParser extends Parser {
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode PRIVATE() { return getToken(TSqlParser.PRIVATE, 0); }
 		public TerminalNode KEY() { return getToken(TSqlParser.KEY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Private_key_optionsContext private_key_options() {
 			return getRuleContext(Private_key_optionsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Existing_keysContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -66539,12 +66818,17 @@ public class TSqlParser extends Parser {
 	public static class Private_key_optionsContext extends ParserRuleContext {
 		public Token path;
 		public Token password;
+		public List<TerminalNode> EQUAL() { return getTokens(TSqlParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(TSqlParser.EQUAL, i);
+		}
 		public TerminalNode FILE() { return getToken(TSqlParser.FILE, 0); }
 		public TerminalNode BINARY() { return getToken(TSqlParser.BINARY, 0); }
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(TSqlParser.STRING, i);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public TerminalNode BY() { return getToken(TSqlParser.BY, 0); }
 		public TerminalNode PASSWORD() { return getToken(TSqlParser.PASSWORD, 0); }
 		public TerminalNode DECRYPTION() { return getToken(TSqlParser.DECRYPTION, 0); }
@@ -66635,7 +66919,10 @@ public class TSqlParser extends Parser {
 		public Token certificate_subject_name;
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode SUBJECT() { return getToken(TSqlParser.SUBJECT, 0); }
-		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
+		public List<TerminalNode> EQUAL() { return getTokens(TSqlParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(TSqlParser.EQUAL, i);
+		}
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(TSqlParser.STRING, i);
@@ -66643,6 +66930,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode ENCRYPTION() { return getToken(TSqlParser.ENCRYPTION, 0); }
 		public TerminalNode BY() { return getToken(TSqlParser.BY, 0); }
 		public TerminalNode PASSWORD() { return getToken(TSqlParser.PASSWORD, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<Date_optionsContext> date_options() {
 			return getRuleContexts(Date_optionsContext.class);
 		}
@@ -66804,6 +67095,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode MASTER() { return getToken(TSqlParser.MASTER, 0); }
 		public TerminalNode PASSWORD() { return getToken(TSqlParser.PASSWORD, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public Open_keyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -66988,6 +67280,7 @@ public class TSqlParser extends Parser {
 			return getToken(TSqlParser.BY, i);
 		}
 		public TerminalNode PASSWORD() { return getToken(TSqlParser.PASSWORD, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public TerminalNode SYMMETRIC() { return getToken(TSqlParser.SYMMETRIC, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
@@ -67011,6 +67304,10 @@ public class TSqlParser extends Parser {
 		}
 		public Encryption_mechanismContext encryption_mechanism(int i) {
 			return getRuleContext(Encryption_mechanismContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Create_keyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -67362,6 +67659,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode KEY() { return getToken(TSqlParser.KEY, 0); }
 		public TerminalNode SYMMETRIC() { return getToken(TSqlParser.SYMMETRIC, 0); }
 		public TerminalNode PASSWORD() { return getToken(TSqlParser.PASSWORD, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public Encryption_mechanismContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -68205,9 +68503,12 @@ public class TSqlParser extends Parser {
 		public IdContext member_name;
 		public TerminalNode SET() { return getToken(TSqlParser.SET, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
@@ -68410,12 +68711,15 @@ public class TSqlParser extends Parser {
 			return getRuleContext(IdContext.class,0);
 		}
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode MARK() { return getToken(TSqlParser.MARK, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public TerminalNode COMMIT() { return getToken(TSqlParser.COMMIT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode DELAYED_DURABILITY() { return getToken(TSqlParser.DELAYED_DURABILITY, 0); }
 		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode OFF() { return getToken(TSqlParser.OFF, 0); }
 		public TerminalNode ON() { return getToken(TSqlParser.ON, 0); }
 		public TerminalNode WORK() { return getToken(TSqlParser.WORK, 0); }
@@ -69728,6 +70032,7 @@ public class TSqlParser extends Parser {
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Use_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -69952,13 +70257,16 @@ public class TSqlParser extends Parser {
 		public Simple_idContext simple_id() {
 			return getRuleContext(Simple_idContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Expression_listContext expression_list() {
 			return getRuleContext(Expression_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public Dbcc_optionsContext dbcc_options() {
 			return getRuleContext(Dbcc_optionsContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Dbcc_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -70044,6 +70352,7 @@ public class TSqlParser extends Parser {
 		public Simple_idContext simple_id(int i) {
 			return getRuleContext(Simple_idContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public Dbcc_optionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -70165,6 +70474,7 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Data_typeContext.class,0);
 		}
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -70235,9 +70545,11 @@ public class TSqlParser extends Parser {
 
 	public static class Table_type_definitionContext extends ParserRuleContext {
 		public TerminalNode TABLE() { return getToken(TSqlParser.TABLE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Column_def_table_constraintsContext column_def_table_constraints() {
 			return getRuleContext(Column_def_table_constraintsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Table_type_definitionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -70286,9 +70598,11 @@ public class TSqlParser extends Parser {
 
 	public static class Xml_type_definitionContext extends ParserRuleContext {
 		public TerminalNode XML() { return getToken(TSqlParser.XML, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Xml_schema_collectionContext xml_schema_collection() {
 			return getRuleContext(Xml_schema_collectionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode CONTENT() { return getToken(TSqlParser.CONTENT, 0); }
 		public TerminalNode DOCUMENT() { return getToken(TSqlParser.DOCUMENT, 0); }
 		public Xml_type_definitionContext(ParserRuleContext parent, int invokingState) {
@@ -70361,6 +70675,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode ID(int i) {
 			return getToken(TSqlParser.ID, i);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Xml_schema_collectionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -70411,6 +70726,10 @@ public class TSqlParser extends Parser {
 		}
 		public Column_def_table_constraintContext column_def_table_constraint(int i) {
 			return getRuleContext(Column_def_table_constraintContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Column_def_table_constraintsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -70586,6 +70905,9 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Column_constraintContext.class,i);
 		}
 		public TerminalNode CONSTRAINT() { return getToken(TSqlParser.CONSTRAINT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode NOT() { return getToken(TSqlParser.NOT, 0); }
 		public TerminalNode FOR() { return getToken(TSqlParser.FOR, 0); }
 		public TerminalNode REPLICATION() { return getToken(TSqlParser.REPLICATION, 0); }
@@ -71288,9 +71610,11 @@ public class TSqlParser extends Parser {
 		public IdContext constraint;
 		public Column_name_listContext pk;
 		public TerminalNode CHECK() { return getToken(TSqlParser.CHECK, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Search_conditionContext search_condition() {
 			return getRuleContext(Search_conditionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode REFERENCES() { return getToken(TSqlParser.REFERENCES, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
@@ -71510,8 +71834,16 @@ public class TSqlParser extends Parser {
 		public IdContext constraint;
 		public Column_name_listContext fk;
 		public Column_name_listContext pk;
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public Column_name_list_with_orderContext column_name_list_with_order() {
 			return getRuleContext(Column_name_list_with_orderContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public TerminalNode CHECK() { return getToken(TSqlParser.CHECK, 0); }
 		public Search_conditionContext search_condition() {
@@ -72454,11 +72786,17 @@ public class TSqlParser extends Parser {
 
 	public static class Index_optionsContext extends ParserRuleContext {
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Index_optionContext> index_option() {
 			return getRuleContexts(Index_optionContext.class);
 		}
 		public Index_optionContext index_option(int i) {
 			return getRuleContext(Index_optionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Index_optionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -72530,6 +72868,7 @@ public class TSqlParser extends Parser {
 		public Simple_idContext simple_id(int i) {
 			return getRuleContext(Simple_idContext.class,i);
 		}
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public On_offContext on_off() {
 			return getRuleContext(On_offContext.class,0);
 		}
@@ -73040,6 +73379,7 @@ public class TSqlParser extends Parser {
 		public Select_statementContext select_statement() {
 			return getRuleContext(Select_statementContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Declare_set_cursor_commonContext declare_set_cursor_common() {
 			return getRuleContext(Declare_set_cursor_commonContext.class,0);
 		}
@@ -73437,12 +73777,17 @@ public class TSqlParser extends Parser {
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(TSqlParser.LOCAL_ID, i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode NEXT() { return getToken(TSqlParser.NEXT, 0); }
 		public TerminalNode PRIOR() { return getToken(TSqlParser.PRIOR, 0); }
 		public TerminalNode FIRST() { return getToken(TSqlParser.FIRST, 0); }
 		public TerminalNode LAST() { return getToken(TSqlParser.LAST, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode ABSOLUTE() { return getToken(TSqlParser.ABSOLUTE, 0); }
 		public TerminalNode RELATIVE() { return getToken(TSqlParser.RELATIVE, 0); }
@@ -73610,6 +73955,7 @@ public class TSqlParser extends Parser {
 		public On_offContext on_off() {
 			return getRuleContext(On_offContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode TRANSACTION() { return getToken(TSqlParser.TRANSACTION, 0); }
 		public TerminalNode ISOLATION() { return getToken(TSqlParser.ISOLATION, 0); }
 		public TerminalNode LEVEL() { return getToken(TSqlParser.LEVEL, 0); }
@@ -74391,6 +74737,15 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
+		public TerminalNode DIVIDE() { return getToken(TSqlParser.DIVIDE, 0); }
+		public TerminalNode MODULE() { return getToken(TSqlParser.MODULE, 0); }
+		public TerminalNode PLUS() { return getToken(TSqlParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(TSqlParser.MINUS, 0); }
+		public TerminalNode BIT_AND() { return getToken(TSqlParser.BIT_AND, 0); }
+		public TerminalNode BIT_XOR() { return getToken(TSqlParser.BIT_XOR, 0); }
+		public TerminalNode BIT_OR() { return getToken(TSqlParser.BIT_OR, 0); }
+		public TerminalNode DOUBLE_BAR() { return getToken(TSqlParser.DOUBLE_BAR, 0); }
 		public Comparison_operatorContext comparison_operator() {
 			return getRuleContext(Comparison_operatorContext.class,0);
 		}
@@ -74813,9 +75168,12 @@ public class TSqlParser extends Parser {
 
 	public static class Unary_operator_expressionContext extends ParserRuleContext {
 		public Token op;
+		public TerminalNode BIT_NOT() { return getToken(TSqlParser.BIT_NOT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode PLUS() { return getToken(TSqlParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(TSqlParser.MINUS, 0); }
 		public Unary_operator_expressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -74887,9 +75245,11 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Bracket_expressionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public SubqueryContext subquery() {
 			return getRuleContext(SubqueryContext.class,0);
 		}
@@ -74963,9 +75323,11 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Function_callContext.class,0);
 		}
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Constant_expressionContext constant_expression() {
 			return getRuleContext(Constant_expressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Constant_expressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -75097,10 +75459,22 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Common_table_expressionContext.class,i);
 		}
 		public TerminalNode XMLNAMESPACES() { return getToken(TSqlParser.XMLNAMESPACES, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode BLOCKING_HIERARCHY() { return getToken(TSqlParser.BLOCKING_HIERARCHY, 0); }
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public Select_statementContext select_statement() {
 			return getRuleContext(Select_statementContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public Full_column_name_listContext full_column_name_list() {
 			return getRuleContext(Full_column_name_listContext.class,0);
@@ -75216,8 +75590,16 @@ public class TSqlParser extends Parser {
 	public static class Common_table_expressionContext extends ParserRuleContext {
 		public IdContext expression_name;
 		public TerminalNode AS() { return getToken(TSqlParser.AS, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public Select_statementContext select_statement() {
 			return getRuleContext(Select_statementContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
@@ -75298,12 +75680,16 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Full_column_nameContext.class,0);
 		}
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public Assignment_operatorContext assignment_operator() {
 			return getRuleContext(Assignment_operatorContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Expression_listContext expression_list() {
 			return getRuleContext(Expression_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<IdContext> id() {
 			return getRuleContexts(IdContext.class);
 		}
@@ -75852,6 +76238,10 @@ public class TSqlParser extends Parser {
 		public Search_conditionContext search_condition(int i) {
 			return getRuleContext(Search_conditionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Search_condition_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -76103,9 +76493,11 @@ public class TSqlParser extends Parser {
 
 	public static class PredicateContext extends ParserRuleContext {
 		public TerminalNode EXISTS() { return getToken(TSqlParser.EXISTS, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public SubqueryContext subquery() {
 			return getRuleContext(SubqueryContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -76346,9 +76738,11 @@ public class TSqlParser extends Parser {
 		public Query_specificationContext query_specification() {
 			return getRuleContext(Query_specificationContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Query_expressionContext query_expression() {
 			return getRuleContext(Query_expressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<Sql_unionContext> sql_union() {
 			return getRuleContexts(Sql_unionContext.class);
 		}
@@ -76439,9 +76833,11 @@ public class TSqlParser extends Parser {
 		public Query_specificationContext query_specification() {
 			return getRuleContext(Query_specificationContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Query_expressionContext query_expression() {
 			return getRuleContext(Query_expressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode ALL() { return getToken(TSqlParser.ALL, 0); }
 		public Sql_unionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -76578,6 +76974,10 @@ public class TSqlParser extends Parser {
 		}
 		public Search_conditionContext search_condition(int i) {
 			return getRuleContext(Search_conditionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Query_specificationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -76824,9 +77224,11 @@ public class TSqlParser extends Parser {
 		public TerminalNode PERCENT() { return getToken(TSqlParser.PERCENT, 0); }
 		public TerminalNode REAL() { return getToken(TSqlParser.REAL, 0); }
 		public TerminalNode FLOAT() { return getToken(TSqlParser.FLOAT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Top_percentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -76902,9 +77304,11 @@ public class TSqlParser extends Parser {
 
 	public static class Top_countContext extends ParserRuleContext {
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Top_countContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -76972,6 +77376,10 @@ public class TSqlParser extends Parser {
 		}
 		public Order_by_expressionContext order_by_expression(int i) {
 			return getRuleContext(Order_by_expressionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode OFFSET() { return getToken(TSqlParser.OFFSET, 0); }
 		public List<ExpressionContext> expression() {
@@ -77131,9 +77539,17 @@ public class TSqlParser extends Parser {
 		public TerminalNode ELEMENTS() { return getToken(TSqlParser.ELEMENTS, 0); }
 		public TerminalNode XSINIL() { return getToken(TSqlParser.XSINIL, 0); }
 		public TerminalNode ABSENT() { return getToken(TSqlParser.ABSENT, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(TSqlParser.STRING, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public TerminalNode XMLDATA() { return getToken(TSqlParser.XMLDATA, 0); }
 		public TerminalNode XMLSCHEMA() { return getToken(TSqlParser.XMLSCHEMA, 0); }
@@ -77486,10 +77902,13 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Xml_common_directivesContext extends ParserRuleContext {
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public TerminalNode BINARY_BASE64() { return getToken(TSqlParser.BINARY_BASE64, 0); }
 		public TerminalNode TYPE() { return getToken(TSqlParser.TYPE, 0); }
 		public TerminalNode ROOT() { return getToken(TSqlParser.ROOT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Xml_common_directivesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -77679,11 +78098,17 @@ public class TSqlParser extends Parser {
 
 	public static class Option_clauseContext extends ParserRuleContext {
 		public TerminalNode OPTION() { return getToken(TSqlParser.OPTION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<OptionContext> option() {
 			return getRuleContexts(OptionContext.class);
 		}
 		public OptionContext option(int i) {
 			return getRuleContext(OptionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Option_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -77773,11 +78198,17 @@ public class TSqlParser extends Parser {
 		public TerminalNode MAXRECURSION() { return getToken(TSqlParser.MAXRECURSION, 0); }
 		public TerminalNode OPTIMIZE() { return getToken(TSqlParser.OPTIMIZE, 0); }
 		public TerminalNode FOR() { return getToken(TSqlParser.FOR, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Optimize_for_argContext> optimize_for_arg() {
 			return getRuleContexts(Optimize_for_argContext.class);
 		}
 		public Optimize_for_argContext optimize_for_arg(int i) {
 			return getRuleContext(Optimize_for_argContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode UNKNOWN() { return getToken(TSqlParser.UNKNOWN, 0); }
 		public TerminalNode PARAMETERIZATION() { return getToken(TSqlParser.PARAMETERIZATION, 0); }
@@ -78037,6 +78468,7 @@ public class TSqlParser extends Parser {
 	public static class Optimize_for_argContext extends ParserRuleContext {
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public TerminalNode UNKNOWN() { return getToken(TSqlParser.UNKNOWN, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public ConstantContext constant() {
 			return getRuleContext(ConstantContext.class,0);
 		}
@@ -78131,6 +78563,10 @@ public class TSqlParser extends Parser {
 		public Select_list_elemContext select_list_elem(int i) {
 			return getRuleContext(Select_list_elemContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Select_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -78191,11 +78627,17 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Udt_method_argumentsContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Execute_var_stringContext> execute_var_string() {
 			return getRuleContexts(Execute_var_stringContext.class);
 		}
 		public Execute_var_stringContext execute_var_string(int i) {
 			return getRuleContext(Execute_var_stringContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Udt_method_argumentsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -78259,9 +78701,11 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class AsteriskContext extends ParserRuleContext {
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public AsteriskContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -78321,11 +78765,13 @@ public class TSqlParser extends Parser {
 		public As_column_aliasContext as_column_alias() {
 			return getRuleContext(As_column_aliasContext.class,0);
 		}
+		public TerminalNode DOLLAR() { return getToken(TSqlParser.DOLLAR, 0); }
 		public TerminalNode IDENTITY() { return getToken(TSqlParser.IDENTITY, 0); }
 		public TerminalNode ROWGUID() { return getToken(TSqlParser.ROWGUID, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
@@ -78865,6 +79311,7 @@ public class TSqlParser extends Parser {
 		public IdContext udt_column_name;
 		public IdContext non_static_attr;
 		public IdContext static_attr;
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Udt_method_argumentsContext udt_method_arguments() {
 			return getRuleContext(Udt_method_argumentsContext.class,0);
 		}
@@ -78876,6 +79323,10 @@ public class TSqlParser extends Parser {
 		}
 		public As_column_aliasContext as_column_alias() {
 			return getRuleContext(As_column_aliasContext.class,0);
+		}
+		public List<TerminalNode> COLON() { return getTokens(TSqlParser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(TSqlParser.COLON, i);
 		}
 		public Udt_elemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -78980,6 +79431,7 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public As_column_aliasContext as_column_alias() {
 			return getRuleContext(As_column_aliasContext.class,0);
 		}
@@ -79137,6 +79589,10 @@ public class TSqlParser extends Parser {
 		public Table_sourceContext table_source(int i) {
 			return getRuleContext(Table_sourceContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Table_sourcesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -79200,6 +79656,8 @@ public class TSqlParser extends Parser {
 		public Table_source_item_joinedContext table_source_item_joined() {
 			return getRuleContext(Table_source_item_joinedContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Table_sourceContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -79350,8 +79808,13 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Function_callContext.class,0);
 		}
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Open_xmlContext open_xml() {
 			return getRuleContext(Open_xmlContext.class,0);
+		}
+		public List<TerminalNode> COLON() { return getTokens(TSqlParser.COLON); }
+		public TerminalNode COLON(int i) {
+			return getToken(TSqlParser.COLON, i);
 		}
 		public Table_source_itemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -79584,11 +80047,23 @@ public class TSqlParser extends Parser {
 
 	public static class Open_xmlContext extends ParserRuleContext {
 		public TerminalNode OPENXML() { return getToken(TSqlParser.OPENXML, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public Schema_declarationContext schema_declaration() {
@@ -79679,6 +80154,10 @@ public class TSqlParser extends Parser {
 		}
 		public Column_declarationContext column_declaration(int i) {
 			return getRuleContext(Column_declarationContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Schema_declarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -79798,10 +80277,13 @@ public class TSqlParser extends Parser {
 
 	public static class Change_tableContext extends ParserRuleContext {
 		public TerminalNode CHANGETABLE() { return getToken(TSqlParser.CHANGETABLE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode CHANGES() { return getToken(TSqlParser.CHANGES, 0); }
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode NULL() { return getToken(TSqlParser.NULL, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
@@ -80079,6 +80561,7 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Pivot_clauseContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Aggregate_windowed_functionContext aggregate_windowed_function() {
 			return getRuleContext(Aggregate_windowed_functionContext.class,0);
 		}
@@ -80090,6 +80573,7 @@ public class TSqlParser extends Parser {
 		public Column_alias_listContext column_alias_list() {
 			return getRuleContext(Column_alias_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Pivot_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -80143,6 +80627,10 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Unpivot_clauseContext extends ParserRuleContext {
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -80153,6 +80641,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode IN() { return getToken(TSqlParser.IN, 0); }
 		public Full_column_name_listContext full_column_name_list() {
 			return getRuleContext(Full_column_name_listContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
 		}
 		public Unpivot_clauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -80216,6 +80708,10 @@ public class TSqlParser extends Parser {
 		}
 		public Full_column_nameContext full_column_name(int i) {
 			return getRuleContext(Full_column_nameContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Full_column_name_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -80476,6 +80972,7 @@ public class TSqlParser extends Parser {
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TerminalNode DECIMAL() { return getToken(TSqlParser.DECIMAL, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public Bulk_optionContext(ParserRuleContext parent, int invokingState) {
@@ -80536,6 +81033,8 @@ public class TSqlParser extends Parser {
 		public SubqueryContext subquery() {
 			return getRuleContext(SubqueryContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Table_value_constructorContext table_value_constructor() {
 			return getRuleContext(Table_value_constructorContext.class,0);
 		}
@@ -80644,13 +81143,19 @@ public class TSqlParser extends Parser {
 	}
 	public static class DATEADDContext extends Function_callContext {
 		public TerminalNode DATEADD() { return getToken(TSqlParser.DATEADD, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public DATEADDContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80668,6 +81173,9 @@ public class TSqlParser extends Parser {
 	}
 	public static class CHECKSUMContext extends Function_callContext {
 		public TerminalNode CHECKSUM() { return getToken(TSqlParser.CHECKSUM, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public CHECKSUMContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80702,6 +81210,9 @@ public class TSqlParser extends Parser {
 	}
 	public static class BINARY_CHECKSUMContext extends Function_callContext {
 		public TerminalNode BINARY_CHECKSUM() { return getToken(TSqlParser.BINARY_CHECKSUM, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public BINARY_CHECKSUMContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80719,8 +81230,13 @@ public class TSqlParser extends Parser {
 	}
 	public static class IFFContext extends Function_callContext {
 		public TerminalNode IIF() { return getToken(TSqlParser.IIF, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Search_conditionContext search_condition() {
 			return getRuleContext(Search_conditionContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -80728,6 +81244,7 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public IFFContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80762,12 +81279,15 @@ public class TSqlParser extends Parser {
 	}
 	public static class NULLIFContext extends Function_callContext {
 		public TerminalNode NULLIF() { return getToken(TSqlParser.NULLIF, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public NULLIFContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80805,6 +81325,12 @@ public class TSqlParser extends Parser {
 		public ExpressionContext convert_expression;
 		public ExpressionContext style;
 		public TerminalNode CONVERT() { return getToken(TSqlParser.CONVERT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Data_typeContext data_type() {
 			return getRuleContext(Data_typeContext.class,0);
 		}
@@ -80850,9 +81376,11 @@ public class TSqlParser extends Parser {
 	}
 	public static class COALESCEContext extends Function_callContext {
 		public TerminalNode COALESCE() { return getToken(TSqlParser.COALESCE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Expression_listContext expression_list() {
 			return getRuleContext(Expression_listContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public COALESCEContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80870,6 +81398,7 @@ public class TSqlParser extends Parser {
 	}
 	public static class CASTContext extends Function_callContext {
 		public TerminalNode CAST() { return getToken(TSqlParser.CAST, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -80877,6 +81406,7 @@ public class TSqlParser extends Parser {
 		public Data_typeContext data_type() {
 			return getRuleContext(Data_typeContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public CASTContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80913,6 +81443,8 @@ public class TSqlParser extends Parser {
 		public Scalar_function_nameContext scalar_function_name() {
 			return getRuleContext(Scalar_function_nameContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Expression_listContext expression_list() {
 			return getRuleContext(Expression_listContext.class,0);
 		}
@@ -80933,10 +81465,13 @@ public class TSqlParser extends Parser {
 	}
 	public static class DATEPARTContext extends Function_callContext {
 		public TerminalNode DATEPART() { return getToken(TSqlParser.DATEPART, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public DATEPARTContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -80954,16 +81489,22 @@ public class TSqlParser extends Parser {
 	}
 	public static class STUFFContext extends Function_callContext {
 		public TerminalNode STUFF() { return getToken(TSqlParser.STUFF, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<TerminalNode> DECIMAL() { return getTokens(TSqlParser.DECIMAL); }
 		public TerminalNode DECIMAL(int i) {
 			return getToken(TSqlParser.DECIMAL, i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public STUFFContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81002,8 +81543,14 @@ public class TSqlParser extends Parser {
 		public Token seed;
 		public Token increment;
 		public TerminalNode IDENTITY() { return getToken(TSqlParser.IDENTITY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Data_typeContext data_type() {
 			return getRuleContext(Data_typeContext.class,0);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public List<TerminalNode> DECIMAL() { return getTokens(TSqlParser.DECIMAL); }
 		public TerminalNode DECIMAL(int i) {
@@ -81045,10 +81592,13 @@ public class TSqlParser extends Parser {
 	}
 	public static class DATENAMEContext extends Function_callContext {
 		public TerminalNode DATENAME() { return getToken(TSqlParser.DATENAME, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public DATENAMEContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81066,6 +81616,8 @@ public class TSqlParser extends Parser {
 	}
 	public static class GETUTCDATEContext extends Function_callContext {
 		public TerminalNode GETUTCDATE() { return getToken(TSqlParser.GETUTCDATE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public GETUTCDATEContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81102,12 +81654,15 @@ public class TSqlParser extends Parser {
 	}
 	public static class ISNULLContext extends Function_callContext {
 		public TerminalNode ISNULL() { return getToken(TSqlParser.ISNULL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public ISNULLContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81125,13 +81680,19 @@ public class TSqlParser extends Parser {
 	}
 	public static class DATEDIFFContext extends Function_callContext {
 		public TerminalNode DATEDIFF() { return getToken(TSqlParser.DATEDIFF, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public DATEDIFFContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81149,6 +81710,8 @@ public class TSqlParser extends Parser {
 	}
 	public static class GETDATEContext extends Function_callContext {
 		public TerminalNode GETDATE() { return getToken(TSqlParser.GETDATE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public GETDATEContext(Function_callContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -81168,6 +81731,15 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expr;
 		public ExpressionContext separator;
 		public TerminalNode STRING_AGG() { return getToken(TSqlParser.STRING_AGG, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
+		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -81755,7 +82327,14 @@ public class TSqlParser extends Parser {
 	public static class Value_methodContext extends ParserRuleContext {
 		public Token xquery;
 		public Token sqltype;
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public TerminalNode VALUE() { return getToken(TSqlParser.VALUE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(TSqlParser.STRING, i);
@@ -81958,7 +82537,13 @@ public class TSqlParser extends Parser {
 
 	public static class Query_methodContext extends ParserRuleContext {
 		public Token xquery;
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public TerminalNode QUERY() { return getToken(TSqlParser.QUERY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
@@ -82085,7 +82670,10 @@ public class TSqlParser extends Parser {
 
 	public static class Exist_methodContext extends ParserRuleContext {
 		public Token xquery;
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode EXIST() { return getToken(TSqlParser.EXIST, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
@@ -82150,7 +82738,10 @@ public class TSqlParser extends Parser {
 
 	public static class Modify_methodContext extends ParserRuleContext {
 		public Token xml_dml;
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode MODIFY() { return getToken(TSqlParser.MODIFY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
@@ -82215,7 +82806,10 @@ public class TSqlParser extends Parser {
 
 	public static class Nodes_methodContext extends ParserRuleContext {
 		public Token xquery;
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode NODES() { return getToken(TSqlParser.NODES, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
 		public TerminalNode ID() { return getToken(TSqlParser.ID, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
@@ -82558,13 +83152,19 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class With_table_hintsContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Table_hintContext> table_hint() {
 			return getRuleContexts(Table_hintContext.class);
 		}
 		public Table_hintContext table_hint(int i) {
 			return getRuleContext(Table_hintContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public With_table_hintsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -82646,11 +83246,17 @@ public class TSqlParser extends Parser {
 
 	public static class Insert_with_table_hintsContext extends ParserRuleContext {
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Table_hintContext> table_hint() {
 			return getRuleContexts(Table_hintContext.class);
 		}
 		public Table_hintContext table_hint(int i) {
 			return getRuleContext(Table_hintContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Insert_with_table_hintsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -82725,6 +83331,7 @@ public class TSqlParser extends Parser {
 
 	public static class Table_hintContext extends ParserRuleContext {
 		public TerminalNode INDEX() { return getToken(TSqlParser.INDEX, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public List<Index_valueContext> index_value() {
 			return getRuleContexts(Index_valueContext.class);
 		}
@@ -82741,6 +83348,18 @@ public class TSqlParser extends Parser {
 			return getToken(TSqlParser.ID, i);
 		}
 		public TerminalNode NOEXPAND() { return getToken(TSqlParser.NOEXPAND, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Table_hintContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -83855,11 +84474,17 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Column_alias_listContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<Column_aliasContext> column_alias() {
 			return getRuleContexts(Column_aliasContext.class);
 		}
 		public Column_aliasContext column_alias(int i) {
 			return getRuleContext(Column_aliasContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Column_alias_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -84412,11 +85037,23 @@ public class TSqlParser extends Parser {
 
 	public static class Table_value_constructorContext extends ParserRuleContext {
 		public TerminalNode VALUES() { return getToken(TSqlParser.VALUES, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(TSqlParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(TSqlParser.LR_BRACKET, i);
+		}
 		public List<Expression_listContext> expression_list() {
 			return getRuleContexts(Expression_listContext.class);
 		}
 		public Expression_listContext expression_list(int i) {
 			return getRuleContext(Expression_listContext.class,i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(TSqlParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(TSqlParser.RR_BRACKET, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Table_value_constructorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -84494,6 +85131,10 @@ public class TSqlParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Expression_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -84552,6 +85193,8 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Ranking_windowed_functionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Over_clauseContext over_clause() {
 			return getRuleContext(Over_clauseContext.class,0);
 		}
@@ -84643,9 +85286,11 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Aggregate_windowed_functionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public All_distinct_expressionContext all_distinct_expression() {
 			return getRuleContext(All_distinct_expressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode AVG() { return getToken(TSqlParser.AVG, 0); }
 		public TerminalNode MAX() { return getToken(TSqlParser.MAX, 0); }
 		public TerminalNode MIN() { return getToken(TSqlParser.MIN, 0); }
@@ -84659,6 +85304,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode COUNT() { return getToken(TSqlParser.COUNT, 0); }
 		public TerminalNode COUNT_BIG() { return getToken(TSqlParser.COUNT_BIG, 0); }
+		public TerminalNode STAR() { return getToken(TSqlParser.STAR, 0); }
 		public TerminalNode CHECKSUM_AGG() { return getToken(TSqlParser.CHECKSUM_AGG, 0); }
 		public TerminalNode GROUPING() { return getToken(TSqlParser.GROUPING, 0); }
 		public ExpressionContext expression() {
@@ -85294,12 +85940,14 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Analytic_windowed_functionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public Over_clauseContext over_clause() {
 			return getRuleContext(Over_clauseContext.class,0);
 		}
@@ -85307,6 +85955,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode LAST_VALUE() { return getToken(TSqlParser.LAST_VALUE, 0); }
 		public TerminalNode LAG() { return getToken(TSqlParser.LAG, 0); }
 		public TerminalNode LEAD() { return getToken(TSqlParser.LEAD, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public Analytic_windowed_functionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -85488,6 +86140,8 @@ public class TSqlParser extends Parser {
 
 	public static class Over_clauseContext extends ParserRuleContext {
 		public TerminalNode OVER() { return getToken(TSqlParser.OVER, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode PARTITION() { return getToken(TSqlParser.PARTITION, 0); }
 		public TerminalNode BY() { return getToken(TSqlParser.BY, 0); }
 		public Expression_listContext expression_list() {
@@ -85914,6 +86568,10 @@ public class TSqlParser extends Parser {
 		}
 		public Database_filestream_optionContext database_filestream_option(int i) {
 			return getRuleContext(Database_filestream_optionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode DEFAULT_LANGUAGE() { return getToken(TSqlParser.DEFAULT_LANGUAGE, 0); }
 		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
@@ -87166,6 +87824,10 @@ public class TSqlParser extends Parser {
 		public TerminalNode FILESTREAM() { return getToken(TSqlParser.FILESTREAM, 0); }
 		public TerminalNode DEFAULT() { return getToken(TSqlParser.DEFAULT, 0); }
 		public TerminalNode MEMORY_OPTIMIZED_DATA() { return getToken(TSqlParser.MEMORY_OPTIMIZED_DATA, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public File_groupContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -87280,6 +87942,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public TerminalNode SIZE() { return getToken(TSqlParser.SIZE, 0); }
 		public List<File_sizeContext> file_size() {
@@ -87909,6 +88575,10 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public Entity_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -88007,6 +88677,7 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Entity_name_for_azure_dwContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -88074,6 +88745,7 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Entity_name_for_parallel_dwContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -88141,6 +88813,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
 		}
 		public Full_table_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -88240,6 +88916,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
 		}
 		public TerminalNode BLOCKING_HIERARCHY() { return getToken(TSqlParser.BLOCKING_HIERARCHY, 0); }
 		public Table_nameContext(ParserRuleContext parent, int invokingState) {
@@ -88369,6 +89049,7 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Simple_nameContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -88430,6 +89111,7 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public Func_proc_name_schemaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -88496,6 +89178,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
 		}
 		public Func_proc_name_database_schemaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -88588,6 +89274,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
 		}
 		public Func_proc_name_server_database_schemaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -89167,6 +89857,7 @@ public class TSqlParser extends Parser {
 		public Table_nameContext table_name() {
 			return getRuleContext(Table_nameContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(TSqlParser.DOT, 0); }
 		public TerminalNode COMPATIBILITY_LEVEL() { return getToken(TSqlParser.COMPATIBILITY_LEVEL, 0); }
 		public TerminalNode STATUS() { return getToken(TSqlParser.STATUS, 0); }
 		public TerminalNode QUOTED_IDENTIFIER() { return getToken(TSqlParser.QUOTED_IDENTIFIER, 0); }
@@ -89372,6 +90063,10 @@ public class TSqlParser extends Parser {
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public List<TerminalNode> ASC() { return getTokens(TSqlParser.ASC); }
 		public TerminalNode ASC(int i) {
 			return getToken(TSqlParser.ASC, i);
@@ -89479,6 +90174,10 @@ public class TSqlParser extends Parser {
 		}
 		public IdContext id(int i) {
 			return getRuleContext(IdContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
 		}
 		public Column_name_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -90350,11 +91049,15 @@ public class TSqlParser extends Parser {
 		public TerminalNode BEGIN() { return getToken(TSqlParser.BEGIN, 0); }
 		public TerminalNode CONVERSATION() { return getToken(TSqlParser.CONVERSATION, 0); }
 		public TerminalNode TIMER() { return getToken(TSqlParser.TIMER, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode TIMEOUT() { return getToken(TSqlParser.TIMEOUT, 0); }
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
 		public TimeContext time() {
 			return getRuleContext(TimeContext.class,0);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Begin_conversation_timerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -90453,8 +91156,17 @@ public class TSqlParser extends Parser {
 			return getRuleContext(Service_nameContext.class,i);
 		}
 		public TerminalNode CONVERSATION() { return getToken(TSqlParser.CONVERSATION, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(TSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(TSqlParser.COMMA, i);
+		}
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
+		public List<TerminalNode> EQUAL() { return getTokens(TSqlParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(TSqlParser.EQUAL, i);
+		}
 		public TerminalNode LIFETIME() { return getToken(TSqlParser.LIFETIME, 0); }
 		public TerminalNode ENCRYPTION() { return getToken(TSqlParser.ENCRYPTION, 0); }
 		public TerminalNode RELATED_CONVERSATION() { return getToken(TSqlParser.RELATED_CONVERSATION, 0); }
@@ -90784,8 +91496,13 @@ public class TSqlParser extends Parser {
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(TSqlParser.LOCAL_ID, i);
 		}
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TerminalNode WITH() { return getToken(TSqlParser.WITH, 0); }
 		public TerminalNode ERROR() { return getToken(TSqlParser.ERROR, 0); }
+		public List<TerminalNode> EQUAL() { return getTokens(TSqlParser.EQUAL); }
+		public TerminalNode EQUAL(int i) {
+			return getToken(TSqlParser.EQUAL, i);
+		}
 		public TerminalNode DESCRIPTION() { return getToken(TSqlParser.DESCRIPTION, 0); }
 		public TerminalNode CLEANUP() { return getToken(TSqlParser.CLEANUP, 0); }
 		public List<TerminalNode> STRING() { return getTokens(TSqlParser.STRING); }
@@ -90907,14 +91624,18 @@ public class TSqlParser extends Parser {
 
 	public static class Waitfor_conversationContext extends ParserRuleContext {
 		public TimeContext timeout;
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
 		public Get_conversationContext get_conversation() {
 			return getRuleContext(Get_conversationContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WAITFOR() { return getToken(TSqlParser.WAITFOR, 0); }
 		public TerminalNode TIMEOUT() { return getToken(TSqlParser.TIMEOUT, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public TimeContext time() {
 			return getRuleContext(TimeContext.class,0);
 		}
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public Waitfor_conversationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -91014,6 +91735,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode STRING() { return getToken(TSqlParser.STRING, 0); }
 		public TerminalNode LOCAL_ID() { return getToken(TSqlParser.LOCAL_ID, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Get_conversationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -91088,6 +91810,10 @@ public class TSqlParser extends Parser {
 		public IdContext database_name;
 		public IdContext schema_name;
 		public IdContext name;
+		public List<TerminalNode> DOT() { return getTokens(TSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(TSqlParser.DOT, i);
+		}
 		public List<IdContext> id() {
 			return getRuleContexts(IdContext.class);
 		}
@@ -91177,6 +91903,9 @@ public class TSqlParser extends Parser {
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(TSqlParser.LOCAL_ID, i);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
+		public TerminalNode SEMI() { return getToken(TSqlParser.SEMI, 0); }
 		public Send_conversationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -91277,11 +92006,14 @@ public class TSqlParser extends Parser {
 			return getRuleContext(IdContext.class,0);
 		}
 		public TerminalNode IDENTITY() { return getToken(TSqlParser.IDENTITY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(TSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(TSqlParser.RR_BRACKET, 0); }
 		public List<TerminalNode> DECIMAL() { return getTokens(TSqlParser.DECIMAL); }
 		public TerminalNode DECIMAL(int i) {
 			return getToken(TSqlParser.DECIMAL, i);
 		}
 		public TerminalNode MAX() { return getToken(TSqlParser.MAX, 0); }
+		public TerminalNode COMMA() { return getToken(TSqlParser.COMMA, 0); }
 		public TerminalNode DOUBLE() { return getToken(TSqlParser.DOUBLE, 0); }
 		public TerminalNode PRECISION() { return getToken(TSqlParser.PRECISION, 0); }
 		public TerminalNode INT() { return getToken(TSqlParser.INT, 0); }
@@ -91509,6 +92241,7 @@ public class TSqlParser extends Parser {
 		}
 		public TerminalNode REAL() { return getToken(TSqlParser.REAL, 0); }
 		public TerminalNode FLOAT() { return getToken(TSqlParser.FLOAT, 0); }
+		public TerminalNode DOLLAR() { return getToken(TSqlParser.DOLLAR, 0); }
 		public ConstantContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -91633,6 +92366,8 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class SignContext extends ParserRuleContext {
+		public TerminalNode PLUS() { return getToken(TSqlParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(TSqlParser.MINUS, 0); }
 		public SignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -92654,6 +93389,10 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Comparison_operatorContext extends ParserRuleContext {
+		public TerminalNode EQUAL() { return getToken(TSqlParser.EQUAL, 0); }
+		public TerminalNode GREATER() { return getToken(TSqlParser.GREATER, 0); }
+		public TerminalNode LESS() { return getToken(TSqlParser.LESS, 0); }
+		public TerminalNode EXCLAMATION() { return getToken(TSqlParser.EXCLAMATION, 0); }
 		public Comparison_operatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -92769,6 +93508,14 @@ public class TSqlParser extends Parser {
 	}
 
 	public static class Assignment_operatorContext extends ParserRuleContext {
+		public TerminalNode PLUS_ASSIGN() { return getToken(TSqlParser.PLUS_ASSIGN, 0); }
+		public TerminalNode MINUS_ASSIGN() { return getToken(TSqlParser.MINUS_ASSIGN, 0); }
+		public TerminalNode MULT_ASSIGN() { return getToken(TSqlParser.MULT_ASSIGN, 0); }
+		public TerminalNode DIV_ASSIGN() { return getToken(TSqlParser.DIV_ASSIGN, 0); }
+		public TerminalNode MOD_ASSIGN() { return getToken(TSqlParser.MOD_ASSIGN, 0); }
+		public TerminalNode AND_ASSIGN() { return getToken(TSqlParser.AND_ASSIGN, 0); }
+		public TerminalNode XOR_ASSIGN() { return getToken(TSqlParser.XOR_ASSIGN, 0); }
+		public TerminalNode OR_ASSIGN() { return getToken(TSqlParser.OR_ASSIGN, 0); }
 		public Assignment_operatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -92824,6 +93571,7 @@ public class TSqlParser extends Parser {
 		public TerminalNode MB() { return getToken(TSqlParser.MB, 0); }
 		public TerminalNode GB() { return getToken(TSqlParser.GB, 0); }
 		public TerminalNode TB() { return getToken(TSqlParser.TB, 0); }
+		public TerminalNode MODULE() { return getToken(TSqlParser.MODULE, 0); }
 		public File_sizeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}

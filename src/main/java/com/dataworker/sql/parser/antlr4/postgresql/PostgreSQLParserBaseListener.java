@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/postgresql/PostgreSQLParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/postgresql/PostgreSQLParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.postgresql;
 
 import org.antlr.v4.runtime.ParserRuleContext;

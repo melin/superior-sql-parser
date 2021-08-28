@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/presto/PrestoSqlBase.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/presto/PrestoSqlBase.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.presto;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class PrestoSqlBaseParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -87,109 +87,119 @@ public class PrestoSqlBaseParser extends Parser {
 		RULE_pathSpecification = 77, RULE_privilege = 78, RULE_qualifiedName = 79, 
 		RULE_grantor = 80, RULE_principal = 81, RULE_roles = 82, RULE_identifier = 83, 
 		RULE_number = 84, RULE_nonReserved = 85;
-	public static final String[] ruleNames = {
-		"singleStatement", "standaloneExpression", "standalonePathSpecification", 
-		"standaloneType", "standaloneRowPattern", "statement", "query", "with", 
-		"tableElement", "columnDefinition", "likeClause", "properties", "property", 
-		"queryNoWith", "limitRowCount", "rowCount", "queryTerm", "queryPrimary", 
-		"sortItem", "querySpecification", "groupBy", "groupingElement", "groupingSet", 
-		"windowDefinition", "windowSpecification", "namedQuery", "setQuantifier", 
-		"selectItem", "relation", "joinType", "joinCriteria", "sampledRelation", 
-		"sampleType", "patternRecognition", "measureDefinition", "rowsPerMatch", 
-		"emptyMatchHandling", "skipTo", "subsetDefinition", "variableDefinition", 
-		"aliasedRelation", "columnAliases", "relationPrimary", "expression", "booleanExpression", 
-		"predicate", "valueExpression", "primaryExpression", "processingMode", 
-		"nullTreatment", "string", "timeZoneSpecifier", "comparisonOperator", 
-		"comparisonQuantifier", "booleanValue", "interval", "intervalField", "normalForm", 
-		"type", "rowField", "typeParameter", "whenClause", "filter", "mergeCase", 
-		"over", "windowFrame", "frameExtent", "frameBound", "rowPattern", "patternPrimary", 
-		"patternQuantifier", "updateAssignment", "explainOption", "transactionMode", 
-		"levelOfIsolation", "callArgument", "pathElement", "pathSpecification", 
-		"privilege", "qualifiedName", "grantor", "principal", "roles", "identifier", 
-		"number", "nonReserved"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"singleStatement", "standaloneExpression", "standalonePathSpecification", 
+			"standaloneType", "standaloneRowPattern", "statement", "query", "with", 
+			"tableElement", "columnDefinition", "likeClause", "properties", "property", 
+			"queryNoWith", "limitRowCount", "rowCount", "queryTerm", "queryPrimary", 
+			"sortItem", "querySpecification", "groupBy", "groupingElement", "groupingSet", 
+			"windowDefinition", "windowSpecification", "namedQuery", "setQuantifier", 
+			"selectItem", "relation", "joinType", "joinCriteria", "sampledRelation", 
+			"sampleType", "patternRecognition", "measureDefinition", "rowsPerMatch", 
+			"emptyMatchHandling", "skipTo", "subsetDefinition", "variableDefinition", 
+			"aliasedRelation", "columnAliases", "relationPrimary", "expression", 
+			"booleanExpression", "predicate", "valueExpression", "primaryExpression", 
+			"processingMode", "nullTreatment", "string", "timeZoneSpecifier", "comparisonOperator", 
+			"comparisonQuantifier", "booleanValue", "interval", "intervalField", 
+			"normalForm", "type", "rowField", "typeParameter", "whenClause", "filter", 
+			"mergeCase", "over", "windowFrame", "frameExtent", "frameBound", "rowPattern", 
+			"patternPrimary", "patternQuantifier", "updateAssignment", "explainOption", 
+			"transactionMode", "levelOfIsolation", "callArgument", "pathElement", 
+			"pathSpecification", "privilege", "qualifiedName", "grantor", "principal", 
+			"roles", "identifier", "number", "nonReserved"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'.'", "'('", "')'", "','", "'SKIP'", "'->'", "'['", "']'", "'|'", 
-		"'^'", "'$'", "'{-'", "'-}'", "'{'", "'}'", "'=>'", "'ADD'", "'ADMIN'", 
-		"'AFTER'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", "'ANY'", "'ARRAY'", 
-		"'AS'", "'ASC'", "'AT'", "'AUTHORIZATION'", "'BERNOULLI'", "'BETWEEN'", 
-		"'BY'", "'CALL'", "'CASCADE'", "'CASE'", "'CAST'", "'CATALOGS'", "'COLUMN'", 
-		"'COLUMNS'", "'COMMENT'", "'COMMIT'", "'COMMITTED'", "'CONSTRAINT'", "'CREATE'", 
-		"'CROSS'", "'CUBE'", "'CURRENT'", "'CURRENT_CATALOG'", "'CURRENT_DATE'", 
-		"'CURRENT_PATH'", "'CURRENT_ROLE'", "'CURRENT_SCHEMA'", "'CURRENT_TIME'", 
-		"'CURRENT_TIMESTAMP'", "'CURRENT_USER'", "'DATA'", "'DATE'", "'DAY'", 
-		"'DEALLOCATE'", "'DEFINER'", "'DELETE'", "'DESC'", "'DESCRIBE'", "'DEFINE'", 
-		"'DISTINCT'", "'DISTRIBUTED'", "'DOUBLE'", "'DROP'", "'ELSE'", "'EMPTY'", 
-		"'END'", "'ESCAPE'", "'EXCEPT'", "'EXCLUDING'", "'EXECUTE'", "'EXISTS'", 
-		"'EXPLAIN'", "'EXTRACT'", "'FALSE'", "'FETCH'", "'FILTER'", "'FINAL'", 
-		"'FIRST'", "'FOLLOWING'", "'FOR'", "'FORMAT'", "'FROM'", "'FULL'", "'FUNCTIONS'", 
-		"'GRANT'", "'GRANTED'", "'GRANTS'", "'GRAPHVIZ'", "'GROUP'", "'GROUPING'", 
-		"'GROUPS'", "'HAVING'", "'HOUR'", "'IF'", "'IGNORE'", "'IN'", "'INCLUDING'", 
-		"'INITIAL'", "'INNER'", "'INPUT'", "'INSERT'", "'INTERSECT'", "'INTERVAL'", 
-		"'INTO'", "'INVOKER'", "'IO'", "'IS'", "'ISOLATION'", "'JOIN'", "'JSON'", 
-		"'LAST'", "'LATERAL'", "'LEFT'", "'LEVEL'", "'LIKE'", "'LIMIT'", "'LOCAL'", 
-		"'LOCALTIME'", "'LOCALTIMESTAMP'", "'LOGICAL'", "'MAP'", "'MATCH'", "'MATCHED'", 
-		"'MATCHES'", "'MATCH_RECOGNIZE'", "'MATERIALIZED'", "'MEASURES'", "'MERGE'", 
-		"'MINUTE'", "'MONTH'", "'NATURAL'", "'NEXT'", "'NFC'", "'NFD'", "'NFKC'", 
-		"'NFKD'", "'NO'", "'NONE'", "'NORMALIZE'", "'NOT'", "'NULL'", "'NULLIF'", 
-		"'NULLS'", "'OFFSET'", "'OMIT'", "'ON'", "'ONE'", "'ONLY'", "'OPTION'", 
-		"'OR'", "'ORDER'", "'ORDINALITY'", "'OUTER'", "'OUTPUT'", "'OVER'", "'PARTITION'", 
-		"'PARTITIONS'", "'PAST'", "'PATH'", "'PATTERN'", "'PER'", "'PERMUTE'", 
-		"'POSITION'", "'PRECEDING'", "'PRECISION'", "'PREPARE'", "'PRIVILEGES'", 
-		"'PROPERTIES'", "'RANGE'", "'READ'", "'RECURSIVE'", "'REFRESH'", "'RENAME'", 
-		"'REPEATABLE'", "'REPLACE'", "'RESET'", "'RESPECT'", "'RESTRICT'", "'REVOKE'", 
-		"'RIGHT'", "'ROLE'", "'ROLES'", "'ROLLBACK'", "'ROLLUP'", "'ROW'", "'ROWS'", 
-		"'RUNNING'", "'SCHEMA'", "'SCHEMAS'", "'SECOND'", "'SECURITY'", "'SEEK'", 
-		"'SELECT'", "'SERIALIZABLE'", "'SESSION'", "'SET'", "'SETS'", "'SHOW'", 
-		"'SOME'", "'START'", "'STATS'", "'SUBSET'", "'SUBSTRING'", "'SYSTEM'", 
-		"'TABLE'", "'TABLES'", "'TABLESAMPLE'", "'TEXT'", "'THEN'", "'TIES'", 
-		"'TIME'", "'TIMESTAMP'", "'TO'", "'TRANSACTION'", "'TRUE'", "'TRY_CAST'", 
-		"'TYPE'", "'UESCAPE'", "'UNBOUNDED'", "'UNCOMMITTED'", "'UNION'", "'UNMATCHED'", 
-		"'UNNEST'", "'UPDATE'", "'USE'", "'USER'", "'USING'", "'VALIDATE'", "'VALUES'", 
-		"'VERBOSE'", "'VIEW'", "'WHEN'", "'WHERE'", "'WINDOW'", "'WITH'", "'WITHOUT'", 
-		"'WORK'", "'WRITE'", "'YEAR'", "'ZONE'", "'='", null, "'<'", "'<='", "'>'", 
-		"'>='", "'+'", "'-'", "'*'", "'/'", "'%'", "'||'", "'?'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, "ADD", "ADMIN", "AFTER", "ALL", "ALTER", 
-		"ANALYZE", "AND", "ANY", "ARRAY", "AS", "ASC", "AT", "AUTHORIZATION", 
-		"BERNOULLI", "BETWEEN", "BY", "CALL", "CASCADE", "CASE", "CAST", "CATALOGS", 
-		"COLUMN", "COLUMNS", "COMMENT", "COMMIT", "COMMITTED", "CONSTRAINT", "CREATE", 
-		"CROSS", "CUBE", "CURRENT", "CURRENT_CATALOG", "CURRENT_DATE", "CURRENT_PATH", 
-		"CURRENT_ROLE", "CURRENT_SCHEMA", "CURRENT_TIME", "CURRENT_TIMESTAMP", 
-		"CURRENT_USER", "DATA", "DATE", "DAY", "DEALLOCATE", "DEFINER", "DELETE", 
-		"DESC", "DESCRIBE", "DEFINE", "DISTINCT", "DISTRIBUTED", "DOUBLE", "DROP", 
-		"ELSE", "EMPTY", "END", "ESCAPE", "EXCEPT", "EXCLUDING", "EXECUTE", "EXISTS", 
-		"EXPLAIN", "EXTRACT", "FALSE", "FETCH", "FILTER", "FINAL", "FIRST", "FOLLOWING", 
-		"FOR", "FORMAT", "FROM", "FULL", "FUNCTIONS", "GRANT", "GRANTED", "GRANTS", 
-		"GRAPHVIZ", "GROUP", "GROUPING", "GROUPS", "HAVING", "HOUR", "IF", "IGNORE", 
-		"IN", "INCLUDING", "INITIAL", "INNER", "INPUT", "INSERT", "INTERSECT", 
-		"INTERVAL", "INTO", "INVOKER", "IO", "IS", "ISOLATION", "JOIN", "JSON", 
-		"LAST", "LATERAL", "LEFT", "LEVEL", "LIKE", "LIMIT", "LOCAL", "LOCALTIME", 
-		"LOCALTIMESTAMP", "LOGICAL", "MAP", "MATCH", "MATCHED", "MATCHES", "MATCH_RECOGNIZE", 
-		"MATERIALIZED", "MEASURES", "MERGE", "MINUTE", "MONTH", "NATURAL", "NEXT", 
-		"NFC", "NFD", "NFKC", "NFKD", "NO", "NONE", "NORMALIZE", "NOT", "NULL", 
-		"NULLIF", "NULLS", "OFFSET", "OMIT", "ON", "ONE", "ONLY", "OPTION", "OR", 
-		"ORDER", "ORDINALITY", "OUTER", "OUTPUT", "OVER", "PARTITION", "PARTITIONS", 
-		"PAST", "PATH", "PATTERN", "PER", "PERMUTE", "POSITION", "PRECEDING", 
-		"PRECISION", "PREPARE", "PRIVILEGES", "PROPERTIES", "RANGE", "READ", "RECURSIVE", 
-		"REFRESH", "RENAME", "REPEATABLE", "REPLACE", "RESET", "RESPECT", "RESTRICT", 
-		"REVOKE", "RIGHT", "ROLE", "ROLES", "ROLLBACK", "ROLLUP", "ROW", "ROWS", 
-		"RUNNING", "SCHEMA", "SCHEMAS", "SECOND", "SECURITY", "SEEK", "SELECT", 
-		"SERIALIZABLE", "SESSION", "SET", "SETS", "SHOW", "SOME", "START", "STATS", 
-		"SUBSET", "SUBSTRING", "SYSTEM", "TABLE", "TABLES", "TABLESAMPLE", "TEXT", 
-		"THEN", "TIES", "TIME", "TIMESTAMP", "TO", "TRANSACTION", "TRUE", "TRY_CAST", 
-		"TYPE", "UESCAPE", "UNBOUNDED", "UNCOMMITTED", "UNION", "UNMATCHED", "UNNEST", 
-		"UPDATE", "USE", "USER", "USING", "VALIDATE", "VALUES", "VERBOSE", "VIEW", 
-		"WHEN", "WHERE", "WINDOW", "WITH", "WITHOUT", "WORK", "WRITE", "YEAR", 
-		"ZONE", "EQ", "NEQ", "LT", "LTE", "GT", "GTE", "PLUS", "MINUS", "ASTERISK", 
-		"SLASH", "PERCENT", "CONCAT", "QUESTION_MARK", "STRING", "UNICODE_STRING", 
-		"BINARY_LITERAL", "INTEGER_VALUE", "DECIMAL_VALUE", "DOUBLE_VALUE", "IDENTIFIER", 
-		"DIGIT_IDENTIFIER", "QUOTED_IDENTIFIER", "BACKQUOTED_IDENTIFIER", "SIMPLE_COMMENT", 
-		"BRACKETED_COMMENT", "WS", "UNRECOGNIZED", "DELIMITER"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'.'", "'('", "')'", "','", "'SKIP'", "'->'", "'['", "']'", "'|'", 
+			"'^'", "'$'", "'{-'", "'-}'", "'{'", "'}'", "'=>'", "'ADD'", "'ADMIN'", 
+			"'AFTER'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", "'ANY'", "'ARRAY'", 
+			"'AS'", "'ASC'", "'AT'", "'AUTHORIZATION'", "'BERNOULLI'", "'BETWEEN'", 
+			"'BY'", "'CALL'", "'CASCADE'", "'CASE'", "'CAST'", "'CATALOGS'", "'COLUMN'", 
+			"'COLUMNS'", "'COMMENT'", "'COMMIT'", "'COMMITTED'", "'CONSTRAINT'", 
+			"'CREATE'", "'CROSS'", "'CUBE'", "'CURRENT'", "'CURRENT_CATALOG'", "'CURRENT_DATE'", 
+			"'CURRENT_PATH'", "'CURRENT_ROLE'", "'CURRENT_SCHEMA'", "'CURRENT_TIME'", 
+			"'CURRENT_TIMESTAMP'", "'CURRENT_USER'", "'DATA'", "'DATE'", "'DAY'", 
+			"'DEALLOCATE'", "'DEFINER'", "'DELETE'", "'DESC'", "'DESCRIBE'", "'DEFINE'", 
+			"'DISTINCT'", "'DISTRIBUTED'", "'DOUBLE'", "'DROP'", "'ELSE'", "'EMPTY'", 
+			"'END'", "'ESCAPE'", "'EXCEPT'", "'EXCLUDING'", "'EXECUTE'", "'EXISTS'", 
+			"'EXPLAIN'", "'EXTRACT'", "'FALSE'", "'FETCH'", "'FILTER'", "'FINAL'", 
+			"'FIRST'", "'FOLLOWING'", "'FOR'", "'FORMAT'", "'FROM'", "'FULL'", "'FUNCTIONS'", 
+			"'GRANT'", "'GRANTED'", "'GRANTS'", "'GRAPHVIZ'", "'GROUP'", "'GROUPING'", 
+			"'GROUPS'", "'HAVING'", "'HOUR'", "'IF'", "'IGNORE'", "'IN'", "'INCLUDING'", 
+			"'INITIAL'", "'INNER'", "'INPUT'", "'INSERT'", "'INTERSECT'", "'INTERVAL'", 
+			"'INTO'", "'INVOKER'", "'IO'", "'IS'", "'ISOLATION'", "'JOIN'", "'JSON'", 
+			"'LAST'", "'LATERAL'", "'LEFT'", "'LEVEL'", "'LIKE'", "'LIMIT'", "'LOCAL'", 
+			"'LOCALTIME'", "'LOCALTIMESTAMP'", "'LOGICAL'", "'MAP'", "'MATCH'", "'MATCHED'", 
+			"'MATCHES'", "'MATCH_RECOGNIZE'", "'MATERIALIZED'", "'MEASURES'", "'MERGE'", 
+			"'MINUTE'", "'MONTH'", "'NATURAL'", "'NEXT'", "'NFC'", "'NFD'", "'NFKC'", 
+			"'NFKD'", "'NO'", "'NONE'", "'NORMALIZE'", "'NOT'", "'NULL'", "'NULLIF'", 
+			"'NULLS'", "'OFFSET'", "'OMIT'", "'ON'", "'ONE'", "'ONLY'", "'OPTION'", 
+			"'OR'", "'ORDER'", "'ORDINALITY'", "'OUTER'", "'OUTPUT'", "'OVER'", "'PARTITION'", 
+			"'PARTITIONS'", "'PAST'", "'PATH'", "'PATTERN'", "'PER'", "'PERMUTE'", 
+			"'POSITION'", "'PRECEDING'", "'PRECISION'", "'PREPARE'", "'PRIVILEGES'", 
+			"'PROPERTIES'", "'RANGE'", "'READ'", "'RECURSIVE'", "'REFRESH'", "'RENAME'", 
+			"'REPEATABLE'", "'REPLACE'", "'RESET'", "'RESPECT'", "'RESTRICT'", "'REVOKE'", 
+			"'RIGHT'", "'ROLE'", "'ROLES'", "'ROLLBACK'", "'ROLLUP'", "'ROW'", "'ROWS'", 
+			"'RUNNING'", "'SCHEMA'", "'SCHEMAS'", "'SECOND'", "'SECURITY'", "'SEEK'", 
+			"'SELECT'", "'SERIALIZABLE'", "'SESSION'", "'SET'", "'SETS'", "'SHOW'", 
+			"'SOME'", "'START'", "'STATS'", "'SUBSET'", "'SUBSTRING'", "'SYSTEM'", 
+			"'TABLE'", "'TABLES'", "'TABLESAMPLE'", "'TEXT'", "'THEN'", "'TIES'", 
+			"'TIME'", "'TIMESTAMP'", "'TO'", "'TRANSACTION'", "'TRUE'", "'TRY_CAST'", 
+			"'TYPE'", "'UESCAPE'", "'UNBOUNDED'", "'UNCOMMITTED'", "'UNION'", "'UNMATCHED'", 
+			"'UNNEST'", "'UPDATE'", "'USE'", "'USER'", "'USING'", "'VALIDATE'", "'VALUES'", 
+			"'VERBOSE'", "'VIEW'", "'WHEN'", "'WHERE'", "'WINDOW'", "'WITH'", "'WITHOUT'", 
+			"'WORK'", "'WRITE'", "'YEAR'", "'ZONE'", "'='", null, "'<'", "'<='", 
+			"'>'", "'>='", "'+'", "'-'", "'*'", "'/'", "'%'", "'||'", "'?'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, "ADD", "ADMIN", "AFTER", "ALL", "ALTER", 
+			"ANALYZE", "AND", "ANY", "ARRAY", "AS", "ASC", "AT", "AUTHORIZATION", 
+			"BERNOULLI", "BETWEEN", "BY", "CALL", "CASCADE", "CASE", "CAST", "CATALOGS", 
+			"COLUMN", "COLUMNS", "COMMENT", "COMMIT", "COMMITTED", "CONSTRAINT", 
+			"CREATE", "CROSS", "CUBE", "CURRENT", "CURRENT_CATALOG", "CURRENT_DATE", 
+			"CURRENT_PATH", "CURRENT_ROLE", "CURRENT_SCHEMA", "CURRENT_TIME", "CURRENT_TIMESTAMP", 
+			"CURRENT_USER", "DATA", "DATE", "DAY", "DEALLOCATE", "DEFINER", "DELETE", 
+			"DESC", "DESCRIBE", "DEFINE", "DISTINCT", "DISTRIBUTED", "DOUBLE", "DROP", 
+			"ELSE", "EMPTY", "END", "ESCAPE", "EXCEPT", "EXCLUDING", "EXECUTE", "EXISTS", 
+			"EXPLAIN", "EXTRACT", "FALSE", "FETCH", "FILTER", "FINAL", "FIRST", "FOLLOWING", 
+			"FOR", "FORMAT", "FROM", "FULL", "FUNCTIONS", "GRANT", "GRANTED", "GRANTS", 
+			"GRAPHVIZ", "GROUP", "GROUPING", "GROUPS", "HAVING", "HOUR", "IF", "IGNORE", 
+			"IN", "INCLUDING", "INITIAL", "INNER", "INPUT", "INSERT", "INTERSECT", 
+			"INTERVAL", "INTO", "INVOKER", "IO", "IS", "ISOLATION", "JOIN", "JSON", 
+			"LAST", "LATERAL", "LEFT", "LEVEL", "LIKE", "LIMIT", "LOCAL", "LOCALTIME", 
+			"LOCALTIMESTAMP", "LOGICAL", "MAP", "MATCH", "MATCHED", "MATCHES", "MATCH_RECOGNIZE", 
+			"MATERIALIZED", "MEASURES", "MERGE", "MINUTE", "MONTH", "NATURAL", "NEXT", 
+			"NFC", "NFD", "NFKC", "NFKD", "NO", "NONE", "NORMALIZE", "NOT", "NULL", 
+			"NULLIF", "NULLS", "OFFSET", "OMIT", "ON", "ONE", "ONLY", "OPTION", "OR", 
+			"ORDER", "ORDINALITY", "OUTER", "OUTPUT", "OVER", "PARTITION", "PARTITIONS", 
+			"PAST", "PATH", "PATTERN", "PER", "PERMUTE", "POSITION", "PRECEDING", 
+			"PRECISION", "PREPARE", "PRIVILEGES", "PROPERTIES", "RANGE", "READ", 
+			"RECURSIVE", "REFRESH", "RENAME", "REPEATABLE", "REPLACE", "RESET", "RESPECT", 
+			"RESTRICT", "REVOKE", "RIGHT", "ROLE", "ROLES", "ROLLBACK", "ROLLUP", 
+			"ROW", "ROWS", "RUNNING", "SCHEMA", "SCHEMAS", "SECOND", "SECURITY", 
+			"SEEK", "SELECT", "SERIALIZABLE", "SESSION", "SET", "SETS", "SHOW", "SOME", 
+			"START", "STATS", "SUBSET", "SUBSTRING", "SYSTEM", "TABLE", "TABLES", 
+			"TABLESAMPLE", "TEXT", "THEN", "TIES", "TIME", "TIMESTAMP", "TO", "TRANSACTION", 
+			"TRUE", "TRY_CAST", "TYPE", "UESCAPE", "UNBOUNDED", "UNCOMMITTED", "UNION", 
+			"UNMATCHED", "UNNEST", "UPDATE", "USE", "USER", "USING", "VALIDATE", 
+			"VALUES", "VERBOSE", "VIEW", "WHEN", "WHERE", "WINDOW", "WITH", "WITHOUT", 
+			"WORK", "WRITE", "YEAR", "ZONE", "EQ", "NEQ", "LT", "LTE", "GT", "GTE", 
+			"PLUS", "MINUS", "ASTERISK", "SLASH", "PERCENT", "CONCAT", "QUESTION_MARK", 
+			"STRING", "UNICODE_STRING", "BINARY_LITERAL", "INTEGER_VALUE", "DECIMAL_VALUE", 
+			"DOUBLE_VALUE", "IDENTIFIER", "DIGIT_IDENTIFIER", "QUOTED_IDENTIFIER", 
+			"BACKQUOTED_IDENTIFIER", "SIMPLE_COMMENT", "BRACKETED_COMMENT", "WS", 
+			"UNRECOGNIZED", "DELIMITER"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -239,6 +249,7 @@ public class PrestoSqlBaseParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class SingleStatementContext extends ParserRuleContext {
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
@@ -12185,9 +12196,11 @@ public class PrestoSqlBaseParser extends Parser {
 	}
 	public static class LegacyArrayTypeContext extends TypeContext {
 		public TerminalNode ARRAY() { return getToken(PrestoSqlBaseParser.ARRAY, 0); }
+		public TerminalNode LT() { return getToken(PrestoSqlBaseParser.LT, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode GT() { return getToken(PrestoSqlBaseParser.GT, 0); }
 		public LegacyArrayTypeContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12261,6 +12274,8 @@ public class PrestoSqlBaseParser extends Parser {
 		public TypeContext keyType;
 		public TypeContext valueType;
 		public TerminalNode MAP() { return getToken(PrestoSqlBaseParser.MAP, 0); }
+		public TerminalNode LT() { return getToken(PrestoSqlBaseParser.LT, 0); }
+		public TerminalNode GT() { return getToken(PrestoSqlBaseParser.GT, 0); }
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}

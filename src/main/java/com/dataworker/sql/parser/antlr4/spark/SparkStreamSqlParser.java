@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/spark/SparkStreamSqlParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/spark/SparkStreamSqlParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.spark;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SparkStreamSqlParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -33,33 +33,42 @@ public class SparkStreamSqlParser extends Parser {
 		RULE_colTypeList = 11, RULE_colType = 12, RULE_dataType = 13, RULE_tablePropertyList = 14, 
 		RULE_tableProperty = 15, RULE_tablePropertyKey = 16, RULE_tablePropertyValue = 17, 
 		RULE_booleanValue = 18, RULE_tableIdentifier = 19, RULE_identifier = 20;
-	public static final String[] ruleNames = {
-		"root", "sqlStatements", "sqlStatement", "createStreamTable", "insertStatement", 
-		"setStatement", "emptyStatement", "setKeyExpr", "valueKeyExpr", "selectExpr", 
-		"word", "colTypeList", "colType", "dataType", "tablePropertyList", "tableProperty", 
-		"tablePropertyKey", "tablePropertyValue", "booleanValue", "tableIdentifier", 
-		"identifier"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"root", "sqlStatements", "sqlStatement", "createStreamTable", "insertStatement", 
+			"setStatement", "emptyStatement", "setKeyExpr", "valueKeyExpr", "selectExpr", 
+			"word", "colTypeList", "colType", "dataType", "tablePropertyList", "tableProperty", 
+			"tablePropertyKey", "tablePropertyValue", "booleanValue", "tableIdentifier", 
+			"identifier"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, "'CREATE'", "'TABLE'", "'STREAM'", "'WITH'", 
-		"'COMMENT'", "'TRUE'", "'FALSE'", "'AS'", "'BY'", "'SET'", "'DELAY'", 
-		"'INSERT'", "'INTO'", "'USING'", "'PATTERN'", "'--'", "'STRING'", "'BOOLEAN'", 
-		"'INT'", "'BIGINT'", "'FLOAT'", "'DOUBLE'", "'DATE'", "'TIMESTAMP'", "'*'", 
-		"'/'", "'%'", "'+'", "'-'", "'='", "'>'", "'<'", "'!'", "'~'", "'|'", 
-		"'&'", "'^'", "'.'", "'('", "')'", "','", "';'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
-		"CREATE", "TABLE", "STREAM", "WITH", "COMMENT", "TRUE", "FALSE", "AS", 
-		"BY", "SET", "DELAY", "INSERT", "INTO", "USING", "PATTERN", "MINUSMINUS", 
-		"STRING", "BOOLEAN", "INT", "BIGINT", "FLOAT", "DOUBLE", "DATE", "TIMESTAMP", 
-		"STAR", "DIVIDE", "MODULE", "PLUS", "MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", 
-		"LESS_SYMBOL", "EXCLAMATION_SYMBOL", "BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", 
-		"BIT_XOR_OP", "DOT", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", "ID", 
-		"REVERSE_QUOTE_ID", "STRING_LITERAL", "DECIMAL_LITERAL", "REAL_LITERAL", 
-		"ERROR_RECONGNIGION"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, "'CREATE'", "'TABLE'", "'STREAM'", "'WITH'", 
+			"'COMMENT'", "'TRUE'", "'FALSE'", "'AS'", "'BY'", "'SET'", "'DELAY'", 
+			"'INSERT'", "'INTO'", "'USING'", "'PATTERN'", "'--'", "'STRING'", "'BOOLEAN'", 
+			"'INT'", "'BIGINT'", "'FLOAT'", "'DOUBLE'", "'DATE'", "'TIMESTAMP'", 
+			"'*'", "'/'", "'%'", "'+'", "'-'", "'='", "'>'", "'<'", "'!'", "'~'", 
+			"'|'", "'&'", "'^'", "'.'", "'('", "')'", "','", "';'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
+			"CREATE", "TABLE", "STREAM", "WITH", "COMMENT", "TRUE", "FALSE", "AS", 
+			"BY", "SET", "DELAY", "INSERT", "INTO", "USING", "PATTERN", "MINUSMINUS", 
+			"STRING", "BOOLEAN", "INT", "BIGINT", "FLOAT", "DOUBLE", "DATE", "TIMESTAMP", 
+			"STAR", "DIVIDE", "MODULE", "PLUS", "MINUS", "EQUAL_SYMBOL", "GREATER_SYMBOL", 
+			"LESS_SYMBOL", "EXCLAMATION_SYMBOL", "BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", 
+			"BIT_XOR_OP", "DOT", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", "ID", 
+			"REVERSE_QUOTE_ID", "STRING_LITERAL", "DECIMAL_LITERAL", "REAL_LITERAL", 
+			"ERROR_RECONGNIGION"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -109,6 +118,7 @@ public class SparkStreamSqlParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class RootContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(SparkStreamSqlParser.EOF, 0); }
 		public SqlStatementsContext sqlStatements() {
@@ -400,6 +410,8 @@ public class SparkStreamSqlParser extends Parser {
 		public TerminalNode CREATE() { return getToken(SparkStreamSqlParser.CREATE, 0); }
 		public TerminalNode STREAM() { return getToken(SparkStreamSqlParser.STREAM, 0); }
 		public TerminalNode TABLE() { return getToken(SparkStreamSqlParser.TABLE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(SparkStreamSqlParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(SparkStreamSqlParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(SparkStreamSqlParser.WITH, 0); }
 		public TableIdentifierContext tableIdentifier() {
 			return getRuleContext(TableIdentifierContext.class,0);
@@ -625,6 +637,10 @@ public class SparkStreamSqlParser extends Parser {
 		public TerminalNode ID(int i) {
 			return getToken(SparkStreamSqlParser.ID, i);
 		}
+		public List<TerminalNode> DOT() { return getTokens(SparkStreamSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(SparkStreamSqlParser.DOT, i);
+		}
 		public SetKeyExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -808,6 +824,7 @@ public class SparkStreamSqlParser extends Parser {
 
 	public static class WordContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(SparkStreamSqlParser.ID, 0); }
+		public TerminalNode DOT() { return getToken(SparkStreamSqlParser.DOT, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(SparkStreamSqlParser.STRING_LITERAL, 0); }
 		public TerminalNode DECIMAL_LITERAL() { return getToken(SparkStreamSqlParser.DECIMAL_LITERAL, 0); }
 		public TerminalNode REAL_LITERAL() { return getToken(SparkStreamSqlParser.REAL_LITERAL, 0); }
@@ -1069,6 +1086,10 @@ public class SparkStreamSqlParser extends Parser {
 		public ColTypeContext colType(int i) {
 			return getRuleContext(ColTypeContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(SparkStreamSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(SparkStreamSqlParser.COMMA, i);
+		}
 		public ColTypeListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1276,11 +1297,17 @@ public class SparkStreamSqlParser extends Parser {
 	}
 
 	public static class TablePropertyListContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(SparkStreamSqlParser.LR_BRACKET, 0); }
 		public List<TablePropertyContext> tableProperty() {
 			return getRuleContexts(TablePropertyContext.class);
 		}
 		public TablePropertyContext tableProperty(int i) {
 			return getRuleContext(TablePropertyContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(SparkStreamSqlParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(SparkStreamSqlParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(SparkStreamSqlParser.COMMA, i);
 		}
 		public TablePropertyListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1401,6 +1428,10 @@ public class SparkStreamSqlParser extends Parser {
 		public List<TerminalNode> ID() { return getTokens(SparkStreamSqlParser.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(SparkStreamSqlParser.ID, i);
+		}
+		public List<TerminalNode> DOT() { return getTokens(SparkStreamSqlParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(SparkStreamSqlParser.DOT, i);
 		}
 		public TerminalNode STRING_LITERAL() { return getToken(SparkStreamSqlParser.STRING_LITERAL, 0); }
 		public TablePropertyKeyContext(ParserRuleContext parent, int invokingState) {
@@ -1605,6 +1636,7 @@ public class SparkStreamSqlParser extends Parser {
 		public IdentifierContext identifier(int i) {
 			return getRuleContext(IdentifierContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(SparkStreamSqlParser.DOT, 0); }
 		public TableIdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}

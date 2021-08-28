@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/mysql/MySQLParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/mysql/MySQLParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.mysql;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 

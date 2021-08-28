@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/arithmetic/Arithmetic.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/arithmetic/Arithmetic.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.arithmetic;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ArithmeticParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -32,29 +32,39 @@ public class ArithmeticParser extends Parser {
 		RULE_comparisonOperator = 6, RULE_whenClause = 7, RULE_functionName = 8, 
 		RULE_identifier = 9, RULE_constant = 10, RULE_setQuantifier = 11, RULE_number = 12, 
 		RULE_booleanValue = 13;
-	public static final String[] ruleNames = {
-		"arithmetic", "expression", "booleanExpression", "predicate", "valueExpression", 
-		"primaryExpression", "comparisonOperator", "whenClause", "functionName", 
-		"identifier", "constant", "setQuantifier", "number", "booleanValue"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"arithmetic", "expression", "booleanExpression", "predicate", "valueExpression", 
+			"primaryExpression", "comparisonOperator", "whenClause", "functionName", 
+			"identifier", "constant", "setQuantifier", "number", "booleanValue"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "','", "')'", "'->'", null, "'TRUE'", "'FALSE'", "'NULL'", 
-		"'CASE'", "'WHEN'", "'THEN'", "'ELSE'", "'END'", "'DISTINCT'", "'ALL'", 
-		null, "'<=>'", "'<>'", "'!='", "'<'", "'<='", "'>'", "'>='", "'['", "']'", 
-		"'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", "'|'", "'||'", 
-		"'^'", null, null, null, null, null, null, null, null, "'/**/'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, "STRING", "TRUE", "FALSE", "NULL", "CASE", 
-		"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
-		"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
-		"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", "CONCAT_PIPE", 
-		"HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", "INTEGER_VALUE", 
-		"IDENTIFIER", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", "SIMPLE_COMMENT", 
-		"BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", "WS", "NOT", "AND", "OR", 
-		"BETWEEN", "IN", "RLIKE", "LIKE", "ESCAPE", "IS", "UNKNOWN"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'('", "','", "')'", "'->'", null, "'TRUE'", "'FALSE'", "'NULL'", 
+			"'CASE'", "'WHEN'", "'THEN'", "'ELSE'", "'END'", "'DISTINCT'", "'ALL'", 
+			null, "'<=>'", "'<>'", "'!='", "'<'", "'<='", "'>'", "'>='", "'['", "']'", 
+			"'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", "'|'", "'||'", 
+			"'^'", null, null, null, null, null, null, null, null, "'/**/'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, "STRING", "TRUE", "FALSE", "NULL", "CASE", 
+			"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
+			"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
+			"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", 
+			"CONCAT_PIPE", "HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", 
+			"INTEGER_VALUE", "IDENTIFIER", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", 
+			"SIMPLE_COMMENT", "BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", "WS", 
+			"NOT", "AND", "OR", "BETWEEN", "IN", "RLIKE", "LIKE", "ESCAPE", "IS", 
+			"UNKNOWN"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -107,6 +117,7 @@ public class ArithmeticParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class ArithmeticContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -1040,6 +1051,8 @@ public class ArithmeticParser extends Parser {
 	public static class SubscriptContext extends PrimaryExpressionContext {
 		public PrimaryExpressionContext value;
 		public ValueExpressionContext index;
+		public TerminalNode LBRACKET() { return getToken(ArithmeticParser.LBRACKET, 0); }
+		public TerminalNode RBRACKET() { return getToken(ArithmeticParser.RBRACKET, 0); }
 		public PrimaryExpressionContext primaryExpression() {
 			return getRuleContext(PrimaryExpressionContext.class,0);
 		}

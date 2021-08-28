@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/mysql/MySQLParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/mysql/MySQLParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.mysql;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MySQLParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -314,439 +314,452 @@ public class MySQLParser extends Parser {
 		RULE_bitOperator = 306, RULE_mathOperator = 307, RULE_charsetNameBase = 308, 
 		RULE_transactionLevelBase = 309, RULE_privilegesBase = 310, RULE_intervalTypeBase = 311, 
 		RULE_dataTypeBase = 312, RULE_keywordsCanBeId = 313, RULE_functionNameBase = 314;
-	public static final String[] ruleNames = {
-		"root", "sqlStatements", "sqlStatement", "emptyStatement", "ddlStatement", 
-		"dmlStatement", "transactionStatement", "replicationStatement", "preparedStatement", 
-		"compoundStatement", "administrationStatement", "utilityStatement", "createDatabase", 
-		"createEvent", "createIndex", "createLogfileGroup", "createProcedure", 
-		"createFunction", "createServer", "createTable", "createTablespaceInnodb", 
-		"createTablespaceNdb", "createTrigger", "createView", "createDatabaseOption", 
-		"ownerStatement", "scheduleExpression", "timestampValue", "intervalExpr", 
-		"intervalType", "enableType", "indexType", "indexOption", "procedureParameter", 
-		"functionParameter", "routineOption", "serverOption", "createDefinitions", 
-		"createDefinition", "columnDefinition", "columnConstraint", "tableConstraint", 
-		"referenceDefinition", "referenceAction", "referenceControlType", "indexColumnDefinition", 
-		"tableOption", "tablespaceStorage", "partitionDefinitions", "partitionFunctionDefinition", 
-		"subpartitionFunctionDefinition", "partitionDefinition", "partitionDefinerAtom", 
-		"partitionDefinerVector", "subpartitionDefinition", "partitionOption", 
-		"alterDatabase", "alterEvent", "alterFunction", "alterInstance", "alterLogfileGroup", 
-		"alterProcedure", "alterServer", "alterTable", "alterTablespace", "alterView", 
-		"alterSpecification", "dropDatabase", "dropEvent", "dropIndex", "dropLogfileGroup", 
-		"dropProcedure", "dropFunction", "dropServer", "dropTable", "dropTablespace", 
-		"dropTrigger", "dropView", "renameTable", "renameTableClause", "truncateTable", 
-		"callStatement", "deleteStatement", "doStatement", "handlerStatement", 
-		"insertStatement", "loadDataStatement", "loadXmlStatement", "replaceStatement", 
-		"selectStatement", "updateStatement", "insertStatementValue", "updatedElement", 
-		"assignmentField", "lockClause", "singleDeleteStatement", "multipleDeleteStatement", 
-		"handlerOpenStatement", "handlerReadIndexStatement", "handlerReadStatement", 
-		"handlerCloseStatement", "singleUpdateStatement", "multipleUpdateStatement", 
-		"orderByClause", "orderByExpression", "tableSources", "tableSource", "tableSourceItem", 
-		"indexHint", "indexHintType", "joinPart", "queryExpression", "queryExpressionNointo", 
-		"querySpecification", "querySpecificationNointo", "unionParenthesis", 
-		"unionStatement", "selectSpec", "selectElements", "selectElement", "selectIntoExpression", 
-		"selectFieldsInto", "selectLinesInto", "fromClause", "groupByItem", "limitClause", 
-		"limitClauseAtom", "startTransaction", "beginWork", "commitWork", "rollbackWork", 
-		"savepointStatement", "rollbackStatement", "releaseStatement", "lockTables", 
-		"unlockTables", "setAutocommitStatement", "setTransactionStatement", "transactionMode", 
-		"lockTableElement", "lockAction", "transactionOption", "transactionLevel", 
-		"changeMaster", "changeReplicationFilter", "purgeBinaryLogs", "resetMaster", 
-		"resetSlave", "startSlave", "stopSlave", "startGroupReplication", "stopGroupReplication", 
-		"masterOption", "stringMasterOption", "decimalMasterOption", "boolMasterOption", 
-		"channelOption", "replicationFilter", "tablePair", "threadType", "untilOption", 
-		"connectionOption", "gtuidSet", "xaStartTransaction", "xaEndTransaction", 
-		"xaPrepareStatement", "xaCommitWork", "xaRollbackWork", "xaRecoverWork", 
-		"prepareStatement", "executeStatement", "deallocatePrepare", "routineBody", 
-		"blockStatement", "caseStatement", "ifStatement", "iterateStatement", 
-		"leaveStatement", "loopStatement", "repeatStatement", "returnStatement", 
-		"whileStatement", "cursorStatement", "declareVariable", "declareCondition", 
-		"declareCursor", "declareHandler", "handlerConditionValue", "procedureSqlStatement", 
-		"caseAlternative", "elifAlternative", "alterUser", "createUser", "dropUser", 
-		"grantStatement", "grantProxy", "renameUser", "revokeStatement", "revokeProxy", 
-		"setPasswordStatement", "userSpecification", "userAuthOption", "tlsOption", 
-		"userResourceOption", "userPasswordOption", "userLockOption", "privelegeClause", 
-		"privilege", "privilegeLevel", "renameUserClause", "analyzeTable", "checkTable", 
-		"checksumTable", "optimizeTable", "repairTable", "checkTableOption", "createUdfunction", 
-		"installPlugin", "uninstallPlugin", "setStatement", "showStatement", "variableClause", 
-		"showCommonEntity", "showFilter", "showGlobalInfoClause", "showSchemaEntity", 
-		"showProfileType", "binlogStatement", "cacheIndexStatement", "flushStatement", 
-		"killStatement", "loadIndexIntoCache", "resetStatement", "shutdownStatement", 
-		"tableIndexes", "flushOption", "flushTableOption", "loadedTableIndexes", 
-		"simpleDescribeStatement", "fullDescribeStatement", "helpStatement", "useStatement", 
-		"signalStatement", "resignalStatement", "signalConditionInformation", 
-		"diagnosticsStatement", "diagnosticsConditionInformationName", "describeObjectClause", 
-		"fullId", "tableName", "fullColumnName", "indexColumnName", "userName", 
-		"mysqlVariable", "charsetName", "collationName", "engineName", "uuidSet", 
-		"xid", "xuidStringId", "authPlugin", "uid", "simpleId", "dottedId", "decimalLiteral", 
-		"fileSizeLiteral", "stringLiteral", "booleanLiteral", "hexadecimalLiteral", 
-		"nullNotnull", "constant", "dataType", "collectionOptions", "convertedDataType", 
-		"lengthOneDimension", "lengthTwoDimension", "lengthTwoOptionalDimension", 
-		"uidList", "tables", "indexColumnNames", "expressions", "expressionsWithDefaults", 
-		"constants", "simpleStrings", "userVariables", "defaultValue", "currentTimestamp", 
-		"expressionOrDefault", "ifExists", "ifNotExists", "functionCall", "specificFunction", 
-		"caseFuncAlternative", "levelsInWeightString", "levelInWeightListElement", 
-		"aggregateWindowedFunction", "scalarFunctionName", "passwordFunctionClause", 
-		"functionArgs", "functionArg", "expression", "predicate", "expressionAtom", 
-		"unaryOperator", "comparisonOperator", "logicalOperator", "bitOperator", 
-		"mathOperator", "charsetNameBase", "transactionLevelBase", "privilegesBase", 
-		"intervalTypeBase", "dataTypeBase", "keywordsCanBeId", "functionNameBase"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"root", "sqlStatements", "sqlStatement", "emptyStatement", "ddlStatement", 
+			"dmlStatement", "transactionStatement", "replicationStatement", "preparedStatement", 
+			"compoundStatement", "administrationStatement", "utilityStatement", "createDatabase", 
+			"createEvent", "createIndex", "createLogfileGroup", "createProcedure", 
+			"createFunction", "createServer", "createTable", "createTablespaceInnodb", 
+			"createTablespaceNdb", "createTrigger", "createView", "createDatabaseOption", 
+			"ownerStatement", "scheduleExpression", "timestampValue", "intervalExpr", 
+			"intervalType", "enableType", "indexType", "indexOption", "procedureParameter", 
+			"functionParameter", "routineOption", "serverOption", "createDefinitions", 
+			"createDefinition", "columnDefinition", "columnConstraint", "tableConstraint", 
+			"referenceDefinition", "referenceAction", "referenceControlType", "indexColumnDefinition", 
+			"tableOption", "tablespaceStorage", "partitionDefinitions", "partitionFunctionDefinition", 
+			"subpartitionFunctionDefinition", "partitionDefinition", "partitionDefinerAtom", 
+			"partitionDefinerVector", "subpartitionDefinition", "partitionOption", 
+			"alterDatabase", "alterEvent", "alterFunction", "alterInstance", "alterLogfileGroup", 
+			"alterProcedure", "alterServer", "alterTable", "alterTablespace", "alterView", 
+			"alterSpecification", "dropDatabase", "dropEvent", "dropIndex", "dropLogfileGroup", 
+			"dropProcedure", "dropFunction", "dropServer", "dropTable", "dropTablespace", 
+			"dropTrigger", "dropView", "renameTable", "renameTableClause", "truncateTable", 
+			"callStatement", "deleteStatement", "doStatement", "handlerStatement", 
+			"insertStatement", "loadDataStatement", "loadXmlStatement", "replaceStatement", 
+			"selectStatement", "updateStatement", "insertStatementValue", "updatedElement", 
+			"assignmentField", "lockClause", "singleDeleteStatement", "multipleDeleteStatement", 
+			"handlerOpenStatement", "handlerReadIndexStatement", "handlerReadStatement", 
+			"handlerCloseStatement", "singleUpdateStatement", "multipleUpdateStatement", 
+			"orderByClause", "orderByExpression", "tableSources", "tableSource", 
+			"tableSourceItem", "indexHint", "indexHintType", "joinPart", "queryExpression", 
+			"queryExpressionNointo", "querySpecification", "querySpecificationNointo", 
+			"unionParenthesis", "unionStatement", "selectSpec", "selectElements", 
+			"selectElement", "selectIntoExpression", "selectFieldsInto", "selectLinesInto", 
+			"fromClause", "groupByItem", "limitClause", "limitClauseAtom", "startTransaction", 
+			"beginWork", "commitWork", "rollbackWork", "savepointStatement", "rollbackStatement", 
+			"releaseStatement", "lockTables", "unlockTables", "setAutocommitStatement", 
+			"setTransactionStatement", "transactionMode", "lockTableElement", "lockAction", 
+			"transactionOption", "transactionLevel", "changeMaster", "changeReplicationFilter", 
+			"purgeBinaryLogs", "resetMaster", "resetSlave", "startSlave", "stopSlave", 
+			"startGroupReplication", "stopGroupReplication", "masterOption", "stringMasterOption", 
+			"decimalMasterOption", "boolMasterOption", "channelOption", "replicationFilter", 
+			"tablePair", "threadType", "untilOption", "connectionOption", "gtuidSet", 
+			"xaStartTransaction", "xaEndTransaction", "xaPrepareStatement", "xaCommitWork", 
+			"xaRollbackWork", "xaRecoverWork", "prepareStatement", "executeStatement", 
+			"deallocatePrepare", "routineBody", "blockStatement", "caseStatement", 
+			"ifStatement", "iterateStatement", "leaveStatement", "loopStatement", 
+			"repeatStatement", "returnStatement", "whileStatement", "cursorStatement", 
+			"declareVariable", "declareCondition", "declareCursor", "declareHandler", 
+			"handlerConditionValue", "procedureSqlStatement", "caseAlternative", 
+			"elifAlternative", "alterUser", "createUser", "dropUser", "grantStatement", 
+			"grantProxy", "renameUser", "revokeStatement", "revokeProxy", "setPasswordStatement", 
+			"userSpecification", "userAuthOption", "tlsOption", "userResourceOption", 
+			"userPasswordOption", "userLockOption", "privelegeClause", "privilege", 
+			"privilegeLevel", "renameUserClause", "analyzeTable", "checkTable", "checksumTable", 
+			"optimizeTable", "repairTable", "checkTableOption", "createUdfunction", 
+			"installPlugin", "uninstallPlugin", "setStatement", "showStatement", 
+			"variableClause", "showCommonEntity", "showFilter", "showGlobalInfoClause", 
+			"showSchemaEntity", "showProfileType", "binlogStatement", "cacheIndexStatement", 
+			"flushStatement", "killStatement", "loadIndexIntoCache", "resetStatement", 
+			"shutdownStatement", "tableIndexes", "flushOption", "flushTableOption", 
+			"loadedTableIndexes", "simpleDescribeStatement", "fullDescribeStatement", 
+			"helpStatement", "useStatement", "signalStatement", "resignalStatement", 
+			"signalConditionInformation", "diagnosticsStatement", "diagnosticsConditionInformationName", 
+			"describeObjectClause", "fullId", "tableName", "fullColumnName", "indexColumnName", 
+			"userName", "mysqlVariable", "charsetName", "collationName", "engineName", 
+			"uuidSet", "xid", "xuidStringId", "authPlugin", "uid", "simpleId", "dottedId", 
+			"decimalLiteral", "fileSizeLiteral", "stringLiteral", "booleanLiteral", 
+			"hexadecimalLiteral", "nullNotnull", "constant", "dataType", "collectionOptions", 
+			"convertedDataType", "lengthOneDimension", "lengthTwoDimension", "lengthTwoOptionalDimension", 
+			"uidList", "tables", "indexColumnNames", "expressions", "expressionsWithDefaults", 
+			"constants", "simpleStrings", "userVariables", "defaultValue", "currentTimestamp", 
+			"expressionOrDefault", "ifExists", "ifNotExists", "functionCall", "specificFunction", 
+			"caseFuncAlternative", "levelsInWeightString", "levelInWeightListElement", 
+			"aggregateWindowedFunction", "scalarFunctionName", "passwordFunctionClause", 
+			"functionArgs", "functionArg", "expression", "predicate", "expressionAtom", 
+			"unaryOperator", "comparisonOperator", "logicalOperator", "bitOperator", 
+			"mathOperator", "charsetNameBase", "transactionLevelBase", "privilegesBase", 
+			"intervalTypeBase", "dataTypeBase", "keywordsCanBeId", "functionNameBase"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, "'ADD'", "'ALL'", "'ALTER'", "'ALWAYS'", 
-		"'ANALYZE'", "'AND'", "'AS'", "'ASC'", "'BEFORE'", "'BETWEEN'", "'BOTH'", 
-		"'BY'", "'CALL'", "'CASCADE'", "'CASE'", "'CAST'", "'CHANGE'", "'CHARACTER'", 
-		"'CHECK'", "'COLLATE'", "'COLUMN'", "'CONDITION'", "'CONSTRAINT'", "'CONTINUE'", 
-		"'CONVERT'", "'CREATE'", "'CROSS'", "'CURRENT'", "'CURRENT_USER'", "'CURSOR'", 
-		"'DATABASE'", "'DATABASES'", "'DECLARE'", "'DEFAULT'", "'DELAYED'", "'DELETE'", 
-		"'DESC'", "'DESCRIBE'", "'DETERMINISTIC'", "'DIAGNOSTICS'", "'DISTINCT'", 
-		"'DISTINCTROW'", "'DROP'", "'EACH'", "'ELSE'", "'ELSEIF'", "'ENCLOSED'", 
-		"'ESCAPED'", "'EXISTS'", "'EXIT'", "'EXPLAIN'", "'FALSE'", "'FETCH'", 
-		"'FOR'", "'FORCE'", "'FOREIGN'", "'FROM'", "'FULLTEXT'", "'GENERATED'", 
-		"'GET'", "'GRANT'", "'GROUP'", "'HAVING'", "'HIGH_PRIORITY'", "'IF'", 
-		"'IGNORE'", "'IN'", "'INDEX'", "'INFILE'", "'INNER'", "'INOUT'", "'INSERT'", 
-		"'INTERVAL'", "'INTO'", "'IS'", "'ITERATE'", "'JOIN'", "'KEY'", "'KEYS'", 
-		"'KILL'", "'LEADING'", "'LEAVE'", "'LEFT'", "'LIKE'", "'LIMIT'", "'LINEAR'", 
-		"'LINES'", "'LOAD'", "'LOCK'", "'LOOP'", "'LOW_PRIORITY'", "'MASTER_BIND'", 
-		"'MASTER_SSL_VERIFY_SERVER_CERT'", "'MATCH'", "'MAXVALUE'", "'MODIFIES'", 
-		"'NATURAL'", "'NOT'", "'NO_WRITE_TO_BINLOG'", "'NULL'", "'NUMBER'", "'ON'", 
-		"'OPTIMIZE'", "'OPTION'", "'OPTIONALLY'", "'OR'", "'ORDER'", "'OUT'", 
-		"'OUTER'", "'OUTFILE'", "'PARTITION'", "'PRIMARY'", "'PROCEDURE'", "'PURGE'", 
-		"'RANGE'", "'READ'", "'READS'", "'REFERENCES'", "'REGEXP'", "'RELEASE'", 
-		"'RENAME'", "'REPEAT'", "'REPLACE'", "'REQUIRE'", "'RESIGNAL'", "'RESTRICT'", 
-		"'RETURN'", "'REVOKE'", "'RIGHT'", "'RLIKE'", "'SCHEMA'", "'SCHEMAS'", 
-		"'SELECT'", "'SET'", "'SEPARATOR'", "'SHOW'", "'SIGNAL'", "'SPATIAL'", 
-		"'SQL'", "'SQLEXCEPTION'", "'SQLSTATE'", "'SQLWARNING'", "'SQL_BIG_RESULT'", 
-		"'SQL_CALC_FOUND_ROWS'", "'SQL_SMALL_RESULT'", "'SSL'", "'STACKED'", "'STARTING'", 
-		"'STRAIGHT_JOIN'", "'TABLE'", "'TERMINATED'", "'THEN'", "'TO'", "'TRAILING'", 
-		"'TRIGGER'", "'TRUE'", "'UNDO'", "'UNION'", "'UNIQUE'", "'UNLOCK'", "'UNSIGNED'", 
-		"'UPDATE'", "'USAGE'", "'USE'", "'USING'", "'VALUES'", "'WHEN'", "'WHERE'", 
-		"'WHILE'", "'WITH'", "'WRITE'", "'XOR'", "'ZEROFILL'", "'TINYINT'", "'SMALLINT'", 
-		"'MEDIUMINT'", "'INT'", "'INTEGER'", "'BIGINT'", "'REAL'", "'DOUBLE'", 
-		"'PRECISION'", "'FLOAT'", "'DECIMAL'", "'DEC'", "'NUMERIC'", "'DATE'", 
-		"'TIME'", "'TIMESTAMP'", "'DATETIME'", "'YEAR'", "'CHAR'", "'VARCHAR'", 
-		"'NVARCHAR'", "'NATIONAL'", "'BINARY'", "'VARBINARY'", "'TINYBLOB'", "'BLOB'", 
-		"'MEDIUMBLOB'", "'LONGBLOB'", "'TINYTEXT'", "'TEXT'", "'MEDIUMTEXT'", 
-		"'LONGTEXT'", "'ENUM'", "'VARYING'", "'SERIAL'", "'YEAR_MONTH'", "'DAY_HOUR'", 
-		"'DAY_MINUTE'", "'DAY_SECOND'", "'HOUR_MINUTE'", "'HOUR_SECOND'", "'MINUTE_SECOND'", 
-		"'SECOND_MICROSECOND'", "'MINUTE_MICROSECOND'", "'HOUR_MICROSECOND'", 
-		"'DAY_MICROSECOND'", "'AVG'", "'BIT_AND'", "'BIT_OR'", "'BIT_XOR'", "'COUNT'", 
-		"'GROUP_CONCAT'", "'MAX'", "'MIN'", "'STD'", "'STDDEV'", "'STDDEV_POP'", 
-		"'STDDEV_SAMP'", "'SUM'", "'VAR_POP'", "'VAR_SAMP'", "'VARIANCE'", "'CURRENT_DATE'", 
-		"'CURRENT_TIME'", "'CURRENT_TIMESTAMP'", "'LOCALTIME'", "'CURDATE'", "'CURTIME'", 
-		"'DATE_ADD'", "'DATE_SUB'", "'EXTRACT'", "'LOCALTIMESTAMP'", "'NOW'", 
-		"'POSITION'", "'SUBSTR'", "'SUBSTRING'", "'SYSDATE'", "'TRIM'", "'UTC_DATE'", 
-		"'UTC_TIME'", "'UTC_TIMESTAMP'", "'ACCOUNT'", "'ACTION'", "'AFTER'", "'AGGREGATE'", 
-		"'ALGORITHM'", "'ANY'", "'AT'", "'AUTHORS'", "'AUTOCOMMIT'", "'AUTOEXTEND_SIZE'", 
-		"'AUTO_INCREMENT'", "'AVG_ROW_LENGTH'", "'BEGIN'", "'BINLOG'", "'BIT'", 
-		"'BLOCK'", "'BOOL'", "'BOOLEAN'", "'BTREE'", "'CACHE'", "'CASCADED'", 
-		"'CHAIN'", "'CHANGED'", "'CHANNEL'", "'CHECKSUM'", "'PAGE_CHECKSUM'", 
-		"'CIPHER'", "'CLASS_ORIGIN'", "'CLIENT'", "'CLOSE'", "'COALESCE'", "'CODE'", 
-		"'COLUMNS'", "'COLUMN_FORMAT'", "'COLUMN_NAME'", "'COMMENT'", "'COMMIT'", 
-		"'COMPACT'", "'COMPLETION'", "'COMPRESSED'", "'COMPRESSION'", "'CONCURRENT'", 
-		"'CONNECTION'", "'CONSISTENT'", "'CONSTRAINT_CATALOG'", "'CONSTRAINT_SCHEMA'", 
-		"'CONSTRAINT_NAME'", "'CONTAINS'", "'CONTEXT'", "'CONTRIBUTORS'", "'COPY'", 
-		"'CPU'", "'CURSOR_NAME'", "'DATA'", "'DATAFILE'", "'DEALLOCATE'", "'DEFAULT_AUTH'", 
-		"'DEFINER'", "'DELAY_KEY_WRITE'", "'DES_KEY_FILE'", "'DIRECTORY'", "'DISABLE'", 
-		"'DISCARD'", "'DISK'", "'DO'", "'DUMPFILE'", "'DUPLICATE'", "'DYNAMIC'", 
-		"'ENABLE'", "'ENCRYPTION'", "'END'", "'ENDS'", "'ENGINE'", "'ENGINES'", 
-		"'ERROR'", "'ERRORS'", "'ESCAPE'", "'EVEN'", "'EVENT'", "'EVENTS'", "'EVERY'", 
-		"'EXCHANGE'", "'EXCLUSIVE'", "'EXPIRE'", "'EXPORT'", "'EXTENDED'", "'EXTENT_SIZE'", 
-		"'FAST'", "'FAULTS'", "'FIELDS'", "'FILE_BLOCK_SIZE'", "'FILTER'", "'FIRST'", 
-		"'FIXED'", "'FLUSH'", "'FOLLOWS'", "'FOUND'", "'FULL'", "'FUNCTION'", 
-		"'GENERAL'", "'GLOBAL'", "'GRANTS'", "'GROUP_REPLICATION'", "'HANDLER'", 
-		"'HASH'", "'HELP'", "'HOST'", "'HOSTS'", "'IDENTIFIED'", "'IGNORE_SERVER_IDS'", 
-		"'IMPORT'", "'INDEXES'", "'INITIAL_SIZE'", "'INPLACE'", "'INSERT_METHOD'", 
-		"'INSTALL'", "'INSTANCE'", "'INVISIBLE'", "'INVOKER'", "'IO'", "'IO_THREAD'", 
-		"'IPC'", "'ISOLATION'", "'ISSUER'", "'JSON'", "'KEY_BLOCK_SIZE'", "'LANGUAGE'", 
-		"'LAST'", "'LEAVES'", "'LESS'", "'LEVEL'", "'LIST'", "'LOCAL'", "'LOGFILE'", 
-		"'LOGS'", "'MASTER'", "'MASTER_AUTO_POSITION'", "'MASTER_CONNECT_RETRY'", 
-		"'MASTER_DELAY'", "'MASTER_HEARTBEAT_PERIOD'", "'MASTER_HOST'", "'MASTER_LOG_FILE'", 
-		"'MASTER_LOG_POS'", "'MASTER_PASSWORD'", "'MASTER_PORT'", "'MASTER_RETRY_COUNT'", 
-		"'MASTER_SSL'", "'MASTER_SSL_CA'", "'MASTER_SSL_CAPATH'", "'MASTER_SSL_CERT'", 
-		"'MASTER_SSL_CIPHER'", "'MASTER_SSL_CRL'", "'MASTER_SSL_CRLPATH'", "'MASTER_SSL_KEY'", 
-		"'MASTER_TLS_VERSION'", "'MASTER_USER'", "'MAX_CONNECTIONS_PER_HOUR'", 
-		"'MAX_QUERIES_PER_HOUR'", "'MAX_ROWS'", "'MAX_SIZE'", "'MAX_UPDATES_PER_HOUR'", 
-		"'MAX_USER_CONNECTIONS'", "'MEDIUM'", "'MERGE'", "'MESSAGE_TEXT'", "'MID'", 
-		"'MIGRATE'", "'MIN_ROWS'", "'MODE'", "'MODIFY'", "'MUTEX'", "'MYSQL'", 
-		"'MYSQL_ERRNO'", "'NAME'", "'NAMES'", "'NCHAR'", "'NEVER'", "'NEXT'", 
-		"'NO'", "'NODEGROUP'", "'NONE'", "'OFFLINE'", "'OFFSET'", "'OJ'", "'OLD_PASSWORD'", 
-		"'ONE'", "'ONLINE'", "'ONLY'", "'OPEN'", "'OPTIMIZER_COSTS'", "'OPTIONS'", 
-		"'OWNER'", "'PACK_KEYS'", "'PAGE'", "'PARSER'", "'PARTIAL'", "'PARTITIONING'", 
-		"'PARTITIONS'", "'PASSWORD'", "'PHASE'", "'PLUGIN'", "'PLUGIN_DIR'", "'PLUGINS'", 
-		"'PORT'", "'PRECEDES'", "'PREPARE'", "'PRESERVE'", "'PREV'", "'PROCESSLIST'", 
-		"'PROFILE'", "'PROFILES'", "'PROXY'", "'QUERY'", "'QUICK'", "'REBUILD'", 
-		"'RECOVER'", "'REDO_BUFFER_SIZE'", "'REDUNDANT'", "'RELAY'", "'RELAY_LOG_FILE'", 
-		"'RELAY_LOG_POS'", "'RELAYLOG'", "'REMOVE'", "'REORGANIZE'", "'REPAIR'", 
-		"'REPLICATE_DO_DB'", "'REPLICATE_DO_TABLE'", "'REPLICATE_IGNORE_DB'", 
-		"'REPLICATE_IGNORE_TABLE'", "'REPLICATE_REWRITE_DB'", "'REPLICATE_WILD_DO_TABLE'", 
-		"'REPLICATE_WILD_IGNORE_TABLE'", "'REPLICATION'", "'RESET'", "'RESUME'", 
-		"'RETURNED_SQLSTATE'", "'RETURNS'", "'ROLLBACK'", "'ROLLUP'", "'ROTATE'", 
-		"'ROW'", "'ROWS'", "'ROW_FORMAT'", "'SAVEPOINT'", "'SCHEDULE'", "'SECURITY'", 
-		"'SERVER'", "'SESSION'", "'SHARE'", "'SHARED'", "'SIGNED'", "'SIMPLE'", 
-		"'SLAVE'", "'SLOW'", "'SNAPSHOT'", "'SOCKET'", "'SOME'", "'SONAME'", "'SOUNDS'", 
-		"'SOURCE'", "'SQL_AFTER_GTIDS'", "'SQL_AFTER_MTS_GAPS'", "'SQL_BEFORE_GTIDS'", 
-		"'SQL_BUFFER_RESULT'", "'SQL_CACHE'", "'SQL_NO_CACHE'", "'SQL_THREAD'", 
-		"'START'", "'STARTS'", "'STATS_AUTO_RECALC'", "'STATS_PERSISTENT'", "'STATS_SAMPLE_PAGES'", 
-		"'STATUS'", "'STOP'", "'STORAGE'", "'STORED'", "'STRING'", "'SUBCLASS_ORIGIN'", 
-		"'SUBJECT'", "'SUBPARTITION'", "'SUBPARTITIONS'", "'SUSPEND'", "'SWAPS'", 
-		"'SWITCHES'", "'TABLE_NAME'", "'TABLESPACE'", "'TEMPORARY'", "'TEMPTABLE'", 
-		"'THAN'", "'TRADITIONAL'", "'TRANSACTION'", "'TRIGGERS'", "'TRUNCATE'", 
-		"'UNDEFINED'", "'UNDOFILE'", "'UNDO_BUFFER_SIZE'", "'UNINSTALL'", "'UNKNOWN'", 
-		"'UNTIL'", "'UPGRADE'", "'USER'", "'USE_FRM'", "'USER_RESOURCES'", "'VALIDATION'", 
-		"'VALUE'", "'VARIABLES'", "'VIEW'", "'VIRTUAL'", "'VISIBLE'", "'WAIT'", 
-		"'WARNINGS'", "'WITHOUT'", "'WORK'", "'WRAPPER'", "'X509'", "'XA'", "'XML'", 
-		"'EUR'", "'USA'", "'JIS'", "'ISO'", "'INTERNAL'", "'QUARTER'", "'MONTH'", 
-		"'DAY'", "'HOUR'", "'MINUTE'", "'WEEK'", "'SECOND'", "'MICROSECOND'", 
-		"'TABLES'", "'ROUTINE'", "'EXECUTE'", "'FILE'", "'PROCESS'", "'RELOAD'", 
-		"'SHUTDOWN'", "'SUPER'", "'PRIVILEGES'", null, "'ARMSCII8'", "'ASCII'", 
-		"'BIG5'", "'CP1250'", "'CP1251'", "'CP1256'", "'CP1257'", "'CP850'", "'CP852'", 
-		"'CP866'", "'CP932'", "'DEC8'", "'EUCJPMS'", "'EUCKR'", "'GB2312'", "'GBK'", 
-		"'GEOSTD8'", "'GREEK'", "'HEBREW'", "'HP8'", "'KEYBCS2'", "'KOI8R'", "'KOI8U'", 
-		"'LATIN1'", "'LATIN2'", "'LATIN5'", "'LATIN7'", "'MACCE'", "'MACROMAN'", 
-		"'SJIS'", "'SWE7'", "'TIS620'", "'UCS2'", "'UJIS'", "'UTF16'", "'UTF16LE'", 
-		"'UTF32'", "'UTF8'", "'UTF8MB3'", "'UTF8MB4'", "'ARCHIVE'", "'BLACKHOLE'", 
-		"'CSV'", "'FEDERATED'", "'INNODB'", "'MEMORY'", "'MRG_MYISAM'", "'MYISAM'", 
-		"'NDB'", "'NDBCLUSTER'", "'PERFORMANCE_SCHEMA'", "'TOKUDB'", "'REPEATABLE'", 
-		"'COMMITTED'", "'UNCOMMITTED'", "'SERIALIZABLE'", "'GEOMETRYCOLLECTION'", 
-		"'GEOMCOLLECTION'", "'GEOMETRY'", "'LINESTRING'", "'MULTILINESTRING'", 
-		"'MULTIPOINT'", "'MULTIPOLYGON'", "'POINT'", "'POLYGON'", "'ABS'", "'ACOS'", 
-		"'ADDDATE'", "'ADDTIME'", "'AES_DECRYPT'", "'AES_ENCRYPT'", "'AREA'", 
-		"'ASBINARY'", "'ASIN'", "'ASTEXT'", "'ASWKB'", "'ASWKT'", "'ASYMMETRIC_DECRYPT'", 
-		"'ASYMMETRIC_DERIVE'", "'ASYMMETRIC_ENCRYPT'", "'ASYMMETRIC_SIGN'", "'ASYMMETRIC_VERIFY'", 
-		"'ATAN'", "'ATAN2'", "'BENCHMARK'", "'BIN'", "'BIT_COUNT'", "'BIT_LENGTH'", 
-		"'BUFFER'", "'CATALOG_NAME'", "'CEIL'", "'CEILING'", "'CENTROID'", "'CHARACTER_LENGTH'", 
-		"'CHARSET'", "'CHAR_LENGTH'", "'COERCIBILITY'", "'COLLATION'", "'COMPRESS'", 
-		"'CONCAT'", "'CONCAT_WS'", "'CONNECTION_ID'", "'CONV'", "'CONVERT_TZ'", 
-		"'COS'", "'COT'", "'CRC32'", "'CREATE_ASYMMETRIC_PRIV_KEY'", "'CREATE_ASYMMETRIC_PUB_KEY'", 
-		"'CREATE_DH_PARAMETERS'", "'CREATE_DIGEST'", "'CROSSES'", "'DATEDIFF'", 
-		"'DATE_FORMAT'", "'DAYNAME'", "'DAYOFMONTH'", "'DAYOFWEEK'", "'DAYOFYEAR'", 
-		"'DECODE'", "'DEGREES'", "'DES_DECRYPT'", "'DES_ENCRYPT'", "'DIMENSION'", 
-		"'DISJOINT'", "'ELT'", "'ENCODE'", "'ENCRYPT'", "'ENDPOINT'", "'ENVELOPE'", 
-		"'EQUALS'", "'EXP'", "'EXPORT_SET'", "'EXTERIORRING'", "'EXTRACTVALUE'", 
-		"'FIELD'", "'FIND_IN_SET'", "'FLOOR'", "'FORMAT'", "'FOUND_ROWS'", "'FROM_BASE64'", 
-		"'FROM_DAYS'", "'FROM_UNIXTIME'", "'GEOMCOLLFROMTEXT'", "'GEOMCOLLFROMWKB'", 
-		"'GEOMETRYCOLLECTIONFROMTEXT'", "'GEOMETRYCOLLECTIONFROMWKB'", "'GEOMETRYFROMTEXT'", 
-		"'GEOMETRYFROMWKB'", "'GEOMETRYN'", "'GEOMETRYTYPE'", "'GEOMFROMTEXT'", 
-		"'GEOMFROMWKB'", "'GET_FORMAT'", "'GET_LOCK'", "'GLENGTH'", "'GREATEST'", 
-		"'GTID_SUBSET'", "'GTID_SUBTRACT'", "'HEX'", "'IFNULL'", "'INET6_ATON'", 
-		"'INET6_NTOA'", "'INET_ATON'", "'INET_NTOA'", "'INSTR'", "'INTERIORRINGN'", 
-		"'INTERSECTS'", "'ISCLOSED'", "'ISEMPTY'", "'ISNULL'", "'ISSIMPLE'", "'IS_FREE_LOCK'", 
-		"'IS_IPV4'", "'IS_IPV4_COMPAT'", "'IS_IPV4_MAPPED'", "'IS_IPV6'", "'IS_USED_LOCK'", 
-		"'LAST_INSERT_ID'", "'LCASE'", "'LEAST'", "'LENGTH'", "'LINEFROMTEXT'", 
-		"'LINEFROMWKB'", "'LINESTRINGFROMTEXT'", "'LINESTRINGFROMWKB'", "'LN'", 
-		"'LOAD_FILE'", "'LOCATE'", "'LOG'", "'LOG10'", "'LOG2'", "'LOWER'", "'LPAD'", 
-		"'LTRIM'", "'MAKEDATE'", "'MAKETIME'", "'MAKE_SET'", "'MASTER_POS_WAIT'", 
-		"'MBRCONTAINS'", "'MBRDISJOINT'", "'MBREQUAL'", "'MBRINTERSECTS'", "'MBROVERLAPS'", 
-		"'MBRTOUCHES'", "'MBRWITHIN'", "'MD5'", "'MLINEFROMTEXT'", "'MLINEFROMWKB'", 
-		"'MONTHNAME'", "'MPOINTFROMTEXT'", "'MPOINTFROMWKB'", "'MPOLYFROMTEXT'", 
-		"'MPOLYFROMWKB'", "'MULTILINESTRINGFROMTEXT'", "'MULTILINESTRINGFROMWKB'", 
-		"'MULTIPOINTFROMTEXT'", "'MULTIPOINTFROMWKB'", "'MULTIPOLYGONFROMTEXT'", 
-		"'MULTIPOLYGONFROMWKB'", "'NAME_CONST'", "'NULLIF'", "'NUMGEOMETRIES'", 
-		"'NUMINTERIORRINGS'", "'NUMPOINTS'", "'OCT'", "'OCTET_LENGTH'", "'ORD'", 
-		"'OVERLAPS'", "'PERIOD_ADD'", "'PERIOD_DIFF'", "'PI'", "'POINTFROMTEXT'", 
-		"'POINTFROMWKB'", "'POINTN'", "'POLYFROMTEXT'", "'POLYFROMWKB'", "'POLYGONFROMTEXT'", 
-		"'POLYGONFROMWKB'", "'POW'", "'POWER'", "'QUOTE'", "'RADIANS'", "'RAND'", 
-		"'RANDOM_BYTES'", "'RELEASE_LOCK'", "'REVERSE'", "'ROUND'", "'ROW_COUNT'", 
-		"'RPAD'", "'RTRIM'", "'SEC_TO_TIME'", "'SESSION_USER'", "'SHA'", "'SHA1'", 
-		"'SHA2'", "'SCHEMA_NAME'", "'SIGN'", "'SIN'", "'SLEEP'", "'SOUNDEX'", 
-		"'SQL_THREAD_WAIT_AFTER_GTIDS'", "'SQRT'", "'SRID'", "'STARTPOINT'", "'STRCMP'", 
-		"'STR_TO_DATE'", "'ST_AREA'", "'ST_ASBINARY'", "'ST_ASTEXT'", "'ST_ASWKB'", 
-		"'ST_ASWKT'", "'ST_BUFFER'", "'ST_CENTROID'", "'ST_CONTAINS'", "'ST_CROSSES'", 
-		"'ST_DIFFERENCE'", "'ST_DIMENSION'", "'ST_DISJOINT'", "'ST_DISTANCE'", 
-		"'ST_ENDPOINT'", "'ST_ENVELOPE'", "'ST_EQUALS'", "'ST_EXTERIORRING'", 
-		"'ST_GEOMCOLLFROMTEXT'", "'ST_GEOMCOLLFROMTXT'", "'ST_GEOMCOLLFROMWKB'", 
-		"'ST_GEOMETRYCOLLECTIONFROMTEXT'", "'ST_GEOMETRYCOLLECTIONFROMWKB'", "'ST_GEOMETRYFROMTEXT'", 
-		"'ST_GEOMETRYFROMWKB'", "'ST_GEOMETRYN'", "'ST_GEOMETRYTYPE'", "'ST_GEOMFROMTEXT'", 
-		"'ST_GEOMFROMWKB'", "'ST_INTERIORRINGN'", "'ST_INTERSECTION'", "'ST_INTERSECTS'", 
-		"'ST_ISCLOSED'", "'ST_ISEMPTY'", "'ST_ISSIMPLE'", "'ST_LINEFROMTEXT'", 
-		"'ST_LINEFROMWKB'", "'ST_LINESTRINGFROMTEXT'", "'ST_LINESTRINGFROMWKB'", 
-		"'ST_NUMGEOMETRIES'", "'ST_NUMINTERIORRING'", "'ST_NUMINTERIORRINGS'", 
-		"'ST_NUMPOINTS'", "'ST_OVERLAPS'", "'ST_POINTFROMTEXT'", "'ST_POINTFROMWKB'", 
-		"'ST_POINTN'", "'ST_POLYFROMTEXT'", "'ST_POLYFROMWKB'", "'ST_POLYGONFROMTEXT'", 
-		"'ST_POLYGONFROMWKB'", "'ST_SRID'", "'ST_STARTPOINT'", "'ST_SYMDIFFERENCE'", 
-		"'ST_TOUCHES'", "'ST_UNION'", "'ST_WITHIN'", "'ST_X'", "'ST_Y'", "'SUBDATE'", 
-		"'SUBSTRING_INDEX'", "'SUBTIME'", "'SYSTEM_USER'", "'TAN'", "'TIMEDIFF'", 
-		"'TIMESTAMPADD'", "'TIMESTAMPDIFF'", "'TIME_FORMAT'", "'TIME_TO_SEC'", 
-		"'TOUCHES'", "'TO_BASE64'", "'TO_DAYS'", "'TO_SECONDS'", "'UCASE'", "'UNCOMPRESS'", 
-		"'UNCOMPRESSED_LENGTH'", "'UNHEX'", "'UNIX_TIMESTAMP'", "'UPDATEXML'", 
-		"'UPPER'", "'UUID'", "'UUID_SHORT'", "'VALIDATE_PASSWORD_STRENGTH'", "'VERSION'", 
-		"'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS'", "'WEEKDAY'", "'WEEKOFYEAR'", "'WEIGHT_STRING'", 
-		"'WITHIN'", "'YEARWEEK'", "'Y'", "'X'", "':='", "'+='", "'-='", "'*='", 
-		"'/='", "'%='", "'&='", "'^='", "'|='", "'*'", "'/'", "'%'", "'+'", "'--'", 
-		"'-'", "'DIV'", "'MOD'", "'='", "'>'", "'<'", "'!'", "'~'", "'|'", "'&'", 
-		"'^'", "'.'", "'('", "')'", "','", "';'", "'@'", "'0'", "'1'", "'2'", 
-		"'''", "'\"'", "'`'", "':'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
-		"ADD", "ALL", "ALTER", "ALWAYS", "ANALYZE", "AND", "AS", "ASC", "BEFORE", 
-		"BETWEEN", "BOTH", "BY", "CALL", "CASCADE", "CASE", "CAST", "CHANGE", 
-		"CHARACTER", "CHECK", "COLLATE", "COLUMN", "CONDITION", "CONSTRAINT", 
-		"CONTINUE", "CONVERT", "CREATE", "CROSS", "CURRENT", "CURRENT_USER", "CURSOR", 
-		"DATABASE", "DATABASES", "DECLARE", "DEFAULT", "DELAYED", "DELETE", "DESC", 
-		"DESCRIBE", "DETERMINISTIC", "DIAGNOSTICS", "DISTINCT", "DISTINCTROW", 
-		"DROP", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "ESCAPED", "EXISTS", "EXIT", 
-		"EXPLAIN", "FALSE", "FETCH", "FOR", "FORCE", "FOREIGN", "FROM", "FULLTEXT", 
-		"GENERATED", "GET", "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "IF", 
-		"IGNORE", "IN", "INDEX", "INFILE", "INNER", "INOUT", "INSERT", "INTERVAL", 
-		"INTO", "IS", "ITERATE", "JOIN", "KEY", "KEYS", "KILL", "LEADING", "LEAVE", 
-		"LEFT", "LIKE", "LIMIT", "LINEAR", "LINES", "LOAD", "LOCK", "LOOP", "LOW_PRIORITY", 
-		"MASTER_BIND", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MODIFIES", 
-		"NATURAL", "NOT", "NO_WRITE_TO_BINLOG", "NULL_LITERAL", "NUMBER", "ON", 
-		"OPTIMIZE", "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", 
-		"PARTITION", "PRIMARY", "PROCEDURE", "PURGE", "RANGE", "READ", "READS", 
-		"REFERENCES", "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE", "REQUIRE", 
-		"RESIGNAL", "RESTRICT", "RETURN", "REVOKE", "RIGHT", "RLIKE", "SCHEMA", 
-		"SCHEMAS", "SELECT", "SET", "SEPARATOR", "SHOW", "SIGNAL", "SPATIAL", 
-		"SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT", "SQL_CALC_FOUND_ROWS", 
-		"SQL_SMALL_RESULT", "SSL", "STACKED", "STARTING", "STRAIGHT_JOIN", "TABLE", 
-		"TERMINATED", "THEN", "TO", "TRAILING", "TRIGGER", "TRUE", "UNDO", "UNION", 
-		"UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "USAGE", "USE", "USING", "VALUES", 
-		"WHEN", "WHERE", "WHILE", "WITH", "WRITE", "XOR", "ZEROFILL", "TINYINT", 
-		"SMALLINT", "MEDIUMINT", "INT", "INTEGER", "BIGINT", "REAL", "DOUBLE", 
-		"PRECISION", "FLOAT", "DECIMAL", "DEC", "NUMERIC", "DATE", "TIME", "TIMESTAMP", 
-		"DATETIME", "YEAR", "CHAR", "VARCHAR", "NVARCHAR", "NATIONAL", "BINARY", 
-		"VARBINARY", "TINYBLOB", "BLOB", "MEDIUMBLOB", "LONGBLOB", "TINYTEXT", 
-		"TEXT", "MEDIUMTEXT", "LONGTEXT", "ENUM", "VARYING", "SERIAL", "YEAR_MONTH", 
-		"DAY_HOUR", "DAY_MINUTE", "DAY_SECOND", "HOUR_MINUTE", "HOUR_SECOND", 
-		"MINUTE_SECOND", "SECOND_MICROSECOND", "MINUTE_MICROSECOND", "HOUR_MICROSECOND", 
-		"DAY_MICROSECOND", "AVG", "BIT_AND", "BIT_OR", "BIT_XOR", "COUNT", "GROUP_CONCAT", 
-		"MAX", "MIN", "STD", "STDDEV", "STDDEV_POP", "STDDEV_SAMP", "SUM", "VAR_POP", 
-		"VAR_SAMP", "VARIANCE", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", 
-		"LOCALTIME", "CURDATE", "CURTIME", "DATE_ADD", "DATE_SUB", "EXTRACT", 
-		"LOCALTIMESTAMP", "NOW", "POSITION", "SUBSTR", "SUBSTRING", "SYSDATE", 
-		"TRIM", "UTC_DATE", "UTC_TIME", "UTC_TIMESTAMP", "ACCOUNT", "ACTION", 
-		"AFTER", "AGGREGATE", "ALGORITHM", "ANY", "AT", "AUTHORS", "AUTOCOMMIT", 
-		"AUTOEXTEND_SIZE", "AUTO_INCREMENT", "AVG_ROW_LENGTH", "BEGIN", "BINLOG", 
-		"BIT", "BLOCK", "BOOL", "BOOLEAN", "BTREE", "CACHE", "CASCADED", "CHAIN", 
-		"CHANGED", "CHANNEL", "CHECKSUM", "PAGE_CHECKSUM", "CIPHER", "CLASS_ORIGIN", 
-		"CLIENT", "CLOSE", "COALESCE", "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", 
-		"COMMENT", "COMMIT", "COMPACT", "COMPLETION", "COMPRESSED", "COMPRESSION", 
-		"CONCURRENT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG", "CONSTRAINT_SCHEMA", 
-		"CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU", 
-		"CURSOR_NAME", "DATA", "DATAFILE", "DEALLOCATE", "DEFAULT_AUTH", "DEFINER", 
-		"DELAY_KEY_WRITE", "DES_KEY_FILE", "DIRECTORY", "DISABLE", "DISCARD", 
-		"DISK", "DO", "DUMPFILE", "DUPLICATE", "DYNAMIC", "ENABLE", "ENCRYPTION", 
-		"END", "ENDS", "ENGINE", "ENGINES", "ERROR", "ERRORS", "ESCAPE", "EVEN", 
-		"EVENT", "EVENTS", "EVERY", "EXCHANGE", "EXCLUSIVE", "EXPIRE", "EXPORT", 
-		"EXTENDED", "EXTENT_SIZE", "FAST", "FAULTS", "FIELDS", "FILE_BLOCK_SIZE", 
-		"FILTER", "FIRST", "FIXED", "FLUSH", "FOLLOWS", "FOUND", "FULL", "FUNCTION", 
-		"GENERAL", "GLOBAL", "GRANTS", "GROUP_REPLICATION", "HANDLER", "HASH", 
-		"HELP", "HOST", "HOSTS", "IDENTIFIED", "IGNORE_SERVER_IDS", "IMPORT", 
-		"INDEXES", "INITIAL_SIZE", "INPLACE", "INSERT_METHOD", "INSTALL", "INSTANCE", 
-		"INVISIBLE", "INVOKER", "IO", "IO_THREAD", "IPC", "ISOLATION", "ISSUER", 
-		"JSON", "KEY_BLOCK_SIZE", "LANGUAGE", "LAST", "LEAVES", "LESS", "LEVEL", 
-		"LIST", "LOCAL", "LOGFILE", "LOGS", "MASTER", "MASTER_AUTO_POSITION", 
-		"MASTER_CONNECT_RETRY", "MASTER_DELAY", "MASTER_HEARTBEAT_PERIOD", "MASTER_HOST", 
-		"MASTER_LOG_FILE", "MASTER_LOG_POS", "MASTER_PASSWORD", "MASTER_PORT", 
-		"MASTER_RETRY_COUNT", "MASTER_SSL", "MASTER_SSL_CA", "MASTER_SSL_CAPATH", 
-		"MASTER_SSL_CERT", "MASTER_SSL_CIPHER", "MASTER_SSL_CRL", "MASTER_SSL_CRLPATH", 
-		"MASTER_SSL_KEY", "MASTER_TLS_VERSION", "MASTER_USER", "MAX_CONNECTIONS_PER_HOUR", 
-		"MAX_QUERIES_PER_HOUR", "MAX_ROWS", "MAX_SIZE", "MAX_UPDATES_PER_HOUR", 
-		"MAX_USER_CONNECTIONS", "MEDIUM", "MERGE", "MESSAGE_TEXT", "MID", "MIGRATE", 
-		"MIN_ROWS", "MODE", "MODIFY", "MUTEX", "MYSQL", "MYSQL_ERRNO", "NAME", 
-		"NAMES", "NCHAR", "NEVER", "NEXT", "NO", "NODEGROUP", "NONE", "OFFLINE", 
-		"OFFSET", "OJ", "OLD_PASSWORD", "ONE", "ONLINE", "ONLY", "OPEN", "OPTIMIZER_COSTS", 
-		"OPTIONS", "OWNER", "PACK_KEYS", "PAGE", "PARSER", "PARTIAL", "PARTITIONING", 
-		"PARTITIONS", "PASSWORD", "PHASE", "PLUGIN", "PLUGIN_DIR", "PLUGINS", 
-		"PORT", "PRECEDES", "PREPARE", "PRESERVE", "PREV", "PROCESSLIST", "PROFILE", 
-		"PROFILES", "PROXY", "QUERY", "QUICK", "REBUILD", "RECOVER", "REDO_BUFFER_SIZE", 
-		"REDUNDANT", "RELAY", "RELAY_LOG_FILE", "RELAY_LOG_POS", "RELAYLOG", "REMOVE", 
-		"REORGANIZE", "REPAIR", "REPLICATE_DO_DB", "REPLICATE_DO_TABLE", "REPLICATE_IGNORE_DB", 
-		"REPLICATE_IGNORE_TABLE", "REPLICATE_REWRITE_DB", "REPLICATE_WILD_DO_TABLE", 
-		"REPLICATE_WILD_IGNORE_TABLE", "REPLICATION", "RESET", "RESUME", "RETURNED_SQLSTATE", 
-		"RETURNS", "ROLLBACK", "ROLLUP", "ROTATE", "ROW", "ROWS", "ROW_FORMAT", 
-		"SAVEPOINT", "SCHEDULE", "SECURITY", "SERVER", "SESSION", "SHARE", "SHARED", 
-		"SIGNED", "SIMPLE", "SLAVE", "SLOW", "SNAPSHOT", "SOCKET", "SOME", "SONAME", 
-		"SOUNDS", "SOURCE", "SQL_AFTER_GTIDS", "SQL_AFTER_MTS_GAPS", "SQL_BEFORE_GTIDS", 
-		"SQL_BUFFER_RESULT", "SQL_CACHE", "SQL_NO_CACHE", "SQL_THREAD", "START", 
-		"STARTS", "STATS_AUTO_RECALC", "STATS_PERSISTENT", "STATS_SAMPLE_PAGES", 
-		"STATUS", "STOP", "STORAGE", "STORED", "STRING", "SUBCLASS_ORIGIN", "SUBJECT", 
-		"SUBPARTITION", "SUBPARTITIONS", "SUSPEND", "SWAPS", "SWITCHES", "TABLE_NAME", 
-		"TABLESPACE", "TEMPORARY", "TEMPTABLE", "THAN", "TRADITIONAL", "TRANSACTION", 
-		"TRIGGERS", "TRUNCATE", "UNDEFINED", "UNDOFILE", "UNDO_BUFFER_SIZE", "UNINSTALL", 
-		"UNKNOWN", "UNTIL", "UPGRADE", "USER", "USE_FRM", "USER_RESOURCES", "VALIDATION", 
-		"VALUE", "VARIABLES", "VIEW", "VIRTUAL", "VISIBLE", "WAIT", "WARNINGS", 
-		"WITHOUT", "WORK", "WRAPPER", "X509", "XA", "XML", "EUR", "USA", "JIS", 
-		"ISO", "INTERNAL", "QUARTER", "MONTH", "DAY", "HOUR", "MINUTE", "WEEK", 
-		"SECOND", "MICROSECOND", "TABLES", "ROUTINE", "EXECUTE", "FILE", "PROCESS", 
-		"RELOAD", "SHUTDOWN", "SUPER", "PRIVILEGES", "SESSION_VARIABLES_ADMIN", 
-		"ARMSCII8", "ASCII", "BIG5", "CP1250", "CP1251", "CP1256", "CP1257", "CP850", 
-		"CP852", "CP866", "CP932", "DEC8", "EUCJPMS", "EUCKR", "GB2312", "GBK", 
-		"GEOSTD8", "GREEK", "HEBREW", "HP8", "KEYBCS2", "KOI8R", "KOI8U", "LATIN1", 
-		"LATIN2", "LATIN5", "LATIN7", "MACCE", "MACROMAN", "SJIS", "SWE7", "TIS620", 
-		"UCS2", "UJIS", "UTF16", "UTF16LE", "UTF32", "UTF8", "UTF8MB3", "UTF8MB4", 
-		"ARCHIVE", "BLACKHOLE", "CSV", "FEDERATED", "INNODB", "MEMORY", "MRG_MYISAM", 
-		"MYISAM", "NDB", "NDBCLUSTER", "PERFORMANCE_SCHEMA", "TOKUDB", "REPEATABLE", 
-		"COMMITTED", "UNCOMMITTED", "SERIALIZABLE", "GEOMETRYCOLLECTION", "GEOMCOLLECTION", 
-		"GEOMETRY", "LINESTRING", "MULTILINESTRING", "MULTIPOINT", "MULTIPOLYGON", 
-		"POINT", "POLYGON", "ABS", "ACOS", "ADDDATE", "ADDTIME", "AES_DECRYPT", 
-		"AES_ENCRYPT", "AREA", "ASBINARY", "ASIN", "ASTEXT", "ASWKB", "ASWKT", 
-		"ASYMMETRIC_DECRYPT", "ASYMMETRIC_DERIVE", "ASYMMETRIC_ENCRYPT", "ASYMMETRIC_SIGN", 
-		"ASYMMETRIC_VERIFY", "ATAN", "ATAN2", "BENCHMARK", "BIN", "BIT_COUNT", 
-		"BIT_LENGTH", "BUFFER", "CATALOG_NAME", "CEIL", "CEILING", "CENTROID", 
-		"CHARACTER_LENGTH", "CHARSET", "CHAR_LENGTH", "COERCIBILITY", "COLLATION", 
-		"COMPRESS", "CONCAT", "CONCAT_WS", "CONNECTION_ID", "CONV", "CONVERT_TZ", 
-		"COS", "COT", "CRC32", "CREATE_ASYMMETRIC_PRIV_KEY", "CREATE_ASYMMETRIC_PUB_KEY", 
-		"CREATE_DH_PARAMETERS", "CREATE_DIGEST", "CROSSES", "DATEDIFF", "DATE_FORMAT", 
-		"DAYNAME", "DAYOFMONTH", "DAYOFWEEK", "DAYOFYEAR", "DECODE", "DEGREES", 
-		"DES_DECRYPT", "DES_ENCRYPT", "DIMENSION", "DISJOINT", "ELT", "ENCODE", 
-		"ENCRYPT", "ENDPOINT", "ENVELOPE", "EQUALS", "EXP", "EXPORT_SET", "EXTERIORRING", 
-		"EXTRACTVALUE", "FIELD", "FIND_IN_SET", "FLOOR", "FORMAT", "FOUND_ROWS", 
-		"FROM_BASE64", "FROM_DAYS", "FROM_UNIXTIME", "GEOMCOLLFROMTEXT", "GEOMCOLLFROMWKB", 
-		"GEOMETRYCOLLECTIONFROMTEXT", "GEOMETRYCOLLECTIONFROMWKB", "GEOMETRYFROMTEXT", 
-		"GEOMETRYFROMWKB", "GEOMETRYN", "GEOMETRYTYPE", "GEOMFROMTEXT", "GEOMFROMWKB", 
-		"GET_FORMAT", "GET_LOCK", "GLENGTH", "GREATEST", "GTID_SUBSET", "GTID_SUBTRACT", 
-		"HEX", "IFNULL", "INET6_ATON", "INET6_NTOA", "INET_ATON", "INET_NTOA", 
-		"INSTR", "INTERIORRINGN", "INTERSECTS", "ISCLOSED", "ISEMPTY", "ISNULL", 
-		"ISSIMPLE", "IS_FREE_LOCK", "IS_IPV4", "IS_IPV4_COMPAT", "IS_IPV4_MAPPED", 
-		"IS_IPV6", "IS_USED_LOCK", "LAST_INSERT_ID", "LCASE", "LEAST", "LENGTH", 
-		"LINEFROMTEXT", "LINEFROMWKB", "LINESTRINGFROMTEXT", "LINESTRINGFROMWKB", 
-		"LN", "LOAD_FILE", "LOCATE", "LOG", "LOG10", "LOG2", "LOWER", "LPAD", 
-		"LTRIM", "MAKEDATE", "MAKETIME", "MAKE_SET", "MASTER_POS_WAIT", "MBRCONTAINS", 
-		"MBRDISJOINT", "MBREQUAL", "MBRINTERSECTS", "MBROVERLAPS", "MBRTOUCHES", 
-		"MBRWITHIN", "MD5", "MLINEFROMTEXT", "MLINEFROMWKB", "MONTHNAME", "MPOINTFROMTEXT", 
-		"MPOINTFROMWKB", "MPOLYFROMTEXT", "MPOLYFROMWKB", "MULTILINESTRINGFROMTEXT", 
-		"MULTILINESTRINGFROMWKB", "MULTIPOINTFROMTEXT", "MULTIPOINTFROMWKB", "MULTIPOLYGONFROMTEXT", 
-		"MULTIPOLYGONFROMWKB", "NAME_CONST", "NULLIF", "NUMGEOMETRIES", "NUMINTERIORRINGS", 
-		"NUMPOINTS", "OCT", "OCTET_LENGTH", "ORD", "OVERLAPS", "PERIOD_ADD", "PERIOD_DIFF", 
-		"PI", "POINTFROMTEXT", "POINTFROMWKB", "POINTN", "POLYFROMTEXT", "POLYFROMWKB", 
-		"POLYGONFROMTEXT", "POLYGONFROMWKB", "POW", "POWER", "QUOTE", "RADIANS", 
-		"RAND", "RANDOM_BYTES", "RELEASE_LOCK", "REVERSE", "ROUND", "ROW_COUNT", 
-		"RPAD", "RTRIM", "SEC_TO_TIME", "SESSION_USER", "SHA", "SHA1", "SHA2", 
-		"SCHEMA_NAME", "SIGN", "SIN", "SLEEP", "SOUNDEX", "SQL_THREAD_WAIT_AFTER_GTIDS", 
-		"SQRT", "SRID", "STARTPOINT", "STRCMP", "STR_TO_DATE", "ST_AREA", "ST_ASBINARY", 
-		"ST_ASTEXT", "ST_ASWKB", "ST_ASWKT", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", 
-		"ST_CROSSES", "ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", 
-		"ST_ENDPOINT", "ST_ENVELOPE", "ST_EQUALS", "ST_EXTERIORRING", "ST_GEOMCOLLFROMTEXT", 
-		"ST_GEOMCOLLFROMTXT", "ST_GEOMCOLLFROMWKB", "ST_GEOMETRYCOLLECTIONFROMTEXT", 
-		"ST_GEOMETRYCOLLECTIONFROMWKB", "ST_GEOMETRYFROMTEXT", "ST_GEOMETRYFROMWKB", 
-		"ST_GEOMETRYN", "ST_GEOMETRYTYPE", "ST_GEOMFROMTEXT", "ST_GEOMFROMWKB", 
-		"ST_INTERIORRINGN", "ST_INTERSECTION", "ST_INTERSECTS", "ST_ISCLOSED", 
-		"ST_ISEMPTY", "ST_ISSIMPLE", "ST_LINEFROMTEXT", "ST_LINEFROMWKB", "ST_LINESTRINGFROMTEXT", 
-		"ST_LINESTRINGFROMWKB", "ST_NUMGEOMETRIES", "ST_NUMINTERIORRING", "ST_NUMINTERIORRINGS", 
-		"ST_NUMPOINTS", "ST_OVERLAPS", "ST_POINTFROMTEXT", "ST_POINTFROMWKB", 
-		"ST_POINTN", "ST_POLYFROMTEXT", "ST_POLYFROMWKB", "ST_POLYGONFROMTEXT", 
-		"ST_POLYGONFROMWKB", "ST_SRID", "ST_STARTPOINT", "ST_SYMDIFFERENCE", "ST_TOUCHES", 
-		"ST_UNION", "ST_WITHIN", "ST_X", "ST_Y", "SUBDATE", "SUBSTRING_INDEX", 
-		"SUBTIME", "SYSTEM_USER", "TAN", "TIMEDIFF", "TIMESTAMPADD", "TIMESTAMPDIFF", 
-		"TIME_FORMAT", "TIME_TO_SEC", "TOUCHES", "TO_BASE64", "TO_DAYS", "TO_SECONDS", 
-		"UCASE", "UNCOMPRESS", "UNCOMPRESSED_LENGTH", "UNHEX", "UNIX_TIMESTAMP", 
-		"UPDATEXML", "UPPER", "UUID", "UUID_SHORT", "VALIDATE_PASSWORD_STRENGTH", 
-		"VERSION", "WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS", "WEEKDAY", "WEEKOFYEAR", 
-		"WEIGHT_STRING", "WITHIN", "YEARWEEK", "Y_FUNCTION", "X_FUNCTION", "VAR_ASSIGN", 
-		"PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", 
-		"AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN", "STAR", "DIVIDE", "MODULE", "PLUS", 
-		"MINUSMINUS", "MINUS", "DIV", "MOD", "EQUAL_SYMBOL", "GREATER_SYMBOL", 
-		"LESS_SYMBOL", "EXCLAMATION_SYMBOL", "BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", 
-		"BIT_XOR_OP", "DOT", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", "AT_SIGN", 
-		"ZERO_DECIMAL", "ONE_DECIMAL", "TWO_DECIMAL", "SINGLE_QUOTE_SYMB", "DOUBLE_QUOTE_SYMB", 
-		"REVERSE_QUOTE_SYMB", "COLON_SYMB", "CHARSET_REVERSE_QOUTE_STRING", "FILESIZE_LITERAL", 
-		"START_NATIONAL_STRING_LITERAL", "STRING_LITERAL", "DECIMAL_LITERAL", 
-		"HEXADECIMAL_LITERAL", "REAL_LITERAL", "NULL_SPEC_LITERAL", "BIT_STRING", 
-		"STRING_CHARSET_NAME", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_USER_NAME", 
-		"LOCAL_ID", "GLOBAL_ID", "ERROR_RECONGNIGION"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, "'ADD'", "'ALL'", "'ALTER'", "'ALWAYS'", 
+			"'ANALYZE'", "'AND'", "'AS'", "'ASC'", "'BEFORE'", "'BETWEEN'", "'BOTH'", 
+			"'BY'", "'CALL'", "'CASCADE'", "'CASE'", "'CAST'", "'CHANGE'", "'CHARACTER'", 
+			"'CHECK'", "'COLLATE'", "'COLUMN'", "'CONDITION'", "'CONSTRAINT'", "'CONTINUE'", 
+			"'CONVERT'", "'CREATE'", "'CROSS'", "'CURRENT'", "'CURRENT_USER'", "'CURSOR'", 
+			"'DATABASE'", "'DATABASES'", "'DECLARE'", "'DEFAULT'", "'DELAYED'", "'DELETE'", 
+			"'DESC'", "'DESCRIBE'", "'DETERMINISTIC'", "'DIAGNOSTICS'", "'DISTINCT'", 
+			"'DISTINCTROW'", "'DROP'", "'EACH'", "'ELSE'", "'ELSEIF'", "'ENCLOSED'", 
+			"'ESCAPED'", "'EXISTS'", "'EXIT'", "'EXPLAIN'", "'FALSE'", "'FETCH'", 
+			"'FOR'", "'FORCE'", "'FOREIGN'", "'FROM'", "'FULLTEXT'", "'GENERATED'", 
+			"'GET'", "'GRANT'", "'GROUP'", "'HAVING'", "'HIGH_PRIORITY'", "'IF'", 
+			"'IGNORE'", "'IN'", "'INDEX'", "'INFILE'", "'INNER'", "'INOUT'", "'INSERT'", 
+			"'INTERVAL'", "'INTO'", "'IS'", "'ITERATE'", "'JOIN'", "'KEY'", "'KEYS'", 
+			"'KILL'", "'LEADING'", "'LEAVE'", "'LEFT'", "'LIKE'", "'LIMIT'", "'LINEAR'", 
+			"'LINES'", "'LOAD'", "'LOCK'", "'LOOP'", "'LOW_PRIORITY'", "'MASTER_BIND'", 
+			"'MASTER_SSL_VERIFY_SERVER_CERT'", "'MATCH'", "'MAXVALUE'", "'MODIFIES'", 
+			"'NATURAL'", "'NOT'", "'NO_WRITE_TO_BINLOG'", "'NULL'", "'NUMBER'", "'ON'", 
+			"'OPTIMIZE'", "'OPTION'", "'OPTIONALLY'", "'OR'", "'ORDER'", "'OUT'", 
+			"'OUTER'", "'OUTFILE'", "'PARTITION'", "'PRIMARY'", "'PROCEDURE'", "'PURGE'", 
+			"'RANGE'", "'READ'", "'READS'", "'REFERENCES'", "'REGEXP'", "'RELEASE'", 
+			"'RENAME'", "'REPEAT'", "'REPLACE'", "'REQUIRE'", "'RESIGNAL'", "'RESTRICT'", 
+			"'RETURN'", "'REVOKE'", "'RIGHT'", "'RLIKE'", "'SCHEMA'", "'SCHEMAS'", 
+			"'SELECT'", "'SET'", "'SEPARATOR'", "'SHOW'", "'SIGNAL'", "'SPATIAL'", 
+			"'SQL'", "'SQLEXCEPTION'", "'SQLSTATE'", "'SQLWARNING'", "'SQL_BIG_RESULT'", 
+			"'SQL_CALC_FOUND_ROWS'", "'SQL_SMALL_RESULT'", "'SSL'", "'STACKED'", 
+			"'STARTING'", "'STRAIGHT_JOIN'", "'TABLE'", "'TERMINATED'", "'THEN'", 
+			"'TO'", "'TRAILING'", "'TRIGGER'", "'TRUE'", "'UNDO'", "'UNION'", "'UNIQUE'", 
+			"'UNLOCK'", "'UNSIGNED'", "'UPDATE'", "'USAGE'", "'USE'", "'USING'", 
+			"'VALUES'", "'WHEN'", "'WHERE'", "'WHILE'", "'WITH'", "'WRITE'", "'XOR'", 
+			"'ZEROFILL'", "'TINYINT'", "'SMALLINT'", "'MEDIUMINT'", "'INT'", "'INTEGER'", 
+			"'BIGINT'", "'REAL'", "'DOUBLE'", "'PRECISION'", "'FLOAT'", "'DECIMAL'", 
+			"'DEC'", "'NUMERIC'", "'DATE'", "'TIME'", "'TIMESTAMP'", "'DATETIME'", 
+			"'YEAR'", "'CHAR'", "'VARCHAR'", "'NVARCHAR'", "'NATIONAL'", "'BINARY'", 
+			"'VARBINARY'", "'TINYBLOB'", "'BLOB'", "'MEDIUMBLOB'", "'LONGBLOB'", 
+			"'TINYTEXT'", "'TEXT'", "'MEDIUMTEXT'", "'LONGTEXT'", "'ENUM'", "'VARYING'", 
+			"'SERIAL'", "'YEAR_MONTH'", "'DAY_HOUR'", "'DAY_MINUTE'", "'DAY_SECOND'", 
+			"'HOUR_MINUTE'", "'HOUR_SECOND'", "'MINUTE_SECOND'", "'SECOND_MICROSECOND'", 
+			"'MINUTE_MICROSECOND'", "'HOUR_MICROSECOND'", "'DAY_MICROSECOND'", "'AVG'", 
+			"'BIT_AND'", "'BIT_OR'", "'BIT_XOR'", "'COUNT'", "'GROUP_CONCAT'", "'MAX'", 
+			"'MIN'", "'STD'", "'STDDEV'", "'STDDEV_POP'", "'STDDEV_SAMP'", "'SUM'", 
+			"'VAR_POP'", "'VAR_SAMP'", "'VARIANCE'", "'CURRENT_DATE'", "'CURRENT_TIME'", 
+			"'CURRENT_TIMESTAMP'", "'LOCALTIME'", "'CURDATE'", "'CURTIME'", "'DATE_ADD'", 
+			"'DATE_SUB'", "'EXTRACT'", "'LOCALTIMESTAMP'", "'NOW'", "'POSITION'", 
+			"'SUBSTR'", "'SUBSTRING'", "'SYSDATE'", "'TRIM'", "'UTC_DATE'", "'UTC_TIME'", 
+			"'UTC_TIMESTAMP'", "'ACCOUNT'", "'ACTION'", "'AFTER'", "'AGGREGATE'", 
+			"'ALGORITHM'", "'ANY'", "'AT'", "'AUTHORS'", "'AUTOCOMMIT'", "'AUTOEXTEND_SIZE'", 
+			"'AUTO_INCREMENT'", "'AVG_ROW_LENGTH'", "'BEGIN'", "'BINLOG'", "'BIT'", 
+			"'BLOCK'", "'BOOL'", "'BOOLEAN'", "'BTREE'", "'CACHE'", "'CASCADED'", 
+			"'CHAIN'", "'CHANGED'", "'CHANNEL'", "'CHECKSUM'", "'PAGE_CHECKSUM'", 
+			"'CIPHER'", "'CLASS_ORIGIN'", "'CLIENT'", "'CLOSE'", "'COALESCE'", "'CODE'", 
+			"'COLUMNS'", "'COLUMN_FORMAT'", "'COLUMN_NAME'", "'COMMENT'", "'COMMIT'", 
+			"'COMPACT'", "'COMPLETION'", "'COMPRESSED'", "'COMPRESSION'", "'CONCURRENT'", 
+			"'CONNECTION'", "'CONSISTENT'", "'CONSTRAINT_CATALOG'", "'CONSTRAINT_SCHEMA'", 
+			"'CONSTRAINT_NAME'", "'CONTAINS'", "'CONTEXT'", "'CONTRIBUTORS'", "'COPY'", 
+			"'CPU'", "'CURSOR_NAME'", "'DATA'", "'DATAFILE'", "'DEALLOCATE'", "'DEFAULT_AUTH'", 
+			"'DEFINER'", "'DELAY_KEY_WRITE'", "'DES_KEY_FILE'", "'DIRECTORY'", "'DISABLE'", 
+			"'DISCARD'", "'DISK'", "'DO'", "'DUMPFILE'", "'DUPLICATE'", "'DYNAMIC'", 
+			"'ENABLE'", "'ENCRYPTION'", "'END'", "'ENDS'", "'ENGINE'", "'ENGINES'", 
+			"'ERROR'", "'ERRORS'", "'ESCAPE'", "'EVEN'", "'EVENT'", "'EVENTS'", "'EVERY'", 
+			"'EXCHANGE'", "'EXCLUSIVE'", "'EXPIRE'", "'EXPORT'", "'EXTENDED'", "'EXTENT_SIZE'", 
+			"'FAST'", "'FAULTS'", "'FIELDS'", "'FILE_BLOCK_SIZE'", "'FILTER'", "'FIRST'", 
+			"'FIXED'", "'FLUSH'", "'FOLLOWS'", "'FOUND'", "'FULL'", "'FUNCTION'", 
+			"'GENERAL'", "'GLOBAL'", "'GRANTS'", "'GROUP_REPLICATION'", "'HANDLER'", 
+			"'HASH'", "'HELP'", "'HOST'", "'HOSTS'", "'IDENTIFIED'", "'IGNORE_SERVER_IDS'", 
+			"'IMPORT'", "'INDEXES'", "'INITIAL_SIZE'", "'INPLACE'", "'INSERT_METHOD'", 
+			"'INSTALL'", "'INSTANCE'", "'INVISIBLE'", "'INVOKER'", "'IO'", "'IO_THREAD'", 
+			"'IPC'", "'ISOLATION'", "'ISSUER'", "'JSON'", "'KEY_BLOCK_SIZE'", "'LANGUAGE'", 
+			"'LAST'", "'LEAVES'", "'LESS'", "'LEVEL'", "'LIST'", "'LOCAL'", "'LOGFILE'", 
+			"'LOGS'", "'MASTER'", "'MASTER_AUTO_POSITION'", "'MASTER_CONNECT_RETRY'", 
+			"'MASTER_DELAY'", "'MASTER_HEARTBEAT_PERIOD'", "'MASTER_HOST'", "'MASTER_LOG_FILE'", 
+			"'MASTER_LOG_POS'", "'MASTER_PASSWORD'", "'MASTER_PORT'", "'MASTER_RETRY_COUNT'", 
+			"'MASTER_SSL'", "'MASTER_SSL_CA'", "'MASTER_SSL_CAPATH'", "'MASTER_SSL_CERT'", 
+			"'MASTER_SSL_CIPHER'", "'MASTER_SSL_CRL'", "'MASTER_SSL_CRLPATH'", "'MASTER_SSL_KEY'", 
+			"'MASTER_TLS_VERSION'", "'MASTER_USER'", "'MAX_CONNECTIONS_PER_HOUR'", 
+			"'MAX_QUERIES_PER_HOUR'", "'MAX_ROWS'", "'MAX_SIZE'", "'MAX_UPDATES_PER_HOUR'", 
+			"'MAX_USER_CONNECTIONS'", "'MEDIUM'", "'MERGE'", "'MESSAGE_TEXT'", "'MID'", 
+			"'MIGRATE'", "'MIN_ROWS'", "'MODE'", "'MODIFY'", "'MUTEX'", "'MYSQL'", 
+			"'MYSQL_ERRNO'", "'NAME'", "'NAMES'", "'NCHAR'", "'NEVER'", "'NEXT'", 
+			"'NO'", "'NODEGROUP'", "'NONE'", "'OFFLINE'", "'OFFSET'", "'OJ'", "'OLD_PASSWORD'", 
+			"'ONE'", "'ONLINE'", "'ONLY'", "'OPEN'", "'OPTIMIZER_COSTS'", "'OPTIONS'", 
+			"'OWNER'", "'PACK_KEYS'", "'PAGE'", "'PARSER'", "'PARTIAL'", "'PARTITIONING'", 
+			"'PARTITIONS'", "'PASSWORD'", "'PHASE'", "'PLUGIN'", "'PLUGIN_DIR'", 
+			"'PLUGINS'", "'PORT'", "'PRECEDES'", "'PREPARE'", "'PRESERVE'", "'PREV'", 
+			"'PROCESSLIST'", "'PROFILE'", "'PROFILES'", "'PROXY'", "'QUERY'", "'QUICK'", 
+			"'REBUILD'", "'RECOVER'", "'REDO_BUFFER_SIZE'", "'REDUNDANT'", "'RELAY'", 
+			"'RELAY_LOG_FILE'", "'RELAY_LOG_POS'", "'RELAYLOG'", "'REMOVE'", "'REORGANIZE'", 
+			"'REPAIR'", "'REPLICATE_DO_DB'", "'REPLICATE_DO_TABLE'", "'REPLICATE_IGNORE_DB'", 
+			"'REPLICATE_IGNORE_TABLE'", "'REPLICATE_REWRITE_DB'", "'REPLICATE_WILD_DO_TABLE'", 
+			"'REPLICATE_WILD_IGNORE_TABLE'", "'REPLICATION'", "'RESET'", "'RESUME'", 
+			"'RETURNED_SQLSTATE'", "'RETURNS'", "'ROLLBACK'", "'ROLLUP'", "'ROTATE'", 
+			"'ROW'", "'ROWS'", "'ROW_FORMAT'", "'SAVEPOINT'", "'SCHEDULE'", "'SECURITY'", 
+			"'SERVER'", "'SESSION'", "'SHARE'", "'SHARED'", "'SIGNED'", "'SIMPLE'", 
+			"'SLAVE'", "'SLOW'", "'SNAPSHOT'", "'SOCKET'", "'SOME'", "'SONAME'", 
+			"'SOUNDS'", "'SOURCE'", "'SQL_AFTER_GTIDS'", "'SQL_AFTER_MTS_GAPS'", 
+			"'SQL_BEFORE_GTIDS'", "'SQL_BUFFER_RESULT'", "'SQL_CACHE'", "'SQL_NO_CACHE'", 
+			"'SQL_THREAD'", "'START'", "'STARTS'", "'STATS_AUTO_RECALC'", "'STATS_PERSISTENT'", 
+			"'STATS_SAMPLE_PAGES'", "'STATUS'", "'STOP'", "'STORAGE'", "'STORED'", 
+			"'STRING'", "'SUBCLASS_ORIGIN'", "'SUBJECT'", "'SUBPARTITION'", "'SUBPARTITIONS'", 
+			"'SUSPEND'", "'SWAPS'", "'SWITCHES'", "'TABLE_NAME'", "'TABLESPACE'", 
+			"'TEMPORARY'", "'TEMPTABLE'", "'THAN'", "'TRADITIONAL'", "'TRANSACTION'", 
+			"'TRIGGERS'", "'TRUNCATE'", "'UNDEFINED'", "'UNDOFILE'", "'UNDO_BUFFER_SIZE'", 
+			"'UNINSTALL'", "'UNKNOWN'", "'UNTIL'", "'UPGRADE'", "'USER'", "'USE_FRM'", 
+			"'USER_RESOURCES'", "'VALIDATION'", "'VALUE'", "'VARIABLES'", "'VIEW'", 
+			"'VIRTUAL'", "'VISIBLE'", "'WAIT'", "'WARNINGS'", "'WITHOUT'", "'WORK'", 
+			"'WRAPPER'", "'X509'", "'XA'", "'XML'", "'EUR'", "'USA'", "'JIS'", "'ISO'", 
+			"'INTERNAL'", "'QUARTER'", "'MONTH'", "'DAY'", "'HOUR'", "'MINUTE'", 
+			"'WEEK'", "'SECOND'", "'MICROSECOND'", "'TABLES'", "'ROUTINE'", "'EXECUTE'", 
+			"'FILE'", "'PROCESS'", "'RELOAD'", "'SHUTDOWN'", "'SUPER'", "'PRIVILEGES'", 
+			null, "'ARMSCII8'", "'ASCII'", "'BIG5'", "'CP1250'", "'CP1251'", "'CP1256'", 
+			"'CP1257'", "'CP850'", "'CP852'", "'CP866'", "'CP932'", "'DEC8'", "'EUCJPMS'", 
+			"'EUCKR'", "'GB2312'", "'GBK'", "'GEOSTD8'", "'GREEK'", "'HEBREW'", "'HP8'", 
+			"'KEYBCS2'", "'KOI8R'", "'KOI8U'", "'LATIN1'", "'LATIN2'", "'LATIN5'", 
+			"'LATIN7'", "'MACCE'", "'MACROMAN'", "'SJIS'", "'SWE7'", "'TIS620'", 
+			"'UCS2'", "'UJIS'", "'UTF16'", "'UTF16LE'", "'UTF32'", "'UTF8'", "'UTF8MB3'", 
+			"'UTF8MB4'", "'ARCHIVE'", "'BLACKHOLE'", "'CSV'", "'FEDERATED'", "'INNODB'", 
+			"'MEMORY'", "'MRG_MYISAM'", "'MYISAM'", "'NDB'", "'NDBCLUSTER'", "'PERFORMANCE_SCHEMA'", 
+			"'TOKUDB'", "'REPEATABLE'", "'COMMITTED'", "'UNCOMMITTED'", "'SERIALIZABLE'", 
+			"'GEOMETRYCOLLECTION'", "'GEOMCOLLECTION'", "'GEOMETRY'", "'LINESTRING'", 
+			"'MULTILINESTRING'", "'MULTIPOINT'", "'MULTIPOLYGON'", "'POINT'", "'POLYGON'", 
+			"'ABS'", "'ACOS'", "'ADDDATE'", "'ADDTIME'", "'AES_DECRYPT'", "'AES_ENCRYPT'", 
+			"'AREA'", "'ASBINARY'", "'ASIN'", "'ASTEXT'", "'ASWKB'", "'ASWKT'", "'ASYMMETRIC_DECRYPT'", 
+			"'ASYMMETRIC_DERIVE'", "'ASYMMETRIC_ENCRYPT'", "'ASYMMETRIC_SIGN'", "'ASYMMETRIC_VERIFY'", 
+			"'ATAN'", "'ATAN2'", "'BENCHMARK'", "'BIN'", "'BIT_COUNT'", "'BIT_LENGTH'", 
+			"'BUFFER'", "'CATALOG_NAME'", "'CEIL'", "'CEILING'", "'CENTROID'", "'CHARACTER_LENGTH'", 
+			"'CHARSET'", "'CHAR_LENGTH'", "'COERCIBILITY'", "'COLLATION'", "'COMPRESS'", 
+			"'CONCAT'", "'CONCAT_WS'", "'CONNECTION_ID'", "'CONV'", "'CONVERT_TZ'", 
+			"'COS'", "'COT'", "'CRC32'", "'CREATE_ASYMMETRIC_PRIV_KEY'", "'CREATE_ASYMMETRIC_PUB_KEY'", 
+			"'CREATE_DH_PARAMETERS'", "'CREATE_DIGEST'", "'CROSSES'", "'DATEDIFF'", 
+			"'DATE_FORMAT'", "'DAYNAME'", "'DAYOFMONTH'", "'DAYOFWEEK'", "'DAYOFYEAR'", 
+			"'DECODE'", "'DEGREES'", "'DES_DECRYPT'", "'DES_ENCRYPT'", "'DIMENSION'", 
+			"'DISJOINT'", "'ELT'", "'ENCODE'", "'ENCRYPT'", "'ENDPOINT'", "'ENVELOPE'", 
+			"'EQUALS'", "'EXP'", "'EXPORT_SET'", "'EXTERIORRING'", "'EXTRACTVALUE'", 
+			"'FIELD'", "'FIND_IN_SET'", "'FLOOR'", "'FORMAT'", "'FOUND_ROWS'", "'FROM_BASE64'", 
+			"'FROM_DAYS'", "'FROM_UNIXTIME'", "'GEOMCOLLFROMTEXT'", "'GEOMCOLLFROMWKB'", 
+			"'GEOMETRYCOLLECTIONFROMTEXT'", "'GEOMETRYCOLLECTIONFROMWKB'", "'GEOMETRYFROMTEXT'", 
+			"'GEOMETRYFROMWKB'", "'GEOMETRYN'", "'GEOMETRYTYPE'", "'GEOMFROMTEXT'", 
+			"'GEOMFROMWKB'", "'GET_FORMAT'", "'GET_LOCK'", "'GLENGTH'", "'GREATEST'", 
+			"'GTID_SUBSET'", "'GTID_SUBTRACT'", "'HEX'", "'IFNULL'", "'INET6_ATON'", 
+			"'INET6_NTOA'", "'INET_ATON'", "'INET_NTOA'", "'INSTR'", "'INTERIORRINGN'", 
+			"'INTERSECTS'", "'ISCLOSED'", "'ISEMPTY'", "'ISNULL'", "'ISSIMPLE'", 
+			"'IS_FREE_LOCK'", "'IS_IPV4'", "'IS_IPV4_COMPAT'", "'IS_IPV4_MAPPED'", 
+			"'IS_IPV6'", "'IS_USED_LOCK'", "'LAST_INSERT_ID'", "'LCASE'", "'LEAST'", 
+			"'LENGTH'", "'LINEFROMTEXT'", "'LINEFROMWKB'", "'LINESTRINGFROMTEXT'", 
+			"'LINESTRINGFROMWKB'", "'LN'", "'LOAD_FILE'", "'LOCATE'", "'LOG'", "'LOG10'", 
+			"'LOG2'", "'LOWER'", "'LPAD'", "'LTRIM'", "'MAKEDATE'", "'MAKETIME'", 
+			"'MAKE_SET'", "'MASTER_POS_WAIT'", "'MBRCONTAINS'", "'MBRDISJOINT'", 
+			"'MBREQUAL'", "'MBRINTERSECTS'", "'MBROVERLAPS'", "'MBRTOUCHES'", "'MBRWITHIN'", 
+			"'MD5'", "'MLINEFROMTEXT'", "'MLINEFROMWKB'", "'MONTHNAME'", "'MPOINTFROMTEXT'", 
+			"'MPOINTFROMWKB'", "'MPOLYFROMTEXT'", "'MPOLYFROMWKB'", "'MULTILINESTRINGFROMTEXT'", 
+			"'MULTILINESTRINGFROMWKB'", "'MULTIPOINTFROMTEXT'", "'MULTIPOINTFROMWKB'", 
+			"'MULTIPOLYGONFROMTEXT'", "'MULTIPOLYGONFROMWKB'", "'NAME_CONST'", "'NULLIF'", 
+			"'NUMGEOMETRIES'", "'NUMINTERIORRINGS'", "'NUMPOINTS'", "'OCT'", "'OCTET_LENGTH'", 
+			"'ORD'", "'OVERLAPS'", "'PERIOD_ADD'", "'PERIOD_DIFF'", "'PI'", "'POINTFROMTEXT'", 
+			"'POINTFROMWKB'", "'POINTN'", "'POLYFROMTEXT'", "'POLYFROMWKB'", "'POLYGONFROMTEXT'", 
+			"'POLYGONFROMWKB'", "'POW'", "'POWER'", "'QUOTE'", "'RADIANS'", "'RAND'", 
+			"'RANDOM_BYTES'", "'RELEASE_LOCK'", "'REVERSE'", "'ROUND'", "'ROW_COUNT'", 
+			"'RPAD'", "'RTRIM'", "'SEC_TO_TIME'", "'SESSION_USER'", "'SHA'", "'SHA1'", 
+			"'SHA2'", "'SCHEMA_NAME'", "'SIGN'", "'SIN'", "'SLEEP'", "'SOUNDEX'", 
+			"'SQL_THREAD_WAIT_AFTER_GTIDS'", "'SQRT'", "'SRID'", "'STARTPOINT'", 
+			"'STRCMP'", "'STR_TO_DATE'", "'ST_AREA'", "'ST_ASBINARY'", "'ST_ASTEXT'", 
+			"'ST_ASWKB'", "'ST_ASWKT'", "'ST_BUFFER'", "'ST_CENTROID'", "'ST_CONTAINS'", 
+			"'ST_CROSSES'", "'ST_DIFFERENCE'", "'ST_DIMENSION'", "'ST_DISJOINT'", 
+			"'ST_DISTANCE'", "'ST_ENDPOINT'", "'ST_ENVELOPE'", "'ST_EQUALS'", "'ST_EXTERIORRING'", 
+			"'ST_GEOMCOLLFROMTEXT'", "'ST_GEOMCOLLFROMTXT'", "'ST_GEOMCOLLFROMWKB'", 
+			"'ST_GEOMETRYCOLLECTIONFROMTEXT'", "'ST_GEOMETRYCOLLECTIONFROMWKB'", 
+			"'ST_GEOMETRYFROMTEXT'", "'ST_GEOMETRYFROMWKB'", "'ST_GEOMETRYN'", "'ST_GEOMETRYTYPE'", 
+			"'ST_GEOMFROMTEXT'", "'ST_GEOMFROMWKB'", "'ST_INTERIORRINGN'", "'ST_INTERSECTION'", 
+			"'ST_INTERSECTS'", "'ST_ISCLOSED'", "'ST_ISEMPTY'", "'ST_ISSIMPLE'", 
+			"'ST_LINEFROMTEXT'", "'ST_LINEFROMWKB'", "'ST_LINESTRINGFROMTEXT'", "'ST_LINESTRINGFROMWKB'", 
+			"'ST_NUMGEOMETRIES'", "'ST_NUMINTERIORRING'", "'ST_NUMINTERIORRINGS'", 
+			"'ST_NUMPOINTS'", "'ST_OVERLAPS'", "'ST_POINTFROMTEXT'", "'ST_POINTFROMWKB'", 
+			"'ST_POINTN'", "'ST_POLYFROMTEXT'", "'ST_POLYFROMWKB'", "'ST_POLYGONFROMTEXT'", 
+			"'ST_POLYGONFROMWKB'", "'ST_SRID'", "'ST_STARTPOINT'", "'ST_SYMDIFFERENCE'", 
+			"'ST_TOUCHES'", "'ST_UNION'", "'ST_WITHIN'", "'ST_X'", "'ST_Y'", "'SUBDATE'", 
+			"'SUBSTRING_INDEX'", "'SUBTIME'", "'SYSTEM_USER'", "'TAN'", "'TIMEDIFF'", 
+			"'TIMESTAMPADD'", "'TIMESTAMPDIFF'", "'TIME_FORMAT'", "'TIME_TO_SEC'", 
+			"'TOUCHES'", "'TO_BASE64'", "'TO_DAYS'", "'TO_SECONDS'", "'UCASE'", "'UNCOMPRESS'", 
+			"'UNCOMPRESSED_LENGTH'", "'UNHEX'", "'UNIX_TIMESTAMP'", "'UPDATEXML'", 
+			"'UPPER'", "'UUID'", "'UUID_SHORT'", "'VALIDATE_PASSWORD_STRENGTH'", 
+			"'VERSION'", "'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS'", "'WEEKDAY'", "'WEEKOFYEAR'", 
+			"'WEIGHT_STRING'", "'WITHIN'", "'YEARWEEK'", "'Y'", "'X'", "':='", "'+='", 
+			"'-='", "'*='", "'/='", "'%='", "'&='", "'^='", "'|='", "'*'", "'/'", 
+			"'%'", "'+'", "'--'", "'-'", "'DIV'", "'MOD'", "'='", "'>'", "'<'", "'!'", 
+			"'~'", "'|'", "'&'", "'^'", "'.'", "'('", "')'", "','", "';'", "'@'", 
+			"'0'", "'1'", "'2'", "'''", "'\"'", "'`'", "':'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "SPACE", "SPEC_MYSQL_COMMENT", "COMMENT_INPUT", "LINE_COMMENT", 
+			"ADD", "ALL", "ALTER", "ALWAYS", "ANALYZE", "AND", "AS", "ASC", "BEFORE", 
+			"BETWEEN", "BOTH", "BY", "CALL", "CASCADE", "CASE", "CAST", "CHANGE", 
+			"CHARACTER", "CHECK", "COLLATE", "COLUMN", "CONDITION", "CONSTRAINT", 
+			"CONTINUE", "CONVERT", "CREATE", "CROSS", "CURRENT", "CURRENT_USER", 
+			"CURSOR", "DATABASE", "DATABASES", "DECLARE", "DEFAULT", "DELAYED", "DELETE", 
+			"DESC", "DESCRIBE", "DETERMINISTIC", "DIAGNOSTICS", "DISTINCT", "DISTINCTROW", 
+			"DROP", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "ESCAPED", "EXISTS", "EXIT", 
+			"EXPLAIN", "FALSE", "FETCH", "FOR", "FORCE", "FOREIGN", "FROM", "FULLTEXT", 
+			"GENERATED", "GET", "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "IF", 
+			"IGNORE", "IN", "INDEX", "INFILE", "INNER", "INOUT", "INSERT", "INTERVAL", 
+			"INTO", "IS", "ITERATE", "JOIN", "KEY", "KEYS", "KILL", "LEADING", "LEAVE", 
+			"LEFT", "LIKE", "LIMIT", "LINEAR", "LINES", "LOAD", "LOCK", "LOOP", "LOW_PRIORITY", 
+			"MASTER_BIND", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", 
+			"MODIFIES", "NATURAL", "NOT", "NO_WRITE_TO_BINLOG", "NULL_LITERAL", "NUMBER", 
+			"ON", "OPTIMIZE", "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", 
+			"OUTFILE", "PARTITION", "PRIMARY", "PROCEDURE", "PURGE", "RANGE", "READ", 
+			"READS", "REFERENCES", "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE", 
+			"REQUIRE", "RESIGNAL", "RESTRICT", "RETURN", "REVOKE", "RIGHT", "RLIKE", 
+			"SCHEMA", "SCHEMAS", "SELECT", "SET", "SEPARATOR", "SHOW", "SIGNAL", 
+			"SPATIAL", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT", 
+			"SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STACKED", "STARTING", 
+			"STRAIGHT_JOIN", "TABLE", "TERMINATED", "THEN", "TO", "TRAILING", "TRIGGER", 
+			"TRUE", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "USAGE", 
+			"USE", "USING", "VALUES", "WHEN", "WHERE", "WHILE", "WITH", "WRITE", 
+			"XOR", "ZEROFILL", "TINYINT", "SMALLINT", "MEDIUMINT", "INT", "INTEGER", 
+			"BIGINT", "REAL", "DOUBLE", "PRECISION", "FLOAT", "DECIMAL", "DEC", "NUMERIC", 
+			"DATE", "TIME", "TIMESTAMP", "DATETIME", "YEAR", "CHAR", "VARCHAR", "NVARCHAR", 
+			"NATIONAL", "BINARY", "VARBINARY", "TINYBLOB", "BLOB", "MEDIUMBLOB", 
+			"LONGBLOB", "TINYTEXT", "TEXT", "MEDIUMTEXT", "LONGTEXT", "ENUM", "VARYING", 
+			"SERIAL", "YEAR_MONTH", "DAY_HOUR", "DAY_MINUTE", "DAY_SECOND", "HOUR_MINUTE", 
+			"HOUR_SECOND", "MINUTE_SECOND", "SECOND_MICROSECOND", "MINUTE_MICROSECOND", 
+			"HOUR_MICROSECOND", "DAY_MICROSECOND", "AVG", "BIT_AND", "BIT_OR", "BIT_XOR", 
+			"COUNT", "GROUP_CONCAT", "MAX", "MIN", "STD", "STDDEV", "STDDEV_POP", 
+			"STDDEV_SAMP", "SUM", "VAR_POP", "VAR_SAMP", "VARIANCE", "CURRENT_DATE", 
+			"CURRENT_TIME", "CURRENT_TIMESTAMP", "LOCALTIME", "CURDATE", "CURTIME", 
+			"DATE_ADD", "DATE_SUB", "EXTRACT", "LOCALTIMESTAMP", "NOW", "POSITION", 
+			"SUBSTR", "SUBSTRING", "SYSDATE", "TRIM", "UTC_DATE", "UTC_TIME", "UTC_TIMESTAMP", 
+			"ACCOUNT", "ACTION", "AFTER", "AGGREGATE", "ALGORITHM", "ANY", "AT", 
+			"AUTHORS", "AUTOCOMMIT", "AUTOEXTEND_SIZE", "AUTO_INCREMENT", "AVG_ROW_LENGTH", 
+			"BEGIN", "BINLOG", "BIT", "BLOCK", "BOOL", "BOOLEAN", "BTREE", "CACHE", 
+			"CASCADED", "CHAIN", "CHANGED", "CHANNEL", "CHECKSUM", "PAGE_CHECKSUM", 
+			"CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE", "CODE", "COLUMNS", 
+			"COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION", 
+			"COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECTION", "CONSISTENT", 
+			"CONSTRAINT_CATALOG", "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", 
+			"CONTEXT", "CONTRIBUTORS", "COPY", "CPU", "CURSOR_NAME", "DATA", "DATAFILE", 
+			"DEALLOCATE", "DEFAULT_AUTH", "DEFINER", "DELAY_KEY_WRITE", "DES_KEY_FILE", 
+			"DIRECTORY", "DISABLE", "DISCARD", "DISK", "DO", "DUMPFILE", "DUPLICATE", 
+			"DYNAMIC", "ENABLE", "ENCRYPTION", "END", "ENDS", "ENGINE", "ENGINES", 
+			"ERROR", "ERRORS", "ESCAPE", "EVEN", "EVENT", "EVENTS", "EVERY", "EXCHANGE", 
+			"EXCLUSIVE", "EXPIRE", "EXPORT", "EXTENDED", "EXTENT_SIZE", "FAST", "FAULTS", 
+			"FIELDS", "FILE_BLOCK_SIZE", "FILTER", "FIRST", "FIXED", "FLUSH", "FOLLOWS", 
+			"FOUND", "FULL", "FUNCTION", "GENERAL", "GLOBAL", "GRANTS", "GROUP_REPLICATION", 
+			"HANDLER", "HASH", "HELP", "HOST", "HOSTS", "IDENTIFIED", "IGNORE_SERVER_IDS", 
+			"IMPORT", "INDEXES", "INITIAL_SIZE", "INPLACE", "INSERT_METHOD", "INSTALL", 
+			"INSTANCE", "INVISIBLE", "INVOKER", "IO", "IO_THREAD", "IPC", "ISOLATION", 
+			"ISSUER", "JSON", "KEY_BLOCK_SIZE", "LANGUAGE", "LAST", "LEAVES", "LESS", 
+			"LEVEL", "LIST", "LOCAL", "LOGFILE", "LOGS", "MASTER", "MASTER_AUTO_POSITION", 
+			"MASTER_CONNECT_RETRY", "MASTER_DELAY", "MASTER_HEARTBEAT_PERIOD", "MASTER_HOST", 
+			"MASTER_LOG_FILE", "MASTER_LOG_POS", "MASTER_PASSWORD", "MASTER_PORT", 
+			"MASTER_RETRY_COUNT", "MASTER_SSL", "MASTER_SSL_CA", "MASTER_SSL_CAPATH", 
+			"MASTER_SSL_CERT", "MASTER_SSL_CIPHER", "MASTER_SSL_CRL", "MASTER_SSL_CRLPATH", 
+			"MASTER_SSL_KEY", "MASTER_TLS_VERSION", "MASTER_USER", "MAX_CONNECTIONS_PER_HOUR", 
+			"MAX_QUERIES_PER_HOUR", "MAX_ROWS", "MAX_SIZE", "MAX_UPDATES_PER_HOUR", 
+			"MAX_USER_CONNECTIONS", "MEDIUM", "MERGE", "MESSAGE_TEXT", "MID", "MIGRATE", 
+			"MIN_ROWS", "MODE", "MODIFY", "MUTEX", "MYSQL", "MYSQL_ERRNO", "NAME", 
+			"NAMES", "NCHAR", "NEVER", "NEXT", "NO", "NODEGROUP", "NONE", "OFFLINE", 
+			"OFFSET", "OJ", "OLD_PASSWORD", "ONE", "ONLINE", "ONLY", "OPEN", "OPTIMIZER_COSTS", 
+			"OPTIONS", "OWNER", "PACK_KEYS", "PAGE", "PARSER", "PARTIAL", "PARTITIONING", 
+			"PARTITIONS", "PASSWORD", "PHASE", "PLUGIN", "PLUGIN_DIR", "PLUGINS", 
+			"PORT", "PRECEDES", "PREPARE", "PRESERVE", "PREV", "PROCESSLIST", "PROFILE", 
+			"PROFILES", "PROXY", "QUERY", "QUICK", "REBUILD", "RECOVER", "REDO_BUFFER_SIZE", 
+			"REDUNDANT", "RELAY", "RELAY_LOG_FILE", "RELAY_LOG_POS", "RELAYLOG", 
+			"REMOVE", "REORGANIZE", "REPAIR", "REPLICATE_DO_DB", "REPLICATE_DO_TABLE", 
+			"REPLICATE_IGNORE_DB", "REPLICATE_IGNORE_TABLE", "REPLICATE_REWRITE_DB", 
+			"REPLICATE_WILD_DO_TABLE", "REPLICATE_WILD_IGNORE_TABLE", "REPLICATION", 
+			"RESET", "RESUME", "RETURNED_SQLSTATE", "RETURNS", "ROLLBACK", "ROLLUP", 
+			"ROTATE", "ROW", "ROWS", "ROW_FORMAT", "SAVEPOINT", "SCHEDULE", "SECURITY", 
+			"SERVER", "SESSION", "SHARE", "SHARED", "SIGNED", "SIMPLE", "SLAVE", 
+			"SLOW", "SNAPSHOT", "SOCKET", "SOME", "SONAME", "SOUNDS", "SOURCE", "SQL_AFTER_GTIDS", 
+			"SQL_AFTER_MTS_GAPS", "SQL_BEFORE_GTIDS", "SQL_BUFFER_RESULT", "SQL_CACHE", 
+			"SQL_NO_CACHE", "SQL_THREAD", "START", "STARTS", "STATS_AUTO_RECALC", 
+			"STATS_PERSISTENT", "STATS_SAMPLE_PAGES", "STATUS", "STOP", "STORAGE", 
+			"STORED", "STRING", "SUBCLASS_ORIGIN", "SUBJECT", "SUBPARTITION", "SUBPARTITIONS", 
+			"SUSPEND", "SWAPS", "SWITCHES", "TABLE_NAME", "TABLESPACE", "TEMPORARY", 
+			"TEMPTABLE", "THAN", "TRADITIONAL", "TRANSACTION", "TRIGGERS", "TRUNCATE", 
+			"UNDEFINED", "UNDOFILE", "UNDO_BUFFER_SIZE", "UNINSTALL", "UNKNOWN", 
+			"UNTIL", "UPGRADE", "USER", "USE_FRM", "USER_RESOURCES", "VALIDATION", 
+			"VALUE", "VARIABLES", "VIEW", "VIRTUAL", "VISIBLE", "WAIT", "WARNINGS", 
+			"WITHOUT", "WORK", "WRAPPER", "X509", "XA", "XML", "EUR", "USA", "JIS", 
+			"ISO", "INTERNAL", "QUARTER", "MONTH", "DAY", "HOUR", "MINUTE", "WEEK", 
+			"SECOND", "MICROSECOND", "TABLES", "ROUTINE", "EXECUTE", "FILE", "PROCESS", 
+			"RELOAD", "SHUTDOWN", "SUPER", "PRIVILEGES", "SESSION_VARIABLES_ADMIN", 
+			"ARMSCII8", "ASCII", "BIG5", "CP1250", "CP1251", "CP1256", "CP1257", 
+			"CP850", "CP852", "CP866", "CP932", "DEC8", "EUCJPMS", "EUCKR", "GB2312", 
+			"GBK", "GEOSTD8", "GREEK", "HEBREW", "HP8", "KEYBCS2", "KOI8R", "KOI8U", 
+			"LATIN1", "LATIN2", "LATIN5", "LATIN7", "MACCE", "MACROMAN", "SJIS", 
+			"SWE7", "TIS620", "UCS2", "UJIS", "UTF16", "UTF16LE", "UTF32", "UTF8", 
+			"UTF8MB3", "UTF8MB4", "ARCHIVE", "BLACKHOLE", "CSV", "FEDERATED", "INNODB", 
+			"MEMORY", "MRG_MYISAM", "MYISAM", "NDB", "NDBCLUSTER", "PERFORMANCE_SCHEMA", 
+			"TOKUDB", "REPEATABLE", "COMMITTED", "UNCOMMITTED", "SERIALIZABLE", "GEOMETRYCOLLECTION", 
+			"GEOMCOLLECTION", "GEOMETRY", "LINESTRING", "MULTILINESTRING", "MULTIPOINT", 
+			"MULTIPOLYGON", "POINT", "POLYGON", "ABS", "ACOS", "ADDDATE", "ADDTIME", 
+			"AES_DECRYPT", "AES_ENCRYPT", "AREA", "ASBINARY", "ASIN", "ASTEXT", "ASWKB", 
+			"ASWKT", "ASYMMETRIC_DECRYPT", "ASYMMETRIC_DERIVE", "ASYMMETRIC_ENCRYPT", 
+			"ASYMMETRIC_SIGN", "ASYMMETRIC_VERIFY", "ATAN", "ATAN2", "BENCHMARK", 
+			"BIN", "BIT_COUNT", "BIT_LENGTH", "BUFFER", "CATALOG_NAME", "CEIL", "CEILING", 
+			"CENTROID", "CHARACTER_LENGTH", "CHARSET", "CHAR_LENGTH", "COERCIBILITY", 
+			"COLLATION", "COMPRESS", "CONCAT", "CONCAT_WS", "CONNECTION_ID", "CONV", 
+			"CONVERT_TZ", "COS", "COT", "CRC32", "CREATE_ASYMMETRIC_PRIV_KEY", "CREATE_ASYMMETRIC_PUB_KEY", 
+			"CREATE_DH_PARAMETERS", "CREATE_DIGEST", "CROSSES", "DATEDIFF", "DATE_FORMAT", 
+			"DAYNAME", "DAYOFMONTH", "DAYOFWEEK", "DAYOFYEAR", "DECODE", "DEGREES", 
+			"DES_DECRYPT", "DES_ENCRYPT", "DIMENSION", "DISJOINT", "ELT", "ENCODE", 
+			"ENCRYPT", "ENDPOINT", "ENVELOPE", "EQUALS", "EXP", "EXPORT_SET", "EXTERIORRING", 
+			"EXTRACTVALUE", "FIELD", "FIND_IN_SET", "FLOOR", "FORMAT", "FOUND_ROWS", 
+			"FROM_BASE64", "FROM_DAYS", "FROM_UNIXTIME", "GEOMCOLLFROMTEXT", "GEOMCOLLFROMWKB", 
+			"GEOMETRYCOLLECTIONFROMTEXT", "GEOMETRYCOLLECTIONFROMWKB", "GEOMETRYFROMTEXT", 
+			"GEOMETRYFROMWKB", "GEOMETRYN", "GEOMETRYTYPE", "GEOMFROMTEXT", "GEOMFROMWKB", 
+			"GET_FORMAT", "GET_LOCK", "GLENGTH", "GREATEST", "GTID_SUBSET", "GTID_SUBTRACT", 
+			"HEX", "IFNULL", "INET6_ATON", "INET6_NTOA", "INET_ATON", "INET_NTOA", 
+			"INSTR", "INTERIORRINGN", "INTERSECTS", "ISCLOSED", "ISEMPTY", "ISNULL", 
+			"ISSIMPLE", "IS_FREE_LOCK", "IS_IPV4", "IS_IPV4_COMPAT", "IS_IPV4_MAPPED", 
+			"IS_IPV6", "IS_USED_LOCK", "LAST_INSERT_ID", "LCASE", "LEAST", "LENGTH", 
+			"LINEFROMTEXT", "LINEFROMWKB", "LINESTRINGFROMTEXT", "LINESTRINGFROMWKB", 
+			"LN", "LOAD_FILE", "LOCATE", "LOG", "LOG10", "LOG2", "LOWER", "LPAD", 
+			"LTRIM", "MAKEDATE", "MAKETIME", "MAKE_SET", "MASTER_POS_WAIT", "MBRCONTAINS", 
+			"MBRDISJOINT", "MBREQUAL", "MBRINTERSECTS", "MBROVERLAPS", "MBRTOUCHES", 
+			"MBRWITHIN", "MD5", "MLINEFROMTEXT", "MLINEFROMWKB", "MONTHNAME", "MPOINTFROMTEXT", 
+			"MPOINTFROMWKB", "MPOLYFROMTEXT", "MPOLYFROMWKB", "MULTILINESTRINGFROMTEXT", 
+			"MULTILINESTRINGFROMWKB", "MULTIPOINTFROMTEXT", "MULTIPOINTFROMWKB", 
+			"MULTIPOLYGONFROMTEXT", "MULTIPOLYGONFROMWKB", "NAME_CONST", "NULLIF", 
+			"NUMGEOMETRIES", "NUMINTERIORRINGS", "NUMPOINTS", "OCT", "OCTET_LENGTH", 
+			"ORD", "OVERLAPS", "PERIOD_ADD", "PERIOD_DIFF", "PI", "POINTFROMTEXT", 
+			"POINTFROMWKB", "POINTN", "POLYFROMTEXT", "POLYFROMWKB", "POLYGONFROMTEXT", 
+			"POLYGONFROMWKB", "POW", "POWER", "QUOTE", "RADIANS", "RAND", "RANDOM_BYTES", 
+			"RELEASE_LOCK", "REVERSE", "ROUND", "ROW_COUNT", "RPAD", "RTRIM", "SEC_TO_TIME", 
+			"SESSION_USER", "SHA", "SHA1", "SHA2", "SCHEMA_NAME", "SIGN", "SIN", 
+			"SLEEP", "SOUNDEX", "SQL_THREAD_WAIT_AFTER_GTIDS", "SQRT", "SRID", "STARTPOINT", 
+			"STRCMP", "STR_TO_DATE", "ST_AREA", "ST_ASBINARY", "ST_ASTEXT", "ST_ASWKB", 
+			"ST_ASWKT", "ST_BUFFER", "ST_CENTROID", "ST_CONTAINS", "ST_CROSSES", 
+			"ST_DIFFERENCE", "ST_DIMENSION", "ST_DISJOINT", "ST_DISTANCE", "ST_ENDPOINT", 
+			"ST_ENVELOPE", "ST_EQUALS", "ST_EXTERIORRING", "ST_GEOMCOLLFROMTEXT", 
+			"ST_GEOMCOLLFROMTXT", "ST_GEOMCOLLFROMWKB", "ST_GEOMETRYCOLLECTIONFROMTEXT", 
+			"ST_GEOMETRYCOLLECTIONFROMWKB", "ST_GEOMETRYFROMTEXT", "ST_GEOMETRYFROMWKB", 
+			"ST_GEOMETRYN", "ST_GEOMETRYTYPE", "ST_GEOMFROMTEXT", "ST_GEOMFROMWKB", 
+			"ST_INTERIORRINGN", "ST_INTERSECTION", "ST_INTERSECTS", "ST_ISCLOSED", 
+			"ST_ISEMPTY", "ST_ISSIMPLE", "ST_LINEFROMTEXT", "ST_LINEFROMWKB", "ST_LINESTRINGFROMTEXT", 
+			"ST_LINESTRINGFROMWKB", "ST_NUMGEOMETRIES", "ST_NUMINTERIORRING", "ST_NUMINTERIORRINGS", 
+			"ST_NUMPOINTS", "ST_OVERLAPS", "ST_POINTFROMTEXT", "ST_POINTFROMWKB", 
+			"ST_POINTN", "ST_POLYFROMTEXT", "ST_POLYFROMWKB", "ST_POLYGONFROMTEXT", 
+			"ST_POLYGONFROMWKB", "ST_SRID", "ST_STARTPOINT", "ST_SYMDIFFERENCE", 
+			"ST_TOUCHES", "ST_UNION", "ST_WITHIN", "ST_X", "ST_Y", "SUBDATE", "SUBSTRING_INDEX", 
+			"SUBTIME", "SYSTEM_USER", "TAN", "TIMEDIFF", "TIMESTAMPADD", "TIMESTAMPDIFF", 
+			"TIME_FORMAT", "TIME_TO_SEC", "TOUCHES", "TO_BASE64", "TO_DAYS", "TO_SECONDS", 
+			"UCASE", "UNCOMPRESS", "UNCOMPRESSED_LENGTH", "UNHEX", "UNIX_TIMESTAMP", 
+			"UPDATEXML", "UPPER", "UUID", "UUID_SHORT", "VALIDATE_PASSWORD_STRENGTH", 
+			"VERSION", "WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS", "WEEKDAY", "WEEKOFYEAR", 
+			"WEIGHT_STRING", "WITHIN", "YEARWEEK", "Y_FUNCTION", "X_FUNCTION", "VAR_ASSIGN", 
+			"PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", 
+			"AND_ASSIGN", "XOR_ASSIGN", "OR_ASSIGN", "STAR", "DIVIDE", "MODULE", 
+			"PLUS", "MINUSMINUS", "MINUS", "DIV", "MOD", "EQUAL_SYMBOL", "GREATER_SYMBOL", 
+			"LESS_SYMBOL", "EXCLAMATION_SYMBOL", "BIT_NOT_OP", "BIT_OR_OP", "BIT_AND_OP", 
+			"BIT_XOR_OP", "DOT", "LR_BRACKET", "RR_BRACKET", "COMMA", "SEMI", "AT_SIGN", 
+			"ZERO_DECIMAL", "ONE_DECIMAL", "TWO_DECIMAL", "SINGLE_QUOTE_SYMB", "DOUBLE_QUOTE_SYMB", 
+			"REVERSE_QUOTE_SYMB", "COLON_SYMB", "CHARSET_REVERSE_QOUTE_STRING", "FILESIZE_LITERAL", 
+			"START_NATIONAL_STRING_LITERAL", "STRING_LITERAL", "DECIMAL_LITERAL", 
+			"HEXADECIMAL_LITERAL", "REAL_LITERAL", "NULL_SPEC_LITERAL", "BIT_STRING", 
+			"STRING_CHARSET_NAME", "DOT_ID", "ID", "REVERSE_QUOTE_ID", "STRING_USER_NAME", 
+			"LOCAL_ID", "GLOBAL_ID", "ERROR_RECONGNIGION"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -796,6 +809,7 @@ public class MySQLParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class RootContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(MySQLParser.EOF, 0); }
 		public SqlStatementsContext sqlStatements() {
@@ -3046,6 +3060,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode EXCLUSIVE(int i) {
 			return getToken(MySQLParser.EXCLUSIVE, i);
 		}
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public CreateIndexContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3263,6 +3281,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode NODEGROUP() { return getToken(MySQLParser.NODEGROUP, 0); }
 		public TerminalNode WAIT() { return getToken(MySQLParser.WAIT, 0); }
 		public TerminalNode COMMENT() { return getToken(MySQLParser.COMMENT, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public List<FileSizeLiteralContext> fileSizeLiteral() {
 			return getRuleContexts(FileSizeLiteralContext.class);
 		}
@@ -3462,6 +3484,8 @@ public class MySQLParser extends Parser {
 		public FullIdContext fullId() {
 			return getRuleContext(FullIdContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public RoutineBodyContext routineBody() {
 			return getRuleContext(RoutineBodyContext.class,0);
 		}
@@ -3473,6 +3497,10 @@ public class MySQLParser extends Parser {
 		}
 		public ProcedureParameterContext procedureParameter(int i) {
 			return getRuleContext(ProcedureParameterContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public List<RoutineOptionContext> routineOption() {
 			return getRuleContexts(RoutineOptionContext.class);
@@ -3590,6 +3618,8 @@ public class MySQLParser extends Parser {
 		public FullIdContext fullId() {
 			return getRuleContext(FullIdContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode RETURNS() { return getToken(MySQLParser.RETURNS, 0); }
 		public DataTypeContext dataType() {
 			return getRuleContext(DataTypeContext.class,0);
@@ -3608,6 +3638,10 @@ public class MySQLParser extends Parser {
 		}
 		public FunctionParameterContext functionParameter(int i) {
 			return getRuleContext(FunctionParameterContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public List<RoutineOptionContext> routineOption() {
 			return getRuleContexts(RoutineOptionContext.class);
@@ -4491,14 +4525,20 @@ public class MySQLParser extends Parser {
 		public TerminalNode DATA() { return getToken(MySQLParser.DATA, 0); }
 		public TerminalNode WRAPPER() { return getToken(MySQLParser.WRAPPER, 0); }
 		public TerminalNode OPTIONS() { return getToken(MySQLParser.OPTIONS, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<ServerOptionContext> serverOption() {
 			return getRuleContexts(ServerOptionContext.class);
 		}
 		public ServerOptionContext serverOption(int i) {
 			return getRuleContext(ServerOptionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode MYSQL() { return getToken(MySQLParser.MYSQL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public CreateServerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4607,6 +4647,8 @@ public class MySQLParser extends Parser {
 			return getRuleContext(TableNameContext.class,i);
 		}
 		public TerminalNode LIKE() { return getToken(MySQLParser.LIKE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode TEMPORARY() { return getToken(MySQLParser.TEMPORARY, 0); }
 		public IfNotExistsContext ifNotExists() {
 			return getRuleContext(IfNotExistsContext.class,0);
@@ -4647,6 +4689,10 @@ public class MySQLParser extends Parser {
 		}
 		public PartitionDefinitionsContext partitionDefinitions() {
 			return getRuleContext(PartitionDefinitionsContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public ColumnCreateTableContext(CreateTableContext ctx) { copyFrom(ctx); }
 		@Override
@@ -4692,6 +4738,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode AS() { return getToken(MySQLParser.AS, 0); }
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
 		public TerminalNode REPLACE() { return getToken(MySQLParser.REPLACE, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public QueryCreateTableContext(CreateTableContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -4997,6 +5047,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode DATAFILE() { return getToken(MySQLParser.DATAFILE, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public TerminalNode FILE_BLOCK_SIZE() { return getToken(MySQLParser.FILE_BLOCK_SIZE, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public TerminalNode ENGINE() { return getToken(MySQLParser.ENGINE, 0); }
 		public EngineNameContext engineName() {
 			return getRuleContext(EngineNameContext.class,0);
@@ -5126,6 +5180,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode NODEGROUP() { return getToken(MySQLParser.NODEGROUP, 0); }
 		public TerminalNode WAIT() { return getToken(MySQLParser.WAIT, 0); }
 		public TerminalNode COMMENT() { return getToken(MySQLParser.COMMENT, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public List<FileSizeLiteralContext> fileSizeLiteral() {
 			return getRuleContexts(FileSizeLiteralContext.class);
 		}
@@ -5507,14 +5565,17 @@ public class MySQLParser extends Parser {
 		public TerminalNode OR() { return getToken(MySQLParser.OR, 0); }
 		public TerminalNode REPLACE() { return getToken(MySQLParser.REPLACE, 0); }
 		public TerminalNode ALGORITHM() { return getToken(MySQLParser.ALGORITHM, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public OwnerStatementContext ownerStatement() {
 			return getRuleContext(OwnerStatementContext.class,0);
 		}
 		public TerminalNode SQL() { return getToken(MySQLParser.SQL, 0); }
 		public TerminalNode SECURITY() { return getToken(MySQLParser.SECURITY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
 		public TerminalNode CHECK() { return getToken(MySQLParser.CHECK, 0); }
 		public TerminalNode OPTION() { return getToken(MySQLParser.OPTION, 0); }
@@ -5700,6 +5761,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode DEFAULT(int i) {
 			return getToken(MySQLParser.DEFAULT, i);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode COLLATE() { return getToken(MySQLParser.COLLATE, 0); }
 		public CollationNameContext collationName() {
 			return getRuleContext(CollationNameContext.class,0);
@@ -5880,10 +5942,13 @@ public class MySQLParser extends Parser {
 
 	public static class OwnerStatementContext extends ParserRuleContext {
 		public TerminalNode DEFINER() { return getToken(MySQLParser.DEFINER, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public UserNameContext userName() {
 			return getRuleContext(UserNameContext.class,0);
 		}
 		public TerminalNode CURRENT_USER() { return getToken(MySQLParser.CURRENT_USER, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public OwnerStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -6248,6 +6313,7 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class IntervalExprContext extends ParserRuleContext {
+		public TerminalNode PLUS() { return getToken(MySQLParser.PLUS, 0); }
 		public TerminalNode INTERVAL() { return getToken(MySQLParser.INTERVAL, 0); }
 		public IntervalTypeContext intervalType() {
 			return getRuleContext(IntervalTypeContext.class,0);
@@ -6602,6 +6668,7 @@ public class MySQLParser extends Parser {
 		public FileSizeLiteralContext fileSizeLiteral() {
 			return getRuleContext(FileSizeLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public IndexTypeContext indexType() {
 			return getRuleContext(IndexTypeContext.class,0);
 		}
@@ -7198,11 +7265,17 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class CreateDefinitionsContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<CreateDefinitionContext> createDefinition() {
 			return getRuleContexts(CreateDefinitionContext.class);
 		}
 		public CreateDefinitionContext createDefinition(int i) {
 			return getRuleContext(CreateDefinitionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public CreateDefinitionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -8394,9 +8467,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class GeneratedColumnConstraintContext extends ColumnConstraintContext {
 		public TerminalNode AS() { return getToken(MySQLParser.AS, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode GENERATED() { return getToken(MySQLParser.GENERATED, 0); }
 		public TerminalNode ALWAYS() { return getToken(MySQLParser.ALWAYS, 0); }
 		public TerminalNode VIRTUAL() { return getToken(MySQLParser.VIRTUAL, 0); }
@@ -8704,9 +8779,11 @@ public class MySQLParser extends Parser {
 	public static class CheckTableConstraintContext extends TableConstraintContext {
 		public UidContext name;
 		public TerminalNode CHECK() { return getToken(MySQLParser.CHECK, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode CONSTRAINT() { return getToken(MySQLParser.CONSTRAINT, 0); }
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
@@ -9565,6 +9642,7 @@ public class MySQLParser extends Parser {
 		public EngineNameContext engineName() {
 			return getRuleContext(EngineNameContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionEngineContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9585,6 +9663,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionMaxRowsContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9606,6 +9685,7 @@ public class MySQLParser extends Parser {
 			return getRuleContext(CollationNameContext.class,0);
 		}
 		public TerminalNode DEFAULT() { return getToken(MySQLParser.DEFAULT, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionCollateContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9625,6 +9705,9 @@ public class MySQLParser extends Parser {
 		public Token extBoolValue;
 		public TerminalNode STATS_PERSISTENT() { return getToken(MySQLParser.STATS_PERSISTENT, 0); }
 		public TerminalNode DEFAULT() { return getToken(MySQLParser.DEFAULT, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionPersistentContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9666,7 +9749,10 @@ public class MySQLParser extends Parser {
 	public static class TableOptionPackKeysContext extends TableOptionContext {
 		public Token extBoolValue;
 		public TerminalNode PACK_KEYS() { return getToken(MySQLParser.PACK_KEYS, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
 		public TerminalNode DEFAULT() { return getToken(MySQLParser.DEFAULT, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionPackKeysContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9685,6 +9771,7 @@ public class MySQLParser extends Parser {
 	public static class TableOptionPasswordContext extends TableOptionContext {
 		public TerminalNode PASSWORD() { return getToken(MySQLParser.PASSWORD, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionPasswordContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9702,9 +9789,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class TableOptionUnionContext extends TableOptionContext {
 		public TerminalNode UNION() { return getToken(MySQLParser.UNION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TablesContext tables() {
 			return getRuleContext(TablesContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionUnionContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9725,6 +9815,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionSamplePageContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9751,6 +9842,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode DEFAULT(int i) {
 			return getToken(MySQLParser.DEFAULT, i);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionCharsetContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9770,6 +9862,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode INDEX() { return getToken(MySQLParser.INDEX, 0); }
 		public TerminalNode DIRECTORY() { return getToken(MySQLParser.DIRECTORY, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionIndexDirectoryContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9790,6 +9883,7 @@ public class MySQLParser extends Parser {
 		public FileSizeLiteralContext fileSizeLiteral() {
 			return getRuleContext(FileSizeLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionKeyBlockSizeContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9808,6 +9902,7 @@ public class MySQLParser extends Parser {
 	public static class TableOptionEncryptionContext extends TableOptionContext {
 		public TerminalNode ENCRYPTION() { return getToken(MySQLParser.ENCRYPTION, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionEncryptionContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9827,6 +9922,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode DATA() { return getToken(MySQLParser.DATA, 0); }
 		public TerminalNode DIRECTORY() { return getToken(MySQLParser.DIRECTORY, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionDataDirectoryContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9846,6 +9942,9 @@ public class MySQLParser extends Parser {
 		public Token extBoolValue;
 		public TerminalNode STATS_AUTO_RECALC() { return getToken(MySQLParser.STATS_AUTO_RECALC, 0); }
 		public TerminalNode DEFAULT() { return getToken(MySQLParser.DEFAULT, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionRecalculationContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9866,6 +9965,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionAutoIncrementContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9885,6 +9985,9 @@ public class MySQLParser extends Parser {
 		public Token boolValue;
 		public TerminalNode CHECKSUM() { return getToken(MySQLParser.CHECKSUM, 0); }
 		public TerminalNode PAGE_CHECKSUM() { return getToken(MySQLParser.PAGE_CHECKSUM, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionChecksumContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9903,6 +10006,9 @@ public class MySQLParser extends Parser {
 	public static class TableOptionDelayContext extends TableOptionContext {
 		public Token boolValue;
 		public TerminalNode DELAY_KEY_WRITE() { return getToken(MySQLParser.DELAY_KEY_WRITE, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionDelayContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9921,6 +10027,7 @@ public class MySQLParser extends Parser {
 	public static class TableOptionConnectionContext extends TableOptionContext {
 		public TerminalNode CONNECTION() { return getToken(MySQLParser.CONNECTION, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionConnectionContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9939,6 +10046,7 @@ public class MySQLParser extends Parser {
 	public static class TableOptionCommentContext extends TableOptionContext {
 		public TerminalNode COMMENT() { return getToken(MySQLParser.COMMENT, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionCommentContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9959,6 +10067,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionAverageContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -9983,6 +10092,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode COMPRESSED() { return getToken(MySQLParser.COMPRESSED, 0); }
 		public TerminalNode REDUNDANT() { return getToken(MySQLParser.REDUNDANT, 0); }
 		public TerminalNode COMPACT() { return getToken(MySQLParser.COMPACT, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionRowFormatContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -10002,6 +10112,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode COMPRESSION() { return getToken(MySQLParser.COMPRESSION, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public TerminalNode ID() { return getToken(MySQLParser.ID, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionCompressionContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -10023,6 +10134,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode NO() { return getToken(MySQLParser.NO, 0); }
 		public TerminalNode FIRST() { return getToken(MySQLParser.FIRST, 0); }
 		public TerminalNode LAST() { return getToken(MySQLParser.LAST, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionInsertMethodContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -10043,6 +10155,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TableOptionMinRowsContext(TableOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -10843,12 +10956,14 @@ public class MySQLParser extends Parser {
 		public SubpartitionFunctionDefinitionContext subpartitionFunctionDefinition() {
 			return getRuleContext(SubpartitionFunctionDefinitionContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinitionContext> partitionDefinition() {
 			return getRuleContexts(PartitionDefinitionContext.class);
 		}
 		public PartitionDefinitionContext partitionDefinition(int i) {
 			return getRuleContext(PartitionDefinitionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<DecimalLiteralContext> decimalLiteral() {
 			return getRuleContexts(DecimalLiteralContext.class);
 		}
@@ -10856,6 +10971,10 @@ public class MySQLParser extends Parser {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
 		public TerminalNode SUBPARTITIONS() { return getToken(MySQLParser.SUBPARTITIONS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public PartitionDefinitionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -10983,11 +11102,16 @@ public class MySQLParser extends Parser {
 	public static class PartitionFunctionKeyContext extends PartitionFunctionDefinitionContext {
 		public Token algType;
 		public TerminalNode KEY() { return getToken(MySQLParser.KEY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode LINEAR() { return getToken(MySQLParser.LINEAR, 0); }
 		public TerminalNode ALGORITHM() { return getToken(MySQLParser.ALGORITHM, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode TWO_DECIMAL() { return getToken(MySQLParser.TWO_DECIMAL, 0); }
 		public PartitionFunctionKeyContext(PartitionFunctionDefinitionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -11005,9 +11129,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class PartitionFunctionHashContext extends PartitionFunctionDefinitionContext {
 		public TerminalNode HASH() { return getToken(MySQLParser.HASH, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode LINEAR() { return getToken(MySQLParser.LINEAR, 0); }
 		public PartitionFunctionHashContext(PartitionFunctionDefinitionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -11026,9 +11152,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class PartitionFunctionListContext extends PartitionFunctionDefinitionContext {
 		public TerminalNode LIST() { return getToken(MySQLParser.LIST, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode COLUMNS() { return getToken(MySQLParser.COLUMNS, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
@@ -11050,9 +11178,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class PartitionFunctionRangeContext extends PartitionFunctionDefinitionContext {
 		public TerminalNode RANGE() { return getToken(MySQLParser.RANGE, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode COLUMNS() { return getToken(MySQLParser.COLUMNS, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
@@ -11250,9 +11380,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class SubPartitionFunctionHashContext extends SubpartitionFunctionDefinitionContext {
 		public TerminalNode HASH() { return getToken(MySQLParser.HASH, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode LINEAR() { return getToken(MySQLParser.LINEAR, 0); }
 		public SubPartitionFunctionHashContext(SubpartitionFunctionDefinitionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -11272,11 +11404,16 @@ public class MySQLParser extends Parser {
 	public static class SubPartitionFunctionKeyContext extends SubpartitionFunctionDefinitionContext {
 		public Token algType;
 		public TerminalNode KEY() { return getToken(MySQLParser.KEY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode LINEAR() { return getToken(MySQLParser.LINEAR, 0); }
 		public TerminalNode ALGORITHM() { return getToken(MySQLParser.ALGORITHM, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
+		public TerminalNode TWO_DECIMAL() { return getToken(MySQLParser.TWO_DECIMAL, 0); }
 		public SubPartitionFunctionKeyContext(SubpartitionFunctionDefinitionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -11404,11 +11541,17 @@ public class MySQLParser extends Parser {
 		public TerminalNode VALUES() { return getToken(MySQLParser.VALUES, 0); }
 		public TerminalNode LESS() { return getToken(MySQLParser.LESS, 0); }
 		public TerminalNode THAN() { return getToken(MySQLParser.THAN, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinerAtomContext> partitionDefinerAtom() {
 			return getRuleContexts(PartitionDefinerAtomContext.class);
 		}
 		public PartitionDefinerAtomContext partitionDefinerAtom(int i) {
 			return getRuleContext(PartitionDefinerAtomContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public List<PartitionOptionContext> partitionOption() {
 			return getRuleContexts(PartitionOptionContext.class);
@@ -11444,11 +11587,17 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode VALUES() { return getToken(MySQLParser.VALUES, 0); }
 		public TerminalNode IN() { return getToken(MySQLParser.IN, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinerAtomContext> partitionDefinerAtom() {
 			return getRuleContexts(PartitionDefinerAtomContext.class);
 		}
 		public PartitionDefinerAtomContext partitionDefinerAtom(int i) {
 			return getRuleContext(PartitionDefinerAtomContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public List<PartitionOptionContext> partitionOption() {
 			return getRuleContexts(PartitionOptionContext.class);
@@ -11484,11 +11633,17 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode VALUES() { return getToken(MySQLParser.VALUES, 0); }
 		public TerminalNode IN() { return getToken(MySQLParser.IN, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinerVectorContext> partitionDefinerVector() {
 			return getRuleContexts(PartitionDefinerVectorContext.class);
 		}
 		public PartitionDefinerVectorContext partitionDefinerVector(int i) {
 			return getRuleContext(PartitionDefinerVectorContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public List<PartitionOptionContext> partitionOption() {
 			return getRuleContexts(PartitionOptionContext.class);
@@ -11533,6 +11688,10 @@ public class MySQLParser extends Parser {
 		}
 		public SubpartitionDefinitionContext subpartitionDefinition(int i) {
 			return getRuleContext(SubpartitionDefinitionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public PartitionSimpleContext(PartitionDefinitionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -11989,11 +12148,17 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class PartitionDefinerVectorContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinerAtomContext> partitionDefinerAtom() {
 			return getRuleContexts(PartitionDefinerAtomContext.class);
 		}
 		public PartitionDefinerAtomContext partitionDefinerAtom(int i) {
 			return getRuleContext(PartitionDefinerAtomContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public PartitionDefinerVectorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -12139,6 +12304,7 @@ public class MySQLParser extends Parser {
 		public Token comment;
 		public TerminalNode COMMENT() { return getToken(MySQLParser.COMMENT, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionCommentContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12160,6 +12326,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionNodeGroupContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12180,6 +12347,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode INDEX() { return getToken(MySQLParser.INDEX, 0); }
 		public TerminalNode DIRECTORY() { return getToken(MySQLParser.DIRECTORY, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionIndexDirectoryContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12201,6 +12369,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionMaxRowsContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12222,6 +12391,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionTablespaceContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12243,6 +12413,7 @@ public class MySQLParser extends Parser {
 			return getRuleContext(EngineNameContext.class,0);
 		}
 		public TerminalNode STORAGE() { return getToken(MySQLParser.STORAGE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionEngineContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12264,6 +12435,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionMinRowsContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12284,6 +12456,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode DATA() { return getToken(MySQLParser.DATA, 0); }
 		public TerminalNode DIRECTORY() { return getToken(MySQLParser.DIRECTORY, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PartitionOptionDataDirectoryContext(PartitionOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -12981,6 +13154,10 @@ public class MySQLParser extends Parser {
 			return getRuleContext(FileSizeLiteralContext.class,0);
 		}
 		public TerminalNode WAIT() { return getToken(MySQLParser.WAIT, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public AlterLogfileGroupContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -13158,11 +13335,17 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidContext.class,0);
 		}
 		public TerminalNode OPTIONS() { return getToken(MySQLParser.OPTIONS, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<ServerOptionContext> serverOption() {
 			return getRuleContexts(ServerOptionContext.class);
 		}
 		public ServerOptionContext serverOption(int i) {
 			return getRuleContext(ServerOptionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public AlterServerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -13252,6 +13435,10 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode ONLINE() { return getToken(MySQLParser.ONLINE, 0); }
 		public TerminalNode OFFLINE() { return getToken(MySQLParser.OFFLINE, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AlterTableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -13378,6 +13565,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode ADD() { return getToken(MySQLParser.ADD, 0); }
 		public TerminalNode DROP() { return getToken(MySQLParser.DROP, 0); }
 		public TerminalNode INITIAL_SIZE() { return getToken(MySQLParser.INITIAL_SIZE, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public FileSizeLiteralContext fileSizeLiteral() {
 			return getRuleContext(FileSizeLiteralContext.class,0);
 		}
@@ -13494,14 +13685,17 @@ public class MySQLParser extends Parser {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
 		public TerminalNode ALGORITHM() { return getToken(MySQLParser.ALGORITHM, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public OwnerStatementContext ownerStatement() {
 			return getRuleContext(OwnerStatementContext.class,0);
 		}
 		public TerminalNode SQL() { return getToken(MySQLParser.SQL, 0); }
 		public TerminalNode SECURITY() { return getToken(MySQLParser.SECURITY, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
 		public TerminalNode CHECK() { return getToken(MySQLParser.CHECK, 0); }
 		public TerminalNode OPTION() { return getToken(MySQLParser.OPTION, 0); }
@@ -13696,6 +13890,10 @@ public class MySQLParser extends Parser {
 	public static class AlterByDefaultCharsetContext extends AlterSpecificationContext {
 		public TerminalNode CHARACTER() { return getToken(MySQLParser.CHARACTER, 0); }
 		public TerminalNode SET() { return getToken(MySQLParser.SET, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public CharsetNameContext charsetName() {
 			return getRuleContext(CharsetNameContext.class,0);
 		}
@@ -13776,11 +13974,17 @@ public class MySQLParser extends Parser {
 	public static class AlterByAddPartitionContext extends AlterSpecificationContext {
 		public TerminalNode ADD() { return getToken(MySQLParser.ADD, 0); }
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinitionContext> partitionDefinition() {
 			return getRuleContexts(PartitionDefinitionContext.class);
 		}
 		public PartitionDefinitionContext partitionDefinition(int i) {
 			return getRuleContext(PartitionDefinitionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public AlterByAddPartitionContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
@@ -13965,6 +14169,7 @@ public class MySQLParser extends Parser {
 	}
 	public static class AlterByAddColumnsContext extends AlterSpecificationContext {
 		public TerminalNode ADD() { return getToken(MySQLParser.ADD, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<UidContext> uid() {
 			return getRuleContexts(UidContext.class);
 		}
@@ -13977,7 +14182,12 @@ public class MySQLParser extends Parser {
 		public ColumnDefinitionContext columnDefinition(int i) {
 			return getRuleContext(ColumnDefinitionContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode COLUMN() { return getToken(MySQLParser.COLUMN, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AlterByAddColumnsContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -14019,9 +14229,11 @@ public class MySQLParser extends Parser {
 		public UidContext name;
 		public TerminalNode ADD() { return getToken(MySQLParser.ADD, 0); }
 		public TerminalNode CHECK() { return getToken(MySQLParser.CHECK, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode CONSTRAINT() { return getToken(MySQLParser.CONSTRAINT, 0); }
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
@@ -14351,6 +14563,10 @@ public class MySQLParser extends Parser {
 		public TableOptionContext tableOption(int i) {
 			return getRuleContext(TableOptionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AlterByTableOptionContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -14392,6 +14608,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode NONE() { return getToken(MySQLParser.NONE, 0); }
 		public TerminalNode SHARED() { return getToken(MySQLParser.SHARED, 0); }
 		public TerminalNode EXCLUSIVE() { return getToken(MySQLParser.EXCLUSIVE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public AlterByLockContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -14555,11 +14772,17 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidListContext.class,0);
 		}
 		public TerminalNode INTO() { return getToken(MySQLParser.INTO, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<PartitionDefinitionContext> partitionDefinition() {
 			return getRuleContexts(PartitionDefinitionContext.class);
 		}
 		public PartitionDefinitionContext partitionDefinition(int i) {
 			return getRuleContext(PartitionDefinitionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public AlterByReorganizePartitionContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
@@ -14582,6 +14805,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode DEFAULT() { return getToken(MySQLParser.DEFAULT, 0); }
 		public TerminalNode INPLACE() { return getToken(MySQLParser.INPLACE, 0); }
 		public TerminalNode COPY() { return getToken(MySQLParser.COPY, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public AlterBySetAlgorithmContext(AlterSpecificationContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -22199,6 +22423,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode EXCLUSIVE(int i) {
 			return getToken(MySQLParser.EXCLUSIVE, i);
 		}
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public DropIndexContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -22348,6 +22576,7 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidContext.class,0);
 		}
 		public TerminalNode ENGINE() { return getToken(MySQLParser.ENGINE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public EngineNameContext engineName() {
 			return getRuleContext(EngineNameContext.class,0);
 		}
@@ -22702,6 +22931,7 @@ public class MySQLParser extends Parser {
 		public EngineNameContext engineName() {
 			return getRuleContext(EngineNameContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public DropTablespaceContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -22846,6 +23076,10 @@ public class MySQLParser extends Parser {
 		public IfExistsContext ifExists() {
 			return getRuleContext(IfExistsContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode RESTRICT() { return getToken(MySQLParser.RESTRICT, 0); }
 		public TerminalNode CASCADE() { return getToken(MySQLParser.CASCADE, 0); }
 		public DropViewContext(ParserRuleContext parent, int invokingState) {
@@ -22946,6 +23180,10 @@ public class MySQLParser extends Parser {
 		}
 		public RenameTableClauseContext renameTableClause(int i) {
 			return getRuleContext(RenameTableClauseContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public RenameTableContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -23124,6 +23362,8 @@ public class MySQLParser extends Parser {
 		public FullIdContext fullId() {
 			return getRuleContext(FullIdContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public ConstantsContext constants() {
 			return getRuleContext(ConstantsContext.class,0);
 		}
@@ -23407,6 +23647,14 @@ public class MySQLParser extends Parser {
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
 		public TerminalNode INTO() { return getToken(MySQLParser.INTO, 0); }
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
+		}
 		public List<UpdatedElementContext> updatedElement() {
 			return getRuleContexts(UpdatedElementContext.class);
 		}
@@ -23420,6 +23668,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode LOW_PRIORITY() { return getToken(MySQLParser.LOW_PRIORITY, 0); }
 		public TerminalNode DELAYED() { return getToken(MySQLParser.DELAYED, 0); }
 		public TerminalNode HIGH_PRIORITY() { return getToken(MySQLParser.HIGH_PRIORITY, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public List<UidListContext> uidList() {
 			return getRuleContexts(UidListContext.class);
 		}
@@ -23639,8 +23891,16 @@ public class MySQLParser extends Parser {
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public TerminalNode LOCAL() { return getToken(MySQLParser.LOCAL, 0); }
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
 		}
 		public TerminalNode CHARACTER() { return getToken(MySQLParser.CHARACTER, 0); }
 		public List<TerminalNode> SET() { return getTokens(MySQLParser.SET); }
@@ -23690,6 +23950,10 @@ public class MySQLParser extends Parser {
 		}
 		public SelectLinesIntoContext selectLinesInto(int i) {
 			return getRuleContext(SelectLinesIntoContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public LoadDataStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -23991,6 +24255,8 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode IDENTIFIED() { return getToken(MySQLParser.IDENTIFIED, 0); }
 		public TerminalNode BY() { return getToken(MySQLParser.BY, 0); }
+		public TerminalNode LESS_SYMBOL() { return getToken(MySQLParser.LESS_SYMBOL, 0); }
+		public TerminalNode GREATER_SYMBOL() { return getToken(MySQLParser.GREATER_SYMBOL, 0); }
 		public List<TerminalNode> IGNORE() { return getTokens(MySQLParser.IGNORE); }
 		public TerminalNode IGNORE(int i) {
 			return getToken(MySQLParser.IGNORE, i);
@@ -23998,12 +24264,14 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<AssignmentFieldContext> assignmentField() {
 			return getRuleContexts(AssignmentFieldContext.class);
 		}
 		public AssignmentFieldContext assignmentField(int i) {
 			return getRuleContext(AssignmentFieldContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<UpdatedElementContext> updatedElement() {
 			return getRuleContexts(UpdatedElementContext.class);
 		}
@@ -24017,6 +24285,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode CONCURRENT() { return getToken(MySQLParser.CONCURRENT, 0); }
 		public TerminalNode REPLACE() { return getToken(MySQLParser.REPLACE, 0); }
 		public TerminalNode LINES() { return getToken(MySQLParser.LINES, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public LoadXmlStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -24250,6 +24522,14 @@ public class MySQLParser extends Parser {
 		public TerminalNode SET() { return getToken(MySQLParser.SET, 0); }
 		public TerminalNode INTO() { return getToken(MySQLParser.INTO, 0); }
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
+		}
 		public List<UpdatedElementContext> updatedElement() {
 			return getRuleContexts(UpdatedElementContext.class);
 		}
@@ -24264,6 +24544,10 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode LOW_PRIORITY() { return getToken(MySQLParser.LOW_PRIORITY, 0); }
 		public TerminalNode DELAYED() { return getToken(MySQLParser.DELAYED, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public ReplaceStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -24864,6 +25148,14 @@ public class MySQLParser extends Parser {
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
+		}
 		public TerminalNode VALUES() { return getToken(MySQLParser.VALUES, 0); }
 		public TerminalNode VALUE() { return getToken(MySQLParser.VALUE, 0); }
 		public List<ExpressionsWithDefaultsContext> expressionsWithDefaults() {
@@ -24871,6 +25163,10 @@ public class MySQLParser extends Parser {
 		}
 		public ExpressionsWithDefaultsContext expressionsWithDefaults(int i) {
 			return getRuleContext(ExpressionsWithDefaultsContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public InsertStatementValueContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -24985,6 +25281,7 @@ public class MySQLParser extends Parser {
 		public FullColumnNameContext fullColumnName() {
 			return getRuleContext(FullColumnNameContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -26673,9 +26970,11 @@ public class MySQLParser extends Parser {
 		public TerminalNode QUICK() { return getToken(MySQLParser.QUICK, 0); }
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode WHERE() { return getToken(MySQLParser.WHERE, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -26834,6 +27133,18 @@ public class MySQLParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode LOW_PRIORITY() { return getToken(MySQLParser.LOW_PRIORITY, 0); }
+		public List<TerminalNode> DOT() { return getTokens(MySQLParser.DOT); }
+		public TerminalNode DOT(int i) {
+			return getToken(MySQLParser.DOT, i);
+		}
+		public List<TerminalNode> STAR() { return getTokens(MySQLParser.STAR); }
+		public TerminalNode STAR(int i) {
+			return getToken(MySQLParser.STAR, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public MultipleDeleteStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -27823,9 +28134,11 @@ public class MySQLParser extends Parser {
 		public ComparisonOperatorContext comparisonOperator() {
 			return getRuleContext(ComparisonOperatorContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ConstantsContext constants() {
 			return getRuleContext(ConstantsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode WHERE() { return getToken(MySQLParser.WHERE, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -28112,6 +28425,10 @@ public class MySQLParser extends Parser {
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode WHERE() { return getToken(MySQLParser.WHERE, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -28273,6 +28590,10 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UpdatedElementContext.class,i);
 		}
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode WHERE() { return getToken(MySQLParser.WHERE, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -28381,6 +28702,10 @@ public class MySQLParser extends Parser {
 		}
 		public OrderByExpressionContext orderByExpression(int i) {
 			return getRuleContext(OrderByExpressionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public OrderByClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -28517,6 +28842,10 @@ public class MySQLParser extends Parser {
 		public TableSourceContext tableSource(int i) {
 			return getRuleContext(TableSourceContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TableSourcesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -28586,9 +28915,11 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class TableSourceNestedContext extends TableSourceContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TableSourceItemContext tableSourceItem() {
 			return getRuleContext(TableSourceItemContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<JoinPartContext> joinPart() {
 			return getRuleContexts(JoinPartContext.class);
 		}
@@ -28728,6 +29059,8 @@ public class MySQLParser extends Parser {
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode AS() { return getToken(MySQLParser.AS, 0); }
 		public SubqueryTableItemContext(TableSourceItemContext ctx) { copyFrom(ctx); }
 		@Override
@@ -28750,9 +29083,11 @@ public class MySQLParser extends Parser {
 			return getRuleContext(TableNameContext.class,0);
 		}
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<IndexHintContext> indexHint() {
 			return getRuleContexts(IndexHintContext.class);
 		}
@@ -28763,6 +29098,10 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidContext.class,0);
 		}
 		public TerminalNode AS() { return getToken(MySQLParser.AS, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AtomTableItemContext(TableSourceItemContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -28779,9 +29118,11 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class TableSourcesItemContext extends TableSourceItemContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TableSourcesContext tableSources() {
 			return getRuleContext(TableSourcesContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TableSourcesItemContext(TableSourceItemContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -28945,9 +29286,11 @@ public class MySQLParser extends Parser {
 	public static class IndexHintContext extends ParserRuleContext {
 		public Token indexHintAction;
 		public Token keyFormat;
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode USE() { return getToken(MySQLParser.USE, 0); }
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
 		public TerminalNode FORCE() { return getToken(MySQLParser.FORCE, 0); }
@@ -29128,9 +29471,11 @@ public class MySQLParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode USING() { return getToken(MySQLParser.USING, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode INNER() { return getToken(MySQLParser.INNER, 0); }
 		public TerminalNode CROSS() { return getToken(MySQLParser.CROSS, 0); }
 		public InnerJoinContext(JoinPartContext ctx) { copyFrom(ctx); }
@@ -29184,9 +29529,11 @@ public class MySQLParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode USING() { return getToken(MySQLParser.USING, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode OUTER() { return getToken(MySQLParser.OUTER, 0); }
 		public OuterJoinContext(JoinPartContext ctx) { copyFrom(ctx); }
 		@Override
@@ -29425,9 +29772,11 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class QueryExpressionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public QuerySpecificationContext querySpecification() {
 			return getRuleContext(QuerySpecificationContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public QueryExpressionContext queryExpression() {
 			return getRuleContext(QueryExpressionContext.class,0);
 		}
@@ -29493,9 +29842,11 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class QueryExpressionNointoContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public QuerySpecificationNointoContext querySpecificationNointo() {
 			return getRuleContext(QuerySpecificationNointoContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public QueryExpressionNointoContext queryExpressionNointo() {
 			return getRuleContext(QueryExpressionNointoContext.class,0);
 		}
@@ -30159,6 +30510,11 @@ public class MySQLParser extends Parser {
 		}
 		public SelectElementContext selectElement(int i) {
 			return getRuleContext(SelectElementContext.class,i);
+		}
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public SelectElementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -31071,6 +31427,8 @@ public class MySQLParser extends Parser {
 		public FullIdContext fullId() {
 			return getRuleContext(FullIdContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
 		public SelectStarElementContext(SelectElementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -31257,6 +31615,10 @@ public class MySQLParser extends Parser {
 		}
 		public AssignmentFieldContext assignmentField(int i) {
 			return getRuleContext(AssignmentFieldContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public SelectIntoVariablesContext(SelectIntoExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -31668,6 +32030,10 @@ public class MySQLParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
 		public TerminalNode ROLLUP() { return getToken(MySQLParser.ROLLUP, 0); }
 		public FromClauseContext(ParserRuleContext parent, int invokingState) {
@@ -31857,6 +32223,7 @@ public class MySQLParser extends Parser {
 		public LimitClauseAtomContext limitClauseAtom(int i) {
 			return getRuleContext(LimitClauseAtomContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public LimitClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -32003,6 +32370,10 @@ public class MySQLParser extends Parser {
 		}
 		public TransactionModeContext transactionMode(int i) {
 			return getRuleContext(TransactionModeContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public StartTransactionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -32516,6 +32887,10 @@ public class MySQLParser extends Parser {
 		public LockTableElementContext lockTableElement(int i) {
 			return getRuleContext(LockTableElementContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public LockTablesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -32626,6 +33001,9 @@ public class MySQLParser extends Parser {
 		public Token autocommitValue;
 		public TerminalNode SET() { return getToken(MySQLParser.SET, 0); }
 		public TerminalNode AUTOCOMMIT() { return getToken(MySQLParser.AUTOCOMMIT, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
 		public SetAutocommitStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -32691,6 +33069,10 @@ public class MySQLParser extends Parser {
 		}
 		public TransactionOptionContext transactionOption(int i) {
 			return getRuleContext(TransactionOptionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public TerminalNode GLOBAL() { return getToken(MySQLParser.GLOBAL, 0); }
 		public TerminalNode SESSION() { return getToken(MySQLParser.SESSION, 0); }
@@ -33171,6 +33553,10 @@ public class MySQLParser extends Parser {
 		public MasterOptionContext masterOption(int i) {
 			return getRuleContext(MasterOptionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public ChannelOptionContext channelOption() {
 			return getRuleContext(ChannelOptionContext.class,0);
 		}
@@ -33256,6 +33642,10 @@ public class MySQLParser extends Parser {
 		}
 		public ReplicationFilterContext replicationFilter(int i) {
 			return getRuleContext(ReplicationFilterContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public ChangeReplicationFilterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -33544,6 +33934,10 @@ public class MySQLParser extends Parser {
 		public ChannelOptionContext channelOption() {
 			return getRuleContext(ChannelOptionContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public StartSlaveContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -33657,6 +34051,10 @@ public class MySQLParser extends Parser {
 		}
 		public ThreadTypeContext threadType(int i) {
 			return getRuleContext(ThreadTypeContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public StopSlaveContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -33832,6 +34230,7 @@ public class MySQLParser extends Parser {
 		public StringMasterOptionContext stringMasterOption() {
 			return getRuleContext(StringMasterOptionContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public MasterStringOptionContext(MasterOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -33850,6 +34249,7 @@ public class MySQLParser extends Parser {
 	}
 	public static class MasterRealOptionContext extends MasterOptionContext {
 		public TerminalNode MASTER_HEARTBEAT_PERIOD() { return getToken(MySQLParser.MASTER_HEARTBEAT_PERIOD, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode REAL_LITERAL() { return getToken(MySQLParser.REAL_LITERAL, 0); }
 		public MasterRealOptionContext(MasterOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -33871,6 +34271,9 @@ public class MySQLParser extends Parser {
 		public BoolMasterOptionContext boolMasterOption() {
 			return getRuleContext(BoolMasterOptionContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode ZERO_DECIMAL() { return getToken(MySQLParser.ZERO_DECIMAL, 0); }
+		public TerminalNode ONE_DECIMAL() { return getToken(MySQLParser.ONE_DECIMAL, 0); }
 		public MasterBoolOptionContext(MasterOptionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -33888,11 +34291,18 @@ public class MySQLParser extends Parser {
 	}
 	public static class MasterUidListOptionContext extends MasterOptionContext {
 		public TerminalNode IGNORE_SERVER_IDS() { return getToken(MySQLParser.IGNORE_SERVER_IDS, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<UidContext> uid() {
 			return getRuleContexts(UidContext.class);
 		}
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public MasterUidListOptionContext(MasterOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -33913,6 +34323,7 @@ public class MySQLParser extends Parser {
 		public DecimalMasterOptionContext decimalMasterOption() {
 			return getRuleContext(DecimalMasterOptionContext.class,0);
 		}
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
@@ -34306,9 +34717,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class WildIgnoreTableReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_WILD_IGNORE_TABLE() { return getToken(MySQLParser.REPLICATE_WILD_IGNORE_TABLE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public SimpleStringsContext simpleStrings() {
 			return getRuleContext(SimpleStringsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public WildIgnoreTableReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34326,9 +34740,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class DoTableReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_DO_TABLE() { return getToken(MySQLParser.REPLICATE_DO_TABLE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TablesContext tables() {
 			return getRuleContext(TablesContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public DoTableReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34346,9 +34763,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class IgnoreTableReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_IGNORE_TABLE() { return getToken(MySQLParser.REPLICATE_IGNORE_TABLE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TablesContext tables() {
 			return getRuleContext(TablesContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public IgnoreTableReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34366,11 +34786,18 @@ public class MySQLParser extends Parser {
 	}
 	public static class RewriteDbReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_REWRITE_DB() { return getToken(MySQLParser.REPLICATE_REWRITE_DB, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<TablePairContext> tablePair() {
 			return getRuleContexts(TablePairContext.class);
 		}
 		public TablePairContext tablePair(int i) {
 			return getRuleContext(TablePairContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public RewriteDbReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
@@ -34389,9 +34816,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class DoDbReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_DO_DB() { return getToken(MySQLParser.REPLICATE_DO_DB, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public DoDbReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34409,9 +34839,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class IgnoreDbReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_IGNORE_DB() { return getToken(MySQLParser.REPLICATE_IGNORE_DB, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public IgnoreDbReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34429,9 +34862,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class WildDoTableReplicationContext extends ReplicationFilterContext {
 		public TerminalNode REPLICATE_WILD_DO_TABLE() { return getToken(MySQLParser.REPLICATE_WILD_DO_TABLE, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public SimpleStringsContext simpleStrings() {
 			return getRuleContext(SimpleStringsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public WildDoTableReplicationContext(ReplicationFilterContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -34602,6 +35038,9 @@ public class MySQLParser extends Parser {
 	public static class TablePairContext extends ParserRuleContext {
 		public TableNameContext firstTable;
 		public TableNameContext secondTable;
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<TableNameContext> tableName() {
 			return getRuleContexts(TableNameContext.class);
 		}
@@ -34721,6 +35160,7 @@ public class MySQLParser extends Parser {
 	}
 	public static class GtidsUntilOptionContext extends UntilOptionContext {
 		public Token gtids;
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public GtuidSetContext gtuidSet() {
 			return getRuleContext(GtuidSetContext.class,0);
 		}
@@ -34760,7 +35200,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class MasterLogUntilOptionContext extends UntilOptionContext {
 		public TerminalNode MASTER_LOG_FILE() { return getToken(MySQLParser.MASTER_LOG_FILE, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public TerminalNode MASTER_LOG_POS() { return getToken(MySQLParser.MASTER_LOG_POS, 0); }
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
@@ -34782,7 +35227,12 @@ public class MySQLParser extends Parser {
 	}
 	public static class RelayLogUntilOptionContext extends UntilOptionContext {
 		public TerminalNode RELAY_LOG_FILE() { return getToken(MySQLParser.RELAY_LOG_FILE, 0); }
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public TerminalNode RELAY_LOG_POS() { return getToken(MySQLParser.RELAY_LOG_POS, 0); }
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
@@ -34910,6 +35360,7 @@ public class MySQLParser extends Parser {
 	public static class PluginDirConnectionOptionContext extends ConnectionOptionContext {
 		public Token conOptPluginDir;
 		public TerminalNode PLUGIN_DIR() { return getToken(MySQLParser.PLUGIN_DIR, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public PluginDirConnectionOptionContext(ConnectionOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -34929,6 +35380,7 @@ public class MySQLParser extends Parser {
 	public static class UserConnectionOptionContext extends ConnectionOptionContext {
 		public Token conOptUser;
 		public TerminalNode USER() { return getToken(MySQLParser.USER, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public UserConnectionOptionContext(ConnectionOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -34948,6 +35400,7 @@ public class MySQLParser extends Parser {
 	public static class DefaultAuthConnectionOptionContext extends ConnectionOptionContext {
 		public Token conOptDefAuth;
 		public TerminalNode DEFAULT_AUTH() { return getToken(MySQLParser.DEFAULT_AUTH, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public DefaultAuthConnectionOptionContext(ConnectionOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -34967,6 +35420,7 @@ public class MySQLParser extends Parser {
 	public static class PasswordConnectionOptionContext extends ConnectionOptionContext {
 		public Token conOptPassword;
 		public TerminalNode PASSWORD() { return getToken(MySQLParser.PASSWORD, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public PasswordConnectionOptionContext(ConnectionOptionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -35060,6 +35514,10 @@ public class MySQLParser extends Parser {
 		}
 		public UuidSetContext uuidSet(int i) {
 			return getRuleContext(UuidSetContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
 		public GtuidSetContext(ParserRuleContext parent, int invokingState) {
@@ -35791,6 +36249,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
 		}
+		public TerminalNode COLON_SYMB() { return getToken(MySQLParser.COLON_SYMB, 0); }
 		public List<DeclareVariableContext> declareVariable() {
 			return getRuleContexts(DeclareVariableContext.class);
 		}
@@ -36364,6 +36823,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
 		}
+		public TerminalNode COLON_SYMB() { return getToken(MySQLParser.COLON_SYMB, 0); }
 		public List<ProcedureSqlStatementContext> procedureSqlStatement() {
 			return getRuleContexts(ProcedureSqlStatementContext.class);
 		}
@@ -36474,6 +36934,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
 		}
+		public TerminalNode COLON_SYMB() { return getToken(MySQLParser.COLON_SYMB, 0); }
 		public List<ProcedureSqlStatementContext> procedureSqlStatement() {
 			return getRuleContexts(ProcedureSqlStatementContext.class);
 		}
@@ -36635,6 +37096,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
 		}
+		public TerminalNode COLON_SYMB() { return getToken(MySQLParser.COLON_SYMB, 0); }
 		public List<ProcedureSqlStatementContext> procedureSqlStatement() {
 			return getRuleContexts(ProcedureSqlStatementContext.class);
 		}
@@ -37125,6 +37587,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode CONTINUE() { return getToken(MySQLParser.CONTINUE, 0); }
 		public TerminalNode EXIT() { return getToken(MySQLParser.EXIT, 0); }
 		public TerminalNode UNDO() { return getToken(MySQLParser.UNDO, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public DeclareHandlerContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -38374,6 +38840,10 @@ public class MySQLParser extends Parser {
 		public UserSpecificationContext userSpecification(int i) {
 			return getRuleContext(UserSpecificationContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AlterUserMysqlV56Context(AlterUserContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -38401,6 +38871,10 @@ public class MySQLParser extends Parser {
 		}
 		public IfExistsContext ifExists() {
 			return getRuleContext(IfExistsContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public TerminalNode REQUIRE() { return getToken(MySQLParser.REQUIRE, 0); }
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
@@ -38668,6 +39142,10 @@ public class MySQLParser extends Parser {
 		public IfNotExistsContext ifNotExists() {
 			return getRuleContext(IfNotExistsContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode REQUIRE() { return getToken(MySQLParser.REQUIRE, 0); }
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
 		public List<UserPasswordOptionContext> userPasswordOption() {
@@ -38722,6 +39200,10 @@ public class MySQLParser extends Parser {
 		}
 		public UserAuthOptionContext userAuthOption(int i) {
 			return getRuleContext(UserAuthOptionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public CreateUserMysqlV56Context(CreateUserContext ctx) { copyFrom(ctx); }
 		@Override
@@ -38946,6 +39428,10 @@ public class MySQLParser extends Parser {
 		public IfExistsContext ifExists() {
 			return getRuleContext(IfExistsContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public DropUserContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -39040,6 +39526,10 @@ public class MySQLParser extends Parser {
 		}
 		public UserAuthOptionContext userAuthOption(int i) {
 			return getRuleContext(UserAuthOptionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public TerminalNode REQUIRE() { return getToken(MySQLParser.REQUIRE, 0); }
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
@@ -39289,6 +39779,10 @@ public class MySQLParser extends Parser {
 		public UserNameContext userName(int i) {
 			return getRuleContext(UserNameContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode WITH() { return getToken(MySQLParser.WITH, 0); }
 		public TerminalNode OPTION() { return getToken(MySQLParser.OPTION, 0); }
 		public GrantProxyContext(ParserRuleContext parent, int invokingState) {
@@ -39382,6 +39876,10 @@ public class MySQLParser extends Parser {
 		public RenameUserClauseContext renameUserClause(int i) {
 			return getRuleContext(RenameUserClauseContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public RenameUserContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -39474,6 +39972,10 @@ public class MySQLParser extends Parser {
 		public UserNameContext userName(int i) {
 			return getRuleContext(UserNameContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode TABLE() { return getToken(MySQLParser.TABLE, 0); }
 		public TerminalNode FUNCTION() { return getToken(MySQLParser.FUNCTION, 0); }
 		public TerminalNode PROCEDURE() { return getToken(MySQLParser.PROCEDURE, 0); }
@@ -39495,6 +39997,10 @@ public class MySQLParser extends Parser {
 	public static class ShortRevokeContext extends RevokeStatementContext {
 		public TerminalNode REVOKE() { return getToken(MySQLParser.REVOKE, 0); }
 		public TerminalNode ALL() { return getToken(MySQLParser.ALL, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode GRANT() { return getToken(MySQLParser.GRANT, 0); }
 		public TerminalNode OPTION() { return getToken(MySQLParser.OPTION, 0); }
 		public TerminalNode FROM() { return getToken(MySQLParser.FROM, 0); }
@@ -39672,6 +40178,10 @@ public class MySQLParser extends Parser {
 		public UserNameContext userName(int i) {
 			return getRuleContext(UserNameContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public RevokeProxyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -39743,6 +40253,7 @@ public class MySQLParser extends Parser {
 	public static class SetPasswordStatementContext extends ParserRuleContext {
 		public TerminalNode SET() { return getToken(MySQLParser.SET, 0); }
 		public TerminalNode PASSWORD() { return getToken(MySQLParser.PASSWORD, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public PasswordFunctionClauseContext passwordFunctionClause() {
 			return getRuleContext(PasswordFunctionClauseContext.class,0);
 		}
@@ -40458,9 +40969,11 @@ public class MySQLParser extends Parser {
 		public PrivilegeContext privilege() {
 			return getRuleContext(PrivilegeContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public PrivelegeClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -40871,6 +41384,8 @@ public class MySQLParser extends Parser {
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
 		public DefiniteSchemaPrivLevelContext(PrivilegeLevelContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -40915,6 +41430,7 @@ public class MySQLParser extends Parser {
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
 		}
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
 		public DefiniteFullTablePrivLevelContext(PrivilegeLevelContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -40931,6 +41447,11 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class GlobalPrivLevelContext extends PrivilegeLevelContext {
+		public List<TerminalNode> STAR() { return getTokens(MySQLParser.STAR); }
+		public TerminalNode STAR(int i) {
+			return getToken(MySQLParser.STAR, i);
+		}
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
 		public GlobalPrivLevelContext(PrivilegeLevelContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -40966,6 +41487,7 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class CurrentSchemaPriviLevelContext extends PrivilegeLevelContext {
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
 		public CurrentSchemaPriviLevelContext(PrivilegeLevelContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -41934,6 +42456,18 @@ public class MySQLParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
+		public List<TerminalNode> VAR_ASSIGN() { return getTokens(MySQLParser.VAR_ASSIGN); }
+		public TerminalNode VAR_ASSIGN(int i) {
+			return getToken(MySQLParser.VAR_ASSIGN, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public SetNewValueInsideTriggerContext(SetStatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -41962,6 +42496,18 @@ public class MySQLParser extends Parser {
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
+		public List<TerminalNode> VAR_ASSIGN() { return getTokens(MySQLParser.VAR_ASSIGN); }
+		public TerminalNode VAR_ASSIGN(int i) {
+			return getToken(MySQLParser.VAR_ASSIGN, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public SetVariableContext(SetStatementContext ctx) { copyFrom(ctx); }
 		@Override
@@ -42417,6 +42963,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral(int i) {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public ShowErrorsContext(ShowStatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -42436,6 +42983,9 @@ public class MySQLParser extends Parser {
 		public Token errorFormat;
 		public TerminalNode SHOW() { return getToken(MySQLParser.SHOW, 0); }
 		public TerminalNode COUNT() { return getToken(MySQLParser.COUNT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode ERRORS() { return getToken(MySQLParser.ERRORS, 0); }
 		public TerminalNode WARNINGS() { return getToken(MySQLParser.WARNINGS, 0); }
 		public ShowCountErrorsContext(ShowStatementContext ctx) { copyFrom(ctx); }
@@ -42617,6 +43167,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral(int i) {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public ShowLogEventsContext(ShowStatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -42734,6 +43285,10 @@ public class MySQLParser extends Parser {
 			return getRuleContext(ShowProfileTypeContext.class,i);
 		}
 		public TerminalNode LIMIT() { return getToken(MySQLParser.LIMIT, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode FOR() { return getToken(MySQLParser.FOR, 0); }
 		public TerminalNode QUERY() { return getToken(MySQLParser.QUERY, 0); }
 		public List<DecimalLiteralContext> decimalLiteral() {
@@ -43458,6 +44013,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode GLOBAL() { return getToken(MySQLParser.GLOBAL, 0); }
 		public TerminalNode SESSION() { return getToken(MySQLParser.SESSION, 0); }
 		public TerminalNode LOCAL() { return getToken(MySQLParser.LOCAL, 0); }
+		public List<TerminalNode> AT_SIGN() { return getTokens(MySQLParser.AT_SIGN); }
+		public TerminalNode AT_SIGN(int i) {
+			return getToken(MySQLParser.AT_SIGN, i);
+		}
 		public VariableClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -44882,7 +45441,13 @@ public class MySQLParser extends Parser {
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
@@ -45702,6 +46267,10 @@ public class MySQLParser extends Parser {
 		public FlushOptionContext flushOption(int i) {
 			return getRuleContext(FlushOptionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode NO_WRITE_TO_BINLOG() { return getToken(MySQLParser.NO_WRITE_TO_BINLOG, 0); }
 		public TerminalNode LOCAL() { return getToken(MySQLParser.LOCAL, 0); }
 		public FlushStatementContext(ParserRuleContext parent, int invokingState) {
@@ -45878,6 +46447,10 @@ public class MySQLParser extends Parser {
 		public LoadedTableIndexesContext loadedTableIndexes(int i) {
 			return getRuleContext(LoadedTableIndexesContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public LoadIndexIntoCacheContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -46038,9 +46611,11 @@ public class MySQLParser extends Parser {
 		public TableNameContext tableName() {
 			return getRuleContext(TableNameContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public UidListContext uidList() {
 			return getRuleContext(UidListContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode INDEX() { return getToken(MySQLParser.INDEX, 0); }
 		public TerminalNode KEY() { return getToken(MySQLParser.KEY, 0); }
 		public TableIndexesContext(ParserRuleContext parent, int invokingState) {
@@ -46450,6 +47025,14 @@ public class MySQLParser extends Parser {
 			return getRuleContext(TableNameContext.class,0);
 		}
 		public TerminalNode PARTITION() { return getToken(MySQLParser.PARTITION, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
+		}
 		public TerminalNode IGNORE() { return getToken(MySQLParser.IGNORE, 0); }
 		public TerminalNode LEAVES() { return getToken(MySQLParser.LEAVES, 0); }
 		public List<UidListContext> uidList() {
@@ -47380,6 +47963,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode EXPLAIN() { return getToken(MySQLParser.EXPLAIN, 0); }
 		public TerminalNode DESCRIBE() { return getToken(MySQLParser.DESCRIBE, 0); }
 		public TerminalNode DESC() { return getToken(MySQLParser.DESC, 0); }
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode EXTENDED() { return getToken(MySQLParser.EXTENDED, 0); }
 		public TerminalNode PARTITIONS() { return getToken(MySQLParser.PARTITIONS, 0); }
 		public TerminalNode FORMAT() { return getToken(MySQLParser.FORMAT, 0); }
@@ -47576,6 +48160,10 @@ public class MySQLParser extends Parser {
 		public StringLiteralContext stringLiteral() {
 			return getRuleContext(StringLiteralContext.class,0);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TerminalNode VALUE() { return getToken(MySQLParser.VALUE, 0); }
 		public SignalStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -47698,6 +48286,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode SQLSTATE() { return getToken(MySQLParser.SQLSTATE, 0); }
 		public StringLiteralContext stringLiteral() {
 			return getRuleContext(StringLiteralContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public TerminalNode VALUE() { return getToken(MySQLParser.VALUE, 0); }
 		public ResignalStatementContext(ParserRuleContext parent, int invokingState) {
@@ -47867,6 +48459,7 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class SignalConditionInformationContext extends ParserRuleContext {
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
 		public TerminalNode CLASS_ORIGIN() { return getToken(MySQLParser.CLASS_ORIGIN, 0); }
 		public TerminalNode SUBCLASS_ORIGIN() { return getToken(MySQLParser.SUBCLASS_ORIGIN, 0); }
 		public TerminalNode MESSAGE_TEXT() { return getToken(MySQLParser.MESSAGE_TEXT, 0); }
@@ -47965,6 +48558,10 @@ public class MySQLParser extends Parser {
 		public VariableClauseContext variableClause(int i) {
 			return getRuleContext(VariableClauseContext.class,i);
 		}
+		public List<TerminalNode> EQUAL_SYMBOL() { return getTokens(MySQLParser.EQUAL_SYMBOL); }
+		public TerminalNode EQUAL_SYMBOL(int i) {
+			return getToken(MySQLParser.EQUAL_SYMBOL, i);
+		}
 		public TerminalNode CONDITION() { return getToken(MySQLParser.CONDITION, 0); }
 		public List<DiagnosticsConditionInformationNameContext> diagnosticsConditionInformationName() {
 			return getRuleContexts(DiagnosticsConditionInformationNameContext.class);
@@ -47982,6 +48579,10 @@ public class MySQLParser extends Parser {
 		}
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public DiagnosticsStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -49794,6 +50395,7 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidContext.class,i);
 		}
 		public TerminalNode DOT_ID() { return getToken(MySQLParser.DOT_ID, 0); }
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
 		public FullIdContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -49972,9 +50574,11 @@ public class MySQLParser extends Parser {
 			return getRuleContext(UidContext.class,0);
 		}
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode ASC() { return getToken(MySQLParser.ASC, 0); }
 		public TerminalNode DESC() { return getToken(MySQLParser.DESC, 0); }
 		public IndexColumnNameContext(ParserRuleContext parent, int invokingState) {
@@ -50415,6 +51019,14 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral(int i) {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
+		public List<TerminalNode> MINUS() { return getTokens(MySQLParser.MINUS); }
+		public TerminalNode MINUS(int i) {
+			return getToken(MySQLParser.MINUS, i);
+		}
+		public List<TerminalNode> COLON_SYMB() { return getTokens(MySQLParser.COLON_SYMB); }
+		public TerminalNode COLON_SYMB(int i) {
+			return getToken(MySQLParser.COLON_SYMB, i);
+		}
 		public UuidSetContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -50501,6 +51113,10 @@ public class MySQLParser extends Parser {
 		}
 		public XuidStringIdContext xuidStringId(int i) {
 			return getRuleContext(XuidStringIdContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
@@ -50906,6 +51522,7 @@ public class MySQLParser extends Parser {
 
 	public static class DottedIdContext extends ParserRuleContext {
 		public TerminalNode DOT_ID() { return getToken(MySQLParser.DOT_ID, 0); }
+		public TerminalNode DOT() { return getToken(MySQLParser.DOT, 0); }
 		public UidContext uid() {
 			return getRuleContext(UidContext.class,0);
 		}
@@ -51412,6 +52029,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode MINUS() { return getToken(MySQLParser.MINUS, 0); }
 		public HexadecimalLiteralContext hexadecimalLiteral() {
 			return getRuleContext(HexadecimalLiteralContext.class,0);
 		}
@@ -52320,9 +52938,15 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class CollectionOptionsContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<TerminalNode> STRING_LITERAL() { return getTokens(MySQLParser.STRING_LITERAL); }
 		public TerminalNode STRING_LITERAL(int i) {
 			return getToken(MySQLParser.STRING_LITERAL, i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public CollectionOptionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -52589,9 +53213,11 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class LengthOneDimensionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public DecimalLiteralContext decimalLiteral() {
 			return getRuleContext(DecimalLiteralContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public LengthOneDimensionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52637,12 +53263,15 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class LengthTwoDimensionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<DecimalLiteralContext> decimalLiteral() {
 			return getRuleContexts(DecimalLiteralContext.class);
 		}
 		public DecimalLiteralContext decimalLiteral(int i) {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public LengthTwoDimensionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52692,12 +53321,15 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class LengthTwoOptionalDimensionContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<DecimalLiteralContext> decimalLiteral() {
 			return getRuleContexts(DecimalLiteralContext.class);
 		}
 		public DecimalLiteralContext decimalLiteral(int i) {
 			return getRuleContext(DecimalLiteralContext.class,i);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public LengthTwoOptionalDimensionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52761,6 +53393,10 @@ public class MySQLParser extends Parser {
 		}
 		public UidContext uid(int i) {
 			return getRuleContext(UidContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public UidListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -52828,6 +53464,10 @@ public class MySQLParser extends Parser {
 		public TableNameContext tableName(int i) {
 			return getRuleContext(TableNameContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public TablesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -52888,11 +53528,17 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class IndexColumnNamesContext extends ParserRuleContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<IndexColumnNameContext> indexColumnName() {
 			return getRuleContexts(IndexColumnNameContext.class);
 		}
 		public IndexColumnNameContext indexColumnName(int i) {
 			return getRuleContext(IndexColumnNameContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public IndexColumnNamesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -52962,6 +53608,10 @@ public class MySQLParser extends Parser {
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public ExpressionsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -53025,6 +53675,10 @@ public class MySQLParser extends Parser {
 		}
 		public ExpressionOrDefaultContext expressionOrDefault(int i) {
 			return getRuleContext(ExpressionOrDefaultContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public ExpressionsWithDefaultsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -53090,6 +53744,10 @@ public class MySQLParser extends Parser {
 		public ConstantContext constant(int i) {
 			return getRuleContext(ConstantContext.class,i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public ConstantsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -53152,6 +53810,10 @@ public class MySQLParser extends Parser {
 		public TerminalNode STRING_LITERAL(int i) {
 			return getToken(MySQLParser.STRING_LITERAL, i);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public SimpleStringsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -53213,6 +53875,10 @@ public class MySQLParser extends Parser {
 		public List<TerminalNode> LOCAL_ID() { return getTokens(MySQLParser.LOCAL_ID); }
 		public TerminalNode LOCAL_ID(int i) {
 			return getToken(MySQLParser.LOCAL_ID, i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public UserVariablesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -53373,6 +54039,8 @@ public class MySQLParser extends Parser {
 
 	public static class CurrentTimestampContext extends ParserRuleContext {
 		public TerminalNode NOW() { return getToken(MySQLParser.NOW, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode CURRENT_TIMESTAMP() { return getToken(MySQLParser.CURRENT_TIMESTAMP, 0); }
 		public TerminalNode LOCALTIME() { return getToken(MySQLParser.LOCALTIME, 0); }
 		public TerminalNode LOCALTIMESTAMP() { return getToken(MySQLParser.LOCALTIMESTAMP, 0); }
@@ -54463,6 +55131,8 @@ public class MySQLParser extends Parser {
 		public FullIdContext fullId() {
 			return getRuleContext(FullIdContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public FunctionArgsContext functionArgs() {
 			return getRuleContext(FunctionArgsContext.class,0);
 		}
@@ -54504,6 +55174,8 @@ public class MySQLParser extends Parser {
 		public ScalarFunctionNameContext scalarFunctionName() {
 			return getRuleContext(ScalarFunctionNameContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public FunctionArgsContext functionArgs() {
 			return getRuleContext(FunctionArgsContext.class,0);
 		}
@@ -54629,7 +55301,9 @@ public class MySQLParser extends Parser {
 		public StringLiteralContext inString;
 		public ExpressionContext inExpression;
 		public TerminalNode POSITION() { return getToken(MySQLParser.POSITION, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TerminalNode IN() { return getToken(MySQLParser.IN, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public List<StringLiteralContext> stringLiteral() {
 			return getRuleContexts(StringLiteralContext.class);
 		}
@@ -54664,7 +55338,9 @@ public class MySQLParser extends Parser {
 		public StringLiteralContext fromString;
 		public ExpressionContext fromExpression;
 		public TerminalNode TRIM() { return getToken(MySQLParser.TRIM, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TerminalNode FROM() { return getToken(MySQLParser.FROM, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode BOTH() { return getToken(MySQLParser.BOTH, 0); }
 		public TerminalNode LEADING() { return getToken(MySQLParser.LEADING, 0); }
 		public TerminalNode TRAILING() { return getToken(MySQLParser.TRAILING, 0); }
@@ -54718,9 +55394,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class CharFunctionCallContext extends SpecificFunctionContext {
 		public TerminalNode CHAR() { return getToken(MySQLParser.CHAR, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public FunctionArgsContext functionArgs() {
 			return getRuleContext(FunctionArgsContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode USING() { return getToken(MySQLParser.USING, 0); }
 		public CharsetNameContext charsetName() {
 			return getRuleContext(CharsetNameContext.class,0);
@@ -54743,6 +55421,14 @@ public class MySQLParser extends Parser {
 	public static class WeightFunctionCallContext extends SpecificFunctionContext {
 		public Token stringFormat;
 		public TerminalNode WEIGHT_STRING() { return getToken(MySQLParser.WEIGHT_STRING, 0); }
+		public List<TerminalNode> LR_BRACKET() { return getTokens(MySQLParser.LR_BRACKET); }
+		public TerminalNode LR_BRACKET(int i) {
+			return getToken(MySQLParser.LR_BRACKET, i);
+		}
+		public List<TerminalNode> RR_BRACKET() { return getTokens(MySQLParser.RR_BRACKET); }
+		public TerminalNode RR_BRACKET(int i) {
+			return getToken(MySQLParser.RR_BRACKET, i);
+		}
 		public StringLiteralContext stringLiteral() {
 			return getRuleContext(StringLiteralContext.class,0);
 		}
@@ -54776,9 +55462,12 @@ public class MySQLParser extends Parser {
 	public static class GetFormatFunctionCallContext extends SpecificFunctionContext {
 		public Token datetimeFormat;
 		public TerminalNode GET_FORMAT() { return getToken(MySQLParser.GET_FORMAT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public StringLiteralContext stringLiteral() {
 			return getRuleContext(StringLiteralContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode DATE() { return getToken(MySQLParser.DATE, 0); }
 		public TerminalNode TIME() { return getToken(MySQLParser.TIME, 0); }
 		public TerminalNode DATETIME() { return getToken(MySQLParser.DATETIME, 0); }
@@ -54833,10 +55522,12 @@ public class MySQLParser extends Parser {
 		public StringLiteralContext sourceString;
 		public ExpressionContext sourceExpression;
 		public TerminalNode EXTRACT() { return getToken(MySQLParser.EXTRACT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public IntervalTypeContext intervalType() {
 			return getRuleContext(IntervalTypeContext.class,0);
 		}
 		public TerminalNode FROM() { return getToken(MySQLParser.FROM, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public StringLiteralContext stringLiteral() {
 			return getRuleContext(StringLiteralContext.class,0);
 		}
@@ -54861,12 +55552,15 @@ public class MySQLParser extends Parser {
 	public static class DataTypeFunctionCallContext extends SpecificFunctionContext {
 		public Token separator;
 		public TerminalNode CONVERT() { return getToken(MySQLParser.CONVERT, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public ConvertedDataTypeContext convertedDataType() {
 			return getRuleContext(ConvertedDataTypeContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public TerminalNode COMMA() { return getToken(MySQLParser.COMMA, 0); }
 		public TerminalNode USING() { return getToken(MySQLParser.USING, 0); }
 		public CharsetNameContext charsetName() {
 			return getRuleContext(CharsetNameContext.class,0);
@@ -54890,9 +55584,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class ValuesFunctionCallContext extends SpecificFunctionContext {
 		public TerminalNode VALUES() { return getToken(MySQLParser.VALUES, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public FullColumnNameContext fullColumnName() {
 			return getRuleContext(FullColumnNameContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public ValuesFunctionCallContext(SpecificFunctionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -54915,7 +55611,9 @@ public class MySQLParser extends Parser {
 		public ExpressionContext fromExpression;
 		public DecimalLiteralContext forDecimal;
 		public ExpressionContext forExpression;
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public TerminalNode FROM() { return getToken(MySQLParser.FROM, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode SUBSTR() { return getToken(MySQLParser.SUBSTR, 0); }
 		public TerminalNode SUBSTRING() { return getToken(MySQLParser.SUBSTRING, 0); }
 		public StringLiteralContext stringLiteral() {
@@ -55580,6 +56278,7 @@ public class MySQLParser extends Parser {
 		public DecimalLiteralContext firstLevel;
 		public DecimalLiteralContext lastLevel;
 		public TerminalNode LEVEL() { return getToken(MySQLParser.LEVEL, 0); }
+		public TerminalNode MINUS() { return getToken(MySQLParser.MINUS, 0); }
 		public List<DecimalLiteralContext> decimalLiteral() {
 			return getRuleContexts(DecimalLiteralContext.class);
 		}
@@ -55608,6 +56307,10 @@ public class MySQLParser extends Parser {
 		}
 		public LevelInWeightListElementContext levelInWeightListElement(int i) {
 			return getRuleContext(LevelInWeightListElementContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public LevelWeightListContext(LevelsInWeightStringContext ctx) { copyFrom(ctx); }
 		@Override
@@ -55758,9 +56461,11 @@ public class MySQLParser extends Parser {
 		public Token aggregator;
 		public Token starArg;
 		public Token separator;
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public FunctionArgContext functionArg() {
 			return getRuleContext(FunctionArgContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode AVG() { return getToken(MySQLParser.AVG, 0); }
 		public TerminalNode MAX() { return getToken(MySQLParser.MAX, 0); }
 		public TerminalNode MIN() { return getToken(MySQLParser.MIN, 0); }
@@ -55768,6 +56473,7 @@ public class MySQLParser extends Parser {
 		public TerminalNode ALL() { return getToken(MySQLParser.ALL, 0); }
 		public TerminalNode DISTINCT() { return getToken(MySQLParser.DISTINCT, 0); }
 		public TerminalNode COUNT() { return getToken(MySQLParser.COUNT, 0); }
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
 		public FunctionArgsContext functionArgs() {
 			return getRuleContext(FunctionArgsContext.class,0);
 		}
@@ -55792,6 +56498,10 @@ public class MySQLParser extends Parser {
 		}
 		public TerminalNode SEPARATOR() { return getToken(MySQLParser.SEPARATOR, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(MySQLParser.STRING_LITERAL, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
+		}
 		public AggregateWindowedFunctionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -57344,9 +58054,11 @@ public class MySQLParser extends Parser {
 
 	public static class PasswordFunctionClauseContext extends ParserRuleContext {
 		public Token functionName;
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public FunctionArgContext functionArg() {
 			return getRuleContext(FunctionArgContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode PASSWORD() { return getToken(MySQLParser.PASSWORD, 0); }
 		public TerminalNode OLD_PASSWORD() { return getToken(MySQLParser.OLD_PASSWORD, 0); }
 		public PasswordFunctionClauseContext(ParserRuleContext parent, int invokingState) {
@@ -57429,6 +58141,10 @@ public class MySQLParser extends Parser {
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public FunctionArgsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -57661,6 +58377,7 @@ public class MySQLParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode NOT() { return getToken(MySQLParser.NOT, 0); }
+		public TerminalNode EXCLAMATION_SYMBOL() { return getToken(MySQLParser.EXCLAMATION_SYMBOL, 0); }
 		public NotExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -57902,6 +58619,8 @@ public class MySQLParser extends Parser {
 			return getRuleContext(PredicateContext.class,0);
 		}
 		public TerminalNode IN() { return getToken(MySQLParser.IN, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
@@ -57932,9 +58651,11 @@ public class MySQLParser extends Parser {
 		public ComparisonOperatorContext comparisonOperator() {
 			return getRuleContext(ComparisonOperatorContext.class,0);
 		}
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public TerminalNode ALL() { return getToken(MySQLParser.ALL, 0); }
 		public TerminalNode ANY() { return getToken(MySQLParser.ANY, 0); }
 		public TerminalNode SOME() { return getToken(MySQLParser.SOME, 0); }
@@ -58403,9 +59124,11 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class SubqueryExpessionAtomContext extends ExpressionAtomContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public SubqueryExpessionAtomContext(ExpressionAtomContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -58441,11 +59164,17 @@ public class MySQLParser extends Parser {
 		}
 	}
 	public static class NestedExpressionAtomContext extends ExpressionAtomContext {
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public NestedExpressionAtomContext(ExpressionAtomContext ctx) { copyFrom(ctx); }
 		@Override
@@ -58464,11 +59193,17 @@ public class MySQLParser extends Parser {
 	}
 	public static class NestedRowExpressionAtomContext extends ExpressionAtomContext {
 		public TerminalNode ROW() { return getToken(MySQLParser.ROW, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(MySQLParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(MySQLParser.COMMA, i);
 		}
 		public NestedRowExpressionAtomContext(ExpressionAtomContext ctx) { copyFrom(ctx); }
 		@Override
@@ -58537,9 +59272,11 @@ public class MySQLParser extends Parser {
 	}
 	public static class ExistsExpessionAtomContext extends ExpressionAtomContext {
 		public TerminalNode EXISTS() { return getToken(MySQLParser.EXISTS, 0); }
+		public TerminalNode LR_BRACKET() { return getToken(MySQLParser.LR_BRACKET, 0); }
 		public SelectStatementContext selectStatement() {
 			return getRuleContext(SelectStatementContext.class,0);
 		}
+		public TerminalNode RR_BRACKET() { return getToken(MySQLParser.RR_BRACKET, 0); }
 		public ExistsExpessionAtomContext(ExpressionAtomContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -58911,6 +59648,10 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class UnaryOperatorContext extends ParserRuleContext {
+		public TerminalNode EXCLAMATION_SYMBOL() { return getToken(MySQLParser.EXCLAMATION_SYMBOL, 0); }
+		public TerminalNode BIT_NOT_OP() { return getToken(MySQLParser.BIT_NOT_OP, 0); }
+		public TerminalNode PLUS() { return getToken(MySQLParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(MySQLParser.MINUS, 0); }
 		public TerminalNode NOT() { return getToken(MySQLParser.NOT, 0); }
 		public UnaryOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -58962,6 +59703,10 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class ComparisonOperatorContext extends ParserRuleContext {
+		public TerminalNode EQUAL_SYMBOL() { return getToken(MySQLParser.EQUAL_SYMBOL, 0); }
+		public TerminalNode GREATER_SYMBOL() { return getToken(MySQLParser.GREATER_SYMBOL, 0); }
+		public TerminalNode LESS_SYMBOL() { return getToken(MySQLParser.LESS_SYMBOL, 0); }
+		public TerminalNode EXCLAMATION_SYMBOL() { return getToken(MySQLParser.EXCLAMATION_SYMBOL, 0); }
 		public ComparisonOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -59071,8 +59816,16 @@ public class MySQLParser extends Parser {
 
 	public static class LogicalOperatorContext extends ParserRuleContext {
 		public TerminalNode AND() { return getToken(MySQLParser.AND, 0); }
+		public List<TerminalNode> BIT_AND_OP() { return getTokens(MySQLParser.BIT_AND_OP); }
+		public TerminalNode BIT_AND_OP(int i) {
+			return getToken(MySQLParser.BIT_AND_OP, i);
+		}
 		public TerminalNode XOR() { return getToken(MySQLParser.XOR, 0); }
 		public TerminalNode OR() { return getToken(MySQLParser.OR, 0); }
+		public List<TerminalNode> BIT_OR_OP() { return getTokens(MySQLParser.BIT_OR_OP); }
+		public TerminalNode BIT_OR_OP(int i) {
+			return getToken(MySQLParser.BIT_OR_OP, i);
+		}
 		public LogicalOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -59154,6 +59907,17 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class BitOperatorContext extends ParserRuleContext {
+		public List<TerminalNode> LESS_SYMBOL() { return getTokens(MySQLParser.LESS_SYMBOL); }
+		public TerminalNode LESS_SYMBOL(int i) {
+			return getToken(MySQLParser.LESS_SYMBOL, i);
+		}
+		public List<TerminalNode> GREATER_SYMBOL() { return getTokens(MySQLParser.GREATER_SYMBOL); }
+		public TerminalNode GREATER_SYMBOL(int i) {
+			return getToken(MySQLParser.GREATER_SYMBOL, i);
+		}
+		public TerminalNode BIT_AND_OP() { return getToken(MySQLParser.BIT_AND_OP, 0); }
+		public TerminalNode BIT_XOR_OP() { return getToken(MySQLParser.BIT_XOR_OP, 0); }
+		public TerminalNode BIT_OR_OP() { return getToken(MySQLParser.BIT_OR_OP, 0); }
 		public BitOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -59235,8 +59999,14 @@ public class MySQLParser extends Parser {
 	}
 
 	public static class MathOperatorContext extends ParserRuleContext {
+		public TerminalNode STAR() { return getToken(MySQLParser.STAR, 0); }
+		public TerminalNode DIVIDE() { return getToken(MySQLParser.DIVIDE, 0); }
+		public TerminalNode MODULE() { return getToken(MySQLParser.MODULE, 0); }
 		public TerminalNode DIV() { return getToken(MySQLParser.DIV, 0); }
 		public TerminalNode MOD() { return getToken(MySQLParser.MOD, 0); }
+		public TerminalNode PLUS() { return getToken(MySQLParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(MySQLParser.MINUS, 0); }
+		public TerminalNode MINUSMINUS() { return getToken(MySQLParser.MINUSMINUS, 0); }
 		public MathOperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}

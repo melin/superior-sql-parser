@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/clickhouse/ClickHouseParser.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/clickhouse/ClickHouseParser.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.clickhouse;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ClickHouseParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -64,61 +64,71 @@ public class ClickHouseParser extends Parser {
 		RULE_tableArgExpr = 67, RULE_databaseIdentifier = 68, RULE_literal = 69, 
 		RULE_keyword = 70, RULE_identifier = 71, RULE_unaryOp = 72, RULE_binaryOp = 73, 
 		RULE_enumValue = 74;
-	public static final String[] ruleNames = {
-		"queryList", "queryStmt", "query", "alterStmt", "alterTableClause", "checkStmt", 
-		"createStmt", "schemaClause", "engineClause", "partitionByClause", "primaryKeyClause", 
-		"sampleByClause", "ttlClause", "engineExpr", "tableElementExpr", "tableColumnDfnt", 
-		"tableColumnPropertyExpr", "ttlExpr", "describeStmt", "dropStmt", "insertStmt", 
-		"valuesClause", "valueTupleExpr", "optimizeStmt", "partitionClause", "selectUnionStmt", 
-		"selectStmt", "withClause", "fromClause", "sampleClause", "arrayJoinClause", 
-		"prewhereClause", "whereClause", "groupByClause", "havingClause", "orderByClause", 
-		"limitByClause", "limitClause", "settingsClause", "joinExpr", "joinOp", 
-		"joinOpCross", "joinConstraintClause", "limitExpr", "orderExprList", "orderExpr", 
-		"ratioExpr", "settingExprList", "settingExpr", "setStmt", "showStmt", 
-		"useStmt", "valueExprList", "valueExpr", "columnTypeExpr", "columnExprList", 
-		"columnsExpr", "columnExpr", "columnParamList", "columnArgList", "columnArgExpr", 
-		"columnLambdaExpr", "columnIdentifier", "commentExpr", "tableExpr", "tableIdentifier", 
-		"tableArgList", "tableArgExpr", "databaseIdentifier", "literal", "keyword", 
-		"identifier", "unaryOp", "binaryOp", "enumValue"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"queryList", "queryStmt", "query", "alterStmt", "alterTableClause", "checkStmt", 
+			"createStmt", "schemaClause", "engineClause", "partitionByClause", "primaryKeyClause", 
+			"sampleByClause", "ttlClause", "engineExpr", "tableElementExpr", "tableColumnDfnt", 
+			"tableColumnPropertyExpr", "ttlExpr", "describeStmt", "dropStmt", "insertStmt", 
+			"valuesClause", "valueTupleExpr", "optimizeStmt", "partitionClause", 
+			"selectUnionStmt", "selectStmt", "withClause", "fromClause", "sampleClause", 
+			"arrayJoinClause", "prewhereClause", "whereClause", "groupByClause", 
+			"havingClause", "orderByClause", "limitByClause", "limitClause", "settingsClause", 
+			"joinExpr", "joinOp", "joinOpCross", "joinConstraintClause", "limitExpr", 
+			"orderExprList", "orderExpr", "ratioExpr", "settingExprList", "settingExpr", 
+			"setStmt", "showStmt", "useStmt", "valueExprList", "valueExpr", "columnTypeExpr", 
+			"columnExprList", "columnsExpr", "columnExpr", "columnParamList", "columnArgList", 
+			"columnArgExpr", "columnLambdaExpr", "columnIdentifier", "commentExpr", 
+			"tableExpr", "tableIdentifier", "tableArgList", "tableArgExpr", "databaseIdentifier", 
+			"literal", "keyword", "identifier", "unaryOp", "binaryOp", "enumValue"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		"'->'", "'*'", "'`'", "'\\'", "':'", "','", "'||'", "'-'", "'.'", "'=='", 
-		"'='", "'>='", "'>'", "'['", "'<='", "'('", "'<'", null, "'%'", "'+'", 
-		"'?'", "'''", "']'", "')'", "';'", "'/'", "'_'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", 
-		"ANTI", "ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", 
-		"BY", "CASE", "CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", 
-		"CREATE", "CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", 
-		"DESC", "DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", 
-		"END", "ENGINE", "EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", 
-		"FULL", "GLOBAL", "GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", 
-		"INNER", "INSERT", "INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", 
-		"LEFT", "LIKE", "LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", 
-		"MONTH", "NAN_SQL", "NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", 
-		"OR", "ORDER", "OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", 
-		"QUARTER", "RIGHT", "SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", 
-		"SHOW", "TABLE", "TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", 
-		"TRAILING", "TRIM", "TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", 
-		"WEEK", "WHEN", "WHERE", "WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", 
-		"HEXADECIMAL_LITERAL", "INTEGER_LITERAL", "STRING_LITERAL", "ARROW", "ASTERISK", 
-		"BACKQUOTE", "BACKSLASH", "COLON", "COMMA", "CONCAT", "DASH", "DOT", "EQ_DOUBLE", 
-		"EQ_SINGLE", "GE", "GT", "LBRACKET", "LE", "LPAREN", "LT", "NOT_EQ", "PERCENT", 
-		"PLUS", "QUERY", "QUOTE_SINGLE", "RBRACKET", "RPAREN", "SEMICOLON", "SLASH", 
-		"UNDERSCORE", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", "WHITESPACE"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			"'->'", "'*'", "'`'", "'\\'", "':'", "','", "'||'", "'-'", "'.'", "'=='", 
+			"'='", "'>='", "'>'", "'['", "'<='", "'('", "'<'", null, "'%'", "'+'", 
+			"'?'", "'''", "']'", "')'", "';'", "'/'", "'_'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", 
+			"ANTI", "ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", 
+			"BY", "CASE", "CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", 
+			"CREATE", "CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", 
+			"DESC", "DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", 
+			"END", "ENGINE", "EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", 
+			"FULL", "GLOBAL", "GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", 
+			"INNER", "INSERT", "INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", 
+			"LEFT", "LIKE", "LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", 
+			"MONTH", "NAN_SQL", "NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", 
+			"OR", "ORDER", "OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", 
+			"QUARTER", "RIGHT", "SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", 
+			"SHOW", "TABLE", "TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", 
+			"TRAILING", "TRIM", "TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", 
+			"WEEK", "WHEN", "WHERE", "WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", 
+			"HEXADECIMAL_LITERAL", "INTEGER_LITERAL", "STRING_LITERAL", "ARROW", 
+			"ASTERISK", "BACKQUOTE", "BACKSLASH", "COLON", "COMMA", "CONCAT", "DASH", 
+			"DOT", "EQ_DOUBLE", "EQ_SINGLE", "GE", "GT", "LBRACKET", "LE", "LPAREN", 
+			"LT", "NOT_EQ", "PERCENT", "PLUS", "QUERY", "QUOTE_SINGLE", "RBRACKET", 
+			"RPAREN", "SEMICOLON", "SLASH", "UNDERSCORE", "SINGLE_LINE_COMMENT", 
+			"MULTI_LINE_COMMENT", "WHITESPACE"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -168,6 +178,7 @@ public class ClickHouseParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class QueryListContext extends ParserRuleContext {
 		public List<QueryStmtContext> queryStmt() {
 			return getRuleContexts(QueryStmtContext.class);

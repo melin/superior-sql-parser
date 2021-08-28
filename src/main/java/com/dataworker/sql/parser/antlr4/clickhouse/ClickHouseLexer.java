@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/clickhouse/ClickHouseLexer.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/clickhouse/ClickHouseLexer.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.clickhouse;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ClickHouseLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -48,69 +48,79 @@ public class ClickHouseLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", "ANTI", 
-		"ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", "BY", "CASE", 
-		"CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", "CREATE", 
-		"CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", "DESC", 
-		"DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", "END", "ENGINE", 
-		"EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", "FULL", "GLOBAL", 
-		"GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", "INNER", "INSERT", 
-		"INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", "LEFT", "LIKE", 
-		"LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", "MONTH", "NAN_SQL", 
-		"NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", "OR", "ORDER", 
-		"OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", "QUARTER", "RIGHT", 
-		"SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", "SHOW", "TABLE", 
-		"TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", "TRAILING", "TRIM", 
-		"TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", "WEEK", "WHEN", "WHERE", 
-		"WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", "HEXADECIMAL_LITERAL", 
-		"INTEGER_LITERAL", "STRING_LITERAL", "A", "B", "C", "D", "E", "F", "G", 
-		"H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", 
-		"V", "W", "X", "Y", "Z", "LETTER", "DEC_DIGIT", "HEX_DIGIT", "ARROW", 
-		"ASTERISK", "BACKQUOTE", "BACKSLASH", "COLON", "COMMA", "CONCAT", "DASH", 
-		"DOT", "EQ_DOUBLE", "EQ_SINGLE", "GE", "GT", "LBRACKET", "LE", "LPAREN", 
-		"LT", "NOT_EQ", "PERCENT", "PLUS", "QUERY", "QUOTE_SINGLE", "RBRACKET", 
-		"RPAREN", "SEMICOLON", "SLASH", "UNDERSCORE", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", 
-		"WHITESPACE"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", "ANTI", 
+			"ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", "BY", "CASE", 
+			"CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", "CREATE", 
+			"CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", "DESC", 
+			"DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", "END", 
+			"ENGINE", "EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", "FULL", 
+			"GLOBAL", "GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", "INNER", 
+			"INSERT", "INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", 
+			"LEFT", "LIKE", "LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", 
+			"MONTH", "NAN_SQL", "NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", 
+			"OR", "ORDER", "OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", 
+			"QUARTER", "RIGHT", "SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", 
+			"SHOW", "TABLE", "TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", 
+			"TRAILING", "TRIM", "TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", 
+			"WEEK", "WHEN", "WHERE", "WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", 
+			"HEXADECIMAL_LITERAL", "INTEGER_LITERAL", "STRING_LITERAL", "A", "B", 
+			"C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", 
+			"Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "LETTER", "DEC_DIGIT", 
+			"HEX_DIGIT", "ARROW", "ASTERISK", "BACKQUOTE", "BACKSLASH", "COLON", 
+			"COMMA", "CONCAT", "DASH", "DOT", "EQ_DOUBLE", "EQ_SINGLE", "GE", "GT", 
+			"LBRACKET", "LE", "LPAREN", "LT", "NOT_EQ", "PERCENT", "PLUS", "QUERY", 
+			"QUOTE_SINGLE", "RBRACKET", "RPAREN", "SEMICOLON", "SLASH", "UNDERSCORE", 
+			"SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", "WHITESPACE"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		"'->'", "'*'", "'`'", "'\\'", "':'", "','", "'||'", "'-'", "'.'", "'=='", 
-		"'='", "'>='", "'>'", "'['", "'<='", "'('", "'<'", null, "'%'", "'+'", 
-		"'?'", "'''", "']'", "')'", "';'", "'/'", "'_'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", 
-		"ANTI", "ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", 
-		"BY", "CASE", "CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", 
-		"CREATE", "CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", 
-		"DESC", "DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", 
-		"END", "ENGINE", "EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", 
-		"FULL", "GLOBAL", "GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", 
-		"INNER", "INSERT", "INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", 
-		"LEFT", "LIKE", "LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", 
-		"MONTH", "NAN_SQL", "NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", 
-		"OR", "ORDER", "OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", 
-		"QUARTER", "RIGHT", "SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", 
-		"SHOW", "TABLE", "TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", 
-		"TRAILING", "TRIM", "TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", 
-		"WEEK", "WHEN", "WHERE", "WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", 
-		"HEXADECIMAL_LITERAL", "INTEGER_LITERAL", "STRING_LITERAL", "ARROW", "ASTERISK", 
-		"BACKQUOTE", "BACKSLASH", "COLON", "COMMA", "CONCAT", "DASH", "DOT", "EQ_DOUBLE", 
-		"EQ_SINGLE", "GE", "GT", "LBRACKET", "LE", "LPAREN", "LT", "NOT_EQ", "PERCENT", 
-		"PLUS", "QUERY", "QUOTE_SINGLE", "RBRACKET", "RPAREN", "SEMICOLON", "SLASH", 
-		"UNDERSCORE", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", "WHITESPACE"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			"'->'", "'*'", "'`'", "'\\'", "':'", "','", "'||'", "'-'", "'.'", "'=='", 
+			"'='", "'>='", "'>'", "'['", "'<='", "'('", "'<'", null, "'%'", "'+'", 
+			"'?'", "'''", "']'", "')'", "';'", "'/'", "'_'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "INTERVAL_TYPE", "ADD", "AFTER", "ALIAS", "ALL", "ALTER", "AND", 
+			"ANTI", "ANY", "ARRAY", "AS", "ASCENDING", "ASOF", "BETWEEN", "BOTH", 
+			"BY", "CASE", "CAST", "CHECK", "CLUSTER", "COLLATE", "COLUMN", "COMMENT", 
+			"CREATE", "CROSS", "DATABASE", "DAY", "DEDUPLICATE", "DEFAULT", "DELETE", 
+			"DESC", "DESCENDING", "DESCRIBE", "DISK", "DISTINCT", "DROP", "ELSE", 
+			"END", "ENGINE", "EXISTS", "EXTRACT", "FINAL", "FIRST", "FORMAT", "FROM", 
+			"FULL", "GLOBAL", "GROUP", "HAVING", "HOUR", "ID", "IF", "IN", "INF", 
+			"INNER", "INSERT", "INTERVAL", "INTO", "IS", "JOIN", "KEY", "LAST", "LEADING", 
+			"LEFT", "LIKE", "LIMIT", "LOCAL", "MATERIALIZED", "MINUTE", "MODIFY", 
+			"MONTH", "NAN_SQL", "NOT", "NULL_SQL", "NULLS", "OFFSET", "ON", "OPTIMIZE", 
+			"OR", "ORDER", "OUTER", "OUTFILE", "PARTITION", "PREWHERE", "PRIMARY", 
+			"QUARTER", "RIGHT", "SAMPLE", "SECOND", "SELECT", "SEMI", "SET", "SETTINGS", 
+			"SHOW", "TABLE", "TABLES", "TEMPORARY", "THEN", "TIES", "TO", "TOTALS", 
+			"TRAILING", "TRIM", "TTL", "UNION", "USE", "USING", "VALUES", "VOLUME", 
+			"WEEK", "WHEN", "WHERE", "WITH", "YEAR", "IDENTIFIER", "FLOATING_LITERAL", 
+			"HEXADECIMAL_LITERAL", "INTEGER_LITERAL", "STRING_LITERAL", "ARROW", 
+			"ASTERISK", "BACKQUOTE", "BACKSLASH", "COLON", "COMMA", "CONCAT", "DASH", 
+			"DOT", "EQ_DOUBLE", "EQ_SINGLE", "GE", "GT", "LBRACKET", "LE", "LPAREN", 
+			"LT", "NOT_EQ", "PERCENT", "PLUS", "QUERY", "QUOTE_SINGLE", "RBRACKET", 
+			"RPAREN", "SEMICOLON", "SLASH", "UNDERSCORE", "SINGLE_LINE_COMMENT", 
+			"MULTI_LINE_COMMENT", "WHITESPACE"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

@@ -1,4 +1,4 @@
-// Generated from com/dataworker/sql/parser/antlr4/arithmetic/Arithmetic.g4 by ANTLR 4.7.1
+// Generated from com/dataworker/sql/parser/antlr4/arithmetic/Arithmetic.g4 by ANTLR 4.8
 package com.dataworker.sql.parser.antlr4.arithmetic;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ArithmeticLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -33,33 +33,42 @@ public class ArithmeticLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"T__0", "T__1", "T__2", "T__3", "STRING", "TRUE", "FALSE", "NULL", "CASE", 
-		"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
-		"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
-		"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", "CONCAT_PIPE", 
-		"HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", "INTEGER_VALUE", 
-		"IDENTIFIER", "EXPONENT", "DECIMAL_DIGITS", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", 
-		"DIGIT", "LETTER", "SIMPLE_COMMENT", "BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", 
-		"WS"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"T__0", "T__1", "T__2", "T__3", "STRING", "TRUE", "FALSE", "NULL", "CASE", 
+			"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
+			"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
+			"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", 
+			"CONCAT_PIPE", "HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", 
+			"INTEGER_VALUE", "IDENTIFIER", "EXPONENT", "DECIMAL_DIGITS", "DOUBLE_LITERAL", 
+			"BIGDECIMAL_LITERAL", "DIGIT", "LETTER", "SIMPLE_COMMENT", "BRACKETED_EMPTY_COMMENT", 
+			"BRACKETED_COMMENT", "WS"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "','", "')'", "'->'", null, "'TRUE'", "'FALSE'", "'NULL'", 
-		"'CASE'", "'WHEN'", "'THEN'", "'ELSE'", "'END'", "'DISTINCT'", "'ALL'", 
-		null, "'<=>'", "'<>'", "'!='", "'<'", "'<='", "'>'", "'>='", "'['", "']'", 
-		"'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", "'|'", "'||'", 
-		"'^'", null, null, null, null, null, null, null, null, "'/**/'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, "STRING", "TRUE", "FALSE", "NULL", "CASE", 
-		"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
-		"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
-		"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", "CONCAT_PIPE", 
-		"HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", "INTEGER_VALUE", 
-		"IDENTIFIER", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", "SIMPLE_COMMENT", 
-		"BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", "WS"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'('", "','", "')'", "'->'", null, "'TRUE'", "'FALSE'", "'NULL'", 
+			"'CASE'", "'WHEN'", "'THEN'", "'ELSE'", "'END'", "'DISTINCT'", "'ALL'", 
+			null, "'<=>'", "'<>'", "'!='", "'<'", "'<='", "'>'", "'>='", "'['", "']'", 
+			"'+'", "'-'", "'*'", "'/'", "'%'", "'DIV'", "'~'", "'&'", "'|'", "'||'", 
+			"'^'", null, null, null, null, null, null, null, null, "'/**/'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, "STRING", "TRUE", "FALSE", "NULL", "CASE", 
+			"WHEN", "THEN", "ELSE", "END", "DISTINCT", "ALL", "EQ", "NSEQ", "NEQ", 
+			"NEQJ", "LT", "LTE", "GT", "GTE", "LBRACKET", "RBRACKET", "PLUS", "MINUS", 
+			"ASTERISK", "SLASH", "PERCENT", "DIV", "TILDE", "AMPERSAND", "PIPE", 
+			"CONCAT_PIPE", "HAT", "BIGINT_LITERAL", "SMALLINT_LITERAL", "TINYINT_LITERAL", 
+			"INTEGER_VALUE", "IDENTIFIER", "DOUBLE_LITERAL", "BIGDECIMAL_LITERAL", 
+			"SIMPLE_COMMENT", "BRACKETED_EMPTY_COMMENT", "BRACKETED_COMMENT", "WS"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
