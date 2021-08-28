@@ -90,6 +90,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.SHOW_TABLES)
     }
 
+    override fun visitShowViews(ctx: SparkSqlBaseParser.ShowViewsContext): StatementData {
+        return StatementData(StatementType.SHOW_VIEWS)
+    }
+
     //-----------------------------------table-------------------------------------------------
 
     /**

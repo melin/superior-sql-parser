@@ -1115,6 +1115,14 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun showViewsTest() {
+        var sql = "show views"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
+    }
+
+    @Test
     fun useTest() {
         var sql = "use bigdata"
 
