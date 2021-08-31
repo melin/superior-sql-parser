@@ -1606,7 +1606,7 @@ class SparkSqlParserTest {
 
     @Test
     fun dataXTest() {
-        val sql = "datax reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo')"
+        val sql = "datax reader('sftp') options('host'='x.x.x.x') writer('hive') options(ss.table='demo')"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DataxExpr) {
@@ -1615,7 +1615,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
 
             Assert.assertEquals("hive", statement.distType)
-            Assert.assertEquals("demo", statement.distOptions.get("table"))
+            Assert.assertEquals("demo", statement.distOptions.get("ss.table"))
         } else {
             Assert.fail()
         }
