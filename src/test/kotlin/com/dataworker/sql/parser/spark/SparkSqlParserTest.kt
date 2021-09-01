@@ -984,6 +984,20 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun insertTableCustomColumn() {
+        val sql = "INSERT INTO test_demo_test (name) VALUES('lisi')"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is TableData) {
+            Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
+            Assert.assertEquals(InsertMode.INTO, statement.insertMode)
+            Assert.assertEquals("test_demo_test", statement.outpuTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun insertOverwriteTest0() {
         val sql = "insert OVERWRITE TABLE users PARTITION(ds='20170220') values('libinsong')"
         val statementData = SparkSQLHelper.getStatementData(sql)

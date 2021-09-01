@@ -1000,18 +1000,6 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDataSource(SparkSqlBaseParser.DataSourceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDataSource(SparkSqlBaseParser.DataSourceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterUnsupportedHiveNativeCommands(SparkSqlBaseParser.UnsupportedHiveNativeCommandsContext ctx) { }
 	/**
 	 * {@inheritDoc}

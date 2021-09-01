@@ -578,12 +578,6 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDataSource(SparkSqlBaseParser.DataSourceContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#unsupportedHiveNativeCommands}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

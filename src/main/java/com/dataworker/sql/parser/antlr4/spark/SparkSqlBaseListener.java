@@ -978,16 +978,6 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitDeltaConvert(SparkSqlBaseParser.DeltaConvertContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
-	 * @param ctx the parse tree
-	 */
-	void enterDataSource(SparkSqlBaseParser.DataSourceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SparkSqlBaseParser#dataSource}.
-	 * @param ctx the parse tree
-	 */
-	void exitDataSource(SparkSqlBaseParser.DataSourceContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#unsupportedHiveNativeCommands}.
 	 * @param ctx the parse tree
 	 */
