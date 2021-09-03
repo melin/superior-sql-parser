@@ -249,7 +249,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 key.text
             }
 
-            dcTable.hudiType = expr.hudiType.text
+            if (expr.hudiType != null) {
+                dcTable.hudiType = expr.hudiType.text
+            }
         }
 
         dcTable.partitionColumnNames = partitionColumnNames

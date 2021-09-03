@@ -58,7 +58,7 @@ data class DcTable(
 
     var token: CommonToken? = null
     var hudiPrimaryKeys: List<String> = listOf()
-    var hudiType: String = "ROW"
+    var hudiType: String = "COW"
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName

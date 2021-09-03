@@ -271,6 +271,36 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createHudiTableTest6() {
+        val sql = """
+            create table test_hudi_table ( id int, name string, price double, ts long) 
+            stored as hudi
+            primary key (id, name)
+            partitioned by (dt string)
+            lifeCycle 300
+            """
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("test_hudi_table", name)
+            Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
+            Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
+            Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
+            Assert.assertEquals("COW", statement.hudiType)
+
+            Assert.assertEquals(300, statement.lifeCycle)
+            Assert.assertEquals("hudi", statement.fileFormat)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun descTableTest0() {
         var sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
