@@ -242,6 +242,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             dcTable.locationPath = ctx.locationSpec().get(0).text
         }
 
+        if (fileFormat != null && "hudi" == fileFormat?.lowercase() && ctx.primaryKeyExpr().size == 1) {
+            val expr = ctx.primaryKeyExpr().get(0)
+            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
+                val key = item.getChild(0)
+                key.text
+            }
+
+            dcTable.hudiType = expr.hudiType.text
+        }
+
         dcTable.partitionColumnNames = partitionColumnNames
 
         if (ctx.query() != null) {

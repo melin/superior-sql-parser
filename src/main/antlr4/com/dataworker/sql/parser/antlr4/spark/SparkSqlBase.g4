@@ -119,6 +119,7 @@ statement
         (commentSpec |
         (PARTITIONED BY '(' partitionColumns=colTypeList ')' |
         PARTITIONED BY partitionColumnNames=identifierList) |
+        primaryKeyExpr |
         bucketSpec |
         skewSpec |
         rowFormat |
@@ -719,6 +720,14 @@ rowFormat
       (NULL DEFINED AS nullDefinedAs=STRING)?                                       #rowFormatDelimited
     ;
 
+primaryKeyExpr
+    : PRIMARY KEY primaryKeys=primaryColumnNames WITH? hudiType=(COW | MOR)?
+    ;
+
+primaryColumnNames
+    : '(' errorCapturingIdentifier (',' errorCapturingIdentifier)* ')'
+    ;
+
 multipartIdentifierList
     : multipartIdentifier (',' multipartIdentifier)*
     ;
@@ -1099,7 +1108,10 @@ ansiNonReserved
     | INSERT
     | INTERVAL
     | ITEMS
+    | KEY
     | KEYS
+    | COW
+    | MOR
     | LAST
     | LATERAL
     | LAZY
@@ -1360,7 +1372,10 @@ nonReserved
     | INTO
     | IS
     | ITEMS
+    | KEY
     | KEYS
+    | COW
+    | MOR
     | LAST
     | LATERAL
     | LAZY
@@ -1628,7 +1643,10 @@ INTO: 'INTO';
 IS: 'IS';
 ITEMS: 'ITEMS';
 JOIN: 'JOIN';
+KEY: 'KEY';
 KEYS: 'KEYS';
+COW: 'COW';
+MOR: 'MOR';
 LAST: 'LAST';
 LATERAL: 'LATERAL';
 LAZY: 'LAZY';

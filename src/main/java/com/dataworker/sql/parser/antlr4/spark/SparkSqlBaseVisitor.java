@@ -1197,6 +1197,18 @@ public interface SparkSqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRowFormatDelimited(SparkSqlBaseParser.RowFormatDelimitedContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#primaryKeyExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SparkSqlBaseParser#primaryColumnNames}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SparkSqlBaseParser#multipartIdentifierList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

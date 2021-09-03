@@ -1277,6 +1277,20 @@ public class SparkSqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitMultipartIdentifierList(SparkSqlBaseParser.MultipartIdentifierListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

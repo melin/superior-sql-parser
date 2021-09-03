@@ -2020,6 +2020,26 @@ public interface SparkSqlBaseListener extends ParseTreeListener {
 	 */
 	void exitRowFormatDelimited(SparkSqlBaseParser.RowFormatDelimitedContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#primaryKeyExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#primaryKeyExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SparkSqlBaseParser#primaryColumnNames}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SparkSqlBaseParser#primaryColumnNames}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SparkSqlBaseParser#multipartIdentifierList}.
 	 * @param ctx the parse tree
 	 */

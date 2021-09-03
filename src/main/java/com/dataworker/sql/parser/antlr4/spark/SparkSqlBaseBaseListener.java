@@ -2176,6 +2176,30 @@ public class SparkSqlBaseBaseListener implements SparkSqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimaryKeyExpr(SparkSqlBaseParser.PrimaryKeyExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimaryColumnNames(SparkSqlBaseParser.PrimaryColumnNamesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMultipartIdentifierList(SparkSqlBaseParser.MultipartIdentifierListContext ctx) { }
 	/**
 	 * {@inheritDoc}
