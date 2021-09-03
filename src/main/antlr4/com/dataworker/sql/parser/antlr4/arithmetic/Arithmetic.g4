@@ -107,6 +107,17 @@ END: 'END';
 DISTINCT: 'DISTINCT';
 ALL: 'ALL';
 
+NOT: 'NOT';
+AND: 'AND';
+OR: 'OR';
+BETWEEN: 'BETWEEN';
+IN: 'IN';
+RLIKE: 'RLIKE';
+LIKE: 'LIKE';
+IS: 'IS';
+ESCAPE: 'ESCAPE';
+UNKNOWN: 'UNKNOWN';
+
 EQ  : '=' | '==';
 NSEQ: '<=>';
 NEQ : '<>';
