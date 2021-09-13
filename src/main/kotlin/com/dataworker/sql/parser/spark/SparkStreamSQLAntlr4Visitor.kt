@@ -45,7 +45,7 @@ class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
             }
         }
 
-        val table = StreamStreamTable(tableName, columns, properties)
+        val table = StreamTable(tableName, columns, properties)
         return StatementData(StatementType.CREATE_TABLE, table)
     }
 

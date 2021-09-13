@@ -27,7 +27,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is StreamStreamTable) {
+        if (statement is StreamTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("student_scores", statement.tableName)
             Assert.assertEquals("cn-north-1", statement.properties.get("kafka.group.id"))
@@ -75,7 +75,7 @@ set spark.test = dsd(id)%=2;
         val statementDatas = SparkStreamSQLHelper.getStatementData(sql)
         Assert.assertEquals(16, statementDatas.size)
         val statement = statementDatas.get(0).statement
-        if (statement is StreamStreamTable) {
+        if (statement is StreamTable) {
             Assert.assertEquals("orders", statement.tableName)
         } else {
             Assert.fail()

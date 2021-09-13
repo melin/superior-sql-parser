@@ -243,7 +243,7 @@ data class JobData(val resourceName: String,
     val params: List<String>?) : Statement()
 
 @DefaultConstructor
-data class StreamStreamTable(
+data class StreamTable(
     var tableName: String,
     var columns: List<StreamColumn>,
     var properties: Map<String, String>
