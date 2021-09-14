@@ -117,7 +117,7 @@
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
                     <pluginOptions>
-                        <option>no-arg:annotation=cn.tongdun.datacompute.parser.DefaultConstructor</option>
+                        <option>no-arg:annotation=com.dataworker.sql.parser.DefaultConstructor</option>
                     </pluginOptions>
                 </configuration>
             </plugin>
