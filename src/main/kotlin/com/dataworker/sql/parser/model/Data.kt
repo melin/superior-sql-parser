@@ -203,8 +203,6 @@ data class CompressTableData(val databaseName: String?,
                      val tableName: String,
                      val partitionVals: List<String>?) : Statement()
 
-data class CompressFileData(val path: String) : Statement()
-
 data class DataxExpr(
     val srcType: String,
     var srcOptions: Map<String, String>,
@@ -351,6 +349,16 @@ data class AddTablePartition(
     var partitionSpecs: List<String>
 ): Statement() {
 
+    fun getFullTableName(): String {
+        return if (databaseName != null) databaseName + "." + tableName else tableName
+    }
+}
+
+data class TouchTable(
+    val databaseName: String?,
+    val tableName: String,
+    var partitionSpecs: List<String>
+): Statement() {
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
     }

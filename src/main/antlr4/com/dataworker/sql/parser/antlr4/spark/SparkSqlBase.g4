@@ -156,6 +156,8 @@ statement
         DROP (COLUMN | COLUMNS) columns=multipartIdentifierList        #dropTableColumns
     | ALTER (TABLE | VIEW) from=multipartIdentifier
         RENAME TO to=multipartIdentifier                               #renameTable
+    | ALTER TABLE table=multipartIdentifier
+        TOUCH partitionSpec?                                           #touchTable
     | ALTER (TABLE | VIEW) multipartIdentifier
         SET TBLPROPERTIES tablePropertyList                            #setTableProperties
     | ALTER (TABLE | VIEW) multipartIdentifier
@@ -301,7 +303,6 @@ unsupportedHiveNativeCommands
     | kw1=ALTER kw2=TABLE tableIdentifier kw3=EXCHANGE kw4=PARTITION
     | kw1=ALTER kw2=TABLE tableIdentifier kw3=ARCHIVE kw4=PARTITION
     | kw1=ALTER kw2=TABLE tableIdentifier kw3=UNARCHIVE kw4=PARTITION
-    | kw1=ALTER kw2=TABLE tableIdentifier kw3=TOUCH
     | kw1=ALTER kw2=TABLE tableIdentifier partitionSpec? kw3=COMPACT
     | kw1=ALTER kw2=TABLE tableIdentifier partitionSpec? kw3=CONCATENATE
     | kw1=ALTER kw2=TABLE tableIdentifier partitionSpec? kw3=SET kw4=FILEFORMAT

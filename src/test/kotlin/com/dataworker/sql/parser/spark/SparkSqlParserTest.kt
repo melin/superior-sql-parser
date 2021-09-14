@@ -540,6 +540,35 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun touchTableTest() {
+        var sql = "alter table test.table_name TOUCH"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        Assert.assertEquals(StatementType.ALTER_TABLE_TOUCH, statementData.type)
+        if (statement is TouchTable) {
+            Assert.assertEquals("table_name", statement.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun touchTablePrtitionTest() {
+        var sql = "alter table test.table_name TOUCH partition(ds=20210812, type='login')"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        Assert.assertEquals(StatementType.ALTER_TABLE_TOUCH, statementData.type)
+        if (statement is TouchTable) {
+            Assert.assertEquals("table_name", statement.tableName)
+            Assert.assertEquals(2, statement.partitionSpecs.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun alterTablePropertiesTest() {
         val sql = "ALTER TABLE test.sale_detail SET TBLPROPERTIES ('comment' = 'new coments for statement sale_detail', 'lifeCycle' = '7')"
 

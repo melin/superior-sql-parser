@@ -419,6 +419,24 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, dcTable)
     }
 
+    override fun visitTouchTable(ctx: SparkSqlBaseParser.TouchTableContext): StatementData {
+        val (databaseName, tableName) = parseTableName(ctx.table)
+
+        val partitions = mutableListOf<String>()
+        ctx.children.forEach { partition ->
+            if (partition is SparkSqlBaseParser.PartitionSpecContext) {
+                partition.children.forEach { partitionVal ->
+                    if (partitionVal is SparkSqlBaseParser.PartitionValContext) {
+                        partitions.add(partitionVal.text)
+                    }
+                }
+            }
+        }
+
+        val data = TouchTable(databaseName, tableName, partitions)
+        return StatementData(StatementType.ALTER_TABLE_TOUCH, data)
+    }
+
     override fun visitDropTableColumns(ctx: SparkSqlBaseParser.DropTableColumnsContext): StatementData {
         val (databaseName, tableName) = parseTableName(ctx.table)
 

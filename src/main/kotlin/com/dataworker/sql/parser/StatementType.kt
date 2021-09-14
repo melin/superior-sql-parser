@@ -43,7 +43,6 @@ enum class StatementType: Serializable {
     ALTER_TABLE_ADD_PRIMARY_KEY, //mysql
     DESC_TABLE,
     MSCK_TABLE,
-    //ALTERTABLE_DROPPROPERTIES,
     ALTER_TABLE_TOUCH,
 
     //DML
