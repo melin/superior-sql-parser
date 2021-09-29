@@ -1617,7 +1617,6 @@ class SparkSqlParserTest {
                         name String COMMENT 'name',
                         cnt INT COMMENT 'cnt'
                     ) COMMENT '原始数据表'
-                    ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
                     LOCATION 's3a://hive/test/'
             """
 
