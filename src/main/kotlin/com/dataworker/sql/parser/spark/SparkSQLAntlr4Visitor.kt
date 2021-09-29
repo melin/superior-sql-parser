@@ -173,6 +173,14 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val comment = if (ctx.commentSpec().size > 0) StringUtil.cleanQuote(ctx.commentSpec(0).STRING().text) else null
         val lifeCycle = ctx.lifecycle?.text?.toInt()
 
+        ctx.children.forEach { it ->
+            if (it is SparkSqlBaseParser.RowFormatDelimitedContext) {
+                throw SQLParserException("不支持row format 语法")
+            } else if (it is SparkSqlBaseParser.RowFormatSerdeContext) {
+                throw SQLParserException("不支持row format 语法")
+            }
+        }
+
         var partitionColumns: List<DcColumn>? = null
         var partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
