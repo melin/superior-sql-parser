@@ -638,7 +638,13 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
         val ifNotExists = ctx.NOT() != null
 
-        val dcView = DcView(databaseName, tableName, comment, ifNotExists)
+        var querySql = ""
+        ctx.children.filter { it is SparkSqlBaseParser.QueryContext }.forEach { it ->
+            val query = it as SparkSqlBaseParser.QueryContext
+            querySql = StringUtils.substring(command, query.start.startIndex)
+        }
+
+        val dcView = DcView(databaseName, tableName, querySql, comment, ifNotExists)
         return StatementData(StatementType.CREATE_VIEW, dcView)
     }
 

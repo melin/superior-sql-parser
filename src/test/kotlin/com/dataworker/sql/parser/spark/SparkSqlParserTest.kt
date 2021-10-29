@@ -501,6 +501,7 @@ class SparkSqlParserTest {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
+            Assert.assertEquals("select * from account", statement.querySql)
         } else {
             Assert.fail()
         }
@@ -520,6 +521,7 @@ class SparkSqlParserTest {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
+            Assert.assertEquals("select * from account", statement.querySql)
         } else {
             Assert.fail()
         }

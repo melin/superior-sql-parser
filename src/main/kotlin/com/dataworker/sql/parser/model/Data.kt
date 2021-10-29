@@ -89,6 +89,7 @@ data class TidbColumn(
 data class DcView(
         val databaseName: String?,
         val tableName: String,
+        var querySql: String? = null,
         val comment: String? = null,
         var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
         var ifExists: Boolean = false) : Statement() { //是否存在 if exists 关键字
