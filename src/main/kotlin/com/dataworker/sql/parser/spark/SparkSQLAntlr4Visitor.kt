@@ -651,7 +651,14 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     override fun visitAlterViewQuery(ctx: SparkSqlBaseParser.AlterViewQueryContext): StatementData {
         val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
+        var querySql = ""
+        ctx.children.filter { it is SparkSqlBaseParser.QueryContext }.forEach { it ->
+            val query = it as SparkSqlBaseParser.QueryContext
+            querySql = StringUtils.substring(command, query.start.startIndex)
+        }
+
         val dcView = DcView(databaseName, tableName)
+        dcView.querySql = querySql
         return StatementData(StatementType.ALTER_VIEW_QUERY, dcView)
     }
 

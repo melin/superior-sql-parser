@@ -528,6 +528,21 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun alterViewTest0() {
+        val sql = "ALTER VIEW v1 AS SELECT x, UPPER(s) s FROM t2"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcView) {
+            val name = statement.tableName
+            Assert.assertEquals("v1", name)
+            Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", statement.querySql)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun renameTableTest() {
         var sql = "alter table test.table_name rename to new_table_name"
 
