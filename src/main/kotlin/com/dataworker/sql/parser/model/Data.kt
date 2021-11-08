@@ -127,6 +127,9 @@ data class TableSource(
     }
 }
 
+@DefaultConstructor
+data class DatabaseSource(var databaseName: String): Statement()
+
 data class CommonToken(val start: Int, val stop: Int)
 
 data class DcRenameTable(

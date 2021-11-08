@@ -87,11 +87,21 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitShowTables(ctx: SparkSqlBaseParser.ShowTablesContext): StatementData {
-        return StatementData(StatementType.SHOW_TABLES)
+        if (ctx.childCount > 2) {
+            val databaseName = ctx.multipartIdentifier().parts.get(0).identifier().text
+            return StatementData(StatementType.SHOW_TABLES, DatabaseSource(databaseName))
+        } else {
+            return StatementData(StatementType.SHOW_TABLES)
+        }
     }
 
     override fun visitShowViews(ctx: SparkSqlBaseParser.ShowViewsContext): StatementData {
-        return StatementData(StatementType.SHOW_VIEWS)
+        if (ctx.childCount > 2) {
+            val databaseName = ctx.multipartIdentifier().parts.get(0).identifier().text
+            return StatementData(StatementType.SHOW_VIEWS, DatabaseSource(databaseName))
+        } else {
+            return StatementData(StatementType.SHOW_VIEWS)
+        }
     }
 
     //-----------------------------------table-------------------------------------------------

@@ -1229,17 +1229,55 @@ class SparkSqlParserTest {
     @Test
     fun showTablesTest() {
         var sql = "show Tables"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
+        var statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
+
+        sql = "show Tables in bigdata"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
+        var statement = statementData.statement
+        if (statement is DatabaseSource) {
+            Assert.assertEquals("bigdata", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "show Tables from bigdata"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
+        statement = statementData.statement
+        if (statement is DatabaseSource) {
+            Assert.assertEquals("bigdata", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
     }
 
     @Test
     fun showViewsTest() {
         var sql = "show views"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
+        var statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
+
+        sql = "show views in bigdata"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
+        var statement = statementData.statement
+        if (statement is DatabaseSource) {
+            Assert.assertEquals("bigdata", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "show views from bigdata"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
+        statement = statementData.statement
+        if (statement is DatabaseSource) {
+            Assert.assertEquals("bigdata", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
     }
 
     @Test
