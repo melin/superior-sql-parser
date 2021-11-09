@@ -1763,7 +1763,7 @@ class SparkSqlParserTest {
 
     @Test
     fun dataXTest() {
-        val sql = "datax reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo')"
+        val sql = "datax reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo', column=['id', 'name'])"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DataxExpr) {
@@ -1773,6 +1773,7 @@ class SparkSqlParserTest {
 
             Assert.assertEquals("hive", statement.distType)
             Assert.assertEquals("demo", statement.distOptions.get("table"))
+            Assert.assertEquals("['id','name']", statement.distOptions.get("column"))
         } else {
             Assert.fail()
         }

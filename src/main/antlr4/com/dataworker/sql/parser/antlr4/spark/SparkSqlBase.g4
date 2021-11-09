@@ -422,6 +422,7 @@ tablePropertyValue
     | DECIMAL_VALUE
     | booleanValue
     | STRING
+    | '[' tablePropertyValue (',' tablePropertyValue)* ']'
     ;
 
 constantList
