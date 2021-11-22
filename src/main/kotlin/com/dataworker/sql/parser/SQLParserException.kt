@@ -1,10 +1,7 @@
 package com.dataworker.sql.parser
 
-/**
- * Created by libinsong on 2017/3/16.
- */
-
-class SQLParserException(message: String?) : RuntimeException(message) {
-
-    constructor(message: String?, exception: Exception?) : this(message)
+class SQLParserException: RuntimeException {
+    constructor(message: String, ex: Exception?): super(message, ex) {}
+    constructor(message: String): super(message) {}
+    constructor(ex: Exception): super(ex) {}
 }

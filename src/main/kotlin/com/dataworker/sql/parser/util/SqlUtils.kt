@@ -79,7 +79,7 @@ object SqlUtils {
         stmt.accept(statVisitor)
 
         val list = ArrayList<TableSource>()
-        statVisitor.getTables().forEach { table, stat ->
+        statVisitor.getTables().forEach { table, _ ->
             val names = StringUtils.split(table.name, ".")
             val tableSource = if (names.size == 2) TableSource(names.get(0), names.get(1))
             else TableSource(null, names.get(0))

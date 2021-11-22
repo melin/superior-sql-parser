@@ -48,24 +48,24 @@ class ClickHouseAntlr4Visitor: ClickHouseParserBaseVisitor<StatementData>() {
             val columnDeclarations = StringUtils.substring(command, schemaClause.start.startIndex,
                     schemaClause.engineClause().start.startIndex)
 
-            var orderExpr = if (engineClause?.orderByClause() != null && engineClause?.orderByClause().size > 0)
+            var orderExpr = if (engineClause.orderByClause() != null && engineClause.orderByClause().size > 0)
                 engineClause?.orderByClause()?.get(0)?.orderExprList()?.text else null
             if (orderExpr == null) {
                 throw SQLParserException("creat table 需要指定 order by 字段")
             }
 
-            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause?.partitionByClause().size > 0)
-                engineClause?.partitionByClause()?.get(0)?.columnExpr()?.text else null
-            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause?.primaryKeyClause().size > 0)
-                engineClause?.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
-            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause?.settingsClause().size > 0)
-                engineClause?.settingsClause()?.get(0)?.settingExprList()?.text else null
+            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause.partitionByClause().size > 0)
+                engineClause.partitionByClause()?.get(0)?.columnExpr()?.text else null
+            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause.primaryKeyClause().size > 0)
+                engineClause.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
+            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause.settingsClause().size > 0)
+                engineClause.settingsClause()?.get(0)?.settingExprList()?.text else null
 
-            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause?.ttlClause().size > 0)
-                engineClause?.ttlClause()?.get(0)?.text else null
+            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause.ttlClause().size > 0)
+                engineClause.ttlClause()?.get(0)?.text else null
 
-            var comment = if (engineClause?.commentExpr() != null && engineClause?.commentExpr().size > 0)
-                engineClause?.commentExpr()?.get(0)?.value?.text else null
+            var comment = if (engineClause?.commentExpr() != null && engineClause.commentExpr().size > 0)
+                engineClause.commentExpr()?.get(0)?.value?.text else null
 
             comment = if (comment != null) StringUtil.cleanQuote(comment) else null;
 
@@ -81,18 +81,18 @@ class ClickHouseAntlr4Visitor: ClickHouseParserBaseVisitor<StatementData>() {
             var engine = engineExpr?.identifier()?.text
 
             val cluster = null;
-            var orderExpr = if (engineClause?.orderByClause() != null && engineClause?.orderByClause().size > 0)
-                engineClause?.orderByClause()?.get(0)?.orderExprList()?.text else null
+            var orderExpr = if (engineClause?.orderByClause() != null && engineClause.orderByClause().size > 0)
+                engineClause.orderByClause()?.get(0)?.orderExprList()?.text else null
 
-            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause?.partitionByClause().size > 0)
-                engineClause?.partitionByClause()?.get(0)?.columnExpr()?.text else null
-            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause?.primaryKeyClause().size > 0)
-                engineClause?.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
-            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause?.settingsClause().size > 0)
-                engineClause?.settingsClause()?.get(0)?.settingExprList()?.text else null
+            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause.partitionByClause().size > 0)
+                engineClause.partitionByClause()?.get(0)?.columnExpr()?.text else null
+            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause.primaryKeyClause().size > 0)
+                engineClause.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
+            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause.settingsClause().size > 0)
+                engineClause.settingsClause()?.get(0)?.settingExprList()?.text else null
 
-            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause?.ttlClause().size > 0)
-                engineClause?.ttlClause()?.get(0)?.text else null
+            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause.ttlClause().size > 0)
+                engineClause.ttlClause()?.get(0)?.text else null
 
             var querySelect = StringUtils.substring(command, schemaClause.selectUnionStmt().start.startIndex,
                     schemaClause.selectUnionStmt().stop.stopIndex + 1)
@@ -109,18 +109,18 @@ class ClickHouseAntlr4Visitor: ClickHouseParserBaseVisitor<StatementData>() {
             var engine = engineExpr?.identifier()?.text
 
             val cluster = null;
-            var orderExpr = if (engineClause?.orderByClause() != null && engineClause?.orderByClause().size > 0)
-                engineClause?.orderByClause()?.get(0)?.orderExprList()?.text else null
+            var orderExpr = if (engineClause?.orderByClause() != null && engineClause.orderByClause().size > 0)
+                engineClause.orderByClause()?.get(0)?.orderExprList()?.text else null
 
-            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause?.partitionByClause().size > 0)
-                engineClause?.partitionByClause()?.get(0)?.columnExpr()?.text else null
-            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause?.primaryKeyClause().size > 0)
-                engineClause?.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
-            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause?.settingsClause().size > 0)
-                engineClause?.settingsClause()?.get(0)?.settingExprList()?.text else null
+            val partitionExpr = if (engineClause?.partitionByClause() != null && engineClause.partitionByClause().size > 0)
+                engineClause.partitionByClause()?.get(0)?.columnExpr()?.text else null
+            var primaryExpr = if (engineClause?.primaryKeyClause() != null && engineClause.primaryKeyClause().size > 0)
+                engineClause.primaryKeyClause()?.get(0)?.columnExpr()?.text else null
+            var settingsExpr = if (engineClause?.settingsClause() != null && engineClause.settingsClause().size > 0)
+                engineClause.settingsClause()?.get(0)?.settingExprList()?.text else null
 
-            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause?.ttlClause().size > 0)
-                engineClause?.ttlClause()?.get(0)?.text else null
+            var tableTtlExpr = if (engineClause?.ttlClause() != null && engineClause.ttlClause().size > 0)
+                engineClause.ttlClause()?.get(0)?.text else null
 
             val (srcDatabaseName, srcTableName) = parseTableName(schemaClause.tableIdentifier())
             val table = ClickHouseTableAsLike(databaseName, tableName, cluster, engine,
@@ -169,7 +169,7 @@ class ClickHouseAntlr4Visitor: ClickHouseParserBaseVisitor<StatementData>() {
         val (databaseName, tableName) = parseTableName(ctx)
         val tableSource = TableSource(databaseName, tableName)
         if (StatementType.CREATE_TABLE_AS_SELECT == currentOptType) {
-            (data?.statement as ClickHouseTableAsSelect).inputTables?.add(tableSource)
+            (data?.statement as ClickHouseTableAsSelect).inputTables.add(tableSource)
         } else if (StatementType.SELECT == currentOptType) {
             selectQery.tables.add(tableSource)
         }

@@ -73,10 +73,6 @@ object SparkSQLHelper {
             SHOW_FUNCTIONS,
             DESC_FUNCTION,
 
-            //LIST_JARS,
-            //DELETE_JAR,
-
-            KILL,
             STATUS,
             ADDJAR,
             ANGEL,
@@ -85,18 +81,11 @@ object SparkSQLHelper {
             UNCACHE,
             CLEAR_CACHE,
 
-            COMPRESS_TABLE,
-            COMPRESS_FILE,
-
             DATAX,
 
             DELETE,
             UPDATE,
-            VACUUM,
             MERGE_INTO_TABLE,
-            DELTA_CONVERT,
-            DESC_DETAIL,
-            DESC_HISTORY,
 
             EXPLAIN
             -> true
@@ -182,9 +171,8 @@ object SparkSQLHelper {
 
             return sql
         } else if (statement is DcTable && CREATE_TABLE_AS_SELECT == sqlType) {
-
             val tokens: java.util.ArrayList<CommonToken> = ArrayList()
-            val tableData = statement?.tableData
+            val tableData = statement.tableData
             if (tableData != null) {
                 for (tableSource in tableData.inputTables) {
                     if (tables.containsKey(tableSource.getFullTableName())) {

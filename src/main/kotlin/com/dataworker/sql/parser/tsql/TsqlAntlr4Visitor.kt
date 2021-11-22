@@ -44,9 +44,6 @@ class TsqlAntlr4Visitor: TSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitTable_source_item(ctx: TSqlParser.Table_source_itemContext): StatementData? {
-        if (currentOptType == null) {
-            return null
-        }
 
         if (currentOptType == StatementType.SELECT) {
             /*val list = ctx.identifier()

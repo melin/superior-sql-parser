@@ -124,7 +124,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("platformtool", name)
             Assert.assertEquals(7, statement.lifeCycle)
             Assert.assertEquals("姓名", statement.columns?.get(0)?.comment)
-
+            Assert.assertEquals("hive", statement.createTableType)
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("event_type", statement.partitionColumnNames?.get(1))
@@ -152,6 +152,7 @@ class SparkSqlParserTest {
             val name = statement.tableName
             Assert.assertEquals("dc_cluster_compute", name)
             Assert.assertEquals(100, statement.lifeCycle)
+            Assert.assertEquals("hive", statement.createTableType)
             Assert.assertEquals("数据中心", statement.columns?.get(1)?.comment)
         } else {
             Assert.fail()
@@ -175,6 +176,7 @@ class SparkSqlParserTest {
             val name = statement.tableName
             Assert.assertEquals("iceberg_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
+            Assert.assertEquals("hive", statement.createTableType)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
         } else {
@@ -203,6 +205,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("export_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("orc", statement.fileFormat)
+            Assert.assertEquals("spark", statement.createTableType)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
         } else {
@@ -232,6 +235,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("export_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("orc", statement.fileFormat)
+            Assert.assertEquals("spark", statement.createTableType)
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("the_date", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("the_nums", statement.partitionColumnNames?.get(1))
@@ -1303,22 +1307,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun compressTable() {
-        var sql = "compress table platformtool.table_partition_dt partition(ds='20181127') options(type='gzip')"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.COMPRESS_TABLE, statementData.type)
-    }
-
-    @Test
-    fun compressFile() {
-        var sql = "compress file '/user/datacompute/users/xiuxiu.zheng/parquet/instance' "
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.COMPRESS_FILE, statementData.type)
-    }
-
-    @Test
     fun mergeTest() {
         var sql = "merge table test OPTIONS (mergefile=2)"
 
@@ -1399,63 +1387,6 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("user", statement.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun vaccumTest() {
-        val sql = "VACUUM user RETAIN 10 HOURS"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is VacuumTable) {
-            Assert.assertEquals(StatementType.VACUUM, statementData.type)
-            Assert.assertEquals("user", statement.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun deltaDetailTest() {
-        val sql = "DESC DETAIL user"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is DetailTable) {
-            Assert.assertEquals(StatementType.DESC_DETAIL, statementData.type)
-            Assert.assertEquals("user", statement.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun deltaHistoryTest0() {
-        val sql = "DESC HISTORY user limit 20"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is HistoryTable) {
-            Assert.assertEquals(StatementType.DESC_HISTORY, statementData.type)
-            Assert.assertEquals("user", statement.tableName)
-            Assert.assertEquals(20, statement.limit)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun deltaHistoryTest1() {
-        val sql = "DESC HISTORY user"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is HistoryTable) {
-            Assert.assertEquals(StatementType.DESC_HISTORY, statementData.type)
             Assert.assertEquals("user", statement.tableName)
         } else {
             Assert.fail()
@@ -1580,23 +1511,6 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("merge_test", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.sourceTables.size)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun deltaMergeConvert() {
-        val sql = """
-            CONVERT TO DELTA bigdata.test
-            PARTITIONED BY (ds string, event string)   
-        """.trimIndent()
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is DeltaConvert) {
-            Assert.assertEquals(StatementType.DELTA_CONVERT, statementData.type)
-            Assert.assertEquals("test", statement.tableName)
         } else {
             Assert.fail()
         }

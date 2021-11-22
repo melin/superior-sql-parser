@@ -94,10 +94,6 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): StatementData? {
-        if (currentOptType == null) {
-            return null
-        }
-
         if (!(ctx.parent is PrestoSqlBaseParser.TableNameContext)) {
             return null
         }

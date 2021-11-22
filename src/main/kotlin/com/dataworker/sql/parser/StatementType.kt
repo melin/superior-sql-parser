@@ -76,8 +76,6 @@ enum class StatementType: Serializable {
     SHOW_FUNCTIONS,
     DESC_FUNCTION,
 
-    LIST_JARS,
-    DELETE_JAR,
 
     KILL,
     STATUS,
@@ -94,16 +92,7 @@ enum class StatementType: Serializable {
     JOB,
     USE,
 
-    COMPRESS_FILE,
-    COMPRESS_TABLE,
-
     DATAX,
-
-    //Delta
-    VACUUM,
-    DESC_DETAIL,
-    DESC_HISTORY,
-    DELTA_CONVERT,
 
     ARITHMETIC,
     OPTIMIZE, // clickhouse

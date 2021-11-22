@@ -105,83 +105,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     }
 
     //-----------------------------------table-------------------------------------------------
-
-    /**
-     * create table as query
-     */
     override fun visitCreateTable(ctx: SparkSqlBaseParser.CreateTableContext): StatementData {
         val (databaseName, tableName) = parseTableName(ctx.createTableHeader().multipartIdentifier())
-        val lifeCycle = ctx.createTableClauses().lifecycle?.text?.toInt()
-
-        var columns: List<DcColumn>? = null
-        var partitionColumnNames: List<String>? = null
-        if (ctx.query() == null) {
-            columns = ctx.colTypeList().colType().map {
-                val colName = it.colName.text
-                var dataType = it.dataType().text
-                val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
-                DcColumn(colName, dataType, colComment)
-            }
-        }
-
-        if (ctx.createTableClauses().partitioning != null) {
-            partitionColumnNames = arrayListOf()
-            ctx.createTableClauses().partitioning.transforms.forEach { it ->
-                val identityTransformContext = it as SparkSqlBaseParser.IdentityTransformContext
-                identityTransformContext.children.map { item ->
-                    if (item is SparkSqlBaseParser.QualifiedNameContext) {
-                        val value = item.getChild(0)
-                        if (value is SparkSqlBaseParser.IdentifierContext) {
-                            val part = value.getChild(0).text
-                            partitionColumnNames.add(part)
-                        }
-                    }
-                }
-            }
-        }
-
-        var properties = HashMap<String, String>()
-        if (ctx.createTableClauses().tableProps != null) {
-            ctx.createTableClauses().tableProps.children.filter { it is SparkSqlBaseParser.TablePropertyContext }.map { item ->
-                val property = item as SparkSqlBaseParser.TablePropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
-                properties.put(key, value)
-            }
-        }
-
-        var fileFormat: String? = ctx?.tableProvider()?.multipartIdentifier()?.text
-
-        val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, fileFormat)
-        dcTable.ifNotExists = ctx.createTableHeader().NOT() != null
-        dcTable.external = ctx.createTableHeader().EXTERNAL() != null
-        dcTable.temporary = ctx.createTableHeader().TEMPORARY() != null
-        dcTable.location = ctx.createTableClauses().locationSpec().size > 0
-        if (dcTable.location) {
-            dcTable.locationPath = ctx.createTableClauses().locationSpec().get(0).text
-        }
-        dcTable.partitionColumnNames = partitionColumnNames
-
-        if (ctx.query() != null) {
-            currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
-            if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
-                querySql = StringUtils.substringBetween(querySql, "(", ")")
-            }
-
-            dcTable.querySql = querySql
-            super.visitQuery(ctx.query())
-            dcTable.tableData = statementData
-            return StatementData(StatementType.CREATE_TABLE_AS_SELECT, dcTable)
-        } else {
-            return StatementData(StatementType.CREATE_TABLE, dcTable)
-        }
-    }
-
-    override fun visitCreateHiveTable(ctx: SparkSqlBaseParser.CreateHiveTableContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.createTableHeader().multipartIdentifier())
-        val comment = if (ctx.commentSpec().size > 0) StringUtil.cleanQuote(ctx.commentSpec(0).STRING().text) else null
-        val lifeCycle = ctx.lifecycle?.text?.toInt()
+        val createTableClauses = ctx.createTableClauses();
+        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).STRING().text) else null
+        val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
         ctx.children.forEach { it ->
             if (it is SparkSqlBaseParser.RowFormatDelimitedContext) {
@@ -194,74 +122,75 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         var partitionColumns: List<DcColumn>? = null
         var partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
+        var createTableType: String = "hive"
         if (ctx.query() == null) {
-            if (ctx.partitionColumns != null) {
-                partitionColumns = ctx.partitionColumns.children
-                    .filter { it is SparkSqlBaseParser.ColTypeContext }.map { item ->
-                        val column = item as SparkSqlBaseParser.ColTypeContext
-                        val colName = column.colName.text
-                        var dataType = column.dataType().text
-                        checkPartitionDataType(dataType)
-
-                        partitionColumnNames.add(colName)
-                        val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().STRING().text) else null
-                        DcColumn(colName, dataType, colComment)
-                    }
+            columns = ctx.colTypeList().colType().map {
+                val colName = it.colName.text
+                var dataType = it.dataType().text
+                val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
+                DcColumn(colName, dataType, colComment)
             }
 
-            if (ctx.columns != null) {
-                columns = ctx.columns.children
-                        .filter { it is SparkSqlBaseParser.ColTypeContext }.map { item ->
-                            val column = item as SparkSqlBaseParser.ColTypeContext
-                            val colName = column.colName.text
-                            var dataType = column.dataType().text
-                            //checkColumnDataType(dataType)
+            if (createTableClauses.partitioning != null) {
+                if (ctx.tableProvider() != null) {
+                    createTableType = "spark"
+                    createTableClauses.partitioning.children
+                        .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
+                            val column = item as SparkSqlBaseParser.PartitionTransformContext
+                            partitionColumnNames.add(column.text)
+                        }
+                } else {
+                    partitionColumns = createTableClauses.partitioning.children
+                        .filter { it is SparkSqlBaseParser.PartitionColumnContext }.map { item ->
+                            val column = item as SparkSqlBaseParser.PartitionColumnContext
+                            val colName = column.colType().colName.text
+                            var dataType = column.colType().dataType().text
+                            checkPartitionDataType(dataType)
 
-                            val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().STRING().text) else null
+                            partitionColumnNames.add(colName)
+                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
                             DcColumn(colName, dataType, colComment)
                         }
+                }
             }
         } else {
-            if (ctx.partitionColumnNames != null) {
-                partitionColumnNames = arrayListOf<String>()
-                ctx.partitionColumnNames.children.map { item ->
-                    if (item is SparkSqlBaseParser.IdentifierSeqContext) {
-                        val value = item.getChild(0).getChild(0).getChild(0)
-                        if (value is SparkSqlBaseParser.UnquotedIdentifierContext) {
-                            val part = value.getChild(0).text
-                            partitionColumnNames.add(part)
-                        }
+            if (createTableClauses.partitioning != null) {
+                createTableClauses.partitioning.children
+                    .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
+                        val column = item as SparkSqlBaseParser.PartitionTransformContext
+                        partitionColumnNames.add(column.text)
                     }
-                }
             }
         }
 
-        var properties = HashMap<String, String>()
-        if (ctx.tableProps != null) {
-            ctx.tableProps.children.filter { it is SparkSqlBaseParser.TablePropertyContext }.map { item ->
+        val properties = HashMap<String, String>()
+        if (createTableClauses.tableProps != null) {
+            createTableClauses.tableProps.children.filter { it is SparkSqlBaseParser.TablePropertyContext }.map { item ->
                 val property = item as SparkSqlBaseParser.TablePropertyContext
-                var key = StringUtil.cleanQuote(property.key.text)
-                var value = StringUtil.cleanQuote(property.value.text)
+                val key = StringUtil.cleanQuote(property.key.text)
+                val value = StringUtil.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }
 
-        var fileFormat: String? = null
-        if (ctx.createFileFormat().size == 1) {
-            fileFormat = ctx.createFileFormat().get(0).fileFormat().text
+        var fileFormat = ctx.tableProvider()?.multipartIdentifier()?.text
+        ctx.createTableClauses().createFileFormat()
+        if (ctx.createTableClauses().createFileFormat().size == 1) {
+            fileFormat = ctx.createTableClauses().createFileFormat().get(0).fileFormat().text
         }
 
         val dcTable = DcTable(databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+        dcTable.createTableType = createTableType;
         dcTable.ifNotExists = ctx.createTableHeader().NOT() != null
         dcTable.external = ctx.createTableHeader().EXTERNAL() != null
         dcTable.temporary = ctx.createTableHeader().TEMPORARY() != null
-        dcTable.location = ctx.locationSpec().size > 0
+        dcTable.location = createTableClauses.locationSpec().size > 0
         if (dcTable.location) {
-            dcTable.locationPath = ctx.locationSpec().get(0).text
+            dcTable.locationPath = createTableClauses.locationSpec().get(0).text
         }
 
-        if (fileFormat != null && "hudi" == fileFormat?.lowercase() && ctx.primaryKeyExpr().size == 1) {
-            val expr = ctx.primaryKeyExpr().get(0)
+        if (fileFormat != null && "hudi" == fileFormat.lowercase() && createTableClauses.primaryKeyExpr().size == 1) {
+            val expr = createTableClauses.primaryKeyExpr().get(0)
             dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
                 val key = item.getChild(0)
                 key.text
@@ -456,10 +385,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitDropTableColumns(ctx: SparkSqlBaseParser.DropTableColumnsContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.table)
+        val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
         val dcTable = DcAlterColumn(databaseName, tableName)
-        dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
+        dcTable.token = CommonToken(ctx.multipartIdentifier().start.startIndex, ctx.multipartIdentifier().stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_DROP_COL, dcTable)
     }
 
@@ -479,11 +408,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 ?.map { partitionValContext -> partitionValContext.text }?.toList()
         val data = MergeData(databaseName, tableName, partitionVals)
         return StatementData(StatementType.MERGE_TABLE, data)
-    }
-
-    override fun visitKillJob(ctx: SparkSqlBaseParser.KillJobContext): StatementData {
-        val data = KillData(ctx.identifier().text)
-        return StatementData(StatementType.KILL, data)
     }
 
     override fun visitReadTable(ctx: SparkSqlBaseParser.ReadTableContext): StatementData {
@@ -524,7 +448,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.SHOW_CREATE_TABLE, data)
     }
 
-    override fun visitShowTable(ctx: SparkSqlBaseParser.ShowTableContext): StatementData {
+    override fun visitShowTableExtended(ctx: SparkSqlBaseParser.ShowTableExtendedContext): StatementData {
         return StatementData(StatementType.SHOW_TABLE_EXTENDED)
     }
 
@@ -541,20 +465,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val data = DcTable(databaseName, tableName)
         return StatementData(StatementType.ANALYZE_TABLE, data)
     }
-
-    override fun visitCompressTable(ctx: SparkSqlBaseParser.CompressTableContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val partitionVals = ctx.partitionSpec()?.partitionVal()
-                ?.map { partitionValContext -> partitionValContext.text }?.toList()
-        val data = CompressTableData(databaseName, tableName, partitionVals)
-        return StatementData(StatementType.COMPRESS_TABLE, data)
-    }
-
-    override fun visitCompressFile(ctx: SparkSqlBaseParser.CompressFileContext): StatementData {
-        return StatementData(StatementType.COMPRESS_FILE, null)
-    }
-
 
     override fun visitDataxExpr(ctx: SparkSqlBaseParser.DataxExprContext): StatementData {
         val srcType = StringUtil.cleanQuote(ctx.srcName.text)
@@ -726,10 +636,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.EXPLAIN)
     }
 
-    override fun visitAddJar(ctx: SparkSqlBaseParser.AddJarContext?): StatementData {
-        return StatementData(StatementType.ADDJAR)
-    }
-
     override fun visitLoadTempTable(ctx: SparkSqlBaseParser.LoadTempTableContext): StatementData {
         val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
@@ -781,8 +687,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
             isCTE = true
 
-            val node = node.getChild(1)
-            if (StringUtils.startsWithIgnoreCase(node.text, "select")) {
+            val childnode = node.getChild(1)
+            if (StringUtils.startsWithIgnoreCase(childnode.text, "select")) {
                 currentOptType = StatementType.SELECT
                 super.visitStatementDefault(ctx)
                 statementData.limit = limit
@@ -814,13 +720,13 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
             isCTE = true
 
-            val node = ctx.getChild(1)
-            if (node is SparkSqlBaseParser.SingleInsertQueryContext) {
-                if (StringUtils.equalsIgnoreCase("insert", node.start.text)) {
+            val childNode = ctx.getChild(1)
+            if (childNode is SparkSqlBaseParser.SingleInsertQueryContext) {
+                if (StringUtils.equalsIgnoreCase("insert", childNode.start.text)) {
                     insertSql = true
                     super.visitDmlStatement(ctx)
 
-                    val tableContext = node.getChild(0)
+                    val tableContext = childNode.getChild(0)
                     val multipartIdentifier: SparkSqlBaseParser.MultipartIdentifierContext = if (tableContext is SparkSqlBaseParser.InsertIntoTableContext) {
                         tableContext.multipartIdentifier()
                     } else {
@@ -933,34 +839,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.UPDATE, update)
     }
 
-    override fun visitVacuumTable(ctx: SparkSqlBaseParser.VacuumTableContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val num = if (ctx.num != null) ctx.num.text.toInt() else null
-        val update = VacuumTable(databaseName, tableName, num)
-        return StatementData(StatementType.VACUUM, update)
-    }
-
-    override fun visitDescribeDeltaDetail(ctx: SparkSqlBaseParser.DescribeDeltaDetailContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val update = DetailTable(databaseName, tableName)
-        return StatementData(StatementType.DESC_DETAIL, update)
-    }
-
-    override fun visitDescribeDeltaHistory(ctx: SparkSqlBaseParser.DescribeDeltaHistoryContext): StatementData {
-        val (databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val num = if (ctx.limit != null) ctx.limit.text.toInt() else null
-        val update = HistoryTable(databaseName, tableName, num)
-        return StatementData(StatementType.DESC_HISTORY, update)
-    }
-
     override fun visitMergeIntoTable(ctx: SparkSqlBaseParser.MergeIntoTableContext): StatementData {
         currentOptType = StatementType.MERGE_INTO_TABLE
 
         val (targetDatabase, targetTableName) = parseTableName(ctx.target)
-        var targetTable = TableSource(targetDatabase, targetTableName)
+        val targetTable = TableSource(targetDatabase, targetTableName)
         val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
         targetTable.tokens.add(token)
 
@@ -970,8 +853,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             val (sourceDatabase, sourceTableName) = parseTableName(ctx.source)
 
             val sourceTable = TableSource(sourceDatabase, sourceTableName)
-            val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-            sourceTable.tokens.add(token)
+            val innerToken = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
+            sourceTable.tokens.add(innerToken)
             deltaMerge.sourceTables.add(sourceTable)
         } else if (ctx.sourceQuery != null && ctx.sourceQuery is SparkSqlBaseParser.QueryContext) {
             val query = ctx.sourceQuery as SparkSqlBaseParser.QueryContext
@@ -980,14 +863,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             deltaMerge.sourceTables.addAll(statementData.inputTables)
         }
         return StatementData(StatementType.MERGE_INTO_TABLE, deltaMerge)
-    }
-
-    override fun visitDeltaConvert(ctx: SparkSqlBaseParser.DeltaConvertContext): StatementData {
-        val (targetDatabase, targetTableName) = parseTableName(ctx.multipartIdentifier())
-        var format = ctx.format.text
-        var deltaConvert = DeltaConvert(targetDatabase, targetTableName, format)
-
-        return StatementData(StatementType.DELTA_CONVERT, deltaConvert)
     }
 
     //-----------------------------------private method-------------------------------------------------
@@ -1007,10 +882,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitMultipartIdentifier(ctx: SparkSqlBaseParser.MultipartIdentifierContext): StatementData? {
-        if (currentOptType == null) {
-            return null
-        }
-        var (databaseName, tableName, metaAction) = parseTableName(ctx)
+        val (databaseName, tableName, metaAction) = parseTableName(ctx)
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
                 currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.INSERT_SELECT ||
@@ -1126,7 +998,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             return true
         }
 
-        return when (dataType.toLowerCase()) {
+        return when (dataType.lowercase()) {
             "string", "int", "bigint", "double", "date", "timestamp", "boolean" -> true
             else -> throw IllegalStateException("不支持数据类型：" + dataType)
         }
@@ -1136,7 +1008,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
      * 分区支持数据类型
      */
     private fun checkPartitionDataType(dataType: String): Boolean {
-        return when (dataType.toLowerCase()) {
+        return when (dataType.lowercase()) {
             "string", "int", "bigint" -> true
             else -> throw IllegalStateException("不支持数据类型：" + dataType)
         }

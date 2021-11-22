@@ -172,7 +172,7 @@ object MySQLHelper {
                     }
 
                     sql = StringUtils.trim(sql)
-                    if(StringUtils.endsWith(sql, ";")) {
+                    if (StringUtils.endsWith(sql, ";")) {
                         sql = StringUtils.substring(sql, 0, -1)
                     }
 
