@@ -161,6 +161,18 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         if (dcTable.location) {
             dcTable.locationPath = ctx.createTableClauses().locationSpec().get(0).text
         }
+
+        if (fileFormat != null && "hudi" == fileFormat?.lowercase() && ctx.createTableClauses().primaryKeyExpr().size == 1) {
+            val expr = ctx.createTableClauses().primaryKeyExpr().get(0)
+            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
+                val key = item.getChild(0)
+                key.text
+            }
+
+            if (expr.hudiType != null) {
+                dcTable.hudiType = expr.hudiType.text
+            }
+        }
         dcTable.partitionColumnNames = partitionColumnNames
 
         if (ctx.query() != null) {
@@ -259,18 +271,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         dcTable.location = ctx.locationSpec().size > 0
         if (dcTable.location) {
             dcTable.locationPath = ctx.locationSpec().get(0).text
-        }
-
-        if (fileFormat != null && "hudi" == fileFormat?.lowercase() && ctx.primaryKeyExpr().size == 1) {
-            val expr = ctx.primaryKeyExpr().get(0)
-            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
-                val key = item.getChild(0)
-                key.text
-            }
-
-            if (expr.hudiType != null) {
-                dcTable.hudiType = expr.hudiType.text
-            }
         }
 
         dcTable.partitionColumnNames = partitionColumnNames

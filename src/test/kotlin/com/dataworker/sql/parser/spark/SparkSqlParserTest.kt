@@ -248,10 +248,10 @@ class SparkSqlParserTest {
     @Test
     fun createHudiTableTest5() {
         val sql = """
-            create table test_hudi_table ( id int, name string, price double, ts long) 
-            stored as hudi
+            create table test_hudi_table ( id int, name string, price double, ts long, dt string) 
+            using hudi
             primary key (id, name) with MOR
-            partitioned by (dt string)
+            partitioned by (dt)
             lifeCycle 300
             """
 
@@ -265,7 +265,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
             Assert.assertEquals("MOR", statement.hudiType)
-            Assert.assertEquals("hive", statement.createTableType)
+            Assert.assertEquals("spark", statement.createTableType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -279,10 +279,10 @@ class SparkSqlParserTest {
     @Test
     fun createHudiTableTest6() {
         val sql = """
-            create table test_hudi_table ( id int, name string, price double, ts long) 
-            stored as hudi
+            create table test_hudi_table ( id int, name string, price double, ts long, dt string) 
+            using hudi
             primary key (id, name)
-            partitioned by (dt string)
+            partitioned by (dt)
             lifeCycle 300
             """
 
@@ -296,7 +296,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
             Assert.assertEquals("COW", statement.hudiType)
-            Assert.assertEquals("hive", statement.createTableType)
+            Assert.assertEquals("spark", statement.createTableType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)

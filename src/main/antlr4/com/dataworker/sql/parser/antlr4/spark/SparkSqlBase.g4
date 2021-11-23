@@ -119,7 +119,6 @@ statement
         (commentSpec |
         (PARTITIONED BY '(' partitionColumns=colTypeList ')' |
         PARTITIONED BY partitionColumnNames=identifierList) |
-        primaryKeyExpr |
         bucketSpec |
         skewSpec |
         rowFormat |
@@ -397,6 +396,7 @@ tableProvider
 createTableClauses
     :((OPTIONS options=tablePropertyList) |
      (PARTITIONED BY partitioning=transformList) |
+     primaryKeyExpr |
      bucketSpec |
      locationSpec |
      commentSpec |
