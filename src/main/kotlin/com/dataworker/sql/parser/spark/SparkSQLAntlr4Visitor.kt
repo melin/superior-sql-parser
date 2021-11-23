@@ -153,6 +153,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         var fileFormat: String? = ctx?.tableProvider()?.multipartIdentifier()?.text
 
         val dcTable = DcTable(databaseName, tableName, null, lifeCycle, null, columns, properties, fileFormat)
+        dcTable.createTableType = "spark"
         dcTable.ifNotExists = ctx.createTableHeader().NOT() != null
         dcTable.external = ctx.createTableHeader().EXTERNAL() != null
         dcTable.temporary = ctx.createTableHeader().TEMPORARY() != null

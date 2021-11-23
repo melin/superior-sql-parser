@@ -128,6 +128,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("event_type", statement.partitionColumnNames?.get(1))
+            Assert.assertEquals("hive", statement.createTableType)
         } else {
             Assert.fail()
         }
@@ -153,6 +154,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("dc_cluster_compute", name)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("数据中心", statement.columns?.get(1)?.comment)
+            Assert.assertEquals("spark", statement.createTableType)
         } else {
             Assert.fail()
         }
@@ -177,6 +179,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals("hive", statement.createTableType)
         } else {
             Assert.fail()
         }
@@ -205,6 +208,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals("spark", statement.createTableType)
         } else {
             Assert.fail()
         }
@@ -235,6 +239,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("the_date", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("the_nums", statement.partitionColumnNames?.get(1))
+            Assert.assertEquals("spark", statement.createTableType)
         } else {
             Assert.fail()
         }
@@ -260,6 +265,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
             Assert.assertEquals("MOR", statement.hudiType)
+            Assert.assertEquals("hive", statement.createTableType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -290,6 +296,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
             Assert.assertEquals("COW", statement.hudiType)
+            Assert.assertEquals("hive", statement.createTableType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)

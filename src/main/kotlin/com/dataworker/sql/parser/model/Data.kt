@@ -56,6 +56,8 @@ data class DcTable(
                 tableName: String): this(databaseName,
             tableName, null, null, null, null, null, null, false, false, false)
 
+    // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
+    var createTableType: String = "hive"
     var token: CommonToken? = null
     var hudiPrimaryKeys: List<String> = listOf()
     var hudiType: String = "COW"
