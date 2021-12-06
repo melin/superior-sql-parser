@@ -245,6 +245,27 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createTableTest7() {
+        val sql = """
+            CREATE TABLE test_demo_test (name string, age int)
+            using orc
+            LIFECYCLE 10;
+            """
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("test_demo_test", name)
+            Assert.assertEquals(10, statement.lifeCycle)
+            Assert.assertEquals("orc", statement.fileFormat)
+            Assert.assertEquals("spark", statement.createTableType)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun createHudiTableTest5() {
         val sql = """
             create table test_hudi_table ( id int, name string, price double, ts long) 

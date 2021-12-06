@@ -131,9 +131,12 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 DcColumn(colName, dataType, colComment)
             }
 
+            if (ctx.tableProvider() != null) {
+                createTableType = "spark"
+            }
+
             if (createTableClauses.partitioning != null) {
                 if (ctx.tableProvider() != null) {
-                    createTableType = "spark"
                     createTableClauses.partitioning.children
                         .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
                             val column = item as SparkSqlBaseParser.PartitionTransformContext
