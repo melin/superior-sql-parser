@@ -266,6 +266,26 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createTableTest9() {
+        val sql = """
+            create table dzlog_test_dt (
+                message string,
+                collect_time timestamp
+            ) 
+            using parquet
+            partitioned by (ds string) 
+            lifeCycle 14;
+            """
+
+        try {
+            SparkSQLHelper.getStatementData(sql)
+            Assert.fail()
+        } catch (e: Exception) {
+            Assert.assertTrue(true)
+        }
+    }
+
+    @Test
     fun createHudiTableTest5() {
         val sql = """
             create table test_hudi_table ( id int, name string, price double, ts long) 

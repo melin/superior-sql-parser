@@ -136,12 +136,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             }
 
             if (createTableClauses.partitioning != null) {
-                if (ctx.tableProvider() != null) {
+                if ("spark" == createTableType) {
                     createTableClauses.partitioning.children
                         .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
                             val column = item as SparkSqlBaseParser.PartitionTransformContext
                             partitionColumnNames.add(column.text)
                         }
+
+                    if (partitionColumnNames.size == 0) {
+                        throw SQLParserException("spark create table 语法创建表，创建分区字段语法错误，请参考文档");
+                    }
                 } else {
                     partitionColumns = createTableClauses.partitioning.children
                         .filter { it is SparkSqlBaseParser.PartitionColumnContext }.map { item ->
