@@ -73,10 +73,6 @@ object SparkSQLHelper {
             SHOW_FUNCTIONS,
             DESC_FUNCTION,
 
-            STATUS,
-            ADDJAR,
-            ANGEL,
-
             CACHE,
             UNCACHE,
             CLEAR_CACHE,

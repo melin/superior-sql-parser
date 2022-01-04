@@ -76,12 +76,6 @@ enum class StatementType: Serializable {
     SHOW_FUNCTIONS,
     DESC_FUNCTION,
 
-
-    KILL,
-    STATUS,
-    ADDJAR,
-    ANGEL,
-
     CACHE,
     UNCACHE,
     CLEAR_CACHE,
