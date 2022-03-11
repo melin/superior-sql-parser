@@ -346,6 +346,31 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createIcebergTable() {
+        val sql = """
+            CREATE TABLE IF NOT EXISTS iceberg_melin.test_table_02 (
+                id bigint, data string, ds timestamp) 
+            USING iceberg PARTITIONED BY (days(ts))
+            lifeCycle 300
+        """.trimIndent()
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("test_table_02", name)
+
+            Assert.assertEquals(300, statement.lifeCycle)
+            Assert.assertEquals("iceberg", statement.fileFormat)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("days(ts)", statement.partitionColumnNames?.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun descTableTest0() {
         var sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
