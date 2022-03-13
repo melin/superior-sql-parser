@@ -255,10 +255,10 @@ statement
         (OPTIONS options=tablePropertyList)?                           #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=constant (OPTIONS options=tablePropertyList)?          #exportTable
-    | DATAX READER '(' srcName=STRING ')' OPTIONS
+    | DTUNNEL READER '(' srcName=STRING ')' OPTIONS
         readOpts=tablePropertyList
         WRITER '(' distName=STRING ')' OPTIONS
-        writeOpts=tablePropertyList                                    #dataxExpr
+        writeOpts=tablePropertyList                                    #dtunnelExpr
 
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
@@ -1157,7 +1157,7 @@ ansiNonReserved
     | LIST
     | LOAD
     | READ
-    | DATAX
+    | DTUNNEL
     | READER
     | WRITER
     | LIFECYCLE
@@ -1419,7 +1419,7 @@ nonReserved
     | LIST
     | LOAD
     | READ
-    | DATAX
+    | DTUNNEL
     | READER
     | WRITER
     | LIFECYCLE
@@ -1688,7 +1688,7 @@ LINES: 'LINES';
 LIST: 'LIST';
 LOAD: 'LOAD';
 READ: 'READ';
-DATAX: 'DATAX';
+DTUNNEL: 'DTUNNEL';
 READER: 'READER';
 WRITER: 'WRITER';
 LIFECYCLE: 'LIFECYCLE';

@@ -52,7 +52,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         if (ctx.parts.size == 2) {
             return Database(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return Database(null, ctx.parts.get(1).text)
+            return Database(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -66,7 +66,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         } else if (ctx.parts.size == 2) {
             return Schema(null, ctx.parts.get(0).text, ctx.parts.get(1).text, null)
         } else if (ctx.parts.size == 1) {
-            return Schema(null, null, ctx.parts.get(1).text, null)
+            return Schema(null, null, ctx.parts.get(0).text, null)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -485,7 +485,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.ANALYZE_TABLE, data)
     }
 
-    override fun visitDataxExpr(ctx: SparkSqlBaseParser.DataxExprContext): StatementData {
+    override fun visitDtunnelExpr(ctx: SparkSqlBaseParser.DtunnelExprContext): StatementData {
         val srcType = StringUtil.cleanQuote(ctx.srcName.text)
         val distType = StringUtil.cleanQuote(ctx.distName.text)
 

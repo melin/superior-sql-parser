@@ -1306,7 +1306,7 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
         var statement = statementData.statement
-        if (statement is DatabaseSource) {
+        if (statement is DcDatabase) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
@@ -1316,7 +1316,7 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
         statement = statementData.statement
-        if (statement is DatabaseSource) {
+        if (statement is DcDatabase) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
@@ -1333,7 +1333,7 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
         var statement = statementData.statement
-        if (statement is DatabaseSource) {
+        if (statement is DcDatabase) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
@@ -1343,7 +1343,7 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
         statement = statementData.statement
-        if (statement is DatabaseSource) {
+        if (statement is DcDatabase) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
@@ -1701,7 +1701,7 @@ class SparkSqlParserTest {
         }
     }
 
-    @Test
+    //@Test
     fun queryLakeTableMetaTest0() {
         val sql = "select * from dc.user.history limit 101"
         val statementData = SparkSQLHelper.getStatementData(sql)
@@ -1717,7 +1717,7 @@ class SparkSqlParserTest {
         }
     }
 
-    @Test
+    //@Test
     fun queryLakeTableMetaTest1() {
         val sql = """
             select h.made_current_at, s.operation, h.snapshot_id, h.is_current_ancestor, s.summary['spark.app.id']
@@ -1742,8 +1742,8 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun dataXTest() {
-        val sql = "datax reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo', column=['id', 'name'])"
+    fun dtunnelTest() {
+        val sql = "dtunnel reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo', column=['id', 'name'])"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DataxExpr) {
