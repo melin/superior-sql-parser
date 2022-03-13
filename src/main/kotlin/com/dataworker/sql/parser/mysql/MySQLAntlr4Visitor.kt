@@ -108,7 +108,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         }
         val (databaseName, tableName) = parseFullId(ctx.tables().tableName(0).fullId())
 
-        val dcTable = DcTable(databaseName, tableName)
+        val dcTable = DcTable(null, databaseName, tableName)
         dcTable.ifExists = if (ctx.ifExists() != null) true else false
         return StatementData(StatementType.DROP_TABLE_TIDB, dcTable)
     }
@@ -116,7 +116,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
     override fun visitTruncateTable(ctx: MySQLParser.TruncateTableContext): StatementData {
         val (databaseName, tableName) = parseFullId(ctx.tableName().fullId())
 
-        val dcTable = DcTable(databaseName, tableName)
+        val dcTable = DcTable(null, databaseName, tableName)
         return StatementData(StatementType.TRUNCATE_TABLE, dcTable)
     }
 
@@ -124,7 +124,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         val (databaseName, oldTableName) = parseFullId(ctx.renameTableClause().get(0).tableName(0).fullId())
         val (_, newTableName) = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
-        val renameTable = DcRenameTable(databaseName, oldTableName, newTableName)
+        val renameTable = DcRenameTable(null, databaseName, oldTableName, newTableName)
         return StatementData(StatementType.RENAME_TABLE, renameTable)
     }
 
@@ -260,7 +260,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
 
             val (databaseName, tableName) =
                     parseFullId(ctx.updateStatement().singleUpdateStatement().tableName().fullId())
-            var tableSource = UpdateTable(databaseName, tableName)
+            var tableSource = UpdateTable(null, databaseName, tableName)
             return return StatementData(StatementType.UPDATE, tableSource)
         } else if (ctx.deleteStatement() != null) {
             val statement = ctx.deleteStatement()
@@ -270,7 +270,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
 
             val (databaseName, tableName) =
                     parseFullId(ctx.deleteStatement().singleDeleteStatement().tableName().fullId())
-            var tableSource = DeleteTable(databaseName, tableName)
+            var tableSource = DeleteTable(null, databaseName, tableName)
             return return StatementData(StatementType.DELETE, tableSource)
         } else {
             throw SQLParserException("不支持的DML")

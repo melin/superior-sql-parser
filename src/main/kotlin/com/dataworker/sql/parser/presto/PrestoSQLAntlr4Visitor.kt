@@ -51,7 +51,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val dcTable = DcTable(tableSource.databaseName, tableSource.tableName)
+        val dcTable = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
         data = StatementData(StatementType.SHOW_CREATE_TABLE, dcTable)
         return data
     }
@@ -59,7 +59,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableSource = createTableSource(ctx.qualifiedName())
-        table = DcTable(tableSource.databaseName, tableSource.tableName)
+        table = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
 
         var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
@@ -80,7 +80,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val dcTable = DcTable(tableSource.databaseName, tableSource.tableName)
+        val dcTable = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
         val token = CommonToken(ctx.qualifiedName().start.startIndex, ctx.qualifiedName().stop.stopIndex)
         dcTable.ifExists = ctx.EXISTS() != null
         dcTable.token = token
@@ -111,16 +111,22 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableSource {
         val list = ctx.identifier()
 
-        var db: String? = null
-        val text = if (list.size == 1) {
+        var catalogName: String? = null
+        var databaseName: String? = null
+        val tableName = if (list.size == 1) {
             ctx.text
-        } else {
+        } else if (list.size == 2) {
             val index = StringUtils.lastIndexOf(ctx.text, ".")
-            db = StringUtils.substring(ctx.text, 0, index)
+            databaseName = StringUtils.substring(ctx.text, 0, index)
 
             StringUtils.substring(ctx.text, index + 1)
+        } else {
+            val items = StringUtils.split(ctx.text, ".");
+            catalogName = items[0];
+            databaseName = items[1];
+            items[2]
         }
 
-        return TableSource(db, text)
+        return TableSource(catalogName, databaseName, tableName)
     }
 }

@@ -1,12 +1,15 @@
 package com.dataworker.sql.parser.model
 
 import com.dataworker.sql.parser.StatementType
-import com.google.common.collect.Maps
 import java.io.Serializable
 
 /**
  * Created by libinsong on 2017/4/4.
  */
+
+data class Schema(val catalogName: String?, val databaseName: String?, val tableName: String, val metaType: String?)
+
+data class Database(val catalogName: String?, val databaseName: String)
 
 @Target(AnnotationTarget.CLASS)
 annotation class DefaultConstructor
@@ -20,12 +23,18 @@ data class StatementData(val type: StatementType,
 
 abstract class Statement: Serializable
 
-data class DcDatabase(val databaseName: String,
-                      val location: String?): Statement(){
-    constructor(databaseName: String): this(databaseName,null)
+@DefaultConstructor
+data class DcDatabase(
+    val catalogName: String?,
+    val databaseName: String,
+    val location: String?): Statement(){
+    constructor(catalogName: String?, databaseName: String): this(catalogName, databaseName, null)
+
+    constructor(databaseName: String): this(null, databaseName, null)
 }
 
 data class DcTable(
+        val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
         val comment: String?,
@@ -44,17 +53,17 @@ data class DcTable(
         var tableData: TableData? = null,
         var partitionColumnNames: List<String>? = null) : Statement() { //是否存在 if exists 关键字
 
-    constructor(databaseName: String?,
+    constructor(catalogName: String?,
+                databaseName: String?,
                 tableName: String,
                 comment: String?,
                 lifeCycle: Int?,
                 partitionColumns: List<DcColumn>?,
-                columns: List<DcColumn>?): this(databaseName,
-            tableName, comment, lifeCycle, partitionColumns, columns, null, null, false, false, false)
+                columns: List<DcColumn>?):
+            this(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, null, null, false, false, false)
 
-    constructor(databaseName: String?,
-                tableName: String): this(databaseName,
-            tableName, null, null, null, null, null, null, false, false, false)
+    constructor(catalogName: String?, databaseName: String?, tableName: String):
+            this(catalogName, databaseName, tableName, null, null, null, null, null, null, false, false, false)
 
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var createTableType: String = "hive"
@@ -89,6 +98,7 @@ data class TidbColumn(
 ) : Statement() {}
 
 data class DcView(
+        val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
         var querySql: String? = null,
@@ -113,14 +123,18 @@ data class TableData(
 
 @DefaultConstructor
 data class TableSource(
+        val catalogName: String?,
         var databaseName: String?,
         var tableName: String,
         var metaAction: String?,
         var column: DcColumn? = null,
         var columns: List<String>? = ArrayList()
 ): Statement() {
-    constructor(databaseName: String?,
-                tableName: String): this(databaseName, tableName, null)
+    constructor(catalogName: String?, databaseName: String?, tableName: String):
+            this(catalogName, databaseName, tableName, null)
+
+    constructor(databaseName: String?, tableName: String):
+            this(null, databaseName, tableName, null)
 
     val tokens: java.util.ArrayList<CommonToken> = ArrayList()
 
@@ -129,15 +143,13 @@ data class TableSource(
     }
 }
 
-@DefaultConstructor
-data class DatabaseSource(var databaseName: String): Statement()
-
 data class CommonToken(val start: Int, val stop: Int)
 
 data class DcRenameTable(
-        val databaseName: String?,
-        val oldName: String,
-        val newName: String) : Statement() {
+    val catalogName: String?,
+    val databaseName: String?,
+    val oldName: String,
+    val newName: String) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + oldName else oldName
@@ -148,6 +160,7 @@ data class DcRenameTable(
 }
 
 data class DcRenameView(
+        val catalogName: String?,
         val databaseName: String?,
         val oldName: String,
         val newName: String) : Statement() {
@@ -177,14 +190,15 @@ data class DcColumn(
 }
 
 data class DcAlterColumn(
+        val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
         val oldName: String?,
         val newName: String?,
         val comment: String? = null) : Statement() {
 
-    constructor(databaseName: String?, tableName: String):
-            this(databaseName, tableName, null, null, null);
+    constructor(catalogName: String?, databaseName: String?, tableName: String):
+            this(catalogName, databaseName, tableName, null, null, null);
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -194,20 +208,24 @@ data class DcAlterColumn(
 }
 
 data class DcFunction(
-        val name: String,
-        var temporary: Boolean = false,
-        val className: String?,
-        val file: String?) : Statement() {
+    val name: String,
+    var temporary: Boolean = false,
+    val className: String?,
+    val file: String?) : Statement() {
     constructor(name: String): this(name,  false, null, null)
 }
 
-data class MergeData(val databaseName: String?,
-                     val tableName: String,
-                     val partitionVals: List<String>?) : Statement()
+data class MergeData(
+    val catalogName: String?,
+    val databaseName: String?,
+    val tableName: String,
+    val partitionVals: List<String>?) : Statement()
 
-data class CompressTableData(val databaseName: String?,
-                     val tableName: String,
-                     val partitionVals: List<String>?) : Statement()
+data class CompressTableData(
+    val catalogName: String?,
+    val databaseName: String?,
+    val tableName: String,
+    val partitionVals: List<String>?) : Statement()
 
 data class DataxExpr(
     val srcType: String,
@@ -215,26 +233,34 @@ data class DataxExpr(
     val distType: String,
     var distOptions: Map<String, String>) : Statement()
 
-data class ReadData(val databaseName: String?,
+data class ReadData(
+    val catalogName: String?,
+    val databaseName: String?,
     val tableName: String,
     val partitionVals: List<String>?,
     val limit: Int) : Statement()
 
 data class KillData(val jobGroupId: String) : Statement()
 
-data class LoadData(val databaseName: String?,
+data class LoadData(
+    val catalogName: String?,
+    val databaseName: String?,
     val tableName: String,
     val loadMode: String? = null,
     val resourceName: String? = null,
     val partitionVals: List<String>? = null) : Statement()
 
-data class ExportData(val databaseName: String?,
+data class ExportData(
+    val catalogName: String?,
+    val databaseName: String?,
     val tableName: String,
     val cte: Boolean = false,
     var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
     var cteTempTables: ArrayList<String>? = null) : Statement()
 
-data class RefreshData(val databaseName: String?,
+data class RefreshData(
+    val catalogName: String?,
+    val databaseName: String?,
     val tableName: String) : Statement()
 
 data class SetData(val key: String,
@@ -272,6 +298,7 @@ enum class InsertMode: Serializable {
 }
 
 data class DeleteTable(
+    val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     val where: String? = null) : Statement() {
@@ -282,20 +309,11 @@ data class DeleteTable(
 }
 
 data class UpdateTable(
+    val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     val upset: Map<String, String>? = null,
     val where: String? = null) : Statement() {
-
-    fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
-    }
-}
-
-data class VacuumTable(
-    val databaseName: String?,
-    val tableName: String,
-    val retain: Int? = null) : Statement() {
 
     fun getFullTableName(): String {
         return if (databaseName != null) databaseName + "." + tableName else tableName
@@ -326,17 +344,8 @@ data class DeltaMerge(
     var targetTable: TableSource
 ): Statement()
 
-data class DeltaConvert(
-    val databaseName: String?,
-    val tableName: String,
-    val format: String
-): Statement() {
-    fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
-    }
-}
-
 data class DropTablePartition(
+    val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     var ifExists: Boolean = false,
@@ -349,6 +358,7 @@ data class DropTablePartition(
 }
 
 data class AddTablePartition(
+    val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     var ifNotExists: Boolean = false,
@@ -361,6 +371,7 @@ data class AddTablePartition(
 }
 
 data class TouchTable(
+    val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     var partitionSpecs: List<String>
