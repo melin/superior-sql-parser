@@ -1743,7 +1743,7 @@ class SparkSqlParserTest {
 
     @Test
     fun dtunnelTest() {
-        val sql = "dtunnel reader('sftp') options(host='x.x.x.x') writer('hive') options(table='demo', column=['id', 'name'])"
+        val sql = "dtunnel source('sftp') options(host='x.x.x.x') sink('hive') options(table='demo', column=['id', 'name'])"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DataxExpr) {
