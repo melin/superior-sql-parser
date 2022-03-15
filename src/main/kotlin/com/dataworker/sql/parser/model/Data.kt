@@ -221,13 +221,7 @@ data class MergeData(
     val tableName: String,
     val partitionVals: List<String>?) : Statement()
 
-data class CompressTableData(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    val partitionVals: List<String>?) : Statement()
-
-data class DataxExpr(
+data class DtunnelExpr(
     val srcType: String,
     var srcOptions: Map<String, String>,
     val distType: String,
@@ -239,8 +233,6 @@ data class ReadData(
     val tableName: String,
     val partitionVals: List<String>?,
     val limit: Int) : Statement()
-
-data class KillData(val jobGroupId: String) : Statement()
 
 data class LoadData(
     val catalogName: String?,

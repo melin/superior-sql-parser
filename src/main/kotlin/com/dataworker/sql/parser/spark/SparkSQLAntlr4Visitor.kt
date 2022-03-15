@@ -509,8 +509,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
             }
         }
 
-        val data = DataxExpr(srcType, srcOptions, distType, distOptions)
-        return StatementData(StatementType.DATAX, data)
+        val data = DtunnelExpr(srcType, srcOptions, distType, distOptions)
+        return StatementData(StatementType.DTUNNEL, data)
     }
 
     //-----------------------------------partition-------------------------------------------------
@@ -907,7 +907,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
                 currentOptType == StatementType.INSERT_SELECT ||
                 currentOptType == StatementType.MERGE_INTO_TABLE ||
                 currentOptType == StatementType.EXPORT_TABLE ||
-                currentOptType == StatementType.DATAX) {
+                currentOptType == StatementType.DTUNNEL) {
 
             val tableSource = TableSource(databaseName, tableName, metaAction)
             val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)

@@ -77,7 +77,7 @@ object SparkSQLHelper {
             UNCACHE,
             CLEAR_CACHE,
 
-            DATAX,
+            DTUNNEL,
 
             DELETE,
             UPDATE,

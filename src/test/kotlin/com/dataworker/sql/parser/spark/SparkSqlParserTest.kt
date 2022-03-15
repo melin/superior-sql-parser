@@ -1746,8 +1746,8 @@ class SparkSqlParserTest {
         val sql = "dtunnel source('sftp') options(host='x.x.x.x') sink('hive') options(table='demo', column=['id', 'name'])"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DataxExpr) {
-            Assert.assertEquals(StatementType.DATAX, statementData.type)
+        if (statement is DtunnelExpr) {
+            Assert.assertEquals(StatementType.DTUNNEL, statementData.type)
             Assert.assertEquals("sftp", statement.srcType)
             Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
 
