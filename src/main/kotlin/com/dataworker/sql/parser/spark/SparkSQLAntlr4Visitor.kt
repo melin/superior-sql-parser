@@ -513,6 +513,12 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.DTUNNEL, data)
     }
 
+    override fun visitCall(ctx: SparkSqlBaseParser.CallContext): StatementData {
+        val (catalogName, namespace, procedureName) = parseTableName(ctx.multipartIdentifier())
+        val data = CallExpr(catalogName, namespace, procedureName)
+        return StatementData(StatementType.CALL, data)
+    }
+
     //-----------------------------------partition-------------------------------------------------
 
     override fun visitAddTablePartition(ctx: SparkSqlBaseParser.AddTablePartitionContext): StatementData {

@@ -87,6 +87,7 @@ enum class StatementType: Serializable {
     USE,
 
     DTUNNEL,
+    CALL,
 
     ARITHMETIC,
     OPTIMIZE, // clickhouse

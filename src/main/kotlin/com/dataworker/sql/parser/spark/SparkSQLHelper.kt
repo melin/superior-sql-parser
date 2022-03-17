@@ -78,6 +78,7 @@ object SparkSQLHelper {
             CLEAR_CACHE,
 
             DTUNNEL,
+            CALL,
 
             DELETE,
             UPDATE,

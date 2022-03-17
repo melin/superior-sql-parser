@@ -1760,6 +1760,21 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun callTest() {
+        val sql = "CALL catalog_name.system.rollback_to_snapshot('db.sample', 1)"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CallExpr) {
+            Assert.assertEquals(StatementType.CALL, statementData.type)
+            Assert.assertEquals("catalog_name", statement.catalogName)
+            Assert.assertEquals("system", statement.namespace)
+            Assert.assertEquals("rollback_to_snapshot", statement.procedureName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun notSupportSql() {
         val sql = "insert overwrite directory '/user/ahao' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t' select * from nlp_dev.all_category_sample"
         try {

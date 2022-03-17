@@ -227,6 +227,12 @@ data class DtunnelExpr(
     val distType: String,
     var distOptions: Map<String, String>) : Statement()
 
+data class CallExpr(
+    val catalogName: String?,
+    val namespace: String?,
+    val procedureName: String
+) : Statement()
+
 data class ReadData(
     val catalogName: String?,
     val databaseName: String?,

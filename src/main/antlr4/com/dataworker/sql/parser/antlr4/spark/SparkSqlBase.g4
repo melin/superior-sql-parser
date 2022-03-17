@@ -260,6 +260,9 @@ statement
         SINK '(' distName=STRING ')' OPTIONS
         writeOpts=tablePropertyList                                    #dtunnelExpr
 
+    | CALL multipartIdentifier
+        '(' (callArgument (',' callArgument)*)? ')'                    #call
+
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
@@ -269,6 +272,11 @@ configKey
 
 configValue
     : quotedIdentifier
+    ;
+
+callArgument
+    : expression                    #positionalArgument
+    | identifier '=>' expression    #namedArgument
     ;
 
 unsupportedHiveNativeCommands
@@ -1158,6 +1166,7 @@ ansiNonReserved
     | LOAD
     | READ
     | DTUNNEL
+    | CALL
     | SOURCE
     | SINK
     | LIFECYCLE
@@ -1420,6 +1429,7 @@ nonReserved
     | LOAD
     | READ
     | DTUNNEL
+    | CALL
     | SOURCE
     | SINK
     | LIFECYCLE
@@ -1689,6 +1699,7 @@ LIST: 'LIST';
 LOAD: 'LOAD';
 READ: 'READ';
 DTUNNEL: 'DTUNNEL';
+CALL: 'CALL';
 SOURCE: 'SOURCE';
 SINK: 'SINK';
 LIFECYCLE: 'LIFECYCLE';
