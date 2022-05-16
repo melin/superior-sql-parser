@@ -31,7 +31,6 @@ object SparkSQLHelper {
             CREATE_TABLE_AS_LIKE,
             DROP_TABLE,
             TRUNCATE_TABLE,
-            READ_TABLE,
             MERGE_TABLE,
             REFRESH_TABLE,
             LOAD_TEMP_TABLE,

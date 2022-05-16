@@ -1,12 +1,12 @@
 package com.dataworker.sql.parser.antlr4;
 
-import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseBaseListener;
 import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseParser;
+import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseParserBaseListener;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-public class PostProcessor extends SparkSqlBaseBaseListener {
+public class PostProcessor extends SparkSqlBaseParserBaseListener {
 
     /** Remove the back ticks from an Identifier. */
     @Override

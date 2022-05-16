@@ -2,7 +2,7 @@ package com.dataworker.sql.parser.spark
 
 import com.dataworker.sql.parser.SQLParserException
 import com.dataworker.sql.parser.StatementType
-import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseBaseVisitor
+import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseParserBaseVisitor
 import com.dataworker.sql.parser.antlr4.spark.SparkSqlBaseParser
 import com.dataworker.sql.parser.model.*
 import com.dataworker.sql.parser.util.StringUtil
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
+class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private val statementData = TableData()
@@ -184,8 +184,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
         val properties = HashMap<String, String>()
         if (createTableClauses.tableProps != null) {
-            createTableClauses.tableProps.children.filter { it is SparkSqlBaseParser.TablePropertyContext }.map { item ->
-                val property = item as SparkSqlBaseParser.TablePropertyContext
+            createTableClauses.tableProps.children.filter { it is SparkSqlBaseParser.PropertyContext }.map { item ->
+                val property = item as SparkSqlBaseParser.PropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
                 properties.put(key, value)
@@ -300,9 +300,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
         val properties = HashMap<String, String>()
-        if (ctx.tablePropertyList() != null) {
-            ctx.tablePropertyList().children.filter { it is SparkSqlBaseParser.TablePropertyContext }.map { item ->
-                val property = item as SparkSqlBaseParser.TablePropertyContext
+        if (ctx.propertyList() != null) {
+            ctx.propertyList().children.filter { it is SparkSqlBaseParser.PropertyContext }.map { item ->
+                val property = item as SparkSqlBaseParser.PropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
                 properties.put(key, value)
@@ -429,16 +429,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.MERGE_TABLE, data)
     }
 
-    override fun visitReadTable(ctx: SparkSqlBaseParser.ReadTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val partitionVals = ctx.partitionSpec()?.partitionVal()
-                ?.map { partitionValContext -> partitionValContext.text }?.toList()
-        val data = ReadData(catalogName, databaseName, tableName, partitionVals, ctx.number().text.toInt())
-
-        return StatementData(StatementType.READ_TABLE, data)
-    }
-
     override fun visitRefreshTable(ctx: SparkSqlBaseParser.RefreshTableContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
         val data = RefreshData(catalogName, databaseName, tableName)
@@ -491,8 +481,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
         var srcOptions = HashMap<String, String>()
         if (ctx.readOpts != null) {
-            ctx.readOpts.tableProperty().map { item ->
-                val property = item as SparkSqlBaseParser.TablePropertyContext
+            ctx.readOpts.dtProperty().map { item ->
+                val property = item as SparkSqlBaseParser.DtPropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
                 srcOptions.put(key, value)
@@ -501,8 +491,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseBaseVisitor<StatementData>() {
 
         var distOptions = HashMap<String, String>()
         if (ctx.writeOpts != null) {
-            ctx.writeOpts.tableProperty().map { item ->
-                val property = item as SparkSqlBaseParser.TablePropertyContext
+            ctx.writeOpts.dtProperty().map { item ->
+                val property = item as SparkSqlBaseParser.DtPropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
                 distOptions.put(key, value)

@@ -18,7 +18,6 @@ enum class StatementType: Serializable {
     DROP_TABLE_TIDB, //mysql
     TRUNCATE_TABLE,
     RENAME_TABLE, //mysql
-    READ_TABLE,
     MERGE_TABLE,
     REFRESH_TABLE,
     LOAD_TEMP_TABLE,
