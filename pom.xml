@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.melin</groupId>
+    <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
     <version>3.3.0-SNAPSHOT</version>
 
@@ -12,6 +12,31 @@
         <kotlin.version>1.6.21</kotlin.version>
         <antlr4.version>4.8</antlr4.version>
     </properties>
+
+    <description>
+        Superior SQL Parser
+    </description>
+    <name>Superior SQL Parser</name>
+    <url>https://github.com/melin/superior-sql-parser</url>
+
+    <issueManagement>
+        <system>gitee</system>
+        <url>https://github.com/melin/superior-sql-parser/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/melin/superior-sql-parser.git</connection>
+        <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
+        <url>https://github.com/melin/superior-sql-parser</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>melin</name>
+            <email>libinsong1204@gmail.com</email>
+            <url>https://github.com/melin/superior-sql-parser</url>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -113,7 +138,7 @@
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
                     <pluginOptions>
-                        <option>no-arg:annotation=com.dataworker.sql.parser.DefaultConstructor</option>
+                        <option>no-arg:annotation=com.github.melin.superior.DefaultConstructor</option>
                     </pluginOptions>
                 </configuration>
             </plugin>
@@ -166,31 +191,101 @@
                     <!--<treatWarningsAsErrors>true</treatWarningsAsErrors>-->
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <arguments>-Psonatype-oss-release</arguments>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.1.0</version>
+                <inherited>true</inherited>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludeResources>true</excludeResources>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <id>bundle-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <maxmemory>1024</maxmemory>
+                    <encoding>UTF-8</encoding>
+                    <show>protected</show>
+                    <notree>true</notree>
+
+                    <!-- Avoid running into Java 8's very restrictive doclint issues -->
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
+                </configuration>
             </plugin>
+
+            <!--<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+			</plugin>-->
         </plugins>
     </build>
 
-    <repositories>
+    <distributionManagement>
         <repository>
-            <id>cloudera</id>
-            <url>https://repository.cloudera.com/content/repositories/releases/</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-    </repositories>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
