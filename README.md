@@ -2,6 +2,14 @@
 
 基于antlr4 statement 解析器，支持spark sql, tidb sql, flink sql, Spark/flink jar 运行命令解析
 
+```
+<dependency>
+    <groupId>io.github.melin</groupId>
+    <artifactId>superior-sql-parser</artifactId>
+    <version>3.3.0</version>
+</dependency>
+```
+
 ###
 1. [MySQL](https://github.com/antlr/grammars-v4/tree/master/sql/mysql)
 2. [PrestoSQL](https://github.com/prestosql/presto/tree/master/presto-parser/src/main/antlr4/io/prestosql/sql/parser)

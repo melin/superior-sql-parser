@@ -6,7 +6,7 @@
 
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+    <version>3.3.0</version>
 
     <properties>
         <kotlin.version>1.6.21</kotlin.version>
@@ -29,6 +29,14 @@
         <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
         <url>https://github.com/melin/superior-sql-parser</url>
     </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
