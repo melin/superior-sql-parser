@@ -443,6 +443,7 @@ class SparkSqlParserTest {
     fun createTableSelectTest1() {
         val sql = """
                CREATE TABLE t
+               USING ICEBERG
                PARTITIONED BY (b)
                AS SELECT 1 as a, "a" as b
                """
@@ -452,6 +453,7 @@ class SparkSqlParserTest {
         if (statement is DcTable) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals("ICEBERG", statement.fileFormat)
             Assert.assertEquals("t", name)
             Assert.assertEquals("SELECT 1 as a, \"a\" as b", statement.querySql)
             Assert.assertEquals("b", statement.partitionColumnNames?.get(0))
