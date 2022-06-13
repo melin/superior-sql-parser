@@ -474,6 +474,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("tdl_users_1", name)
             Assert.assertEquals("select * from users a left outer join address b on a.addr_id = b.id", statement.querySql)
             Assert.assertEquals(2, statement.tableData?.inputTables?.size)
+            Assert.assertEquals("parquet", statement.fileFormat)
             Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)
         } else {
             Assert.fail()
@@ -987,13 +988,14 @@ class SparkSqlParserTest {
 
     @Test
     fun queryTest0() {
-        val sql = "select * from users a join address b on a.addr_id=b.id limit 101"
+        val sql = "select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is TableData) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals("users", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("`demo_rp`.bigdata.users", statement.inputTables.get(0).originName)
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
             Assert.assertEquals(101, statement.limit)
         } else {

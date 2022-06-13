@@ -126,15 +126,16 @@ data class TableSource(
         val catalogName: String?,
         var databaseName: String?,
         var tableName: String,
+        var originName: String?,
         var metaAction: String?,
         var column: DcColumn? = null,
         var columns: List<String>? = ArrayList()
 ): Statement() {
     constructor(catalogName: String?, databaseName: String?, tableName: String):
-            this(catalogName, databaseName, tableName, null)
+            this(catalogName, databaseName, tableName, null, null)
 
     constructor(databaseName: String?, tableName: String):
-            this(null, databaseName, tableName, null)
+            this(null, databaseName, tableName, null, null)
 
     val tokens: java.util.ArrayList<CommonToken> = ArrayList()
 

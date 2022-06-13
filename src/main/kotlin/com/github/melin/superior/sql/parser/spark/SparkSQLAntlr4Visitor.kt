@@ -906,6 +906,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 currentOptType == StatementType.DTUNNEL) {
 
             val tableSource = TableSource(databaseName, tableName, metaAction)
+            tableSource.originName = StringUtils.substring(command, ctx.start.startIndex, ctx.stop.stopIndex + 1)
             val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
 
             val index = statementData.inputTables.indexOf(tableSource)
