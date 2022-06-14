@@ -150,7 +150,7 @@ class ClickHouseParserTest {
             Assert.assertEquals("MergeTree", statement.engine)
             Assert.assertEquals("TRANSACTIONKEY", statement.orderExpr)
             Assert.assertEquals("TRANSACTIONKEY", statement.primaryExpr)
-            Assert.assertEquals("sample_transaction_data3", statement.inputTables?.iterator().next().tableName)
+            Assert.assertEquals("sample_transaction_data3", statement.inputTables?.iterator()?.next()?.tableName)
         } else {
             Assert.fail()
         }
