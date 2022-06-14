@@ -132,13 +132,13 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         }
 
         var partitionColumns: List<DcColumn>? = null
-        var partitionColumnNames: ArrayList<String> = arrayListOf()
+        val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
         var createTableType: String = "hive"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
-                var dataType = it.dataType().text
+                val dataType = it.dataType().text
                 val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
                 DcColumn(colName, dataType, colComment)
             }
@@ -235,6 +235,124 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             return StatementData(StatementType.CREATE_TABLE_AS_SELECT, dcTable)
         } else {
             return StatementData(StatementType.CREATE_TABLE, dcTable)
+        }
+    }
+
+    override fun visitReplaceTable(ctx: SparkSqlBaseParser.ReplaceTableContext): StatementData {
+        val (catalogName, databaseName, tableName) = parseTableName(ctx.replaceTableHeader().multipartIdentifier())
+        val createTableClauses = ctx.createTableClauses();
+        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).STRING().text) else null
+        val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
+
+        ctx.children.forEach { it ->
+            if (it is SparkSqlBaseParser.RowFormatDelimitedContext) {
+                throw SQLParserException("不支持row format 语法")
+            } else if (it is SparkSqlBaseParser.RowFormatSerdeContext) {
+                throw SQLParserException("不支持row format 语法")
+            }
+        }
+
+        var partitionColumns: List<DcColumn>? = null
+        val partitionColumnNames: ArrayList<String> = arrayListOf()
+        var columns: List<DcColumn>? = null
+        var createTableType: String = "hive"
+        if (ctx.query() == null) {
+            columns = ctx.colTypeList().colType().map {
+                val colName = it.colName.text
+                val dataType = it.dataType().text
+                val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
+                DcColumn(colName, dataType, colComment)
+            }
+
+            if (ctx.tableProvider() != null) {
+                createTableType = "spark"
+            }
+
+            if (createTableClauses.partitioning != null) {
+                if ("spark" == createTableType) {
+                    createTableClauses.partitioning.children
+                        .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
+                            val column = item as SparkSqlBaseParser.PartitionTransformContext
+                            partitionColumnNames.add(column.text)
+                        }
+
+                    if (partitionColumnNames.size == 0) {
+                        throw SQLParserException("spark create table 语法创建表，创建分区字段语法错误，请参考文档");
+                    }
+                } else {
+                    partitionColumns = createTableClauses.partitioning.children
+                        .filter { it is SparkSqlBaseParser.PartitionColumnContext }.map { item ->
+                            val column = item as SparkSqlBaseParser.PartitionColumnContext
+                            val colName = column.colType().colName.text
+                            var dataType = column.colType().dataType().text
+                            checkPartitionDataType(dataType)
+
+                            partitionColumnNames.add(colName)
+                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
+                            DcColumn(colName, dataType, colComment)
+                        }
+                }
+            }
+        } else {
+            if (createTableClauses.partitioning != null) {
+                createTableClauses.partitioning.children
+                    .filter { it is SparkSqlBaseParser.PartitionTransformContext }.forEach { item ->
+                        val column = item as SparkSqlBaseParser.PartitionTransformContext
+                        partitionColumnNames.add(column.text)
+                    }
+            }
+        }
+
+        val properties = HashMap<String, String>()
+        if (createTableClauses.tableProps != null) {
+            createTableClauses.tableProps.children.filter { it is SparkSqlBaseParser.PropertyContext }.map { item ->
+                val property = item as SparkSqlBaseParser.PropertyContext
+                val key = StringUtil.cleanQuote(property.key.text)
+                val value = StringUtil.cleanQuote(property.value.text)
+                properties.put(key, value)
+            }
+        }
+
+        var fileFormat = ctx.tableProvider()?.multipartIdentifier()?.text
+        ctx.createTableClauses().createFileFormat()
+        if (ctx.createTableClauses().createFileFormat().size == 1) {
+            fileFormat = ctx.createTableClauses().createFileFormat().get(0).fileFormat().text
+        }
+
+        val dcTable = DcTable(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+        dcTable.createTableType = createTableType;
+        dcTable.location = createTableClauses.locationSpec().size > 0
+        if (dcTable.location) {
+            dcTable.locationPath = createTableClauses.locationSpec().get(0).text
+        }
+
+        if (fileFormat != null && "hudi" == fileFormat.lowercase() && createTableClauses.primaryKeyExpr().size == 1) {
+            val expr = createTableClauses.primaryKeyExpr().get(0)
+            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
+                val key = item.getChild(0)
+                key.text
+            }
+
+            if (expr.hudiType != null) {
+                dcTable.hudiType = expr.hudiType.text
+            }
+        }
+
+        dcTable.partitionColumnNames = partitionColumnNames
+
+        if (ctx.query() != null) {
+            currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+            var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
+            if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
+                querySql = StringUtils.substringBetween(querySql, "(", ")")
+            }
+
+            dcTable.querySql = querySql
+            super.visitQuery(ctx.query())
+            dcTable.tableData = statementData
+            return StatementData(StatementType.REPLACE_TABLE_AS_SELECT, dcTable)
+        } else {
+            return StatementData(StatementType.REPLACE_TABLE, dcTable)
         }
     }
 

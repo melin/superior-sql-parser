@@ -372,6 +372,36 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun replaceHudiTableTest() {
+        val sql = """
+            create or replace table test_hudi_table ( id int, name string, price double, ts long) 
+            stored as hudi
+            primary key (id, name) with MOR
+            partitioned by (dt string)
+            lifeCycle 300
+            """
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        Assert.assertEquals(StatementType.REPLACE_TABLE, statementData.type)
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals("test_hudi_table", name)
+            Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
+            Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
+            Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
+            Assert.assertEquals("MOR", statement.hudiType)
+
+            Assert.assertEquals(300, statement.lifeCycle)
+            Assert.assertEquals("hudi", statement.fileFormat)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun descTableTest0() {
         var sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
@@ -499,6 +529,26 @@ class SparkSqlParserTest {
             Assert.assertEquals("tdl_users_1", name)
             //Assert.assertEquals("select * from users a left outer join address b on a.addr_id = b.id", statement.querySql)
             Assert.assertEquals(3, statement.tableData?.inputTables?.size)
+            Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun replaceTableSelectTest() {
+        val sql = "create or replace table tdl_users_1 STORED AS ORC as select * from bigdata.users a left outer join address b on a.addr_id = b.id"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals(StatementType.REPLACE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals(statement.fileFormat, "ORC")
+            Assert.assertEquals("tdl_users_1", name)
+            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
+            Assert.assertEquals(2, statement.tableData?.inputTables?.size)
+            Assert.assertEquals("users", statement.tableData?.inputTables?.get(0)?.tableName)
             Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)
         } else {
             Assert.fail()

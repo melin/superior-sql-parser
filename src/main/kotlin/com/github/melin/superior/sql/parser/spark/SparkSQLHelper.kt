@@ -28,6 +28,8 @@ object SparkSQLHelper {
 
             CREATE_TABLE,
             CREATE_TABLE_AS_SELECT,
+            REPLACE_TABLE,
+            REPLACE_TABLE_AS_SELECT,
             CREATE_TABLE_AS_LIKE,
             DROP_TABLE,
             TRUNCATE_TABLE,
@@ -166,7 +168,7 @@ object SparkSQLHelper {
             }
 
             return sql
-        } else if (statement is DcTable && CREATE_TABLE_AS_SELECT == sqlType) {
+        } else if (statement is DcTable && (CREATE_TABLE_AS_SELECT == sqlType || REPLACE_TABLE_AS_SELECT == sqlType)) {
             val tokens: java.util.ArrayList<CommonToken> = ArrayList()
             val tableData = statement.tableData
             if (tableData != null) {
