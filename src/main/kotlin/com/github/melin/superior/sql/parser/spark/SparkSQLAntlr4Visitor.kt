@@ -980,7 +980,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
         targetTable.tokens.add(token)
 
-        val deltaMerge = DeltaMerge(targetTable = targetTable)
+        val deltaMerge = MergeIntoTable(targetTable = targetTable)
 
         if (ctx.source != null) {
             val (catalogName, sourceDatabase, sourceTableName) = parseTableName(ctx.source)

@@ -1,6 +1,5 @@
 package com.github.melin.superior.sql.parser.spark
 
-import com.github.melin.superior.*
 import com.github.melin.superior.sql.parser.StatementType
 import com.github.melin.superior.sql.parser.model.*
 import org.junit.Assert
@@ -1526,7 +1525,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DeltaMerge) {
+        if (statement is MergeIntoTable) {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("logs", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.sourceTables.size)
@@ -1547,7 +1546,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DeltaMerge) {
+        if (statement is MergeIntoTable) {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("logs", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.sourceTables.size)
@@ -1579,7 +1578,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DeltaMerge) {
+        if (statement is MergeIntoTable) {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("customers", statement.targetTable.tableName)
             Assert.assertEquals(2, statement.sourceTables.size)
@@ -1605,7 +1604,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DeltaMerge) {
+        if (statement is MergeIntoTable) {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("target", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.sourceTables.size)
@@ -1628,7 +1627,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DeltaMerge) {
+        if (statement is MergeIntoTable) {
             Assert.assertEquals(StatementType.MERGE_INTO_TABLE, statementData.type)
             Assert.assertEquals("merge_test", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.sourceTables.size)

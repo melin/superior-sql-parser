@@ -72,7 +72,7 @@ data class DcTable(
     var hudiType: String = "COW"
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -87,7 +87,7 @@ data class TidbCreateTable(
         var ifNotExists: Boolean = false) : Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(null, databaseName, tableName)
     }
 }
 
@@ -107,7 +107,7 @@ data class DcView(
         var ifExists: Boolean = false) : Statement() { //是否存在 if exists 关键字
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -140,7 +140,7 @@ data class TableSource(
     val tokens: java.util.ArrayList<CommonToken> = ArrayList()
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -153,7 +153,7 @@ data class DcRenameTable(
     val newName: String) : Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + oldName else oldName
+        return innerFullTableName(catalogName, databaseName, oldName)
     }
 
     var oldToken: CommonToken? = null
@@ -167,7 +167,7 @@ data class DcRenameView(
         val newName: String) : Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + oldName else oldName
+        return innerFullTableName(catalogName, databaseName, oldName)
     }
 }
 
@@ -202,7 +202,7 @@ data class DcAlterColumn(
             this(catalogName, databaseName, tableName, null, null, null);
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 
     var token: CommonToken? = null
@@ -233,13 +233,6 @@ data class CallExpr(
     val namespace: String?,
     val procedureName: String
 ) : Statement()
-
-data class ReadData(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    val partitionVals: List<String>?,
-    val limit: Int) : Statement()
 
 data class LoadData(
     val catalogName: String?,
@@ -303,7 +296,7 @@ data class DeleteTable(
     val where: String? = null) : Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -315,30 +308,11 @@ data class UpdateTable(
     val where: String? = null) : Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
-data class DetailTable(
-    val databaseName: String?,
-    val tableName: String) : Statement() {
-
-    fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
-    }
-}
-
-data class HistoryTable(
-    val databaseName: String?,
-    val tableName: String,
-    val limit: Int? = null) : Statement() {
-
-    fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
-    }
-}
-
-data class DeltaMerge(
+data class MergeIntoTable(
     var sourceTables: java.util.HashSet<TableSource> = HashSet(),
     var targetTable: TableSource
 ): Statement()
@@ -352,7 +326,7 @@ data class DropTablePartition(
 ): Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -365,7 +339,7 @@ data class AddTablePartition(
 ): Statement() {
 
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -376,7 +350,7 @@ data class TouchTable(
     var partitionSpecs: List<String>
 ): Statement() {
     fun getFullTableName(): String {
-        return if (databaseName != null) databaseName + "." + tableName else tableName
+        return innerFullTableName(catalogName, databaseName, tableName)
     }
 }
 
@@ -384,3 +358,15 @@ data class ArithmeticData(
     val variables: java.util.HashSet<String> = HashSet(),
     val functions: java.util.HashSet<String> = HashSet()
 ): Statement()
+
+private fun innerFullTableName(catalogName: String?, databaseName: String?, tableName: String): String {
+    if (catalogName != null) {
+        return "${catalogName}.${databaseName}.${tableName}"
+    }
+
+    if (databaseName != null) {
+        return "${databaseName}.${tableName}"
+    }
+
+    return tableName
+}
