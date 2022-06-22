@@ -1,5 +1,6 @@
 package com.github.melin.superior.sql.parser.spark
 
+import com.github.melin.superior.sql.parser.SQLParserException
 import com.github.melin.superior.sql.parser.StatementType
 import com.github.melin.superior.sql.parser.model.*
 import org.junit.Assert
@@ -1834,7 +1835,24 @@ class SparkSqlParserTest {
         try {
             SparkSQLHelper.getStatementData(sql)
             Assert.fail()
-        } catch (e: com.github.melin.superior.sql.parser.SQLParserException) {
+        } catch (e: SQLParserException) {
+            Assert.assertTrue(true)
+        }
+    }
+
+    @Test
+    fun typeConstructor() {
+        var sql = "select date '20220-02-13' as demo";
+        SparkSQLHelper.getStatementData(sql)
+
+        sql = "select timestamp '20220-02-13' as demo";
+        SparkSQLHelper.getStatementData(sql)
+
+        sql = "select time '20220-02-13' as demo";
+        try {
+            SparkSQLHelper.getStatementData(sql)
+            Assert.fail()
+        } catch (e: SQLParserException) {
             Assert.assertTrue(true)
         }
     }

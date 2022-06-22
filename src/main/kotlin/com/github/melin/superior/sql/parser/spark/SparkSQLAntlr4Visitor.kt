@@ -8,6 +8,10 @@ import com.github.melin.superior.sql.parser.model.*
 import com.github.melin.superior.sql.parser.util.StringUtil
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 /**
  *
@@ -1122,6 +1126,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitQueryOrganization(ctx: SparkSqlBaseParser.QueryOrganizationContext): StatementData? {
         limit = ctx.limit?.text?.toInt()
         return super.visitQueryOrganization(ctx)
+    }
+
+    override fun visitTypeConstructor(ctx: SparkSqlBaseParser.TypeConstructorContext): StatementData? {
+        val valueType = ctx.identifier().getText().toUpperCase(Locale.ROOT)
+        if (!("DATE".equals(valueType) || "TIMESTAMP".equals(valueType)
+            || "INTERVAL".equals(valueType) || "X".equals(valueType))) {
+            throw SQLParserException("Literals of type " + valueType + " are currently not supported.");
+        }
+
+        return super.visitTypeConstructor(ctx)
     }
 
     /**
