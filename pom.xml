@@ -6,7 +6,7 @@
 
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0.1-SNAPSHOT</version>
+    <version>3.3.0.1</version>
 
     <properties>
         <kotlin.version>1.7.0</kotlin.version>
@@ -254,12 +254,6 @@
                     <doclint>none</doclint>
                 </configuration>
             </plugin>
-
-            <!--<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
-			</plugin>-->
         </plugins>
     </build>
 

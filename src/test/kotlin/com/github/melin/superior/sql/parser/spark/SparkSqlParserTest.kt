@@ -1797,18 +1797,58 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun dtunnelTest() {
-        val sql = "dtunnel source('sftp') options(host='x.x.x.x') sink('hive') options(table='demo', column=['id', 'name'])"
+    fun dtunnelTest0() {
+        val sql = "datatunnel source('sftp') options(host='x.x.x.x') sink('hive') options(table='demo', column=['id', 'name'])"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DtunnelExpr) {
-            Assert.assertEquals(StatementType.DTUNNEL, statementData.type)
+        if (statement is DataTunnelExpr) {
+            Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
             Assert.assertEquals("sftp", statement.srcType)
             Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
 
             Assert.assertEquals("hive", statement.distType)
             Assert.assertEquals("demo", statement.distOptions.get("table"))
             Assert.assertEquals("['id','name']", statement.distOptions.get("column"))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dtunnelTest1() {
+        val sql = """
+            datatunnel source('sftp') options(host='x.x.x.x') 
+            transform = "select * from result where type='sql'"
+            sink('hive') options(table='demo', column=['id', 'name'])
+        """.trimIndent()
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DataTunnelExpr) {
+            Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
+            Assert.assertEquals("sftp", statement.srcType)
+            Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
+
+            Assert.assertEquals("select * from result where type='sql'", statement.transformSql)
+
+            Assert.assertEquals("hive", statement.distType)
+            Assert.assertEquals("demo", statement.distOptions.get("table"))
+            Assert.assertEquals("['id','name']", statement.distOptions.get("column"))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dtunnelTest2() {
+        val sql = "datatunnel source('sftp') options(host='x.x.x.x') sink('log')"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DataTunnelExpr) {
+            Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
+            Assert.assertEquals("sftp", statement.srcType)
+            Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
+
+            Assert.assertEquals("log", statement.distType)
         } else {
             Assert.fail()
         }

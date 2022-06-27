@@ -87,7 +87,7 @@ enum class StatementType: Serializable {
     JOB,
     USE,
 
-    DTUNNEL,
+    DATATUNNEL,
     CALL,
 
     ARITHMETIC,

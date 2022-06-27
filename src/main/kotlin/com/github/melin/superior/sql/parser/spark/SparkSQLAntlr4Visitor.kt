@@ -601,7 +601,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val srcType = StringUtil.cleanQuote(ctx.srcName.text)
         val distType = StringUtil.cleanQuote(ctx.distName.text)
 
-        var srcOptions = HashMap<String, String>()
+        val srcOptions = HashMap<String, String>()
         if (ctx.readOpts != null) {
             ctx.readOpts.dtProperty().map { item ->
                 val property = item as SparkSqlBaseParser.DtPropertyContext
@@ -611,7 +611,12 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
         }
 
-        var distOptions = HashMap<String, String>()
+        var transformSql: String? = null
+        if (ctx.transfromSql != null) {
+            transformSql = StringUtil.cleanQuote(ctx.transfromSql.text)
+        }
+
+        val distOptions = HashMap<String, String>()
         if (ctx.writeOpts != null) {
             ctx.writeOpts.dtProperty().map { item ->
                 val property = item as SparkSqlBaseParser.DtPropertyContext
@@ -621,8 +626,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
         }
 
-        val data = DtunnelExpr(srcType, srcOptions, distType, distOptions)
-        return StatementData(StatementType.DTUNNEL, data)
+        val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions)
+        return StatementData(StatementType.DATATUNNEL, data)
     }
 
     override fun visitCall(ctx: SparkSqlBaseParser.CallContext): StatementData {
@@ -1025,7 +1030,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 currentOptType == StatementType.INSERT_SELECT ||
                 currentOptType == StatementType.MERGE_INTO_TABLE ||
                 currentOptType == StatementType.EXPORT_TABLE ||
-                currentOptType == StatementType.DTUNNEL) {
+                currentOptType == StatementType.DATATUNNEL) {
 
             val tableSource = TableSource(databaseName, tableName, metaAction)
             tableSource.originName = StringUtils.substring(command, ctx.start.startIndex, ctx.stop.stopIndex + 1)

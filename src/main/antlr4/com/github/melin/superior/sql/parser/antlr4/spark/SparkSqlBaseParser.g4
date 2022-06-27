@@ -226,13 +226,13 @@ statement
         (OPTIONS options=propertyList)?                                #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=constant (OPTIONS options=propertyList)?               #exportTable
-    | DTUNNEL SOURCE '(' srcName=STRING ')' OPTIONS
+    | DATATUNNEL SOURCE LEFT_PAREN srcName=STRING RIGHT_PAREN OPTIONS
         readOpts=dtPropertyList
-        SINK '(' distName=STRING ')' OPTIONS
-        writeOpts=dtPropertyList                                         #dtunnelExpr
+        (TRANSFORM EQ transfromSql=STRING)?
+        SINK LEFT_PAREN distName=STRING RIGHT_PAREN (OPTIONS writeOpts=dtPropertyList)? #dtunnelExpr
 
     | CALL multipartIdentifier
-        '(' (callArgument (',' callArgument)*)? ')'                    #call
+        LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN                    #call
 
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
@@ -1158,7 +1158,7 @@ ansiNonReserved
     | DISTRIBUTE
     | DIV
     | DROP
-    | DTUNNEL
+    | DATATUNNEL
     | ESCAPED
     | EXCHANGE
     | EXISTS
@@ -1422,7 +1422,7 @@ nonReserved
     | DISTRIBUTE
     | DIV
     | DROP
-    | DTUNNEL
+    | DATATUNNEL
     | ELSE
     | END
     | ESCAPE

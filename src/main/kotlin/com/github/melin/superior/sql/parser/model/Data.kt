@@ -222,9 +222,10 @@ data class MergeData(
     val tableName: String,
     val partitionVals: List<String>?) : Statement()
 
-data class DtunnelExpr(
+data class DataTunnelExpr(
     val srcType: String,
     var srcOptions: Map<String, String>,
+    val transformSql: String?,
     val distType: String,
     var distOptions: Map<String, String>) : Statement()
 
