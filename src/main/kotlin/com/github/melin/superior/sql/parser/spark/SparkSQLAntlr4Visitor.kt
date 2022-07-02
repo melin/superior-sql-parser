@@ -138,7 +138,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         var partitionColumns: List<DcColumn>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
-        var createTableType: String = "hive"
+        var createTableType: String = "spark"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
@@ -147,8 +147,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 DcColumn(colName, dataType, colComment)
             }
 
-            if (ctx.tableProvider() != null) {
-                createTableType = "spark"
+            if (ctx.tableProvider() == null) {
+                createTableType = "hive"
             }
 
             if (createTableClauses.partitioning != null) {
