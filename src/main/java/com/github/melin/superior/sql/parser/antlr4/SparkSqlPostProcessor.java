@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-public class PostProcessor extends SparkSqlBaseParserBaseListener {
+public class SparkSqlPostProcessor extends SparkSqlBaseParserBaseListener {
 
     /** Remove the back ticks from an Identifier. */
     @Override

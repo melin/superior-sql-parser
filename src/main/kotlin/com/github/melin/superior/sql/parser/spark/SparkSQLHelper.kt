@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import com.github.melin.superior.sql.parser.antlr4.ParseErrorListener
 import com.github.melin.superior.sql.parser.antlr4.ParseException
-import com.github.melin.superior.sql.parser.antlr4.PostProcessor
+import com.github.melin.superior.sql.parser.antlr4.SparkSqlPostProcessor
 import com.github.melin.superior.sql.parser.antlr4.UpperCaseCharStream
 import com.github.melin.superior.sql.parser.antlr4.spark.SparkSqlBaseLexer
 import com.github.melin.superior.sql.parser.antlr4.spark.SparkSqlBaseParser
@@ -101,7 +101,7 @@ object SparkSQLHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = SparkSqlBaseParser(tokenStream)
-        parser.addParseListener(PostProcessor())
+        parser.addParseListener(SparkSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
