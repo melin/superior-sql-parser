@@ -236,7 +236,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             dcTable.querySql = querySql
             super.visitQuery(ctx.query())
             dcTable.tableData = statementData
-            return StatementData(StatementType.CREATE_TABLE_AS_SELECT, dcTable)
+            return StatementData(StatementType.CREATE_TABLE_AS_SELECT, dcTable, querySql)
         } else {
             return StatementData(StatementType.CREATE_TABLE, dcTable)
         }
@@ -1135,8 +1135,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
     override fun visitTypeConstructor(ctx: SparkSqlBaseParser.TypeConstructorContext): StatementData? {
         val valueType = ctx.identifier().getText().toUpperCase(Locale.ROOT)
-        if (!("DATE".equals(valueType) || "TIMESTAMP".equals(valueType)
-            || "INTERVAL".equals(valueType) || "X".equals(valueType))) {
+        if (!("DATE".equals(valueType) || !"TIME".equals(valueType)
+                    || "TIMESTAMP".equals(valueType) || "INTERVAL".equals(valueType)
+                    || "X".equals(valueType))) {
             throw SQLParserException("Literals of type " + valueType + " are currently not supported.");
         }
 

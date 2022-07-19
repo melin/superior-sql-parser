@@ -536,6 +536,23 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createTableSelectTest4() {
+        val sql = "create table huaixin_rp.bigdata.test_iceberg_1 using iceberg PARTITIONED BY(ds) as " +
+                "SELECT 'xxx' as name, 23 as price, '20211203' as ds"
+
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcTable) {
+            val name = statement.tableName
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals("test_iceberg_1", name)
+            Assert.assertEquals("SELECT 'xxx' as name, 23 as price, '20211203' as ds", statement.querySql)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun replaceTableSelectTest() {
         val sql = "create or replace table tdl_users_1 STORED AS ORC as select * from bigdata.users a left outer join address b on a.addr_id = b.id"
 

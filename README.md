@@ -6,9 +6,13 @@
 <dependency>
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0.1</version>
+    <version>3.3.0.2</version>
 </dependency>
 ```
+
+### Deploy
+
+> mvn clean deploy -Prelease
 
 ###
 1. [MySQL](https://github.com/antlr/grammars-v4/tree/master/sql/mysql)

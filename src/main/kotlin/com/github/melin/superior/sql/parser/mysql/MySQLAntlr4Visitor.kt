@@ -232,36 +232,36 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
     //-----------------------------------DML-------------------------------------------------
 
     override fun visitDmlStatement(ctx: MySQLParser.DmlStatementContext): StatementData {
-        if(ctx.selectStatement() != null) {
+        if (ctx.selectStatement() != null) {
             currentOptType = StatementType.SELECT
             super.visitDmlStatement(ctx)
 
             statementData.limit = limit
-            return return StatementData(StatementType.SELECT, statementData)
+            return StatementData(StatementType.SELECT, statementData)
         } else if (ctx.insertStatement() != null) {
             val statement = ctx.insertStatement()
             val (databaseName, tableName) = parseFullId(statement.tableName().fullId())
-            var tableSource = TableSource(databaseName, tableName)
+            val tableSource = TableSource(databaseName, tableName)
             statementData.outpuTables.add(tableSource)
 
-            if(statement.insertStatementValue().selectStatement() != null) {
+            if (statement.insertStatementValue().selectStatement() != null) {
                 currentOptType = StatementType.INSERT_SELECT
                 super.visit(ctx.insertStatement().insertStatementValue().selectStatement())
-                return return StatementData(StatementType.INSERT_SELECT, statementData)
+                return StatementData(StatementType.INSERT_SELECT, statementData)
             } else {
                 currentOptType = StatementType.INSERT_VALUES
-                return return StatementData(StatementType.INSERT_VALUES, statementData)
+                return StatementData(StatementType.INSERT_VALUES, statementData)
             }
         } else if (ctx.updateStatement() != null) {
             val statement = ctx.updateStatement()
-            if(statement.multipleUpdateStatement() != null) {
+            if (statement.multipleUpdateStatement() != null) {
                 throw SQLParserException("不支持更新多个表")
             }
 
             val (databaseName, tableName) =
                     parseFullId(ctx.updateStatement().singleUpdateStatement().tableName().fullId())
-            var tableSource = UpdateTable(null, databaseName, tableName)
-            return return StatementData(StatementType.UPDATE, tableSource)
+            val tableSource = UpdateTable(null, databaseName, tableName)
+            return StatementData(StatementType.UPDATE, tableSource)
         } else if (ctx.deleteStatement() != null) {
             val statement = ctx.deleteStatement()
             if(statement.multipleDeleteStatement() != null) {
@@ -271,7 +271,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
             val (databaseName, tableName) =
                     parseFullId(ctx.deleteStatement().singleDeleteStatement().tableName().fullId())
             var tableSource = DeleteTable(null, databaseName, tableName)
-            return return StatementData(StatementType.DELETE, tableSource)
+            return StatementData(StatementType.DELETE, tableSource)
         } else {
             throw SQLParserException("不支持的DML")
         }
