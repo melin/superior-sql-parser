@@ -354,7 +354,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             dcTable.querySql = querySql
             super.visitQuery(ctx.query())
             dcTable.tableData = statementData
-            return StatementData(StatementType.REPLACE_TABLE_AS_SELECT, dcTable)
+            return StatementData(StatementType.REPLACE_TABLE_AS_SELECT, dcTable, querySql)
         } else {
             return StatementData(StatementType.REPLACE_TABLE, dcTable)
         }

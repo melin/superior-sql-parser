@@ -563,7 +563,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.REPLACE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", name)
-            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
+            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statementData.querySql)
             Assert.assertEquals(2, statement.tableData?.inputTables?.size)
             Assert.assertEquals("users", statement.tableData?.inputTables?.get(0)?.tableName)
             Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)

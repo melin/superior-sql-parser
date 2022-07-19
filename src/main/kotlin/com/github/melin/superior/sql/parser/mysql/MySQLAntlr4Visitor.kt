@@ -57,7 +57,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 val name = StringUtil.cleanBackQuote(column.uid().text)
 
 
-                var dataType = column.columnDefinition().dataType().getChild(0).text.toLowerCase()
+                var dataType = column.columnDefinition().dataType().getChild(0).text.lowercase()
                 val count = column.columnDefinition().dataType().childCount
                 if(count > 1) {
                     val item = column.columnDefinition().dataType().getChild(1)
