@@ -6,7 +6,7 @@
 <dependency>
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0.2</version>
+    <version>3.3.0.4</version>
 </dependency>
 ```
 

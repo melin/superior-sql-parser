@@ -1906,11 +1906,6 @@ class SparkSqlParserTest {
         SparkSQLHelper.getStatementData(sql)
 
         sql = "select time '20220-02-13' as demo";
-        try {
-            SparkSQLHelper.getStatementData(sql)
-            Assert.fail()
-        } catch (e: SQLParserException) {
-            Assert.assertTrue(true)
-        }
+        SparkSQLHelper.getStatementData(sql)
     }
 }
