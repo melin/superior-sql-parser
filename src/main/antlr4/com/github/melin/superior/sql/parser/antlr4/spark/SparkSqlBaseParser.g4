@@ -222,7 +222,7 @@ statement
 
     | MERGE TABLE multipartIdentifier partitionSpec?
         (OPTIONS options=propertyList)?                                #mergeTable
-    | LOAD DATA path=constant TABLE multipartIdentifier
+    | LOAD DATA path=STRING TABLE multipartIdentifier
         (OPTIONS options=propertyList)?                                #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
