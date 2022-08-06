@@ -225,14 +225,15 @@ statement
     | LOAD DATA path=constant TABLE multipartIdentifier
         (OPTIONS options=propertyList)?                                #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
-        TO name=constant (OPTIONS options=propertyList)?               #exportTable
+        TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
     | DATATUNNEL SOURCE LEFT_PAREN srcName=STRING RIGHT_PAREN OPTIONS
         readOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=STRING)?
-        SINK LEFT_PAREN distName=STRING RIGHT_PAREN (OPTIONS writeOpts=dtPropertyList)? #dtunnelExpr
+        SINK LEFT_PAREN distName=STRING RIGHT_PAREN
+        (OPTIONS writeOpts=dtPropertyList)?                            #dtunnelExpr
 
     | CALL multipartIdentifier
-        LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN                    #call
+        LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
 
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
