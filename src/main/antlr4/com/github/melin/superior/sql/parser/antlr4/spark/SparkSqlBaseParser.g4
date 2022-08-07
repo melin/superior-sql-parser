@@ -328,11 +328,11 @@ replaceTableHeader
     ;
 
 primaryKeyExpr
-    : PRIMARY KEY primaryKeys=primaryColumnNames WITH? hudiType=(COW | MOR)?
+    : PRIMARY KEY primaryKeys=primaryColumnNames (WITH hudiType=(COW | MOR))?
     ;
 
 primaryColumnNames
-    : '(' errorCapturingIdentifier (',' errorCapturingIdentifier)* ')'
+    : LEFT_PAREN errorCapturingIdentifier (',' errorCapturingIdentifier)* RIGHT_PAREN
     ;
 
 bucketSpec
