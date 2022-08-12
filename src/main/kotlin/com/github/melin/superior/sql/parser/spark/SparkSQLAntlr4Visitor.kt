@@ -480,7 +480,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val comment = if (commentNode != null) StringUtil.cleanQuote(commentNode.text) else null
 
         val data = DcAlterColumn(catalogName, databaseName, tableName, oldName, newName, comment)
-        return StatementData(StatementType.ALTER_TABLE_RENAME_COL, data)
+        return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, data)
     }
 
     override fun visitRenameTableColumn(ctx: SparkSqlBaseParser.RenameTableColumnContext): StatementData {

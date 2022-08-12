@@ -850,9 +850,18 @@ class SparkSqlParserTest {
             Assert.fail()
         }
 
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("db.sample" to "iceberg_spark.db.sample"))
-        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample ALTER COLUMN id COMMENT 'unique id'", sql1);
+        sql = "ALTER TABLE demo CHANGE COLUMN price price float COMMENT '价格'"
+        statementData = SparkSQLHelper.getStatementData(sql)
+        statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("demo", name)
+            Assert.assertEquals("价格", statement.comment)
+        } else {
+            Assert.fail()
+        }
+
     }
 
     @Test
