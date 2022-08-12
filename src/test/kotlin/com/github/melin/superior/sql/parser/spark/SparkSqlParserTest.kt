@@ -793,7 +793,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_RENAME_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
-            Assert.assertEquals("payload", statement.newName)
+            Assert.assertEquals("payload", statement.newColumName)
         } else {
             Assert.fail()
         }
@@ -845,18 +845,20 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
+            Assert.assertNull(statement.dataType)
             Assert.assertEquals("unique id", statement.comment)
         } else {
             Assert.fail()
         }
 
-        sql = "ALTER TABLE demo CHANGE COLUMN price price float COMMENT '价格'"
+        sql = "ALTER TABLE demo CHANGE COLUMN price Type float COMMENT '价格'"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
         if (statement is DcAlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("demo", name)
+            Assert.assertEquals("float", statement.dataType)
             Assert.assertEquals("价格", statement.comment)
         } else {
             Assert.fail()

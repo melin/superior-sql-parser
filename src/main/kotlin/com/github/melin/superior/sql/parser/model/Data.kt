@@ -194,9 +194,11 @@ data class DcAlterColumn(
         val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
-        val oldName: String?,
-        val newName: String?,
+        val columName: String?,
+        val dataType: String? = null,
         val comment: String? = null) : Statement() {
+
+    var newColumName: String? = null
 
     constructor(catalogName: String?, databaseName: String?, tableName: String):
             this(catalogName, databaseName, tableName, null, null, null);

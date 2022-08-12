@@ -474,12 +474,12 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitHiveChangeColumn(ctx: SparkSqlBaseParser.HiveChangeColumnContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
 
-        val oldName = ctx.colName.parts.get(0).text
-        val newName = ctx.colType().colName.text
+        val columnName = ctx.colName.parts.get(0).text
+        val dataType = ctx.colType().dataType().text
         val commentNode = ctx.colType().commentSpec()?.STRING()
         val comment = if (commentNode != null) StringUtil.cleanQuote(commentNode.text) else null
 
-        val data = DcAlterColumn(catalogName, databaseName, tableName, oldName, newName, comment)
+        val data = DcAlterColumn(catalogName, databaseName, tableName, columnName, dataType, comment)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, data)
     }
 
@@ -489,7 +489,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val oldName = ctx.from.text
         val newName = ctx.to.text
 
-        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, oldName, newName)
+        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, oldName)
+        dcTable.newColumName = newName
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_RENAME_COL, dcTable)
     }
