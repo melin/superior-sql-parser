@@ -43,6 +43,7 @@ object SparkSQLHelper {
             ALTER_TABLE_ADD_COLS,
             ALTER_TABLE_PROPERTIES,
             ALTER_TABLE_RENAME_COL,
+            ALTER_TABLE_CHANGE_COL,
             ALTER_TABLE_DROP_PARTS,
             ALTER_TABLE_ADD_PARTS,
             ALTER_TABLE_RENAME_PART,
