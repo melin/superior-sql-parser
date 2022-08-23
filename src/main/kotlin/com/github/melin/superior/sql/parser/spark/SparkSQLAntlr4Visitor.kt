@@ -503,7 +503,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         if (action is SparkSqlBaseParser.CommentSpecContext) {
             comment = StringUtil.cleanQuote(action.STRING().text)
         }
-        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, null, null, comment)
+
+        val colName = ctx.column.text
+        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, colName, null, comment)
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, dcTable)
     }
@@ -1135,7 +1137,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     }
 
     override fun visitTypeConstructor(ctx: SparkSqlBaseParser.TypeConstructorContext): StatementData? {
-        val valueType = ctx.identifier().getText().toUpperCase(Locale.ROOT)
+        val valueType = ctx.identifier().getText().uppercase()
         if (!("DATE".equals(valueType) || "TIME".equals(valueType)
                     || "TIMESTAMP".equals(valueType) || "INTERVAL".equals(valueType)
                     || "X".equals(valueType))) {

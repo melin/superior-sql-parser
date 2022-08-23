@@ -45,7 +45,6 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 is MySQLParser.TableOptionCommentContext -> {
                     comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
                 }
-                else -> null
             }
         }
         val columns = ArrayList<DcColumn>()
@@ -75,8 +74,6 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                     }
                 }
                 columns.add(DcColumn(name, dataType, colComment))
-            } else if (column is MySQLParser.ConstraintDeclarationContext) {
-                column
             }
         }
 
@@ -298,11 +295,8 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
     }
 
     override fun visitLimitClause(ctx: MySQLParser.LimitClauseContext): StatementData? {
-        if(currentOptType == StatementType.SELECT ) {
-            var _sqlData = statementData
-            if(_sqlData is TableData) {
-                limit = ctx.limit.text.toInt()
-            }
+        if (currentOptType == StatementType.SELECT ) {
+            limit = ctx.limit.text.toInt()
         }
         return null
     }
@@ -311,7 +305,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         var databaseName:String? = null
         var tableName = ""
 
-        if(fullId.childCount == 2) {
+        if (fullId.childCount == 2) {
             databaseName = fullId.uid().get(0).text
             tableName = (fullId.getChild(1) as TerminalNodeImpl).text.substring(1)
         } else if(fullId.childCount == 3) {
@@ -321,10 +315,10 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
             tableName = fullId.uid().get(0).text
         }
 
-        if(databaseName != null) {
+        if (databaseName != null) {
             databaseName = StringUtil.cleanBackQuote(databaseName)
         }
-        if(tableName != null) {
+        if (tableName != null) {
             tableName = StringUtil.cleanBackQuote(tableName)
         }
 

@@ -162,7 +162,7 @@ object MySQLHelper {
                             = if(index<childCount) statement.getChild(index) as TerminalNodeImpl else null
 
                     val startIndex = startContext.start.startIndex
-                    val stopIndex = if(stopContext != null) stopContext.symbol.startIndex else -1;
+                    val stopIndex = if (stopContext != null) stopContext.symbol.startIndex else -1;
 
                     var sql = if(stopIndex > 0) {
                         StringUtils.substring(sql, startIndex, stopIndex)

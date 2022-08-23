@@ -863,7 +863,24 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
+    }
 
+    @Test
+    fun changeColumnTest1() {
+        val sql = "ALTER TABLE test_user11_dt ALTER COLUMN ds comment 'ddd'"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DcAlterColumn) {
+            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
+            val name = statement.tableName
+            Assert.assertEquals("test_user11_dt", name)
+            Assert.assertEquals("ds", statement.columName)
+            Assert.assertNull(statement.newColumName)
+            Assert.assertNull(statement.dataType)
+            Assert.assertEquals("ddd", statement.comment)
+        } else {
+            Assert.fail()
+        }
     }
 
     @Test
@@ -1765,6 +1782,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is DcTable) {
             val prop = statement.properties
+            Assert.assertEquals("ZSTD", prop?.get("compression"))
         } else {
             Assert.fail()
         }
