@@ -137,7 +137,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         var partitionColumns: List<DcColumn>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
-        var createTableType: String = "spark"
+        var createTableType = "spark"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
@@ -646,6 +646,25 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val (catalogName, namespace, procedureName) = parseTableName(ctx.multipartIdentifier())
         val data = CallExpr(catalogName, namespace, procedureName)
         return StatementData(StatementType.CALL, data)
+    }
+
+    override fun visitSync(ctx: SparkSqlBaseParser.SyncContext): StatementData {
+        val type = ctx.type.text.lowercase();
+        var owner: String? = null
+        if (ctx.principal != null) {
+            owner = ctx.principal.text
+        }
+        if ("schema" == type) {
+            val (_, targetSchema, targetTable) = parseTableName(ctx.target)
+            val (_, sourceSchema, sourceTable) = parseTableName(ctx.source)
+            val expr = SyncSchemaExpr(targetSchema, targetTable, sourceSchema, sourceTable, owner);
+            return StatementData(StatementType.SYNC, expr)
+        } else {
+            val (targetCatalog, targetSchema, targetTable) = parseTableName(ctx.target)
+            val (sourceCatalog, sourceSchema, sourceTable) = parseTableName(ctx.source)
+            val expr = SyncTableExpr(targetCatalog, targetSchema, targetTable, sourceCatalog, sourceSchema, sourceTable, owner)
+            return StatementData(StatementType.SYNC, expr)
+        }
     }
 
     //-----------------------------------partition-------------------------------------------------

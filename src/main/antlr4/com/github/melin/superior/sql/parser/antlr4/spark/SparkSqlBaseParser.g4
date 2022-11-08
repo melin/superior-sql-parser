@@ -235,6 +235,9 @@ statement
     | CALL multipartIdentifier
         LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
 
+    | SYNC type=(SCHEMA|TABLE) target=multipartIdentifier FROM source=multipartIdentifier
+      (SET OWNER principal=identifier)?                                #sync
+
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
@@ -1217,6 +1220,7 @@ ansiNonReserved
     | OVER
     | OVERLAY
     | OVERWRITE
+    | OWNER
     | PARTITION
     | PARTITIONED
     | PARTITIONS
@@ -1504,6 +1508,7 @@ nonReserved
     | OVERLAPS
     | OVERLAY
     | OVERWRITE
+    | OWNER
     | PARTITION
     | PARTITIONED
     | PARTITIONS

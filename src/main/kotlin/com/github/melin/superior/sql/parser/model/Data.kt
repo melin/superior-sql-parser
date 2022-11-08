@@ -232,6 +232,24 @@ data class DataTunnelExpr(
     val distType: String,
     var distOptions: Map<String, String>) : Statement()
 
+data class SyncSchemaExpr(
+    val targetCatalog: String?,
+    val targetSchema: String,
+    val sourceCatalog: String?,
+    val sourceSchema: String,
+    val owner: String?
+) : Statement()
+
+data class SyncTableExpr(
+    val targetCatalog: String?,
+    val targetSchema: String?,
+    val targetTable: String,
+    val sourceCatalog: String?,
+    val sourceSchema: String?,
+    val sourceTable: String,
+    val owner: String?
+) : Statement()
+
 data class CallExpr(
     val catalogName: String?,
     val namespace: String?,

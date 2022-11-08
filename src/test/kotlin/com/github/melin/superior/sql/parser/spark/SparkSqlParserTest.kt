@@ -1928,6 +1928,41 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun syncSchemaTest() {
+        val sql = "SYNC SCHEMA my_db_uc FROM hive_metastore.my_db SET OWNER wangwu"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is SyncSchemaExpr) {
+            Assert.assertEquals(StatementType.SYNC, statementData.type)
+            Assert.assertNull(statement.targetCatalog)
+            Assert.assertEquals("my_db_uc", statement.targetSchema)
+            Assert.assertEquals("hive_metastore", statement.sourceCatalog)
+            Assert.assertEquals("my_db", statement.sourceSchema)
+            Assert.assertEquals("wangwu", statement.owner)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun syncTableTest() {
+        val sql = "SYNC TABLE main.default.my_tbl FROM hive_metastore.default.my_tbl"
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is SyncTableExpr) {
+            Assert.assertEquals(StatementType.SYNC, statementData.type)
+            Assert.assertEquals("main", statement.targetCatalog)
+            Assert.assertEquals("default", statement.targetSchema)
+            Assert.assertEquals("my_tbl", statement.targetTable)
+            Assert.assertEquals("hive_metastore", statement.sourceCatalog)
+            Assert.assertEquals("default", statement.sourceSchema)
+            Assert.assertEquals("my_tbl", statement.sourceTable)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun notSupportSql() {
         val sql = "insert overwrite directory '/user/ahao' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t' select * from nlp_dev.all_category_sample"
         try {
