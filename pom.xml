@@ -6,10 +6,10 @@
 
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0.5</version>
+    <version>3.3.0.6</version>
 
     <properties>
-        <kotlin.version>1.7.0</kotlin.version>
+        <kotlin.version>1.7.20</kotlin.version>
         <antlr4.version>4.8</antlr4.version>
     </properties>
 

@@ -6,11 +6,9 @@ package com.github.melin.superior.sql.parser
 enum class DbType {
     SPARK_SQL,
     MYSQL,
-    TIDB,
     ORACLE,
     PRESTO,
     DB2,
     POSTGRESQL,
-    DRUID,
     TSQL
 }
