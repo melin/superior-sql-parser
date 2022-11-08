@@ -289,10 +289,14 @@ class SparkSqlParserTest {
     @Test
     fun createHudiTableTest5() {
         val sql = """
-            create table test_hudi_table ( id int, name string, price double, ts long) 
-            stored as hudi
-            primary key (id, name) with MOR
-            partitioned by (dt string)
+            create table test_hudi_table ( id int, name string, price double, ts long, dt string) 
+            using hudi
+            tblproperties (
+              type = 'MOR',
+              primaryKey = 'id, name',
+              preCombineField = 'ts'
+             )
+            partitioned by (dt)
             lifeCycle 300
             """
 
@@ -319,10 +323,14 @@ class SparkSqlParserTest {
     @Test
     fun createHudiTableTest6() {
         val sql = """
-            create table test_hudi_table ( id int, name string, price double, ts long) 
-            stored as hudi
-            primary key (id, name)
-            partitioned by (dt string)
+            create table test_hudi_table ( id int, name string, price double, ts long, dt string) 
+            using hudi
+            tblproperties (
+              type = 'cow',
+              primaryKey = 'id, name',
+              preCombineField = 'ts'
+             )
+            partitioned by (dt)
             lifeCycle 300
             """
 
@@ -335,7 +343,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
-            Assert.assertEquals("COW", statement.hudiType)
+            Assert.assertEquals("cow", statement.hudiType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -374,10 +382,14 @@ class SparkSqlParserTest {
     @Test
     fun replaceHudiTableTest() {
         val sql = """
-            create or replace table test_hudi_table ( id int, name string, price double, ts long) 
-            stored as hudi
-            primary key (id, name) with MOR
-            partitioned by (dt string)
+            create or replace table test_hudi_table ( id int, name string, price double, ts long, dt string) 
+            using hudi
+            tblproperties (
+              type = 'mor',
+              primaryKey = 'id, name',
+              preCombineField = 'ts'
+             )
+            partitioned by (dt)
             lifeCycle 300
             """
 
@@ -390,7 +402,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
             Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
             Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
-            Assert.assertEquals("MOR", statement.hudiType)
+            Assert.assertEquals("mor", statement.hudiType)
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)

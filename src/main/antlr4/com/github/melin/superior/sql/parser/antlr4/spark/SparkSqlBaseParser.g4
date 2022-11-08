@@ -327,14 +327,6 @@ replaceTableHeader
     : (CREATE OR)? REPLACE TABLE multipartIdentifier
     ;
 
-primaryKeyExpr
-    : PRIMARY KEY primaryKeys=primaryColumnNames (WITH hudiType=(COW | MOR))?
-    ;
-
-primaryColumnNames
-    : LEFT_PAREN errorCapturingIdentifier (',' errorCapturingIdentifier)* RIGHT_PAREN
-    ;
-
 bucketSpec
     : CLUSTERED BY identifierList
       (SORTED BY orderedIdentifierList)?
@@ -418,7 +410,6 @@ createTableClauses
     :((OPTIONS options=propertyList) |
      (PARTITIONED BY partitioning=partitionFieldList) |
      skewSpec |
-     primaryKeyExpr |
      bucketSpec |
      rowFormat |
      createFileFormat |
@@ -1620,8 +1611,6 @@ nonReserved
     | WITHIN
     | YEAR
     | ZONE
-    | COW
-    | MOR
     | SOURCE
     | SINK
 //--DEFAULT-NON-RESERVED-END

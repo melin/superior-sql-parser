@@ -8,7 +8,6 @@ import com.github.melin.superior.sql.parser.model.*
 import com.github.melin.superior.sql.parser.util.StringUtil
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.LinkedHashMap
@@ -167,7 +166,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                         .filter { it is SparkSqlBaseParser.PartitionColumnContext }.map { item ->
                             val column = item as SparkSqlBaseParser.PartitionColumnContext
                             val colName = column.colType().colName.text
-                            var dataType = column.colType().dataType().text
+                            val dataType = column.colType().dataType().text
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
@@ -212,15 +211,20 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             dcTable.locationPath = createTableClauses.locationSpec().get(0).text
         }
 
-        if (fileFormat != null && "hudi" == fileFormat.lowercase() && createTableClauses.primaryKeyExpr().size == 1) {
-            val expr = createTableClauses.primaryKeyExpr().get(0)
-            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
-                val key = item.getChild(0)
-                key.text
+        if (fileFormat != null && "hudi" == fileFormat.lowercase()) {
+            val primaryKey = properties.get("primaryKey")
+            if (StringUtils.isNotBlank(primaryKey)) {
+                dcTable.hudiPrimaryKeys = StringUtils.split(primaryKey, ",").map { StringUtils.trim(it) };
             }
 
-            if (expr.hudiType != null) {
-                dcTable.hudiType = expr.hudiType.text
+            val type = properties.getOrDefault("type", "COW")
+            if (StringUtils.isNotBlank(type)) {
+                dcTable.hudiType = type
+            }
+
+            val preCombineField = properties.getOrDefault("preCombineField", "")
+            if (StringUtils.isNotBlank(preCombineField)) {
+                dcTable.preCombineField = preCombineField
             }
         }
 
@@ -259,7 +263,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         var partitionColumns: List<DcColumn>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<DcColumn>? = null
-        var createTableType: String = "hive"
+        var createTableType = "hive"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
@@ -288,7 +292,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                         .filter { it is SparkSqlBaseParser.PartitionColumnContext }.map { item ->
                             val column = item as SparkSqlBaseParser.PartitionColumnContext
                             val colName = column.colType().colName.text
-                            var dataType = column.colType().dataType().text
+                            val dataType = column.colType().dataType().text
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
@@ -330,15 +334,20 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             dcTable.locationPath = createTableClauses.locationSpec().get(0).text
         }
 
-        if (fileFormat != null && "hudi" == fileFormat.lowercase() && createTableClauses.primaryKeyExpr().size == 1) {
-            val expr = createTableClauses.primaryKeyExpr().get(0)
-            dcTable.hudiPrimaryKeys = expr.primaryKeys.children.filter { it is SparkSqlBaseParser.ErrorCapturingIdentifierContext }.map { item ->
-                val key = item.getChild(0)
-                key.text
+        if (fileFormat != null && "hudi" == fileFormat.lowercase()) {
+            val primaryKey = properties.get("primaryKey")
+            if (StringUtils.isNotBlank(primaryKey)) {
+                dcTable.hudiPrimaryKeys = StringUtils.split(primaryKey, ",").map { StringUtils.trim(it) };
             }
 
-            if (expr.hudiType != null) {
-                dcTable.hudiType = expr.hudiType.text
+            val type = properties.getOrDefault("type", "COW")
+            if (StringUtils.isNotBlank(type)) {
+                dcTable.hudiType = type
+            }
+
+            val preCombineField = properties.getOrDefault("preCombineField", "")
+            if (StringUtils.isNotBlank(preCombineField)) {
+                dcTable.preCombineField = preCombineField
             }
         }
 

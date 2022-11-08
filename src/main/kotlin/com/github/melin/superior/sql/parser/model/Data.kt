@@ -70,6 +70,7 @@ data class DcTable(
     var token: CommonToken? = null
     var hudiPrimaryKeys: List<String> = listOf()
     var hudiType: String = "COW"
+    var preCombineField: String = ""
 
     fun getFullTableName(): String {
         return innerFullTableName(catalogName, databaseName, tableName)
