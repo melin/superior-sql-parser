@@ -20,8 +20,6 @@
 3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
 4. [Spark 3.0](https://github.com/apache/spark/tree/master/sql/catalyst/src/main/antlr4/org/apache/spark/sql/catalyst/parser)
 5. [T-SQL](https://github.com/antlr/grammars-v4/tree/master/sql/tsql)
-6. [ClickHouse](https://github.com/abyss7/ClickHouse/blob/antlr-grammar/src/Parsers/New)
-
 
 ## Spark Structed Streaming sql
 ```sql
