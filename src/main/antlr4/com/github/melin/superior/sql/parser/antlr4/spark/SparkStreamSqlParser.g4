@@ -18,7 +18,7 @@ sqlStatement
 
 createStreamTable
     : CREATE STREAM TABLE tableName=tableIdentifier
-      '(' columns=colTypeList ')'
+      ('(' columns=colTypeList ')')?
       WITH tableProps=tablePropertyList
     ;
 

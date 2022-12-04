@@ -22,25 +22,29 @@ class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
 
     override fun visitCreateStreamTable(ctx: SparkStreamSqlParser.CreateStreamTableContext): StatementData {
         val tableName = ctx.tableName.table.ID().text
-        var columns: List<StreamColumn> = ctx.columns.children
-            .filter {
-                it is SparkStreamSqlParser.ColTypeContext }.map {
-                    item ->
-                    val column = item as SparkStreamSqlParser.ColTypeContext
-                    val colName = column.ID().text
-                    var dataType = column.dataType().text
-                    val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
-                    val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
-                    val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
-                    StreamColumn(colName, dataType, colComment, jsonPath, pattern)
-            }
+        val columns = if (ctx.columns != null) {
+            ctx.columns.children
+                    .filter {
+                        it is SparkStreamSqlParser.ColTypeContext
+                    }.map { item ->
+                        val column = item as SparkStreamSqlParser.ColTypeContext
+                        val colName = column.ID().text
+                        var dataType = column.dataType().text
+                        val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
+                        val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
+                        val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
+                        StreamColumn(colName, dataType, colComment, jsonPath, pattern)
+                    }
+        } else {
+            emptyList()
+        }
 
-        var properties = HashMap<String, String>()
-        if(ctx.tableProps != null) {
+        val properties = HashMap<String, String>()
+        if (ctx.tableProps != null) {
             ctx.tableProps.children.filter { it is SparkStreamSqlParser.TablePropertyContext }.map { item ->
                 val property = item as SparkStreamSqlParser.TablePropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
-                var value = StringUtil.cleanQuote(property.value.text)
+                val value = StringUtil.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }

@@ -83,6 +83,26 @@ set spark.test = dsd(id)%=2;
     }
 
     @Test
+    fun createTableTest5() {
+        val sql = "CREATE Stream TABLE tdl_hudi_stream_json_dt\n" +
+                "    WITH (\n" +
+                "    type = 'hudi',\n" +
+                "    databaseName = \"bigdata\",\n" +
+                "    tableName = \"hudi_stream_json_dt\"" +
+                "    )"
+
+        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statement = statementData.statement
+        if (statement is StreamTable) {
+            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableName)
+            Assert.assertEquals("hudi", statement.properties.get("type"))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun setConfigTest() {
         val sql = "set spark.test = false";
 
@@ -177,5 +197,4 @@ set spark.test = dsd(id)%=2;
             Assert.fail()
         }
     }
-
 }
