@@ -20,6 +20,10 @@
 3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
 4. [Spark 3.0](https://github.com/apache/spark/tree/master/sql/catalyst/src/main/antlr4/org/apache/spark/sql/catalyst/parser)
 5. [T-SQL](https://github.com/antlr/grammars-v4/tree/master/sql/tsql)
+6. [StarRocks](https://github.com/StarRocks/starrocks/tree/main/fe/fe-core/src/main/java/com/starrocks/sql/parser)
+7. [Doris](https://github.com/apache/doris/tree/master/fe/fe-core/src/main/antlr4/org/apache/doris)
+8. [ClickHouse](https://github.com/ClickHouse/ClickHouse/tree/master/utils/antlr)
+9. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql)
 
 ## Spark Structed Streaming sql
 ```sql
