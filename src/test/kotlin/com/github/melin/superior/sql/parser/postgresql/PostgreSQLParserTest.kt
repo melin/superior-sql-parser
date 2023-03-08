@@ -17,7 +17,7 @@ class PostgreSQLParserTest {
         """.trimIndent()
 
         val statementData = PostgreSQLHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = statementData.statement
         if (statement is TableData) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)

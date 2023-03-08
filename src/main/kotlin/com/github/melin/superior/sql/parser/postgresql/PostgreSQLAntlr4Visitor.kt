@@ -18,38 +18,36 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private val statementData = TableData();
     private var limit: Int? = null
-    private var data: StatementData? = null
 
-    override fun visit(tree: ParseTree?): StatementData? {
-        super.visit(tree)
+    override fun visit(tree: ParseTree?): StatementData {
+        val statementData = super.visit(tree)
 
-        if (data == null) {
+        if (statementData == null) {
             throw SQLParserException("不支持的SQL")
         }
 
-        return data;
+        return statementData;
     }
 
-    override fun visitSelect_stmt(ctx: PostgreSQLParser.Select_stmtContext): StatementData? {
+    override fun visitSelect_stmt(ctx: PostgreSQLParser.Select_stmtContext): StatementData {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitSelect_stmt(ctx)
 
             statementData.limit = limit
-            data = StatementData(StatementType.SELECT, statementData)
-            return data
+            return StatementData(StatementType.SELECT, statementData)
         } else {
-            return null
+            throw SQLParserException("not support")
         }
     }
 
-    override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData? {
+    override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData {
         if (currentOptType == StatementType.SELECT) {
             val (_, database, table) = parseTableName(ctx)
             val tableSource = TableSource(database, table)
             statementData.inputTables.add(tableSource)
         }
-        return null
+        throw SQLParserException("not support")
     }
 
     fun parseTableName(ctx: PostgreSQLParser.Schema_qualified_nameContext): Triple<String?, String?, String> {
