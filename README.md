@@ -10,11 +10,44 @@
 </dependency>
 ```
 
-## Deploy
+## Build
 
 > mvn clean deploy -Prelease
 
-##
+## Example
+
+```kotlin
+// Spark SQL
+val sql = "select bzdys, bzhyyh, bzdy, week, round((bzdy-bzdys)*100/bzdys, 2) " +
+        "from (select lag(bzdy) over (order by week) bzdys, bzhyyh, bzdy, week " +
+        "from (select count(distinct partner_code) bzhyyh, count(1) bzdy, week from tdl_dt2x_table)) limit 111"
+
+val statementData = SparkSQLHelper.getStatementData(sql)
+val statement = statementData.statement
+if (statement is TableData) {
+    Assert.assertEquals(StatementType.SELECT, statementData.type)
+    Assert.assertEquals(1, statement.inputTables.size)
+    Assert.assertEquals("tdl_dt2x_table", statement.inputTables.get(0).tableName)
+    Assert.assertEquals(111, statement.limit)
+} else {
+    Assert.fail()
+}
+
+// MySQL
+val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
+val statementData = MySQLHelper.getStatementData(sql)
+val statement = statementData.statement
+if(statement is TableData) {
+    Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+    Assert.assertEquals("bigdata", statement.outpuTables.get(0).databaseName)
+    Assert.assertEquals("user", statement.outpuTables.get(0).tableName)
+    Assert.assertEquals(2, statement.inputTables.size)
+} else {
+    Assert.fail()
+}
+```
+
+## 支持数据库
 1. [MySQL](https://github.com/antlr/grammars-v4/tree/master/sql/mysql)
 2. [PrestoSQL](https://github.com/prestosql/presto/tree/master/presto-parser/src/main/antlr4/io/prestosql/sql/parser)
 3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
@@ -24,27 +57,6 @@
 7. [Doris](https://github.com/apache/doris/tree/master/fe/fe-core/src/main/antlr4/org/apache/doris)
 8. [ClickHouse](https://github.com/ClickHouse/ClickHouse/tree/master/utils/antlr)
 9. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql)
-
-## Spark Structed Streaming sql
-```sql
-create stream TABLE tdl_kafka_users (
-    user_name "/name" string,
-    age	    int,
-    email   string
-) WITH (
-    kafka.bootstrap.servers = 'xxx.xxx.xxx.xxx:9092',
-    kafka.group.id = 'dataworker-stream',
-    subscribe = 'users',
-    includeHeaders = true,
-    startingOffsets = 'latest',
-    failOnDataLoss = true,
-    format='json'
-);
-
-insert into bigdata.test_delta_dt select * from tdl_kafka_users;
-
--- {name:'zhangsan', age: 28, email:'zhangsan@gmail.com'}
-```
 
 ## 相关项目
 1. https://gitee.com/melin/bee
