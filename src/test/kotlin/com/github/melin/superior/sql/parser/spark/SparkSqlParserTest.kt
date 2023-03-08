@@ -457,7 +457,7 @@ class SparkSqlParserTest {
 
     @Test
     fun createTableSelectTest() {
-        val sql = "create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as select * from bigdata.users a left outer join address b on a.addr_id = b.id"
+        val sql = "create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id"
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
@@ -466,10 +466,12 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", name)
-            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
+            Assert.assertEquals("select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
             Assert.assertEquals(2, statement.tableData?.inputTables?.size)
             Assert.assertEquals("users", statement.tableData?.inputTables?.get(0)?.tableName)
             Assert.assertEquals("address", statement.tableData?.inputTables?.get(1)?.tableName)
+
+            Assert.assertEquals("bigdata.test", statement.tableData?.functionNames?.first())
         } else {
             Assert.fail()
         }
@@ -477,7 +479,7 @@ class SparkSqlParserTest {
         val sql1 = SparkSQLHelper.replaceSql(sql,
                 mapOf("bigdata.users" to "iceberg_spark.bigdata.users", "address" to "iceberg_spark.bigdata.address"))
         Assert.assertEquals("create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as " +
-                "select * from iceberg_spark.bigdata.users a left outer join iceberg_spark.bigdata.address b on a.addr_id = b.id",
+                "select *, bigdata.TEST(name) from iceberg_spark.bigdata.users a left outer join iceberg_spark.bigdata.address b on a.addr_id = b.id",
                 sql1);
     }
 
@@ -665,7 +667,7 @@ class SparkSqlParserTest {
         val sql = """CREATE View if not exists view_users
             comment 'view test'
             as
-            select * from account
+            select *, bigdata.test(name) from account
             """
 
         val statementData = SparkSQLHelper.getStatementData(sql)
@@ -674,7 +676,10 @@ class SparkSqlParserTest {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
-            Assert.assertEquals("select * from account", statement.querySql)
+            Assert.assertEquals(1, statement.functionNames.size)
+            Assert.assertEquals("bigdata.test", statement.functionNames.first())
+
+            Assert.assertEquals("select *, bigdata.test(name) from account", statement.querySql)
         } else {
             Assert.fail()
         }
@@ -1347,7 +1352,7 @@ class SparkSqlParserTest {
 
     @Test
     fun insertOverwriteQueryTest3() {
-        val sql = "insert INTO users select * from account a join address b on a.addr_id=b.id"
+        val sql = "insert INTO users select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is TableData) {
@@ -1355,11 +1360,13 @@ class SparkSqlParserTest {
             Assert.assertEquals("users", statement.outpuTables.get(0).tableName)
             Assert.assertEquals(InsertMode.INTO, statement.insertMode)
             Assert.assertEquals(0, statement.partitions?.size)
-            Assert.assertEquals(statementData.querySql, "select * from account a join address b on a.addr_id=b.id")
+            Assert.assertEquals(statementData.querySql, "select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id")
 
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals("account", statement.inputTables.get(0).tableName)
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+
+            Assert.assertEquals("bigdata.test", statement.functionNames.first())
         } else {
             Assert.fail()
         }
@@ -1907,6 +1914,31 @@ class SparkSqlParserTest {
             Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
 
             Assert.assertEquals("log", statement.distType)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dtunnelTest3() {
+        val sql = """
+            WITH tmp_demo_test2 AS (SELECT *, test(id) FROM bigdata.test_demo_test2 where name is not null) 
+                datatunnel SOURCE('hive') OPTIONS(
+                databaseName='bigdata',
+                tableName='tmp_demo_test2',
+                columns=['*'])
+            SINK('log') OPTIONS(numRows = 10)
+        """.trimIndent()
+        val statementData = SparkSQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DataTunnelExpr) {
+            Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
+            Assert.assertEquals("hive", statement.srcType)
+
+            Assert.assertTrue(statement.cte)
+            Assert.assertEquals("log", statement.distType)
+            Assert.assertEquals(1, statement.inputTables?.size)
+            Assert.assertEquals(1, statement.functionNames?.size)
         } else {
             Assert.fail()
         }

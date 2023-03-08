@@ -226,7 +226,7 @@ statement
         (OPTIONS options=propertyList)?                                #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
-    | DATATUNNEL SOURCE LEFT_PAREN srcName=STRING RIGHT_PAREN OPTIONS
+    | ctes? DATATUNNEL SOURCE LEFT_PAREN srcName=STRING RIGHT_PAREN OPTIONS
         readOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=STRING)?
         SINK LEFT_PAREN distName=STRING RIGHT_PAREN

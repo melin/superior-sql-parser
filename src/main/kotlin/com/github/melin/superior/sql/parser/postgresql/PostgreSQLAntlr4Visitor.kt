@@ -41,13 +41,15 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData {
+    override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
             val (_, database, table) = parseTableName(ctx)
             val tableSource = TableSource(database, table)
             statementData.inputTables.add(tableSource)
+            return null
+        } else {
+            throw SQLParserException("not support")
         }
-        throw SQLParserException("not support")
     }
 
     fun parseTableName(ctx: PostgreSQLParser.Schema_qualified_nameContext): Triple<String?, String?, String> {

@@ -107,6 +107,8 @@ data class DcView(
         var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
         var ifExists: Boolean = false) : Statement() { //是否存在 if exists 关键字
 
+    var functionNames: HashSet<String> = HashSet()
+
     fun getFullTableName(): String {
         return innerFullTableName(catalogName, databaseName, tableName)
     }
@@ -118,9 +120,11 @@ data class TableData(
         var outpuTables: java.util.ArrayList<TableSource> = ArrayList(),
         var limit: Int? = null,
         var insertMode: InsertMode? = null,
-        var partitions: HashMap<String, String>? = null,
-        var cteTempTables: ArrayList<String>? = null
-): Statement()
+        var partitions: HashMap<String, String>? = null
+): Statement() {
+    val cteTempTables: ArrayList<String> = ArrayList()
+    val functionNames: HashSet<String> = HashSet()
+}
 
 @DefaultConstructor
 data class TableSource(
@@ -230,7 +234,13 @@ data class DataTunnelExpr(
     var srcOptions: Map<String, String>,
     val transformSql: String?,
     val distType: String,
-    var distOptions: Map<String, String>) : Statement()
+    var distOptions: Map<String, String>,
+    var cte: Boolean = false) : Statement() {
+
+    var inputTables: java.util.ArrayList<TableSource>? = null
+    var cteTempTables: ArrayList<String>? = null
+    var functionNames: HashSet<String>? = null
+}
 
 data class SyncSchemaExpr(
     val targetCatalog: String?,
@@ -270,7 +280,8 @@ data class ExportData(
     val tableName: String,
     val cte: Boolean = false,
     var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
-    var cteTempTables: ArrayList<String>? = null) : Statement()
+    var cteTempTables: ArrayList<String>? = null,
+    var functionNames: HashSet<String>? = null) : Statement()
 
 data class RefreshData(
     val catalogName: String?,

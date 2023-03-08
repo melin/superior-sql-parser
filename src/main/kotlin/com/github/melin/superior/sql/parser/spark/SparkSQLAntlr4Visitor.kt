@@ -31,7 +31,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
     private var insertSql: Boolean = false;
     private var isCTE: Boolean = false;
-    private var cteTempTables: ArrayList<String> = ArrayList()
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
         return if (currentResult == null) true else false
@@ -354,7 +353,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         dcTable.partitionColumnNames = partitionColumnNames
 
         if (ctx.query() != null) {
-            currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+            currentOptType = StatementType.REPLACE_TABLE_AS_SELECT
             var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
             if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
                 querySql = StringUtils.substringBetween(querySql, "(", ")")
@@ -613,6 +612,12 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val srcType = StringUtil.cleanQuote(ctx.srcName.text)
         val distType = StringUtil.cleanQuote(ctx.distName.text)
 
+        currentOptType = StatementType.DATATUNNEL
+        if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
+            isCTE = true
+            this.visitCtes(ctx.ctes())
+        }
+
         val srcOptions = HashMap<String, String>()
         if (ctx.readOpts != null) {
             ctx.readOpts.dtProperty().map { item ->
@@ -638,7 +643,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
         }
 
-        val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions)
+        val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions, isCTE)
+
+        data.inputTables = statementData.inputTables
+        data.cteTempTables = statementData.cteTempTables
+        data.functionNames = statementData.functionNames
         return StatementData(StatementType.DATATUNNEL, data)
     }
 
@@ -737,7 +746,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             querySql = StringUtils.substring(command, query.start.startIndex)
         }
 
+        currentOptType = StatementType.CREATE_VIEW
+        this.visitQuery(ctx.query())
+
         val dcView = DcView(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
+        dcView.functionNames = statementData.functionNames
         return StatementData(StatementType.CREATE_VIEW, dcView)
     }
 
@@ -829,7 +842,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         super.visitExportTable(ctx)
 
         if (isCTE) {
-            cteTempTables.forEach { tableName ->
+            statementData.cteTempTables.forEach { tableName ->
                 for ((index, table) in statementData.inputTables.withIndex()) {
                     if (table.databaseName.isNullOrBlank() && tableName == table.tableName) {
                         statementData.inputTables.removeAt(index)
@@ -838,8 +851,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 }
             }
             data.inputTables.addAll(statementData.inputTables)
-            data.cteTempTables = cteTempTables
         }
+        data.functionNames = statementData.functionNames
+        data.cteTempTables = statementData.cteTempTables
         return StatementData(StatementType.EXPORT_TABLE, data)
     }
 
@@ -866,7 +880,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 super.visitStatementDefault(ctx)
                 statementData.limit = limit
 
-                cteTempTables.forEach { tableName ->
+                statementData.cteTempTables.forEach { tableName ->
                     for ((index, table) in statementData.inputTables.withIndex()) {
                         if (table.databaseName.isNullOrBlank() && tableName == table.tableName) {
                             statementData.inputTables.removeAt(index)
@@ -874,7 +888,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                         }
                     }
                 }
-                statementData.cteTempTables = cteTempTables
                 return StatementData(StatementType.SELECT, statementData)
             }
         } else if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
@@ -918,7 +931,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                     }
                     statementData.insertMode = insertMode
 
-                    cteTempTables.forEach { name ->
+                    statementData.cteTempTables.forEach { name ->
                         for ((index, table) in statementData.inputTables.withIndex()) {
                             if (table.databaseName.isNullOrBlank() && name == table.tableName) {
                                 statementData.inputTables.removeAt(index)
@@ -935,7 +948,6 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                     }
 
                     if (currentOptType == StatementType.INSERT_SELECT) {
-                        statementData.cteTempTables = cteTempTables
                         return StatementData(StatementType.INSERT_SELECT, statementData, querySql = querySql)
                     }
                 }
@@ -1040,6 +1052,23 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
     //-----------------------------------private method-------------------------------------------------
 
+    override fun visitFunctionName(ctx: SparkSqlBaseParser.FunctionNameContext): StatementData? {
+        if (StatementType.SELECT == currentOptType ||
+            StatementType.CREATE_VIEW == currentOptType ||
+            StatementType.INSERT_SELECT == currentOptType ||
+            StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
+            StatementType.REPLACE_TABLE_AS_SELECT == currentOptType ||
+            StatementType.MULTI_INSERT == currentOptType ||
+            StatementType.MERGE_INTO_TABLE == currentOptType ||
+            StatementType.EXPORT_TABLE == currentOptType ||
+            StatementType.DATATUNNEL == currentOptType) {
+
+            statementData.functionNames.add(StringUtils.lowerCase(ctx.qualifiedName().text))
+            println(ctx.qualifiedName())
+        }
+        return super.visitFunctionName(ctx)
+    }
+
     override fun visitQueryTermDefault(ctx: SparkSqlBaseParser.QueryTermDefaultContext): StatementData? {
         if (querySql == null) {
             querySql = StringUtils.substring(command, ctx.start.startIndex)
@@ -1049,7 +1078,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
     override fun visitNamedQuery(ctx: SparkSqlBaseParser.NamedQueryContext): StatementData? {
         if (isCTE) {
-            cteTempTables.add(ctx.getChild(0).text)
+            statementData.cteTempTables.add(ctx.getChild(0).text)
         }
         return super.visitNamedQuery(ctx)
     }
@@ -1057,6 +1086,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitMultipartIdentifier(ctx: SparkSqlBaseParser.MultipartIdentifierContext): StatementData? {
         val (databaseName, tableName, metaAction) = parseTableName(ctx)
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
+            currentOptType == StatementType.REPLACE_TABLE_AS_SELECT ||
                 currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.INSERT_SELECT ||
                 currentOptType == StatementType.MERGE_INTO_TABLE ||
