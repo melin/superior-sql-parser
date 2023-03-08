@@ -33,6 +33,34 @@ if (statement is TableData) {
     Assert.fail()
 }
 
+// Spark Jar
+val sql = """
+    set spark.shuffle.compress=true;set spark.rdd.compress=true;
+    set spark.driver.maxResultSize=3g;
+    set spark.serializer=org.apache.spark.serializer.KryoSerializer;
+    set spark.kryoserializer.buffer.max=1024m;
+    set spark.kryoserializer.buffer=256m;
+    set spark.network.timeout=300s;
+    examples-jar-with-dependencies.jar imei_test.euSaveHBase gaea_offline:account_mobile sh md shda.interest_radar_mobile_score_dt 20180318 /xiaoyong.fu/sh/mobile/loan 400 '%7B%22job_type%22=' --jar
+    """;
+
+val statementDatas = JobTaskHelper.getStatementData(sql)
+Assert.assertEquals(8, statementDatas.size)
+
+var statementData = statementDatas.get(7)
+var statement = statementData.statement
+if (statement is JobData) {
+    Assert.assertEquals(StatementType.JOB, statementData.type)
+    Assert.assertEquals("createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
+    Assert.assertEquals("imei_test.euSaveHBase", statement.className)
+    Assert.assertEquals("/xiaoyong.fu/sh/mobile/loan", statement.params?.get(5))
+    Assert.assertEquals("400", statement.params?.get(6))
+    Assert.assertEquals("%7B%22job_type%22=", statement.params?.get(7))
+    Assert.assertEquals("--jar", statement.params?.get(8))
+} else {
+    Assert.fail()
+}
+
 // MySQL
 val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
 val statementData = MySQLHelper.getStatementData(sql)
@@ -41,6 +69,20 @@ if(statement is TableData) {
     Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
     Assert.assertEquals("bigdata", statement.outpuTables.get(0).databaseName)
     Assert.assertEquals("user", statement.outpuTables.get(0).tableName)
+    Assert.assertEquals(2, statement.inputTables.size)
+} else {
+    Assert.fail()
+}
+
+// Postgres
+val sql = """
+    select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
+""".trimIndent()
+
+val statementData = PostgreSQLHelper.getStatementData(sql)
+val statement = statementData?.statement
+if (statement is TableData) {
+    Assert.assertEquals(StatementType.SELECT, statementData.type)
     Assert.assertEquals(2, statement.inputTables.size)
 } else {
     Assert.fail()
