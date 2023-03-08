@@ -32,7 +32,7 @@ class JobTaskParserTest {
             set flink.test = dw.eset_sdfe_sd;
             set flink.test = demo.test;
             set flink.test = dsd(id)%=2;
-            tet_test-demo_1.23-sdfd.jar cn.tongdun.Demo1 param1  param2 'hello \n world'
+            tet_test-demo_1.23-sdfd.jar com.example.Demo1 param1  param2 'hello \n world'
              'hdfs://user/hive'
              '{"user": "binsong.li",
                address: "hangzhou"
@@ -75,7 +75,7 @@ class JobTaskParserTest {
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("tet_test-demo_1.23-sdfd.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.Demo1", statement.className)
+            Assert.assertEquals("com.example.Demo1", statement.className)
             Assert.assertEquals(8, statement.params?.size)
             Assert.assertEquals("/user/jars/*", statement.params?.get(5))
         } else {
@@ -86,7 +86,7 @@ class JobTaskParserTest {
     @Test
     fun setConfigTest2() {
         val sql =
-                "demo.jar cn.tongdun.Demo 'hello \"test\" world' param2 \n param3";
+                "demo.jar com.example.Demo 'hello \"test\" world' param2 \n param3";
 
         val statementDatas = JobTaskHelper.getStatementData(sql)
         Assert.assertEquals(1, statementDatas.size)
@@ -96,7 +96,7 @@ class JobTaskParserTest {
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("demo.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.Demo", statement.className)
+            Assert.assertEquals("com.example.Demo", statement.className)
             Assert.assertEquals(3, statement.params?.size)
 
             Assert.assertEquals("hello \"test\" world", statement.params?.get(0))
@@ -122,7 +122,7 @@ class JobTaskParserTest {
             set spark.psi.parNum=2;
             set spark.indexPSI.type=2;
             set spark.metrics.indexFile=index-mobile.json;
-            psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar  cn.tongdun.dw.psi.StartDCJob 1,3,sd,qw
+            psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar  com.example.dw.psi.StartDCJob 1,3,sd,qw
             """;
 
         val statementDatas = JobTaskHelper.getStatementData(sql)
@@ -133,7 +133,7 @@ class JobTaskParserTest {
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.dw.psi.StartDCJob", statement.className)
+            Assert.assertEquals("com.example.dw.psi.StartDCJob", statement.className)
             Assert.assertEquals("1,3,sd,qw", statement.params?.get(0))
         } else {
             Assert.fail()
@@ -158,7 +158,7 @@ set spark.metrics.indexInputTable=dw.dwa_mobile_model_dt;
 set spark.metrics.indexOutputTable=dw.app_mdl_mobile_index_dt;
 set spark.metrics.indexWaitFullPartition=true;
 set spark.metrics.indexHashWhere=abs(hash(mobile))%4=3;
-new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.dw.index.StartDCJob IndexOffline 2018-03-18
+new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar com.example.dw.index.StartDCJob IndexOffline 2018-03-18
             """;
 
         val statementDatas = JobTaskHelper.getStatementData(sql)
@@ -169,7 +169,7 @@ new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.dw.index
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.dw.index.StartDCJob", statement.className)
+            Assert.assertEquals("com.example.dw.index.StartDCJob", statement.className)
             Assert.assertEquals("2018-03-18", statement.params?.get(1))
         } else {
             Assert.fail()
@@ -216,8 +216,8 @@ set spark.screenJob.test=true;
 set spark.screenTool.srcTable=default.activity_flat;
 set spark.toMysql.tableName=province;
 set spark.toMysql.field=creditProvinceAmountJson,creditForeignAmount,creditCityAmountJson,zhejiangFraud,fraudProvinceAmountJson;
-province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /xiaoyong.fu/2017-22-03/sh/mobile/loan/ --write-private-test;
-province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /xiaoyong.fu/2017-22-03/sh/mobile/loan/ --write-private-test
+province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob /xiaoyong.fu/2017-22-03/sh/mobile/loan/ --write-private-test;
+province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob /xiaoyong.fu/2017-22-03/sh/mobile/loan/ --write-private-test
             """;
 
         val statementDatas = JobTaskHelper.getStatementData(sql)
@@ -228,7 +228,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("province-1.0-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.screen_dc.ScreenJob", statement.className)
+            Assert.assertEquals("com.example.screen_dc.ScreenJob", statement.className)
             Assert.assertEquals("/xiaoyong.fu/2017-22-03/sh/mobile/loan/", statement.params?.get(0))
             Assert.assertEquals("--write-private-test", statement.params?.get(1))
         } else {
@@ -239,7 +239,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /
     @Test
     fun setConfigTest7() {
         val sql = """
-            raph.edgesSNAPSHOT.eventType.jar cn.tongdun.graph.PhoenixCSVWriterJob graph_csv_s_2 /user/datacompute/bigdata/data/shuoyi.zhao/graph_csv_s_2/2018/12/day_12
+            raph.edgesSNAPSHOT.eventType.jar com.example.graph.PhoenixCSVWriterJob graph_csv_s_2 /user/datacompute/bigdata/data/shuoyi.zhao/graph_csv_s_2/2018/12/day_12
             /user/datacompute/bigdata/data/shuoyi.zhao/graph_csv_s_new_2/Loan/2018/12/day_12 500 Loan hdfs://192.168.40.37,hdfs://192.168.39.133 hdfs://192.168.40.37,hdfs://192.168.39.130;
             """;
 
@@ -251,7 +251,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("raph.edgesSNAPSHOT.eventType.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.graph.PhoenixCSVWriterJob", statement.className)
+            Assert.assertEquals("com.example.graph.PhoenixCSVWriterJob", statement.className)
             Assert.assertEquals("hdfs://192.168.40.37,hdfs://192.168.39.130", statement.params?.get(6))
         } else {
             Assert.fail()
@@ -261,7 +261,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /
     @Test
     fun setConfigTest8() {
         val sql = """
-            set spark.app.name=sparkAppName;set spark.memory.storageFraction=0.1;set spark.memory.fraction=0.95;set spark.memory.useLegacyMode=true;set master=yarn-cluster;/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar cn.tongdun.pontus.core.Engine customCmd "-j{'readerFields':[{'field':'uuid','type':'string'},{'field':'rule_detail','type':'string'}],'resourceSetting':{'spark.driver.memory':'2g','spark.pontus.writer.mapper':'2'},'reader':{'databaseName':'afraudtech','connectionType':'hive','table':'antifraud_rule_result'},'writerFields':[{'transform':'uuid','field':'uuid','type':'varchar(32)'},{'filter':'where id=\'test\'','transform':'rule_detail','field':'policy_recommendation','type':'text'}],'writer':{'dataSourceId':'364','connectionAttr':'jdbc:mysql://192.168.74.136:3306/athena','password':'6ydJDezPBLBuco+sCV6QL6XsdTN/ShtYIz1Gi3TVusw=','writeMode':'UPSERT','userName':'athena','connectionType':'mysql','table':'edison_warning_result'}}"  --jars /user/pontus_2.1/*
+            set spark.app.name=sparkAppName;set spark.memory.storageFraction=0.1;set spark.memory.fraction=0.95;set spark.memory.useLegacyMode=true;set master=yarn-cluster;/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar com.example.pontus.core.Engine customCmd "-j{'readerFields':[{'field':'uuid','type':'string'},{'field':'rule_detail','type':'string'}],'resourceSetting':{'spark.driver.memory':'2g','spark.pontus.writer.mapper':'2'},'reader':{'databaseName':'afraudtech','connectionType':'hive','table':'antifraud_rule_result'},'writerFields':[{'transform':'uuid','field':'uuid','type':'varchar(32)'},{'filter':'where id=\'test\'','transform':'rule_detail','field':'policy_recommendation','type':'text'}],'writer':{'dataSourceId':'364','connectionAttr':'jdbc:mysql://192.168.74.136:3306/athena','password':'6ydJDezPBLBuco+sCV6QL6XsdTN/ShtYIz1Gi3TVusw=','writeMode':'UPSERT','userName':'athena','connectionType':'mysql','table':'edison_warning_result'}}"  --jars /user/pontus_2.1/*
             """;
 
         val statementDatas = JobTaskHelper.getStatementData(sql)
@@ -272,7 +272,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar cn.tongdun.screen_dc.ScreenJob /
         if (statement is JobData) {
             Assert.assertEquals(StatementType.JOB, statementData.type)
             Assert.assertEquals("/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar", statement.resourceName)
-            Assert.assertEquals("cn.tongdun.pontus.core.Engine", statement.className)
+            Assert.assertEquals("com.example.pontus.core.Engine", statement.className)
             Assert.assertEquals(4, statement.params?.size)
             val config = """
                 -j{'readerFields':[{'field':'uuid','type':'string'},{'field':'rule_detail','type':'string'}],'resourceSetting':{'spark.driver.memory':'2g','spark.pontus.writer.mapper':'2'},'reader':{'databaseName':'afraudtech','connectionType':'hive','table':'antifraud_rule_result'},'writerFields':[{'transform':'uuid','field':'uuid','type':'varchar(32)'},{'filter':'where id=\'test\'','transform':'rule_detail','field':'policy_recommendation','type':'text'}],'writer':{'dataSourceId':'364','connectionAttr':'jdbc:mysql://192.168.74.136:3306/athena','password':'6ydJDezPBLBuco+sCV6QL6XsdTN/ShtYIz1Gi3TVusw=','writeMode':'UPSERT','userName':'athena','connectionType':'mysql','table':'edison_warning_result'}}
