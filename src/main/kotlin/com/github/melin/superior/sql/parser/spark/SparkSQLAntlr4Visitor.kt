@@ -60,15 +60,15 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseTableName(ctx: SparkSqlBaseParser.MultipartIdentifierContext): Schema {
+    fun parseTableName(ctx: SparkSqlBaseParser.MultipartIdentifierContext): Table {
         if (ctx.parts.size == 4) {
-            return Schema(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
+            return Table(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
-            return Schema(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, null)
+            return Table(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
         } else if (ctx.parts.size == 2) {
-            return Schema(null, ctx.parts.get(0).text, ctx.parts.get(1).text, null)
+            return Table(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return Schema(null, null, ctx.parts.get(0).text, null)
+            return Table(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }

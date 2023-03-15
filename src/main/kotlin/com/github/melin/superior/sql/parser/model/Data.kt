@@ -7,10 +7,6 @@ import java.io.Serializable
  * Created by libinsong on 2017/4/4.
  */
 
-data class Schema(val catalogName: String?, val databaseName: String?, val tableName: String, val metaType: String?)
-
-data class Database(val catalogName: String?, val databaseName: String)
-
 @Target(AnnotationTarget.CLASS)
 annotation class DefaultConstructor
 

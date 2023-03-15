@@ -6,7 +6,7 @@
 
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.0.8</version>
+    <version>3.3.0.9</version>
 
     <properties>
         <kotlin.version>1.8.10</kotlin.version>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
+            <version>31.1-jre</version>
             <scope>provided</scope>
         </dependency>
 

@@ -92,7 +92,11 @@ enum class StatementType: Serializable {
     SYNC,
 
     ARITHMETIC,
-    OPTIMIZE, // clickhouse
+
+    FLINK_CDC_BEGIN,
+    FLINK_CDC_END,
+    FLINK_CDC_CTAS,
+    FLINK_CDC_CDAS,
 
     UNKOWN;
 }
