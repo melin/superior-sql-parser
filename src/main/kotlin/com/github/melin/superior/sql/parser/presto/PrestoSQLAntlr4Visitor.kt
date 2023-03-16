@@ -99,16 +99,16 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         }
 
         if (currentOptType == StatementType.SELECT) {
-            val tableSource = createTableSource(ctx)
-            statementData.inputTables.add(tableSource)
+            val tableName = createTableSource(ctx)
+            statementData.inputTables.add(tableName)
         } else if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
-            val tableSource = createTableSource(ctx)
-            statementData.inputTables.add(tableSource)
+            val tableName = createTableSource(ctx)
+            statementData.inputTables.add(tableName)
         }
         return null
     }
 
-    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableSource {
+    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableName {
         val list = ctx.identifier()
 
         var catalogName: String? = null
@@ -127,6 +127,6 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             items[2]
         }
 
-        return TableSource(catalogName, databaseName, tableName)
+        return TableName(catalogName, databaseName, tableName)
     }
 }

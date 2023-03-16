@@ -6,6 +6,7 @@ import com.github.melin.superior.sql.parser.antlr4.postgresql.PostgreSQLParser
 import com.github.melin.superior.sql.parser.antlr4.postgresql.PostgreSQLParserBaseVisitor
 import com.github.melin.superior.sql.parser.model.StatementData
 import com.github.melin.superior.sql.parser.model.TableData
+import com.github.melin.superior.sql.parser.model.TableName
 import com.github.melin.superior.sql.parser.model.TableSource
 import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.lang3.StringUtils
@@ -43,9 +44,9 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
 
     override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
-            val (_, database, table) = parseTableName(ctx)
-            val tableSource = TableSource(database, table)
-            statementData.inputTables.add(tableSource)
+            val (_, database, tableName) = parseTableName(ctx)
+            val table = TableName(database, tableName)
+            statementData.inputTables.add(table)
             return null
         } else {
             throw SQLParserException("not support")

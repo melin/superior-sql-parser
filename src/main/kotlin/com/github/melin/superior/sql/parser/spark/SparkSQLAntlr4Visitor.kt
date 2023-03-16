@@ -923,10 +923,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                     }
 
                     val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-                    val tableSource = TableSource(catalogName, databaseName, tableName)
-                    val token = CommonToken(multipartIdentifier.start.startIndex, multipartIdentifier.stop.stopIndex)
-                    tableSource.tokens.add(token)
-                    statementData.outpuTables.add(tableSource)
+                    val table = TableName(catalogName, databaseName, tableName)
+                    statementData.outpuTables.add(table)
                     statementData.partitions = partitions
 
                     if (StringUtils.endsWithIgnoreCase("into", tableContext.getChild(1).text)) {
@@ -970,10 +968,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
 
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-            val tableSource = TableSource(catalogName, databaseName, tableName)
-            val token = CommonToken(multipartIdentifier.start.startIndex, multipartIdentifier.stop.stopIndex)
-            tableSource.tokens.add(token)
-            statementData.outpuTables.add(tableSource)
+            val table = TableName(catalogName, databaseName, tableName)
+            statementData.outpuTables.add(table)
             statementData.partitions = partitions
 
             if (StringUtils.endsWithIgnoreCase("into", tableContext.getChild(1).text)) {
@@ -1040,10 +1036,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         if (ctx.source != null) {
             val (catalogName, sourceDatabase, sourceTableName) = parseTableName(ctx.source)
 
-            val sourceTable = TableSource(catalogName, sourceDatabase, sourceTableName)
-            val innerToken = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-            sourceTable.tokens.add(innerToken)
-            deltaMerge.sourceTables.add(sourceTable)
+            val table = TableName(catalogName, sourceDatabase, sourceTableName)
+            deltaMerge.sourceTables.add(table)
         } else if (ctx.sourceQuery != null && ctx.sourceQuery is SparkSqlBaseParser.QueryContext) {
             val query = ctx.sourceQuery as SparkSqlBaseParser.QueryContext
             super.visitQuery(query)
@@ -1096,23 +1090,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                 currentOptType == StatementType.EXPORT_TABLE ||
                 currentOptType == StatementType.DATATUNNEL) {
 
-            val tableSource = TableSource(databaseName, tableName, metaAction)
-            tableSource.originName = StringUtils.substring(command, ctx.start.startIndex, ctx.stop.stopIndex + 1)
-            val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
+            val table = TableName(databaseName, tableName, metaAction)
 
-            val index = statementData.inputTables.indexOf(tableSource)
+            val index = statementData.inputTables.indexOf(table)
             if (index == -1) {
-                tableSource.tokens.add(token);
-                statementData.inputTables.add(tableSource)
-            } else {
-                statementData.inputTables.get(index).tokens.add(token)
+                statementData.inputTables.add(table)
             }
         } else if (currentOptType == StatementType.MULTI_INSERT) {
-            val tableSource = TableSource(databaseName, tableName, metaAction)
-            val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-            tableSource.tokens.add(token)
             if ("from" == multiInsertToken) {
-                statementData.inputTables.add(tableSource)
+                val table = TableName(databaseName, tableName, metaAction)
+                statementData.inputTables.add(table)
             }
         }
         return null
@@ -1176,18 +1163,14 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             val multipartIdentifier = obj.multipartIdentifier()
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
-            val tableSource = TableSource(catalogName, databaseName, tableName)
-            val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-            tableSource.tokens.add(token)
-            statementData.outpuTables.add(tableSource)
+            val table = TableName(catalogName, databaseName, tableName)
+            statementData.outpuTables.add(table)
         } else if (obj is SparkSqlBaseParser.InsertIntoTableContext) {
             val multipartIdentifier = obj.multipartIdentifier()
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
-            val tableSource = TableSource(catalogName, databaseName, tableName)
-            val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-            tableSource.tokens.add(token)
-            statementData.outpuTables.add(tableSource)
+            val table = TableName(catalogName, databaseName, tableName)
+            statementData.outpuTables.add(table)
         }
         return super.visitMultiInsertQueryBody(ctx)
     }

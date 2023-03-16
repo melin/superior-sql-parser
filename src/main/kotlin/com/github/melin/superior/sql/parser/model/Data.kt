@@ -91,8 +91,8 @@ data class View(
 
 @DefaultConstructor
 data class TableData(
-        var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
-        var outpuTables: java.util.ArrayList<TableSource> = ArrayList(),
+        var inputTables: java.util.ArrayList<TableName> = ArrayList(),
+        var outpuTables: java.util.ArrayList<TableName> = ArrayList(),
         var limit: Int? = null,
         var insertMode: InsertMode? = null,
         var partitions: HashMap<String, String>? = null
@@ -214,7 +214,7 @@ data class DataTunnelExpr(
     var distOptions: Map<String, String>,
     var cte: Boolean = false) : Statement() {
 
-    var inputTables: java.util.ArrayList<TableSource>? = null
+    var inputTables: java.util.ArrayList<TableName>? = null
     var cteTempTables: ArrayList<String>? = null
     var functionNames: HashSet<String>? = null
 }
@@ -256,7 +256,7 @@ data class ExportData(
     val databaseName: String?,
     val tableName: String,
     val cte: Boolean = false,
-    var inputTables: java.util.ArrayList<TableSource> = ArrayList(),
+    var inputTables: java.util.ArrayList<TableName> = ArrayList(),
     var cteTempTables: ArrayList<String>? = null,
     var functionNames: HashSet<String>? = null) : Statement()
 
@@ -323,7 +323,7 @@ data class UpdateTable(
 }
 
 data class MergeIntoTable(
-    var sourceTables: java.util.HashSet<TableSource> = HashSet(),
+    var sourceTables: java.util.HashSet<TableName> = HashSet(),
     var targetTable: TableSource
 ): Statement()
 

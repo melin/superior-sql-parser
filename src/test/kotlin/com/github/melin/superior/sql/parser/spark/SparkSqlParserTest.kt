@@ -476,12 +476,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("bigdata.users" to "iceberg_spark.bigdata.users", "address" to "iceberg_spark.bigdata.address"))
-        Assert.assertEquals("create table \nIF NOT EXISTS tdl_users_1 STORED AS ORC as " +
-                "select *, bigdata.TEST(name) from iceberg_spark.bigdata.users a left outer join iceberg_spark.bigdata.address b on a.addr_id = b.id",
-                sql1);
     }
 
     @Test
@@ -524,11 +518,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("users" to "iceberg_users", "address" to "iceberg_address"))
-        Assert.assertEquals("create table \nIF NOT EXISTS tdl_users_1 using parquet as (select * from iceberg_users a left outer join iceberg_address b on a.addr_id = b.id)",
-            sql1);
     }
 
     @Test
@@ -773,12 +762,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("test.sale_detail" to "iceberg_spark.test.sale_detail"))
-        Assert.assertEquals("alter table iceberg_spark.test.sale_detail add columns " +
-                "(col_name1 string comment 'col_name1', col_name2 string comment 'col_name2')",
-                sql1);
     }
 
     @Test
@@ -795,10 +778,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("db.sample" to "iceberg_spark.db.sample"))
-        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample ADD COLUMN age int FIRST", sql1);
     }
 
     @Test
@@ -815,10 +794,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("db.sample" to "iceberg_spark.db.sample"))
-        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample RENAME COLUMN data TO payload", sql1);
     }
 
     @Test
@@ -914,10 +889,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("db.sample" to "iceberg_spark.db.sample"))
-        Assert.assertEquals("ALTER TABLE iceberg_spark.db.sample DROP COLUMN id", sql1);
     }
 
     @Test
@@ -1108,7 +1079,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals("users", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("`demo_rp`.bigdata.users", statement.inputTables.get(0).originName)
+            Assert.assertEquals("demo_rp.bigdata.users", statement.inputTables.get(0).getFullTableName())
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
             Assert.assertEquals(101, statement.limit)
         } else {
@@ -1319,10 +1290,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("users" to "iceberg_users"))
-        Assert.assertEquals("insert OVERWRITE TABLE iceberg_users PARTITION(ds) values('libinsong', '20170220')", sql1);
     }
 
     @Test
@@ -1343,12 +1310,6 @@ class SparkSqlParserTest {
         } else {
             Assert.fail()
         }
-
-        val sql1 = SparkSQLHelper.replaceSql(sql,
-                mapOf("users" to "iceberg_spark.bigdata.users", "account" to "iceberg_spark.bigdata.account"))
-        Assert.assertEquals("insert INTO iceberg_spark.bigdata.users PARTITION(ds='20170220') " +
-                "select * from iceberg_spark.bigdata.account a join address b on a.addr_id=b.id",
-                sql1);
     }
 
     @Test
@@ -1831,7 +1792,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals("user", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
+            //Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
             Assert.assertEquals(101, statement.limit)
         } else {
             Assert.fail()
@@ -1853,10 +1814,10 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals("table", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
+            //Assert.assertEquals("history", statement.inputTables.get(0).metaAction)
 
             Assert.assertEquals("table", statement.inputTables.get(1).tableName)
-            Assert.assertEquals("snapshots", statement.inputTables.get(1).metaAction)
+            //Assert.assertEquals("snapshots", statement.inputTables.get(1).metaAction)
         } else {
             Assert.fail()
         }

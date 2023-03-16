@@ -217,10 +217,10 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
     }
 
     override fun visitAnalyzeTable(ctx: MySQLParser.AnalyzeTableContext): StatementData {
-        val tables = ArrayList<TableSource>()
+        val tables = ArrayList<TableName>()
         ctx.tables().tableName().forEach { context ->
             val (databaseName, tableName) = parseFullId(context.fullId())
-            tables.add(TableSource(databaseName, tableName))
+            tables.add(TableName(databaseName, tableName))
         }
 
         return StatementData(StatementType.ANALYZE_TABLE, TableData(tables))
@@ -238,8 +238,8 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         } else if (ctx.insertStatement() != null) {
             val statement = ctx.insertStatement()
             val (databaseName, tableName) = parseFullId(statement.tableName().fullId())
-            val tableSource = TableSource(databaseName, tableName)
-            statementData.outpuTables.add(tableSource)
+            val table = TableName(databaseName, tableName)
+            statementData.outpuTables.add(table)
 
             if (statement.insertStatementValue().selectStatement() != null) {
                 currentOptType = StatementType.INSERT_SELECT
@@ -281,8 +281,8 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 StatementType.INSERT_SELECT == currentOptType ||
                 currentOptType == StatementType.ALTER_TABLE_RENAME) {
             val (databaseName, tableName) = parseFullId(ctx.fullId())
-            var tableSource = TableSource(databaseName, tableName)
-            statementData.inputTables.add(tableSource)
+            val table = TableName(databaseName, tableName)
+            statementData.inputTables.add(table)
         } else if(StatementType.ALTER_TABLE_ADD_INDEX == currentOptType ||
                 StatementType.ALTER_TABLE_DROP_INDEX == currentOptType ||
                 StatementType.ALTER_TABLE_ADD_UNIQUE_KEY == currentOptType ||
