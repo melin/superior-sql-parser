@@ -14,10 +14,9 @@ data class CreateTable(
 data class CreateDatabase(
     var sinkDatabaseName: DatabaseName,
     var sourceDatabaseName: DatabaseName,
-    var include: String
+    var includeTable: String
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
-    var computeCols: List<Column>? = null
-    var exclude: String? = null
+    var excludeTable: String? = null
 }

@@ -163,13 +163,13 @@ data class CreateTableLike(
 data class Column(
         val name: String,
         val type: String? = null,
-        val comment: String? = null,
-        val position: String? = null,
-        val afterCol: String? = null) : Statement() {
-    constructor(name: String, type: String?, comment: String?): this(name, type, comment, null, null)
+        val comment: String? = null) : Statement() {
 
     var oldName: String? = null
+    var expression: String? = null
     var isPk: Boolean = false
+    var position: String? = null
+    var afterCol: String? = null
 }
 
 data class AlterColumn(

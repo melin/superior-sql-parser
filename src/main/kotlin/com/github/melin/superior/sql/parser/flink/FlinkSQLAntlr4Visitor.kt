@@ -7,6 +7,7 @@ import com.github.melin.superior.sql.parser.antlr4.flink.FlinkSqlParserBaseVisit
 import com.github.melin.superior.sql.parser.model.*
 import com.github.melin.superior.sql.parser.util.StringUtil
 import org.antlr.v4.runtime.tree.RuleNode
+import org.apache.commons.lang3.StringUtils
 
 /**
  *
@@ -50,6 +51,31 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         val createTable = CreateTable(sinkTable, sourceTable)
         createTable.sinkOptions = sinkOptions
         createTable.sourceOptions = sourceOptions
+
+        if (ctx.computeColList() != null) {
+            val colDefs = ctx.computeColList().computeColDef();
+            val columns = colDefs.map { colDef ->
+                val colName = colDef.colName.text
+                val column = Column(colName)
+
+                val expression = colDef.expression();
+                val expr = StringUtils.substring(command, expression.start.startIndex, expression.stop.stopIndex + 1)
+                column.expression = expr
+
+                if (colDef.FIRST() != null) {
+                    column.position = "FIRST"
+                }
+                if (colDef.AFTER() != null) {
+                    column.position = "AFTER"
+                    column.afterCol = colDef.name.text
+                }
+
+                column
+            }
+
+            createTable.computeCols = columns
+        }
+
         return StatementData(StatementType.FLINK_CDC_CTAS, createTable)
     }
 
@@ -60,7 +86,16 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         val sinkOptions: HashMap<String, String>? = parseOptions(ctx.sinkOptions)
         val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
 
-        val createDatabase = CreateDatabase(sinkDatabase, sourceDatabase, "__ALL__")
+        val createDatabase = if (ctx.includeTable == null) {
+            CreateDatabase(sinkDatabase, sourceDatabase, "__ALL__")
+        } else {
+            CreateDatabase(sinkDatabase, sourceDatabase, StringUtil.cleanQuote(ctx.includeTable.text))
+        }
+
+        if (ctx.excludeTable != null) {
+            createDatabase.excludeTable = StringUtil.cleanQuote(ctx.excludeTable.text)
+        }
+
         createDatabase.sinkOptions = sinkOptions
         createDatabase.sourceOptions = sourceOptions
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)

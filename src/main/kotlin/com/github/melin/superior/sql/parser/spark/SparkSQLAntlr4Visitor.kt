@@ -467,7 +467,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                             afterCol = column.colPosition().afterCol.text
                         }
                     }
-                    Column(colName, dataType, colComment, position, afterCol)
+                    val col = Column(colName, dataType, colComment)
+                    col.position = position
+                    col.afterCol = afterCol
+                    col
                 }
 
         val table = Table(catalogName, databaseName, tableName, null, null, null, columns)

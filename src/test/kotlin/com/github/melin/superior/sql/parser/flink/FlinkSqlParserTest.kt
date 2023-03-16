@@ -27,6 +27,8 @@ class FlinkSqlParserTest {
         if (statement is CreateTable) {
             val table = statement.sinkTableName
             Assert.assertEquals("user", table.tableName)
+            Assert.assertEquals(2, statement.computeCols?.size)
+            Assert.assertEquals("COALESCE(SPLIT_INDEX(`tbl`, 'r', 1), 'default')", statement.computeCols?.get(0)?.expression)
         } else {
             Assert.fail()
         }
@@ -39,6 +41,7 @@ class FlinkSqlParserTest {
             WITH ('sink.parallelism' = '4') 
             AS DATABASE mysql.tpcds 
             INCLUDING ALL TABLES 
+            EXCLUDING TABLE "test"
             OPTIONS('server-id'='8001-8004')
         """.trimIndent()
 
@@ -47,6 +50,7 @@ class FlinkSqlParserTest {
         if (statement is CreateDatabase) {
             val database = statement.sinkDatabaseName
             Assert.assertEquals("holo_tpcds", database.databaseName)
+            Assert.assertEquals("test", statement.excludeTable)
         } else {
             Assert.fail()
         }

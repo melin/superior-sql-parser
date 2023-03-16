@@ -21,9 +21,9 @@ statement
         commentSpec?
         (WITH sinkOptions=propertyList)?
         AS DATABASE source=multipartIdentifier
-        INCLUDING (ALL TABLES | TABLE STRING)
-        (EXCLUDING TABLE STRING)?
-        (OPTIONS sourceOptions=propertyList)?   #createDatabase
+        INCLUDING (ALL TABLES | TABLE includeTable=STRING)
+        (EXCLUDING TABLE excludeTable=STRING)?
+        (OPTIONS sourceOptions=propertyList)?                         #createDatabase
     ;
 
 multipartIdentifier
@@ -71,7 +71,7 @@ computeColList
     ;
 
 computeColDef
-    : colName=identifier AS expression (FIRST | AFTER identifier)?
+    : colName=identifier AS expression (FIRST | AFTER name=identifier)?
     ;
 
 expression
