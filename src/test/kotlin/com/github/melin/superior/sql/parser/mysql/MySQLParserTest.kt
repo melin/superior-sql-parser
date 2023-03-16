@@ -61,14 +61,13 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("bigdata", statement.databaseName)
             Assert.assertEquals("dc_config", statement.tableName)
             Assert.assertEquals("系统参数配置", statement.comment)
 
-            Assert.assertEquals(1, statement.pkColumns.size)
-            Assert.assertEquals("id", statement.pkColumns.get(0))
+            statement.columns?.get(0)?.let { Assert.assertTrue(it.isPk) }
         } else {
             Assert.fail()
         }
@@ -98,7 +97,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("box_partner", statement.tableName)
         } else {
@@ -120,7 +119,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("decision_flow_model", statement.tableName)
         } else {
@@ -163,7 +162,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("app_channel_daily_report", statement.tableName)
         } else {
@@ -187,7 +186,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("decision_flow_model", statement.tableName)
         } else {
@@ -215,7 +214,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TidbCreateTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("dw_job_analysis_detail", statement.tableName)
         } else {
@@ -243,7 +242,7 @@ class MySQLParserTest {
         val sql = "RENAME TABLE `datacompute`.`users_quan` TO  `datacompute`.`dc_users`\n"
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is DcRenameTable) {
+        if(statement is RenameTable) {
             Assert.assertEquals(StatementType.RENAME_TABLE, statementData.type)
             Assert.assertEquals("datacompute", statement.databaseName)
             Assert.assertEquals("users_quan", statement.oldName)

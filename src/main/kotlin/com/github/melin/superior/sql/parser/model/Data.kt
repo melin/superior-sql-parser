@@ -30,32 +30,32 @@ data class Database(
 }
 
 data class Table(
-        val catalogName: String?,
-        val databaseName: String?,
-        val tableName: String,
-        val comment: String?,
-        var lifeCycle: Int?,
-        var partitionColumns: List<DcColumn>?,
-        var columns: List<DcColumn>?,
-        var properties: Map<String, String>?,
-        var fileFormat: String? = null,
-        var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
-        var ifExists: Boolean = false,
-        var external: Boolean = false,
-        var temporary: Boolean = false,
-        var location: Boolean = false,
-        var locationPath: String? = null,
-        var querySql: String? = null,
-        var tableData: TableData? = null,
-        var partitionColumnNames: List<String>? = null) : Statement() { //是否存在 if exists 关键字
+    val catalogName: String?,
+    val databaseName: String?,
+    val tableName: String,
+    val comment: String?,
+    var lifeCycle: Int?,
+    var partitionColumns: List<Column>?,
+    var columns: List<Column>?,
+    var properties: Map<String, String>?,
+    var fileFormat: String? = null,
+    var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
+    var ifExists: Boolean = false,
+    var external: Boolean = false,
+    var temporary: Boolean = false,
+    var location: Boolean = false,
+    var locationPath: String? = null,
+    var querySql: String? = null,
+    var tableData: TableData? = null,
+    var partitionColumnNames: List<String>? = null) : Statement() { //是否存在 if exists 关键字
 
     constructor(catalogName: String?,
                 databaseName: String?,
                 tableName: String,
                 comment: String?,
                 lifeCycle: Int?,
-                partitionColumns: List<DcColumn>?,
-                columns: List<DcColumn>?):
+                partitionColumns: List<Column>?,
+                columns: List<Column>?):
             this(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, null, null, false, false, false)
 
     constructor(catalogName: String?, databaseName: String?, tableName: String):
@@ -73,28 +73,7 @@ data class Table(
     }
 }
 
-data class TidbCreateTable(
-        val databaseName: String?,
-        val tableName: String,
-        val comment: String?,
-        var columns: List<DcColumn>,
-        var pkColumns: List<String>,
-        var uniques: List<TidbColumn>,
-        var properties: Map<String, String>,
-        var ifNotExists: Boolean = false) : Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(null, databaseName, tableName)
-    }
-}
-
-data class TidbColumn(
-        val indexName: String?,
-        val indexType: String?,
-        var columns: List<String>
-) : Statement() {}
-
-data class DcView(
+data class View(
         val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
@@ -124,13 +103,13 @@ data class TableData(
 
 @DefaultConstructor
 data class TableSource(
-        val catalogName: String?,
-        var databaseName: String?,
-        var tableName: String,
-        var originName: String?,
-        var metaAction: String?,
-        var column: DcColumn? = null,
-        var columns: List<String>? = ArrayList()
+    val catalogName: String?,
+    var databaseName: String?,
+    var tableName: String,
+    var originName: String?,
+    var metaAction: String?,
+    var column: Column? = null,
+    var columns: List<String>? = ArrayList()
 ): Statement() {
     constructor(catalogName: String?, databaseName: String?, tableName: String):
             this(catalogName, databaseName, tableName, null, null)
@@ -147,7 +126,7 @@ data class TableSource(
 
 data class CommonToken(val start: Int, val stop: Int)
 
-data class DcRenameTable(
+data class RenameTable(
     val catalogName: String?,
     val databaseName: String?,
     val oldName: String,
@@ -161,7 +140,7 @@ data class DcRenameTable(
     var newToken: CommonToken? = null
 }
 
-data class DcRenameView(
+data class RenameView(
         val catalogName: String?,
         val databaseName: String?,
         val oldName: String,
@@ -172,7 +151,7 @@ data class DcRenameView(
     }
 }
 
-data class DcCopyTable(
+data class CreateTableLike(
         val oldDatabaseName: String?,
         val oldTableName: String,
         val newDatabaseName: String?,
@@ -181,17 +160,19 @@ data class DcCopyTable(
         var external: Boolean = false,
         var temporary: Boolean = false) : Statement()
 
-data class DcColumn(
+data class Column(
         val name: String,
         val type: String? = null,
         val comment: String? = null,
-        val oldName: String? = null,
         val position: String? = null,
         val afterCol: String? = null) : Statement() {
-    constructor(name: String, type: String?, comment: String?): this(name, type, comment, null, null, null)
+    constructor(name: String, type: String?, comment: String?): this(name, type, comment, null, null)
+
+    var oldName: String? = null
+    var isPk: Boolean = false
 }
 
-data class DcAlterColumn(
+data class AlterColumn(
         val catalogName: String?,
         val databaseName: String?,
         val tableName: String,

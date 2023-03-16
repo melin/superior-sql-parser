@@ -7,7 +7,7 @@ data class CreateTable(
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
-    var computeCols: List<DcColumn>? = null
+    var computeCols: List<Column>? = null
 }
 
 @DefaultConstructor
@@ -18,6 +18,6 @@ data class CreateDatabase(
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
-    var computeCols: List<DcColumn>? = null
+    var computeCols: List<Column>? = null
     var exclude: String? = null
 }

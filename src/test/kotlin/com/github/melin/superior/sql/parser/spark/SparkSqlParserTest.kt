@@ -447,7 +447,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcCopyTable) {
+        if (statement is CreateTableLike) {
             val name = statement.newTableName
             Assert.assertEquals("sale_detail", statement.oldTableName)
             Assert.assertEquals("sale_detail_like", name)
@@ -607,7 +607,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcView) {
+        if (statement is View) {
             val name = statement.tableName
             Assert.assertEquals("sale_detail_drop2", name)
         } else {
@@ -653,7 +653,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcView) {
+        if (statement is View) {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
@@ -673,7 +673,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcView) {
+        if (statement is View) {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
@@ -692,7 +692,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcView) {
+        if (statement is View) {
             val name = statement.tableName
             Assert.assertEquals("v1", name)
             Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", statement.querySql)
@@ -707,7 +707,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcRenameTable) {
+        if (statement is RenameTable) {
             val name = statement.newName
             Assert.assertEquals("new_table_name", name)
         } else {
@@ -807,7 +807,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_RENAME_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -826,7 +826,7 @@ class SparkSqlParserTest {
         var sql = "ALTER TABLE db.sample ALTER COLUMN location.lat TYPE double"
         var statementData = SparkSQLHelper.getStatementData(sql)
         var statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -837,7 +837,7 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN id DROP NOT NULL"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -848,7 +848,7 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN point.z AFTER y"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -859,7 +859,7 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN id COMMENT 'unique id'"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -872,7 +872,7 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE demo CHANGE COLUMN price Type float COMMENT '价格'"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("demo", name)
@@ -888,7 +888,7 @@ class SparkSqlParserTest {
         val sql = "ALTER TABLE test_user11_dt ALTER COLUMN ds comment 'ddd'"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("test_user11_dt", name)
@@ -907,7 +907,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_DROP_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
@@ -941,7 +941,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DcAlterColumn) {
+        if (statement is AlterColumn) {
             val name = statement.tableName
             Assert.assertEquals("sale_detail", name)
             Assert.assertEquals("sdsd", statement.comment)
@@ -953,7 +953,7 @@ class SparkSqlParserTest {
 
         val statementData1 = SparkSQLHelper.getStatementData(sql1)
         val statement1 = statementData1.statement
-        if (statement1 is DcAlterColumn) {
+        if (statement1 is AlterColumn) {
             val name = statement1.tableName
             Assert.assertEquals("test_users_dt", name)
         } else {

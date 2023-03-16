@@ -131,14 +131,14 @@ object FlinkSQLHelper {
             sql = innerReplaceSql(token, sql, tables)
 
             return sql
-        } else if (statement is DcAlterColumn
+        } else if (statement is AlterColumn
                 && (ALTER_TABLE_RENAME_COL == sqlType || ALTER_TABLE_CHANGE_COL == sqlType || ALTER_TABLE_DROP_COL == sqlType)) {
 
             val token = statement.token;
             sql = innerReplaceSql(token, sql, tables)
 
             return sql
-        } else if (statement is DcRenameTable && DROP_TABLE == sqlType) {
+        } else if (statement is RenameTable && DROP_TABLE == sqlType) {
 
             var token = statement.newToken;
             sql = innerReplaceSql(token, sql, tables)

@@ -18,7 +18,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
     private val statementData = TableData()
     private var tableSource: TableSource? = null
     private var limit:Int? = null
-    private val primaries = ArrayList<String>()
+    private val primaryKeys = ArrayList<String>()
 
     //-----------------------------------database-------------------------------------------------
 
@@ -47,8 +47,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 }
             }
         }
-        val columns = ArrayList<DcColumn>()
-        val uniques = ArrayList<TidbColumn>()
+        val columns = ArrayList<Column>()
         val properties = HashMap<String, String>()
 
         ctx.createDefinitions().children.forEach { column ->
@@ -73,18 +72,18 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                         colComment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
                     }
                 }
-                columns.add(DcColumn(name, dataType, colComment))
+                columns.add(Column(name, dataType, colComment))
             }
         }
 
+        super.visitColumnCreateTable(ctx)
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
+        columns.forEach { column: Column -> if (primaryKeys.contains(column.name)) { column.isPk = true } }
+        val table = Table(null, databaseName, tableName, comment,
+                null, null, columns, properties, null, ifNotExists)
 
-        val sqlData = TidbCreateTable(databaseName, tableName, comment,
-                columns, primaries, uniques, properties, ifNotExists)
-
-        super.visitColumnCreateTable(ctx)
-        return StatementData(StatementType.CREATE_TABLE, sqlData)
+        return StatementData(StatementType.CREATE_TABLE, table)
     }
 
     override fun visitPrimaryKeyTableConstraint(ctx: MySQLParser.PrimaryKeyTableConstraintContext): StatementData? {
@@ -93,7 +92,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         for (i in 1..(count-2)) {
             var column = ctx.indexColumnNames().getChild(i).text
             column = StringUtil.cleanBackQuote(column)
-            primaries.add(column)
+            primaryKeys.add(column)
         }
 
         return null
@@ -121,7 +120,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         val (databaseName, oldTableName) = parseFullId(ctx.renameTableClause().get(0).tableName(0).fullId())
         val (_, newTableName) = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
-        val renameTable = DcRenameTable(null, databaseName, oldTableName, newTableName)
+        val renameTable = RenameTable(null, databaseName, oldTableName, newTableName)
         return StatementData(StatementType.RENAME_TABLE, renameTable)
     }
 
@@ -142,8 +141,8 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
             val (databaseName, tableName) = parseFullId(ctx.tableName().fullId())
             var tableSource = TableSource(databaseName, tableName)
 
-            val oldColumn = StringUtil.cleanBackQuote(statement.oldColumn.text)
-            val newColumn = StringUtil.cleanBackQuote(statement.newColumn.text)
+            val oldColumnName = StringUtil.cleanBackQuote(statement.oldColumn.text)
+            val newColumnName = StringUtil.cleanBackQuote(statement.newColumn.text)
             val dataType = statement.columnDefinition().dataType().text
             var comment:String? = null
 
@@ -153,7 +152,8 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 }
             }
 
-            val column = DcColumn(newColumn, dataType, comment, oldColumn)
+            val column = Column(newColumnName, dataType, comment)
+            column.oldName = oldColumnName
             tableSource.column = column
 
             return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, tableSource)
@@ -170,7 +170,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
                 }
             }
 
-            val column = DcColumn(name, dataType, comment)
+            val column = Column(name, dataType, comment)
             tableSource.column = column
 
             return StatementData(StatementType.ALTER_TABLE_ADD_COL, tableSource)
@@ -179,7 +179,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
             var tableSource = TableSource(databaseName, tableName)
 
             val name = StringUtil.cleanBackQuote(statement.uid().text)
-            val column = DcColumn(name)
+            val column = Column(name)
             tableSource.column = column
 
             return StatementData(StatementType.ALTER_TABLE_DROP_COL, tableSource)
@@ -189,7 +189,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
 
             val name = StringUtil.cleanBackQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
-            val column = DcColumn(name, dataType)
+            val column = Column(name, dataType)
             tableSource.column = column
 
             return StatementData(StatementType.ALTER_TABLE_MODIFY_COL, tableSource)

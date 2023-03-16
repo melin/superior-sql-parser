@@ -133,16 +133,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
         }
 
-        var partitionColumns: List<DcColumn>? = null
+        var partitionColumns: List<Column>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
-        var columns: List<DcColumn>? = null
+        var columns: List<Column>? = null
         var createTableType = "spark"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
                 val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
-                DcColumn(colName, dataType, colComment)
+                Column(colName, dataType, colComment)
             }
 
             if (ctx.tableProvider() == null) {
@@ -170,7 +170,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
                             partitionColumnNames.add(colName)
                             val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
-                            DcColumn(colName, dataType, colComment)
+                            Column(colName, dataType, colComment)
                         }
                 }
             }
@@ -259,16 +259,16 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             }
         }
 
-        var partitionColumns: List<DcColumn>? = null
+        var partitionColumns: List<Column>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
-        var columns: List<DcColumn>? = null
+        var columns: List<Column>? = null
         var createTableType = "hive"
         if (ctx.query() == null) {
             columns = ctx.colTypeList().colType().map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
                 val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
-                DcColumn(colName, dataType, colComment)
+                Column(colName, dataType, colComment)
             }
 
             if (ctx.tableProvider() != null) {
@@ -296,7 +296,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
                             partitionColumnNames.add(colName)
                             val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
-                            DcColumn(colName, dataType, colComment)
+                            Column(colName, dataType, colComment)
                         }
                 }
             }
@@ -375,7 +375,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val oldDatabaseName = ctx.source.db?.text
         val oldTableName = ctx.source.table.text
 
-        val dcTable = DcCopyTable(oldDatabaseName, oldTableName, newDatabaseName, newTableName)
+        val dcTable = CreateTableLike(oldDatabaseName, oldTableName, newDatabaseName, newTableName)
         dcTable.ifNotExists = ctx.NOT() != null
 
         return StatementData(StatementType.CREATE_TABLE_AS_LIKE, dcTable)
@@ -394,9 +394,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitDropView(ctx: SparkSqlBaseParser.DropViewContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
-        val dcView = DcView(catalogName, databaseName, tableName)
-        dcView.ifExists = ctx.EXISTS() != null
-        return StatementData(StatementType.DROP_VIEW, dcView)
+        val view = View(catalogName, databaseName, tableName)
+        view.ifExists = ctx.EXISTS() != null
+        return StatementData(StatementType.DROP_VIEW, view)
     }
 
     override fun visitTruncateTable(ctx: SparkSqlBaseParser.TruncateTableContext): StatementData {
@@ -416,10 +416,10 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val (_, _, newTableName) = parseTableName(ctx.to)
 
         if (ctx.VIEW() != null) {
-            val dcView = DcRenameView(catalogName, databaseName, oldTableName, newTableName)
+            val dcView = RenameView(catalogName, databaseName, oldTableName, newTableName)
             return StatementData(StatementType.ALTER_VIEW_RENAME, dcView)
         } else {
-            val dcTable = DcRenameTable(catalogName, databaseName, oldTableName, newTableName)
+            val dcTable = RenameTable(catalogName, databaseName, oldTableName, newTableName)
             dcTable.oldToken = CommonToken(ctx.from.start.startIndex, ctx.from.stop.stopIndex)
             dcTable.newToken = CommonToken(ctx.to.start.startIndex, ctx.to.stop.stopIndex)
             return StatementData(StatementType.ALTER_TABLE_RENAME, dcTable)
@@ -467,7 +467,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                             afterCol = column.colPosition().afterCol.text
                         }
                     }
-                    DcColumn(colName, dataType, colComment, null, position, afterCol)
+                    Column(colName, dataType, colComment, position, afterCol)
                 }
 
         val table = Table(catalogName, databaseName, tableName, null, null, null, columns)
@@ -487,7 +487,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val commentNode = ctx.colType().commentSpec()?.STRING()
         val comment = if (commentNode != null) StringUtil.cleanQuote(commentNode.text) else null
 
-        val data = DcAlterColumn(catalogName, databaseName, tableName, columnName, dataType, comment)
+        val data = AlterColumn(catalogName, databaseName, tableName, columnName, dataType, comment)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, data)
     }
 
@@ -497,7 +497,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val oldName = ctx.from.text
         val newName = ctx.to.text
 
-        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, oldName)
+        val dcTable = AlterColumn(catalogName, databaseName, tableName, oldName)
         dcTable.newColumName = newName
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_RENAME_COL, dcTable)
@@ -513,7 +513,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         }
 
         val colName = ctx.column.text
-        val dcTable = DcAlterColumn(catalogName, databaseName, tableName, colName, null, comment)
+        val dcTable = AlterColumn(catalogName, databaseName, tableName, colName, null, comment)
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, dcTable)
     }
@@ -539,7 +539,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitDropTableColumns(ctx: SparkSqlBaseParser.DropTableColumnsContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
-        val dcTable = DcAlterColumn(catalogName, databaseName, tableName)
+        val dcTable = AlterColumn(catalogName, databaseName, tableName)
         dcTable.token = CommonToken(ctx.multipartIdentifier().start.startIndex, ctx.multipartIdentifier().stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_DROP_COL, dcTable)
     }
@@ -749,9 +749,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
-        val dcView = DcView(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
-        dcView.functionNames = statementData.functionNames
-        return StatementData(StatementType.CREATE_VIEW, dcView)
+        val view = View(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
+        view.functionNames = statementData.functionNames
+        return StatementData(StatementType.CREATE_VIEW, view)
     }
 
     override fun visitAlterViewQuery(ctx: SparkSqlBaseParser.AlterViewQueryContext): StatementData {
@@ -763,9 +763,9 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
             querySql = StringUtils.substring(command, query.start.startIndex)
         }
 
-        val dcView = DcView(catalogName, databaseName, tableName)
-        dcView.querySql = querySql
-        return StatementData(StatementType.ALTER_VIEW_QUERY, dcView)
+        val view = View(catalogName, databaseName, tableName)
+        view.querySql = querySql
+        return StatementData(StatementType.ALTER_VIEW_QUERY, view)
     }
 
     //-----------------------------------function-------------------------------------------------
