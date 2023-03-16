@@ -66,25 +66,25 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
     }
 
-    fun parseDatabase(ctx: FlinkSqlParser.MultipartIdentifierContext): Database {
+    fun parseDatabase(ctx: FlinkSqlParser.MultipartIdentifierContext): DatabaseName {
         if (ctx.parts.size == 2) {
-            return Database(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return DatabaseName(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return Database(null, ctx.parts.get(0).text)
+            return DatabaseName(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
     }
 
-    fun parseTable(ctx: FlinkSqlParser.MultipartIdentifierContext): Table {
+    fun parseTable(ctx: FlinkSqlParser.MultipartIdentifierContext): TableName {
         if (ctx.parts.size == 4) {
-            return Table(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
+            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
-            return Table(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
         } else if (ctx.parts.size == 2) {
-            return Table(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return TableName(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return Table(null, null, ctx.parts.get(0).text)
+            return TableName(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }

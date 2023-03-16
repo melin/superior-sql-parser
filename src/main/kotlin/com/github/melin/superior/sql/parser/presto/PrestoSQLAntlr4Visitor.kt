@@ -16,7 +16,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private val statementData = TableData();
-    private var table: DcTable? = null
+    private var table: Table? = null
     private var limit:Int? = null
     private var command: String? = null
     private var data: StatementData? = null
@@ -51,15 +51,15 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val dcTable = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
-        data = StatementData(StatementType.SHOW_CREATE_TABLE, dcTable)
+        val table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
+        data = StatementData(StatementType.SHOW_CREATE_TABLE, table)
         return data
     }
 
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableSource = createTableSource(ctx.qualifiedName())
-        table = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
+        table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
 
         var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
@@ -80,11 +80,11 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val dcTable = DcTable(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
+        val table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
         val token = CommonToken(ctx.qualifiedName().start.startIndex, ctx.qualifiedName().stop.stopIndex)
-        dcTable.ifExists = ctx.EXISTS() != null
-        dcTable.token = token
-        data = StatementData(StatementType.DROP_TABLE, dcTable)
+        table.ifExists = ctx.EXISTS() != null
+        table.token = token
+        data = StatementData(StatementType.DROP_TABLE, table)
         return data
     }
 

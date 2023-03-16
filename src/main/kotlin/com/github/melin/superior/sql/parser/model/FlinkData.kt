@@ -2,8 +2,8 @@ package com.github.melin.superior.sql.parser.model
 
 @DefaultConstructor
 data class CreateTable(
-    var sinkTable: Table,
-    var sourceTable: Table,
+    var sinkTableName: TableName,
+    var sourceTableName: TableName,
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
@@ -12,8 +12,8 @@ data class CreateTable(
 
 @DefaultConstructor
 data class CreateDatabase(
-    var sinkDatabase: Database,
-    var sourceDatabase: Database,
+    var sinkDatabaseName: DatabaseName,
+    var sourceDatabaseName: DatabaseName,
     var include: String
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null

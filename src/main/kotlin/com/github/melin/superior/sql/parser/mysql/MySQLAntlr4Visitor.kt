@@ -24,13 +24,13 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
 
     override fun visitCreateDatabase(ctx: MySQLParser.CreateDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = DcDatabase(databaseName)
+        val sqlData = Database(databaseName)
         return StatementData(StatementType.CREATE_DATABASE, sqlData)
     }
 
     override fun visitDropDatabase(ctx: MySQLParser.DropDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = DcDatabase(databaseName)
+        val sqlData = Database(databaseName)
 
         return StatementData(StatementType.DROP_DATABASE, sqlData)
     }
@@ -105,16 +105,16 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
         }
         val (databaseName, tableName) = parseFullId(ctx.tables().tableName(0).fullId())
 
-        val dcTable = DcTable(null, databaseName, tableName)
-        dcTable.ifExists = if (ctx.ifExists() != null) true else false
-        return StatementData(StatementType.DROP_TABLE_TIDB, dcTable)
+        val table = Table(null, databaseName, tableName)
+        table.ifExists = if (ctx.ifExists() != null) true else false
+        return StatementData(StatementType.DROP_TABLE_TIDB, table)
     }
 
     override fun visitTruncateTable(ctx: MySQLParser.TruncateTableContext): StatementData {
         val (databaseName, tableName) = parseFullId(ctx.tableName().fullId())
 
-        val dcTable = DcTable(null, databaseName, tableName)
-        return StatementData(StatementType.TRUNCATE_TABLE, dcTable)
+        val table = Table(null, databaseName, tableName)
+        return StatementData(StatementType.TRUNCATE_TABLE, table)
     }
 
     override fun visitRenameTable(ctx: MySQLParser.RenameTableContext): StatementData {
@@ -127,7 +127,7 @@ class MySQLAntlr4Visitor : MySQLParserBaseVisitor<StatementData>() {
 
     override fun visitUseStatement(ctx: MySQLParser.UseStatementContext): StatementData {
         val databaseName = ctx.uid().text
-        val data = DcDatabase(databaseName)
+        val data = Database(databaseName)
         return StatementData(StatementType.USE, data)
     }
 

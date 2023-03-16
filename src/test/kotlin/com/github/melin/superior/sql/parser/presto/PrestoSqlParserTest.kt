@@ -1,7 +1,7 @@
 package com.github.melin.superior.sql.parser.presto
 
 import com.github.melin.superior.sql.parser.StatementType
-import com.github.melin.superior.sql.parser.model.DcTable
+import com.github.melin.superior.sql.parser.model.Table
 import com.github.melin.superior.sql.parser.model.TableData
 import org.junit.Assert
 import org.junit.Test
@@ -70,7 +70,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is DcTable) {
+        if (statement is Table) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("dd_s_s", statement.tableName)
             Assert.assertEquals(1, statement.tableData?.inputTables?.size)
@@ -88,7 +88,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is DcTable) {
+        if (statement is Table) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
             Assert.assertEquals("bigdata", statement.databaseName)
             Assert.assertEquals("tdl_small_files_2", statement.tableName)

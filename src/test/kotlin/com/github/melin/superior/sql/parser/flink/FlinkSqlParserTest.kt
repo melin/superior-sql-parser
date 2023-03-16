@@ -25,7 +25,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateTable) {
-            val table = statement.sinkTable
+            val table = statement.sinkTableName
             Assert.assertEquals("user", table.tableName)
         } else {
             Assert.fail()
@@ -45,7 +45,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateDatabase) {
-            val database = statement.sinkDatabase
+            val database = statement.sinkDatabaseName
             Assert.assertEquals("holo_tpcds", database.databaseName)
         } else {
             Assert.fail()

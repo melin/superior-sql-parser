@@ -17,7 +17,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is DcDatabase) {
+        if(statement is Database) {
             val name = statement.databaseName
             Assert.assertEquals(StatementType.CREATE_DATABASE, statementData.type)
             Assert.assertEquals("bigdata", name)
@@ -32,7 +32,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is DcDatabase) {
+        if(statement is Database) {
             val name = statement.databaseName
             Assert.assertEquals(StatementType.DROP_DATABASE, statementData.type)
             Assert.assertEquals("bigdata", name)
@@ -229,7 +229,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is DcTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.DROP_TABLE_TIDB, statementData.type)
             Assert.assertEquals("bigdata", statement.databaseName)
             Assert.assertEquals("users", statement.tableName)
@@ -334,7 +334,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is DcTable) {
+        if(statement is Table) {
             Assert.assertEquals(StatementType.TRUNCATE_TABLE, statementData.type)
             Assert.assertEquals("test", statement.databaseName)
             Assert.assertEquals("user", statement.tableName)
@@ -558,7 +558,7 @@ class MySQLParserTest {
         val statementData = MySQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.USE, statementData.type)
         val statement = statementData.statement
-        if (statement is DcDatabase) {
+        if (statement is Database) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()

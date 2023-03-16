@@ -10,8 +10,6 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import com.github.melin.superior.sql.parser.antlr4.flink.FlinkSqlLexer
 import com.github.melin.superior.sql.parser.antlr4.flink.FlinkSqlParser
-import com.github.melin.superior.sql.parser.antlr4.spark.SparkSqlBaseLexer
-import com.github.melin.superior.sql.parser.antlr4.spark.SparkSqlBaseParser
 import com.github.melin.superior.sql.parser.model.*
 import java.lang.IllegalArgumentException
 
@@ -109,7 +107,7 @@ object FlinkSQLHelper {
             }
 
             return sql
-        } else if (statement is DcTable && (CREATE_TABLE_AS_SELECT == sqlType || REPLACE_TABLE_AS_SELECT == sqlType)) {
+        } else if (statement is Table && (CREATE_TABLE_AS_SELECT == sqlType || REPLACE_TABLE_AS_SELECT == sqlType)) {
             val tokens: java.util.ArrayList<CommonToken> = ArrayList()
             val tableData = statement.tableData
             if (tableData != null) {
@@ -126,7 +124,7 @@ object FlinkSQLHelper {
             }
 
             return sql
-        } else if (statement is DcTable
+        } else if (statement is Table
                 && (DROP_TABLE == sqlType || ALTER_TABLE_ADD_COLS == sqlType || ALTER_TABLE_ADD_COL == sqlType)) {
 
             val token = statement.token;

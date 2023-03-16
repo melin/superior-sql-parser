@@ -20,7 +20,7 @@ data class StatementData(val type: StatementType,
 abstract class Statement: Serializable
 
 @DefaultConstructor
-data class DcDatabase(
+data class Database(
     val catalogName: String?,
     val databaseName: String,
     val location: String?): Statement(){
@@ -29,7 +29,7 @@ data class DcDatabase(
     constructor(databaseName: String): this(null, databaseName, null)
 }
 
-data class DcTable(
+data class Table(
         val catalogName: String?,
         val databaseName: String?,
         val tableName: String,
@@ -211,7 +211,7 @@ data class DcAlterColumn(
     var token: CommonToken? = null
 }
 
-data class DcFunction(
+data class Function(
     val name: String,
     var temporary: Boolean = false,
     val className: String?,
