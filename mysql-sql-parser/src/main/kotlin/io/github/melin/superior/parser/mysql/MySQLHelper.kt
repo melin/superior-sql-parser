@@ -12,8 +12,8 @@ import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.parser.mysql.antlr4.MySQLLexer
-import io.github.melin.superior.parser.mysql.antlr4.MySQLParser
+import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 
 /**
  *
@@ -56,12 +56,12 @@ object MySQLHelper {
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = MySQLLexer(charStream)
+        val lexer = MySqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = MySQLParser(tokenStream)
+        val parser = MySqlParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.LL
@@ -104,29 +104,29 @@ object MySQLHelper {
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(sql))
-        val lexer = MySQLLexer(charStream)
+        val lexer = MySqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokens = CommonTokenStream(lexer)
-        val parser = MySQLParser(tokens)
+        val parser = MySqlParser(tokens)
         val statement = parser.sqlStatement().getChild(0).getChild(0)
 
-        if (statement is MySQLParser.AlterTableContext) {
-            val tableNameContext = statement.getChild(2) as MySQLParser.TableNameContext
+        if (statement is MySqlParser.AlterTableContext) {
+            val tableNameContext = statement.getChild(2) as MySqlParser.TableNameContext
             val stopIndex = tableNameContext.stop.stopIndex
             val alterSqlPrefix = StringUtils.substring(sql, 0, stopIndex + 1);
 
             val childStat = statement.getChild(3)
-            if (childStat is MySQLParser.AlterByAddColumnsContext) {
+            if (childStat is MySqlParser.AlterByAddColumnsContext) {
                 val child = childStat.getChild(2)
-                var startIndex = if(child is MySQLParser.UidContext) {
+                var startIndex = if(child is MySqlParser.UidContext) {
                     val rightNode = child.getChild(0)
                     if (rightNode is TerminalNodeImpl) {
                         rightNode.symbol.startIndex
                     } else {
                         val childNode = rightNode.getChild(0)
-                        if (childNode is MySQLParser.EngineNameContext) {
+                        if (childNode is MySqlParser.EngineNameContext) {
                             childNode.start.startIndex
                         } else {
                             val node = rightNode.getChild(0) as TerminalNodeImpl

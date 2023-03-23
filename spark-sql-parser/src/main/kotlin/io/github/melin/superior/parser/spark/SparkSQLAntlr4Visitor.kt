@@ -3,6 +3,8 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseParser
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseParser.AlterColumnActionContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseParser.ColDefinitionOptionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -78,7 +80,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val (catalogName, databaseName) = parseDatabase(ctx.multipartIdentifier())
         var location: String = ""
         if (ctx.locationSpec().size > 0) {
-            location = ctx.locationSpec().get(0).STRING().text
+            location = ctx.locationSpec().get(0).stringLit().text
             location = StringUtil.cleanQuote(location)
         }
 
@@ -120,7 +122,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitCreateTable(ctx: SparkSqlBaseParser.CreateTableContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.createTableHeader().multipartIdentifier())
         val createTableClauses = ctx.createTableClauses();
-        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).STRING().text) else null
+        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).stringLit().text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
         ctx.children.forEach { it ->
@@ -136,11 +138,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         var columns: List<Column>? = null
         var createTableType = "spark"
         if (ctx.query() == null) {
-            columns = ctx.colTypeList().colType().map {
+            columns = ctx.createOrReplaceTableColTypeList().createOrReplaceTableColType().map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
-                val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
-                Column(colName, dataType, colComment)
+                val (nullable, colComment) = parseColDefinition(it.colDefinitionOption())
+                Column(colName, dataType, colComment, nullable)
             }
 
             if (ctx.tableProvider() == null) {
@@ -167,7 +169,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
-                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
+                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().text) else null
                             Column(colName, dataType, colComment)
                         }
                 }
@@ -246,7 +248,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitReplaceTable(ctx: SparkSqlBaseParser.ReplaceTableContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.replaceTableHeader().multipartIdentifier())
         val createTableClauses = ctx.createTableClauses();
-        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).STRING().text) else null
+        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
         ctx.children.forEach { it ->
@@ -262,11 +264,11 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         var columns: List<Column>? = null
         var createTableType = "hive"
         if (ctx.query() == null) {
-            columns = ctx.colTypeList().colType().map {
+            columns = ctx.createOrReplaceTableColTypeList().createOrReplaceTableColType().map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
-                val colComment = if (it.commentSpec() != null) StringUtil.cleanQuote(it.commentSpec().STRING().text) else null
-                Column(colName, dataType, colComment)
+                val (nullable, colComment) = parseColDefinition(it.colDefinitionOption())
+                Column(colName, dataType, colComment, nullable)
             }
 
             if (ctx.tableProvider() != null) {
@@ -293,7 +295,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
-                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().STRING().text) else null
+                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().text) else null
                             Column(colName, dataType, colComment)
                         }
                 }
@@ -453,7 +455,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
                     val column = item as SparkSqlBaseParser.QualifiedColTypeWithPositionContext
                     val colName = column.multipartIdentifier().text
                     val dataType = column.dataType().text
-                    val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().STRING().text) else null
+                    val colComment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().text) else null
 
                     var position: String? = null
                     var afterCol: String? = null
@@ -485,10 +487,23 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
 
         val columnName = ctx.colName.parts.get(0).text
         val dataType = ctx.colType().dataType().text
-        val commentNode = ctx.colType().commentSpec()?.STRING()
+        val commentNode = ctx.colType().commentSpec()?.stringLit()
         val comment = if (commentNode != null) StringUtil.cleanQuote(commentNode.text) else null
 
-        val data = AlterColumn(catalogName, databaseName, tableName, columnName, dataType, comment)
+        val action = AlterColumnAction()
+        action.columName = columnName
+        action.comment = comment;
+        action.dataType = dataType;
+        if (ctx.colPosition() != null) {
+            if (ctx.colPosition().FIRST() != null) {
+                action.position = "first"
+            } else if (ctx.colPosition().AFTER() != null) {
+                action.position = "after"
+                action.afterCol = ctx.colPosition().afterCol.text
+            }
+        }
+
+        val data = AlterColumn(catalogName, databaseName, tableName, action)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, data)
     }
 
@@ -498,8 +513,8 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         val oldName = ctx.from.text
         val newName = ctx.to.text
 
-        val dcTable = AlterColumn(catalogName, databaseName, tableName, oldName)
-        dcTable.newColumName = newName
+        val action = AlterColumnAction(oldName, newName)
+        val dcTable = AlterColumn(catalogName, databaseName, tableName, action)
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_RENAME_COL, dcTable)
     }
@@ -507,17 +522,14 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitAlterTableAlterColumn(ctx: SparkSqlBaseParser.AlterTableAlterColumnContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
 
-        val action = ctx.alterColumnAction().getChild(0)
-        var comment: String? = null
-        if (action is SparkSqlBaseParser.CommentSpecContext) {
-            comment = StringUtil.cleanQuote(action.STRING().text)
-        }
-
-        val colName = ctx.column.text
-        val dcTable = AlterColumn(catalogName, databaseName, tableName, colName, null, comment)
+        val action = parseAlterColumnAction(ctx.alterColumnAction())
+        action.columName = ctx.column.text
+        val dcTable = AlterColumn(catalogName, databaseName, tableName, action)
         dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, dcTable)
     }
+
+
 
     override fun visitTouchTable(ctx: SparkSqlBaseParser.TouchTableContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
@@ -734,7 +746,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
     override fun visitCreateView(ctx: SparkSqlBaseParser.CreateViewContext): StatementData {
         var comment: String? = null
         if (ctx.commentSpec().size > 0) {
-            comment = ctx.commentSpec().get(0).STRING().text
+            comment = ctx.commentSpec().get(0).stringLit().text
             comment = StringUtil.cleanQuote(comment)
         }
 
@@ -780,7 +792,7 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         if (ctx.TEMPORARY() != null) {
             temporary = true
         } else {
-            file = ctx.resource(0).STRING().text
+            file = ctx.resource(0).stringLit().text
         }
 
         val data = Function(name, temporary, classNmae, file)
@@ -1187,6 +1199,66 @@ class SparkSQLAntlr4Visitor : SparkSqlBaseParserBaseVisitor<StatementData>() {
         }
 
         return super.visitTypeConstructor(ctx)
+    }
+
+    private fun parseColDefinition(colDef: List<ColDefinitionOptionContext>): Pair<Boolean, String?> {
+        var nullable: Boolean = false
+        var comment: String? = null
+
+        if (colDef.size > 0) {
+            colDef.forEach { col ->
+                if (col.NULL() != null) {
+                    nullable = true
+                }
+
+                if (col.commentSpec() != null) {
+                    comment = StringUtil.cleanQuote(col.commentSpec().stringLit().text);
+                }
+            }
+        }
+
+        return Pair(nullable, comment)
+    }
+
+    private fun parseAlterColumnAction(context: AlterColumnActionContext): AlterColumnAction {
+        val action = AlterColumnAction();
+        if (context.dataType() != null) {
+            action.dataType = StringUtils.substring(command, context.dataType().start.startIndex,
+                context.dataType().stop.stopIndex + 1)
+        }
+
+        if (context.commentSpec() != null) {
+            action.comment = StringUtil.cleanQuote(context.commentSpec().stringLit().text)
+        }
+
+        if (context.colPosition() != null) {
+            if (context.colPosition().FIRST() != null) {
+                action.position = "first"
+            } else if (context.colPosition().AFTER() != null) {
+                action.position = "after"
+                action.afterCol = context.colPosition().afterCol.text
+            }
+        }
+
+        if (context.setOrDrop != null) {
+            if (StringUtils.containsAnyIgnoreCase(context.setOrDrop.text, "drop")) {
+                action.setOrDrop = "DROP";
+            } else {
+                action.setOrDrop = "SET";
+            }
+        }
+
+        if (context.defaultExpression() != null) {
+            val expr = context.defaultExpression().expression()
+            action.defaultExpression = StringUtils.substring(command, expr.start.startIndex,
+                expr.stop.stopIndex + 1)
+        }
+
+        if (context.dropDefault != null) {
+            action.dropDefault = true;
+        }
+
+        return action
     }
 
     /**

@@ -787,7 +787,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_RENAME_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
-            Assert.assertEquals("payload", statement.newColumName)
+            Assert.assertEquals("payload", statement.action?.newColumName)
         } else {
             Assert.fail()
         }
@@ -835,8 +835,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("sample", name)
-            Assert.assertNull(statement.dataType)
-            Assert.assertEquals("unique id", statement.comment)
+            Assert.assertNull(statement.action?.dataType)
+            Assert.assertEquals("unique id", statement.action?.comment)
         } else {
             Assert.fail()
         }
@@ -848,8 +848,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("demo", name)
-            Assert.assertEquals("float", statement.dataType)
-            Assert.assertEquals("价格", statement.comment)
+            Assert.assertEquals("float", statement.action?.dataType)
+            Assert.assertEquals("价格", statement.action?.comment)
         } else {
             Assert.fail()
         }
@@ -864,10 +864,10 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             val name = statement.tableName
             Assert.assertEquals("test_user11_dt", name)
-            Assert.assertEquals("ds", statement.columName)
-            Assert.assertNull(statement.newColumName)
-            Assert.assertNull(statement.dataType)
-            Assert.assertEquals("ddd", statement.comment)
+            Assert.assertEquals("ds", statement.action?.columName)
+            Assert.assertNull(statement.action?.newColumName)
+            Assert.assertNull(statement.action?.dataType)
+            Assert.assertEquals("ddd", statement.action?.comment)
         } else {
             Assert.fail()
         }
@@ -912,7 +912,7 @@ class SparkSqlParserTest {
         if (statement is AlterColumn) {
             val name = statement.tableName
             Assert.assertEquals("sale_detail", name)
-            Assert.assertEquals("sdsd", statement.comment)
+            Assert.assertEquals("sdsd", statement.action?.comment)
         } else {
             Assert.fail()
         }

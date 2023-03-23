@@ -19,6 +19,7 @@
         <module>sqlserver-sql-parser</module>
         <module>flink-sql-parser</module>
         <module>common-parser</module>
+        <module>oracle-sql-parser</module>
     </modules>
 
     <properties>
@@ -27,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <kotlin.version>1.8.10</kotlin.version>
-        <antlr4.version>4.8</antlr4.version>
+        <antlr4.version>4.12.0</antlr4.version>
     </properties>
 
     <description>

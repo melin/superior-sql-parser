@@ -5,6 +5,8 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.parser.sqlserver.antlr4.TSqlLexer
+import io.github.melin.superior.parser.sqlserver.antlr4.TSqlParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -42,7 +44,7 @@ object TsqlHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.sql_clause())
+                return sqlVisitor.visit(parser.batch())
             }
             catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
@@ -50,7 +52,7 @@ object TsqlHelper {
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.sql_clause())
+                return sqlVisitor.visit(parser.batch())
             }
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {

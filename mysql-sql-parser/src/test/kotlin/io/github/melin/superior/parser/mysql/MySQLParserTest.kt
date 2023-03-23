@@ -366,13 +366,13 @@ class MySQLParserTest {
                 "CHANGE COLUMN `partition_type` `partition_type1` VARCHAR(45) NULL DEFAULT 'day' COMMENT '分区类型：day, hour, minute' ;"
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableSource) {
+        if(statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
             Assert.assertEquals("datacompute", statement.databaseName)
             Assert.assertEquals("log_collect_config", statement.tableName)
-            Assert.assertEquals("partition_type", statement.column?.oldName)
-            Assert.assertEquals("partition_type1", statement.column?.name)
-            Assert.assertEquals("分区类型：day, hour, minute", statement.column?.comment)
+            Assert.assertEquals("partition_type", statement.action?.columName)
+            Assert.assertEquals("partition_type1", statement.action?.newColumName)
+            Assert.assertEquals("分区类型：day, hour, minute", statement.action?.comment)
         } else {
             Assert.fail()
         }
@@ -383,11 +383,11 @@ class MySQLParserTest {
         val sql = "ALTER TABLE t1 MODIFY age BIGINT NOT NULL;"
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableSource) {
+        if(statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_MODIFY_COL, statementData.type)
             Assert.assertEquals("t1", statement.tableName)
-            Assert.assertEquals("age", statement.column?.name)
-            Assert.assertEquals("BIGINT", statement.column?.type)
+            Assert.assertEquals("age", statement.action?.columName)
+            Assert.assertEquals("BIGINT", statement.action?.dataType)
         } else {
             Assert.fail()
         }
@@ -398,12 +398,12 @@ class MySQLParserTest {
         val sql = "ALTER TABLE `datacompute`.`users_quan` ADD COLUMN `age` VARCHAR(45) NULL DEFAULT 18 COMMENT '年龄' AFTER `username`"
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableSource) {
+        if(statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_ADD_COL, statementData.type)
             Assert.assertEquals("datacompute", statement.databaseName)
             Assert.assertEquals("users_quan", statement.tableName)
-            Assert.assertEquals("age", statement.column?.name)
-            Assert.assertEquals("年龄", statement.column?.comment)
+            Assert.assertEquals("age", statement.action?.columName)
+            Assert.assertEquals("年龄", statement.action?.comment)
         } else {
             Assert.fail()
         }
@@ -414,11 +414,11 @@ class MySQLParserTest {
         val sql = "ALTER TABLE `datacompute`.`users_quan` DROP COLUMN `age`;"
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableSource) {
+        if(statement is AlterColumn) {
             Assert.assertEquals(StatementType.ALTER_TABLE_DROP_COL, statementData.type)
             Assert.assertEquals("datacompute", statement.databaseName)
             Assert.assertEquals("users_quan", statement.tableName)
-            Assert.assertEquals("age", statement.column?.name)
+            Assert.assertEquals("age", statement.action?.columName)
         } else {
             Assert.fail()
         }

@@ -25,10 +25,10 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         return statementData;
     }
 
-    override fun visitSelect_stmt(ctx: PostgreSQLParser.Select_stmtContext): StatementData {
+    override fun visitSelectstmt(ctx: PostgreSQLParser.SelectstmtContext): StatementData {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
-            super.visitSelect_stmt(ctx)
+            super.visitSelectstmt(ctx)
 
             statementData.limit = limit
             return StatementData(StatementType.SELECT, statementData)
@@ -37,7 +37,7 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitSchema_qualified_name(ctx: PostgreSQLParser.Schema_qualified_nameContext): StatementData? {
+    override fun visitQualified_name(ctx: PostgreSQLParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
             val (_, database, tableName) = parseTableName(ctx)
             val table = TableName(database, tableName)
@@ -48,7 +48,7 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseTableName(ctx: PostgreSQLParser.Schema_qualified_nameContext): Triple<String?, String?, String> {
+    fun parseTableName(ctx: PostgreSQLParser.Qualified_nameContext): Triple<String?, String?, String> {
         if (ctx.childCount == 5) {
             return Triple(ctx.getChild(0).text, ctx.getChild(2).text, ctx.getChild(4).text)
         } else if (ctx.childCount == 3) {

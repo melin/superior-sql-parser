@@ -100,17 +100,10 @@ data class TableData(
 data class TableSource(
     val catalogName: String?,
     var databaseName: String?,
-    var tableName: String,
-    var originName: String?,
-    var metaAction: String?,
-    var column: Column? = null,
-    var columns: List<String>? = ArrayList()
+    var tableName: String
 ): Statement() {
-    constructor(catalogName: String?, databaseName: String?, tableName: String):
-            this(catalogName, databaseName, tableName, null, null)
-
     constructor(databaseName: String?, tableName: String):
-            this(null, databaseName, tableName, null, null)
+            this(null, databaseName, tableName)
 
     val tokens: java.util.ArrayList<CommonToken> = ArrayList()
 
@@ -158,10 +151,12 @@ data class CreateTableLike(
 data class Column(
     val name: String,
     val type: String? = null,
-    val comment: String? = null) : Statement() {
+    val comment: String? = null,
+    val nullable: Boolean = false) : Statement() {
 
     var oldName: String? = null
-    var expression: String? = null
+    var defaultExpression: String? = null // 默认值表达式
+    var expression: String? = null // 计算表达式
     var isPk: Boolean = false
     var position: String? = null
     var afterCol: String? = null
@@ -171,21 +166,31 @@ data class AlterColumn(
     val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
-    val columName: String?,
-    val dataType: String? = null,
-    val comment: String? = null) : Statement() {
-
-    var newColumName: String? = null
+    val action: AlterColumnAction?) : Statement() {
 
     constructor(catalogName: String?, databaseName: String?, tableName: String):
-            this(catalogName, databaseName, tableName, null, null, null);
+            this(catalogName, databaseName, tableName, null);
+
+    constructor(databaseName: String?, tableName: String):
+            this(null, databaseName, tableName, null);
 
     fun getFullTableName(): String {
         return innerFullTableName(catalogName, databaseName, tableName)
     }
-
     var token: CommonToken? = null
 }
+
+data class AlterColumnAction(
+    var columName: String? = null, // 修改列名
+    var newColumName: String? = null, // 修改列名，新列名称
+    var dataType: String? = null,
+    var comment: String? = null,
+    var position: String? = null,
+    var afterCol: String? = null,
+    var setOrDrop: String? = null,
+    var defaultExpression: String? = null,
+    var dropDefault: Boolean = false,
+)
 
 data class Function(
     val name: String,
