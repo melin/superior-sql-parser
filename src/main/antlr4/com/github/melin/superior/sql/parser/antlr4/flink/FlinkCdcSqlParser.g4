@@ -1,6 +1,6 @@
-parser grammar FlinkSqlParser;
+parser grammar FlinkCdcSqlParser;
 
-options { tokenVocab = FlinkSqlLexer; }
+options { tokenVocab = FlinkCdcSqlLexer; }
 
 singleStatement
     : statement SEMICOLON* EOF

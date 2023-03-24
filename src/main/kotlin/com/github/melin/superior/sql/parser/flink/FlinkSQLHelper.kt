@@ -3,15 +3,14 @@ package com.github.melin.superior.sql.parser.flink
 import com.github.melin.superior.sql.parser.StatementType
 import com.github.melin.superior.sql.parser.StatementType.*
 import com.github.melin.superior.sql.parser.antlr4.*
+import com.github.melin.superior.sql.parser.antlr4.flink.FlinkCdcSqlLexer
+import com.github.melin.superior.sql.parser.antlr4.flink.FlinkCdcSqlParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
-import com.github.melin.superior.sql.parser.antlr4.flink.FlinkSqlLexer
-import com.github.melin.superior.sql.parser.antlr4.flink.FlinkSqlParser
 import com.github.melin.superior.sql.parser.model.*
-import java.lang.IllegalArgumentException
 
 /**
  *
@@ -34,13 +33,13 @@ object FlinkSQLHelper {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = FlinkSqlLexer(charStream)
+        val lexer = FlinkCdcSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = FlinkSqlParser(tokenStream)
-        parser.addParseListener(FlinkSqlPostProcessor())
+        val parser = FlinkCdcSqlParser(tokenStream)
+        parser.addParseListener(FlinkCdcSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
