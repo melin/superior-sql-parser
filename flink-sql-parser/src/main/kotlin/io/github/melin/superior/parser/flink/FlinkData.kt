@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.flink
 import io.github.melin.superior.common.*
 
 @DefaultConstructor
-data class CreateTable(
+data class FlinkCdcCreateTable(
     var sinkTableName: TableName,
     var sourceTableName: TableName,
 ): Statement() {
@@ -13,7 +13,7 @@ data class CreateTable(
 }
 
 @DefaultConstructor
-data class CreateDatabase(
+data class FlinkCdcCreateDatabase(
     var sinkDatabaseName: DatabaseName,
     var sourceDatabaseName: DatabaseName,
     var includeTable: String

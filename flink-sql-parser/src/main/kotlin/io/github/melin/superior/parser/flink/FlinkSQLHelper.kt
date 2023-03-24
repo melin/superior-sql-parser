@@ -11,8 +11,8 @@ import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlLexer
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
+import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlLexer
+import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 
 /**
  *
@@ -36,13 +36,13 @@ object FlinkSQLHelper {
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = FlinkSqlLexer(charStream)
+        val lexer = FlinkCdcSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = FlinkSqlParser(tokenStream)
-        parser.addParseListener(FlinkSqlPostProcessor())
+        val parser = FlinkCdcSqlParser(tokenStream)
+        parser.addParseListener(FlinkCdcSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL

@@ -2,8 +2,8 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParserBaseVisitor
+import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
+import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
+class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
 
@@ -19,7 +19,7 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSingleStatement(ctx: FlinkSqlParser.SingleStatementContext): StatementData {
+    override fun visitSingleStatement(ctx: FlinkCdcSqlParser.SingleStatementContext): StatementData {
         val data = super.visitSingleStatement(ctx)
 
         if (data == null) {
@@ -29,23 +29,23 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         return data
     }
 
-    override fun visitBeginStatement(ctx: FlinkSqlParser.BeginStatementContext): StatementData {
+    override fun visitBeginStatement(ctx: FlinkCdcSqlParser.BeginStatementContext): StatementData {
         return StatementData(StatementType.FLINK_CDC_BEGIN)
     }
 
-    override fun visitEndStatement(ctx: FlinkSqlParser.EndStatementContext): StatementData {
+    override fun visitEndStatement(ctx: FlinkCdcSqlParser.EndStatementContext): StatementData {
         currentOptType = StatementType.FLINK_CDC_CTAS
         return StatementData(StatementType.FLINK_CDC_END)
     }
 
-    override fun visitCreateTable(ctx: FlinkSqlParser.CreateTableContext): StatementData {
+    override fun visitCreateTable(ctx: FlinkCdcSqlParser.CreateTableContext): StatementData {
         val sinkTable = parseTable(ctx.sink)
         val sourceTable = parseTable(ctx.source)
 
         val sinkOptions: HashMap<String, String>? = parseOptions(ctx.sinkOptions)
         val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
 
-        val createTable = CreateTable(sinkTable, sourceTable)
+        val createTable = FlinkCdcCreateTable(sinkTable, sourceTable)
         createTable.sinkOptions = sinkOptions
         createTable.sourceOptions = sourceOptions
 
@@ -76,7 +76,7 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CTAS, createTable)
     }
 
-    override fun visitCreateDatabase(ctx: FlinkSqlParser.CreateDatabaseContext): StatementData {
+    override fun visitCreateDatabase(ctx: FlinkCdcSqlParser.CreateDatabaseContext): StatementData {
         val sinkDatabase = parseDatabase(ctx.sink)
         val sourceDatabase = parseDatabase(ctx.source)
 
@@ -84,9 +84,9 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
 
         val createDatabase = if (ctx.includeTable == null) {
-            CreateDatabase(sinkDatabase, sourceDatabase, "__ALL__")
+            FlinkCdcCreateDatabase(sinkDatabase, sourceDatabase, "__ALL__")
         } else {
-            CreateDatabase(sinkDatabase, sourceDatabase, StringUtil.cleanQuote(ctx.includeTable.text))
+            FlinkCdcCreateDatabase(sinkDatabase, sourceDatabase, StringUtil.cleanQuote(ctx.includeTable.text))
         }
 
         if (ctx.excludeTable != null) {
@@ -98,7 +98,7 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
     }
 
-    fun parseDatabase(ctx: FlinkSqlParser.MultipartIdentifierContext): DatabaseName {
+    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): DatabaseName {
         if (ctx.parts.size == 2) {
             return DatabaseName(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
@@ -108,7 +108,7 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseTable(ctx: FlinkSqlParser.MultipartIdentifierContext): TableName {
+    fun parseTable(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): TableName {
         if (ctx.parts.size == 4) {
             return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
@@ -122,13 +122,13 @@ class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseOptions(options: FlinkSqlParser.PropertyListContext?): HashMap<String, String>? {
+    fun parseOptions(options: FlinkCdcSqlParser.PropertyListContext?): HashMap<String, String>? {
         if (options == null) {
             return null
         }
         val properties = HashMap<String, String>()
-        options.children.filter { it is FlinkSqlParser.PropertyContext }.map { item ->
-            val property = item as FlinkSqlParser.PropertyContext
+        options.children.filter { it is FlinkCdcSqlParser.PropertyContext }.map { item ->
+            val property = item as FlinkCdcSqlParser.PropertyContext
             val key = StringUtil.cleanQuote(property.key.text)
             val value = StringUtil.cleanQuote(property.value.text)
             properties.put(key, value)

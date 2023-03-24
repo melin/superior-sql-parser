@@ -1,4 +1,4 @@
-lexer grammar FlinkSqlLexer;
+lexer grammar FlinkCdcSqlLexer;
 
 @members {
   /**
