@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils
  */
 class FlinkSQLAntlr4Visitor : FlinkSqlParserBaseVisitor<StatementData>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableData()
     private var command: String? = null
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
