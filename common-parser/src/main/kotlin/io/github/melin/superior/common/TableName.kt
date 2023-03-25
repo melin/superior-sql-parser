@@ -7,6 +7,9 @@ data class TableName(val catalogName: String?, val databaseName: String?, val ta
     constructor(databaseName: String?, tableName: String):
             this(null, databaseName, tableName, null)
 
+    constructor(tableName: String):
+            this(null, null, tableName, null)
+
     fun getFullTableName(): String {
         if (catalogName != null) {
             return "${catalogName}.${databaseName}.${tableName}"

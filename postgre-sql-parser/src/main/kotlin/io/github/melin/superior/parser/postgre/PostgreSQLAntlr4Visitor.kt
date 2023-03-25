@@ -48,15 +48,18 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseTableName(ctx: PostgreSQLParser.Qualified_nameContext): Triple<String?, String?, String> {
-        if (ctx.childCount == 5) {
-            return Triple(ctx.getChild(0).text, ctx.getChild(2).text, ctx.getChild(4).text)
-        } else if (ctx.childCount == 3) {
-            return Triple(null, ctx.getChild(0).text, ctx.getChild(2).text)
+    fun parseTableName(ctx: PostgreSQLParser.Qualified_nameContext): TableName {
+        if (ctx.childCount == 2) {
+            val obj = ctx.getChild(1);
+            if (obj.childCount == 2) {
+                return TableName(ctx.getChild(0).text, obj.getChild(0).text, obj.getChild(1).text)
+            } else if (obj.childCount == 1) {
+                return TableName(ctx.getChild(0).text, obj.getChild(1).text)
+            }
         } else if (ctx.childCount == 1) {
-            return Triple(null, null, ctx.getChild(0).text)
-        } else {
-            throw SQLParserException("parse schema qualified name error")
+            return TableName(ctx.getChild(0).text)
         }
+
+        throw SQLParserException("parse schema qualified name error")
     }
 }
