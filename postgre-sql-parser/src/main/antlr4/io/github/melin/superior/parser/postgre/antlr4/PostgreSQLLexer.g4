@@ -35,7 +35,6 @@ lexer grammar PostgreSQLLexer;
 
 options {
    superClass = PostgreSQLLexerBase;
-   caseInsensitive = true;
 }
 
 @ header
@@ -2689,7 +2688,7 @@ Identifier
    : IdentifierStartChar IdentifierChar*
    ;
 
-fragment IdentifierStartChar options { caseInsensitive=false; }
+fragment IdentifierStartChar
    : // these are the valid identifier start characters below 0x7F
    [a-zA-Z_]
    | // these are the valid characters from 0x80 to 0xFF
@@ -2938,7 +2937,7 @@ UnterminatedEscapeStringConstant
    // Handle a final unmatched \ character appearing at the end of the file
    '\\'? EOF
    ;
-fragment EscapeStringText options { caseInsensitive=false; }
+fragment EscapeStringText
    : ('\'\'' | '\\' ( // two-digit hex escapes are still valid when treated as single-digit escapes
    'x' [0-9a-fA-F] |
    'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] |
