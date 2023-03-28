@@ -20,8 +20,8 @@ statement
         (PARTITIONED BY identifierList)?
         commentSpec?
         (WITH sinkOptions=propertyList)?
-        AS DATABASE source=multipartIdentifier
-        INCLUDING (ALL TABLES | TABLE includeTable=STRING)
+        AS (DATABASE | KAFKA) source=multipartIdentifier
+        (INCLUDING (ALL TABLES | TABLE includeTable=STRING))?
         (EXCLUDING TABLE excludeTable=STRING)?
         (OPTIONS sourceOptions=propertyList)?                         #createDatabase
     ;
