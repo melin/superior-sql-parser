@@ -11,8 +11,8 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseLexer
-import io.github.melin.superior.parser.spark.antlr4.SparkSqlBaseParser
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlLexer
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 
 /**
  *
@@ -96,12 +96,12 @@ object SparkSQLHelper {
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = SparkSqlBaseLexer(charStream)
+        val lexer = SparkSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = SparkSqlBaseParser(tokenStream)
+        val parser = SparkSqlParser(tokenStream)
         parser.addParseListener(SparkSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
