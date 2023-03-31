@@ -1,5 +1,25 @@
-lexer grammar StarRocksLexer;
+// Copyright 2021-present StarRocks, Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+
+lexer grammar StarRocksLexer;
+@members {
+private long sqlMode = com.starrocks.qe.SqlModeHelper.MODE_DEFAULT;
+public void setSqlMode(long newSqlMode) {
+    sqlMode = newSqlMode;
+}
+}
 tokens {
     CONCAT
 }
@@ -399,7 +419,7 @@ ASTERISK_SYMBOL: '*';
 SLASH_SYMBOL: '/';
 PERCENT_SYMBOL: '%';
 
-LOGICAL_OR: '||';
+LOGICAL_OR: '||' {setType((sqlMode & com.starrocks.qe.SqlModeHelper.MODE_PIPES_AS_CONCAT) == 0 ? LOGICAL_OR : StarRocksParser.CONCAT);};
 LOGICAL_AND: '&&';
 LOGICAL_NOT: '!';
 
@@ -488,6 +508,13 @@ BRACKETED_COMMENT
     ;
 
 SEMICOLON: ';';
+
+LEFT_PAREN: '(';
+RIGHT_PAREN: ')';
+COMMA: ',';
+DOT: '.';
+LEFT_BRACKET: '[';
+RIGHT_BRACKET: ']';
 
 DOTDOTDOT: '...';
 

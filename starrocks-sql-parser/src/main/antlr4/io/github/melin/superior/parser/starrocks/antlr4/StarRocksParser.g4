@@ -1,5 +1,19 @@
+// Copyright 2021-present StarRocks, Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 grammar StarRocksParser;
-import StarRocksLexer;
+options { tokenVocab = StarRocksLexer; }
 
 sqlStatements
     : singleStatement+ EOF
@@ -115,6 +129,7 @@ statement
     | adminCheckTabletsStatement
     | killStatement
     | syncStatement
+    | executeScriptStatement
 
     // Cluster Management Statement
     | alterSystemStatement
@@ -497,7 +512,7 @@ dropViewStatement
 
 submitTaskStatement
     : SUBMIT setVarHint* TASK qualifiedName?
-    AS createTableAsSelectStatement
+    AS (createTableAsSelectStatement | insertStatement )
     ;
 
 // ------------------------------------------- Materialized View Statement ---------------------------------------------
@@ -1501,6 +1516,10 @@ setWarehouseStatement
     : SET WAREHOUSE identifierOrString
     ;
 
+executeScriptStatement
+    : ADMIN EXECUTE ON INTEGER_VALUE string
+    ;
+
 unsupportedStatement
     : START TRANSACTION (WITH CONSISTENT SNAPSHOT)?
     | BEGIN WORK?
@@ -1622,13 +1641,11 @@ relationPrimary
     | '(' VALUES rowConstructor (',' rowConstructor)* ')'
         (AS? alias=identifier columnAliases?)?                                          #inlineTable
     | subquery (AS? alias=identifier columnAliases?)?                                   #subqueryWithAlias
-    | tableFunctionCall (AS? alias=identifier columnAliases?)?                          #tableFunction
-    | TABLE '(' tableFunctionCall ')' (AS? alias=identifier columnAliases?)?            #tableFunctionTable
+    | qualifiedName '(' expressionList ')'
+        (AS? alias=identifier columnAliases?)?                                          #tableFunction
+    | TABLE '(' qualifiedName '(' expressionList ')' ')'
+        (AS? alias=identifier columnAliases?)?                                          #normalizedTableFunction
     | '(' relations ')'                                                                 #parenthesizedRelation
-    ;
-
-tableFunctionCall
-    : qualifiedName '(' expressionList ')'
     ;
 
 joinRelation
