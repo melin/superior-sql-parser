@@ -6,8 +6,8 @@ import io.github.melin.superior.common.Statement
 
 @DefaultConstructor
 data class TableLineage(
-    var inputTables: java.util.ArrayList<TableName> = ArrayList(),
-    var outpuTables: java.util.ArrayList<TableName> = ArrayList(),
+    var inputTables: java.util.ArrayList<TableId> = ArrayList(),
+    var outpuTables: java.util.ArrayList<TableId> = ArrayList(),
     var limit: Int? = null,
     var insertMode: InsertMode? = null,
     var partitions: HashMap<String, String>? = null

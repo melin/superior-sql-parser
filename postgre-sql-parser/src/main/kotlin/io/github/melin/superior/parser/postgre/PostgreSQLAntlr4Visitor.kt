@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
@@ -42,7 +42,7 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
     override fun visitQualified_name(ctx: PostgreSQLParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
             val (_, database, tableName) = parseTableName(ctx)
-            val table = TableName(database, tableName)
+            val table = TableId(database, tableName)
             statementData.inputTables.add(table)
             return null
         } else {
@@ -50,16 +50,16 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         }
     }
 
-    fun parseTableName(ctx: PostgreSQLParser.Qualified_nameContext): TableName {
+    fun parseTableName(ctx: PostgreSQLParser.Qualified_nameContext): TableId {
         if (ctx.childCount == 2) {
             val obj = ctx.getChild(1);
             if (obj.childCount == 2) {
-                return TableName(ctx.getChild(0).text, obj.getChild(0).text, obj.getChild(1).text)
+                return TableId(ctx.getChild(0).text, obj.getChild(0).text, obj.getChild(1).text)
             } else if (obj.childCount == 1) {
-                return TableName(ctx.getChild(0).text, obj.getChild(1).text)
+                return TableId(ctx.getChild(0).text, obj.getChild(1).text)
             }
         } else if (ctx.childCount == 1) {
-            return TableName(ctx.getChild(0).text)
+            return TableId(ctx.getChild(0).text)
         }
 
         throw SQLParserException("parse schema qualified name error")

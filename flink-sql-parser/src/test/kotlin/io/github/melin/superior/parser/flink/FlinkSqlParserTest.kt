@@ -24,7 +24,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is FlinkCdcCreateTable) {
-            val table = statement.sinkTableName
+            val table = statement.sinkTableId
             Assert.assertEquals("user", table.tableName)
             Assert.assertEquals(2, statement.computeCols?.size)
             Assert.assertEquals("COALESCE(SPLIT_INDEX(`tbl`, 'r', 1), 'default')", statement.computeCols?.get(0)?.expression)
@@ -47,7 +47,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is FlinkCdcCreateDatabase) {
-            val database = statement.sinkSchemaName
+            val database = statement.sinkSchemaId
             Assert.assertEquals("holo_tpcds", database.schemaName)
             Assert.assertEquals("test", statement.excludeTable)
         } else {
@@ -79,7 +79,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is FlinkCdcCreateDatabase) {
-            val database = statement.sourceSchemaName
+            val database = statement.sourceSchemaId
             Assert.assertEquals("demo1, demo2, demo3, demo4", database.schemaName)
             Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))
         } else {

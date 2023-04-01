@@ -51,25 +51,25 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         this.command = command
     }
 
-    fun parseDatabase(ctx: SparkSqlParser.MultipartIdentifierContext): SchemaName {
+    fun parseDatabase(ctx: SparkSqlParser.MultipartIdentifierContext): SchemaId {
         if (ctx.parts.size == 2) {
-            return SchemaName(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return SchemaId(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return SchemaName(null, ctx.parts.get(0).text)
+            return SchemaId(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
     }
 
-    fun parseTableName(ctx: SparkSqlParser.MultipartIdentifierContext): TableName {
+    fun parseTableName(ctx: SparkSqlParser.MultipartIdentifierContext): TableId {
         if (ctx.parts.size == 4) {
-            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
+            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
-            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
         } else if (ctx.parts.size == 2) {
-            return TableName(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return TableId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return TableName(null, null, ctx.parts.get(0).text)
+            return TableId(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -934,7 +934,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                     }
 
                     val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-                    val table = TableName(catalogName, databaseName, tableName)
+                    val table = TableId(catalogName, databaseName, tableName)
                     tableLineage.outpuTables.add(table)
                     tableLineage.partitions = partitions
 
@@ -979,7 +979,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
 
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-            val table = TableName(catalogName, databaseName, tableName)
+            val table = TableId(catalogName, databaseName, tableName)
             tableLineage.outpuTables.add(table)
             tableLineage.partitions = partitions
 
@@ -1047,7 +1047,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         if (ctx.source != null) {
             val (catalogName, sourceDatabase, sourceTableName) = parseTableName(ctx.source)
 
-            val table = TableName(catalogName, sourceDatabase, sourceTableName)
+            val table = TableId(catalogName, sourceDatabase, sourceTableName)
             deltaMerge.sourceTables.add(table)
         } else if (ctx.sourceQuery != null && ctx.sourceQuery is SparkSqlParser.QueryContext) {
             val query = ctx.sourceQuery as SparkSqlParser.QueryContext
@@ -1100,7 +1100,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                 currentOptType == StatementType.EXPORT_TABLE ||
                 currentOptType == StatementType.DATATUNNEL) {
 
-            val table = TableName(databaseName, tableName, metaAction)
+            val table = TableId(databaseName, tableName, metaAction)
 
             val index = tableLineage.inputTables.indexOf(table)
             if (index == -1) {
@@ -1108,7 +1108,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         } else if (currentOptType == StatementType.MULTI_INSERT) {
             if ("from" == multiInsertToken) {
-                val table = TableName(databaseName, tableName, metaAction)
+                val table = TableId(databaseName, tableName, metaAction)
                 tableLineage.inputTables.add(table)
             }
         }
@@ -1173,13 +1173,13 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val multipartIdentifier = obj.multipartIdentifier()
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
-            val table = TableName(catalogName, databaseName, tableName)
+            val table = TableId(catalogName, databaseName, tableName)
             tableLineage.outpuTables.add(table)
         } else if (obj is SparkSqlParser.InsertIntoTableContext) {
             val multipartIdentifier = obj.multipartIdentifier()
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
-            val table = TableName(catalogName, databaseName, tableName)
+            val table = TableId(catalogName, databaseName, tableName)
             tableLineage.outpuTables.add(table)
         }
         return super.visitMultiInsertQueryBody(ctx)

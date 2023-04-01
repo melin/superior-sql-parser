@@ -3,8 +3,7 @@ package io.github.melin.superior.parser.starrocks
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableDescriptor
-import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -41,11 +40,11 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
     }
 
 
-    fun parseTableName(ctx: StarRocksParserParser.QualifiedNameContext): TableName {
+    fun parseTableName(ctx: StarRocksParserParser.QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 2) {
-            TableName(ctx.identifier().get(0).text, ctx.identifier().get(1).text)
+            TableId(ctx.identifier().get(0).text, ctx.identifier().get(1).text)
         } else if (ctx.identifier().size == 1) {
-            TableName(ctx.identifier().get(0).text)
+            TableId(ctx.identifier().get(0).text)
         } else {
             throw SQLParserException("parse qualifiedName error: " + ctx.identifier().size)
         }

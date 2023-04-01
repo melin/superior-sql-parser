@@ -2,8 +2,8 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.SchemaName
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.SchemaId
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
@@ -100,25 +100,25 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
     }
 
-    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): SchemaName {
+    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): SchemaId {
         if (ctx.parts.size == 2) {
-            return SchemaName(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return SchemaId(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return SchemaName(null, ctx.parts.get(0).text)
+            return SchemaId(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
     }
 
-    fun parseTable(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): TableName {
+    fun parseTable(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): TableId {
         if (ctx.parts.size == 4) {
-            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
+            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
-            return TableName(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
         } else if (ctx.parts.size == 2) {
-            return TableName(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return TableId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return TableName(null, null, ctx.parts.get(0).text)
+            return TableId(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }

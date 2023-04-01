@@ -5,7 +5,7 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
@@ -212,10 +212,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitAnalyzeTable(ctx: MySqlParser.AnalyzeTableContext): StatementData {
-        val tables = ArrayList<TableName>()
+        val tables = ArrayList<TableId>()
         ctx.tables().tableName().forEach { context ->
             val (databaseName, tableName) = parseFullId(context.fullId())
-            tables.add(TableName(databaseName, tableName))
+            tables.add(TableId(databaseName, tableName))
         }
 
         return StatementData(StatementType.ANALYZE_TABLE, TableLineage(tables))
@@ -233,7 +233,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         } else if (ctx.insertStatement() != null) {
             val statement = ctx.insertStatement()
             val (databaseName, tableName) = parseFullId(statement.tableName().fullId())
-            val table = TableName(databaseName, tableName)
+            val table = TableId(databaseName, tableName)
             statementData.outpuTables.add(table)
 
             if (statement.insertStatementValue().selectStatement() != null) {
@@ -276,7 +276,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                 StatementType.INSERT_SELECT == currentOptType ||
                 currentOptType == StatementType.ALTER_TABLE_RENAME) {
             val (databaseName, tableName) = parseFullId(ctx.fullId())
-            val table = TableName(databaseName, tableName)
+            val table = TableId(databaseName, tableName)
             statementData.inputTables.add(table)
         } else if(StatementType.ALTER_TABLE_ADD_INDEX == currentOptType ||
                 StatementType.ALTER_TABLE_DROP_INDEX == currentOptType ||

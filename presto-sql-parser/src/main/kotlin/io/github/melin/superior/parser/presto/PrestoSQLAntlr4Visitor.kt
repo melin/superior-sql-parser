@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.presto
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -109,7 +109,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return null
     }
 
-    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableName {
+    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null
@@ -128,6 +128,6 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             items[2]
         }
 
-        return TableName(catalogName, databaseName, tableName)
+        return TableId(catalogName, databaseName, tableName)
     }
 }

@@ -1,7 +1,7 @@
 package io.github.melin.superior.common
 
 import com.github.melin.superior.sql.parser.util.StringUtil.innerFullTableName
-import io.github.melin.superior.common.relational.TableName
+import io.github.melin.superior.common.relational.TableId
 import java.io.Serializable
 
 @Target(AnnotationTarget.CLASS)
@@ -133,7 +133,7 @@ data class DataTunnelExpr(
     var distOptions: Map<String, String>,
     var cte: Boolean = false) : Statement() {
 
-    var inputTables: java.util.ArrayList<TableName>? = null
+    var inputTables: java.util.ArrayList<TableId>? = null
     var cteTempTables: ArrayList<String>? = null
     var functionNames: HashSet<String>? = null
 }
@@ -175,7 +175,7 @@ data class ExportData(
     val databaseName: String?,
     val tableName: String,
     val cte: Boolean = false,
-    var inputTables: java.util.ArrayList<TableName> = ArrayList(),
+    var inputTables: java.util.ArrayList<TableId> = ArrayList(),
     var cteTempTables: ArrayList<String>? = null,
     var functionNames: HashSet<String>? = null) : Statement()
 
@@ -238,7 +238,7 @@ data class UpdateTable(
 }
 
 data class MergeIntoTable(
-    var sourceTables: java.util.HashSet<TableName> = HashSet(),
+    var sourceTables: java.util.HashSet<TableId> = HashSet(),
     var targetTable: TableSource
 ): Statement()
 
