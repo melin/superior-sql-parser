@@ -1,5 +1,7 @@
 package io.github.melin.superior.common
 
+import com.github.melin.superior.sql.parser.util.StringUtil.innerFullTableName
+import io.github.melin.superior.common.relational.TableName
 import java.io.Serializable
 
 @Target(AnnotationTarget.CLASS)
@@ -13,88 +15,6 @@ data class StatementData(val type: StatementType,
 }
 
 abstract class Statement: Serializable
-
-@DefaultConstructor
-data class Database(
-    val catalogName: String?,
-    val databaseName: String,
-    val location: String?): Statement(){
-    constructor(catalogName: String?, databaseName: String): this(catalogName, databaseName, null)
-
-    constructor(databaseName: String): this(null, databaseName, null)
-}
-
-data class Table(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    val comment: String?,
-    var lifeCycle: Int?,
-    var partitionColumns: List<Column>?,
-    var columns: List<Column>?,
-    var properties: Map<String, String>?,
-    var fileFormat: String? = null,
-    var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
-    var ifExists: Boolean = false,
-    var external: Boolean = false,
-    var temporary: Boolean = false,
-    var location: Boolean = false,
-    var locationPath: String? = null,
-    var querySql: String? = null,
-    var tableData: TableData? = null,
-    var partitionColumnNames: List<String>? = null) : Statement() { //是否存在 if exists 关键字
-
-    constructor(catalogName: String?,
-                databaseName: String?,
-                tableName: String,
-                comment: String?,
-                lifeCycle: Int?,
-                partitionColumns: List<Column>?,
-                columns: List<Column>?):
-            this(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, null, null, false, false, false)
-
-    constructor(catalogName: String?, databaseName: String?, tableName: String):
-            this(catalogName, databaseName, tableName, null, null, null, null, null, null, false, false, false)
-
-    // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
-    var createTableType: String = "hive"
-    var token: CommonToken? = null
-    var hudiPrimaryKeys: List<String> = listOf()
-    var hudiType: String = "COW"
-    var preCombineField: String = ""
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
-
-data class View(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    var querySql: String? = null,
-    val comment: String? = null,
-    var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
-    var ifExists: Boolean = false) : Statement() { //是否存在 if exists 关键字
-
-    var functionNames: HashSet<String> = HashSet()
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
-
-@DefaultConstructor
-data class TableData(
-    var inputTables: java.util.ArrayList<TableName> = ArrayList(),
-    var outpuTables: java.util.ArrayList<TableName> = ArrayList(),
-    var limit: Int? = null,
-    var insertMode: InsertMode? = null,
-    var partitions: HashMap<String, String>? = null
-): Statement() {
-    val cteTempTables: ArrayList<String> = ArrayList()
-    val functionNames: HashSet<String> = HashSet()
-}
 
 @DefaultConstructor
 data class TableSource(
@@ -154,7 +74,6 @@ data class Column(
     val comment: String? = null,
     val nullable: Boolean = false) : Statement() {
 
-    var oldName: String? = null
     var defaultExpression: String? = null // 默认值表达式
     var expression: String? = null // 计算表达式
     var isPk: Boolean = false
@@ -358,16 +277,4 @@ data class TouchTable(
     fun getFullTableName(): String {
         return innerFullTableName(catalogName, databaseName, tableName)
     }
-}
-
-private fun innerFullTableName(catalogName: String?, databaseName: String?, tableName: String): String {
-    if (catalogName != null) {
-        return "${catalogName}.${databaseName}.${tableName}"
-    }
-
-    if (databaseName != null) {
-        return "${databaseName}.${tableName}"
-    }
-
-    return tableName
 }

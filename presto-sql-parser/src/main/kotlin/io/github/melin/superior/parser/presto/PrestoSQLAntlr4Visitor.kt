@@ -1,6 +1,9 @@
 package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.TableDescriptor
+import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.TableName
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -13,8 +16,8 @@ import org.apache.commons.lang3.StringUtils
 class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableData();
-    private var table: Table? = null
+    private val statementData = TableLineage();
+    private var tableDescriptor: TableDescriptor? = null
     private var limit:Int? = null
     private var command: String? = null
     private var data: StatementData? = null
@@ -49,40 +52,40 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
-        data = StatementData(StatementType.SHOW_CREATE_TABLE, table)
+        val tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
+        data = StatementData(StatementType.SHOW_CREATE_TABLE, tableDescriptor)
         return data
     }
 
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableSource = createTableSource(ctx.qualifiedName())
-        table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
+        tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
 
         var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
             querySql = StringUtils.substringBetween(querySql, "(", ")")
         }
 
-        table?.lifeCycle = 7
-        table?.querySql = querySql
+        tableDescriptor?.lifeCycle = 7
+        tableDescriptor?.querySql = querySql
         statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
 
         super.visitQuery(ctx.query())
 
-        table?.tableData = statementData
-        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, table)
+        tableDescriptor?.tableLineage = statementData
+        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, tableDescriptor)
         return data;
     }
 
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val table = Table(tableSource.catalogName, tableSource.databaseName, tableSource.tableName)
+        val tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
         val token = CommonToken(ctx.qualifiedName().start.startIndex, ctx.qualifiedName().stop.stopIndex)
-        table.ifExists = ctx.EXISTS() != null
-        table.token = token
-        data = StatementData(StatementType.DROP_TABLE, table)
+        tableDescriptor.ifExists = ctx.EXISTS() != null
+        tableDescriptor.token = token
+        data = StatementData(StatementType.DROP_TABLE, tableDescriptor)
         return data
     }
 

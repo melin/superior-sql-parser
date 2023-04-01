@@ -34,4 +34,16 @@ object StringUtil {
         val value = if (StringUtils.startsWith(type, "TOK_")) StringUtils.substringAfter(type, "TOK_") else type
         return StringUtils.lowerCase(value)
     }
+
+    fun innerFullTableName(catalogName: String?, databaseName: String?, tableName: String): String {
+        if (catalogName != null) {
+            return "${catalogName}.${databaseName}.${tableName}"
+        }
+
+        if (databaseName != null) {
+            return "${databaseName}.${tableName}"
+        }
+
+        return tableName
+    }
 }

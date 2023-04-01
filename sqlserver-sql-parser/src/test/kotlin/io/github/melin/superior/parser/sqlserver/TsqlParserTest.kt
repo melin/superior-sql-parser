@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.sqlserver
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.TableData
+import io.github.melin.superior.common.relational.TableLineage
 import org.junit.Assert
 
 /**
@@ -17,7 +17,7 @@ class TsqlParserTest {
 
         val statementData = TsqlHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableData) {
+        if (statement is TableLineage) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {

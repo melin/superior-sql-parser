@@ -2,6 +2,10 @@ package com.github.melin.superior.sql.parser.mysql
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.SchemaDescriptor
+import io.github.melin.superior.common.relational.TableDescriptor
+import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.TableName
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
@@ -13,7 +17,7 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableData()
+    private val statementData = TableLineage()
     private var tableSource: TableSource? = null
     private var limit:Int? = null
     private val primaryKeys = ArrayList<String>()
@@ -22,13 +26,13 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = Database(databaseName)
+        val sqlData = SchemaDescriptor(databaseName)
         return StatementData(StatementType.CREATE_DATABASE, sqlData)
     }
 
     override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = Database(databaseName)
+        val sqlData = SchemaDescriptor(databaseName)
 
         return StatementData(StatementType.DROP_DATABASE, sqlData)
     }
@@ -78,10 +82,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         columns.forEach { column: Column -> if (primaryKeys.contains(column.name)) { column.isPk = true } }
-        val table = Table(null, databaseName, tableName, comment,
+        val tableDescriptor = TableDescriptor(null, databaseName, tableName, comment,
                 null, null, columns, properties, null, ifNotExists)
 
-        return StatementData(StatementType.CREATE_TABLE, table)
+        return StatementData(StatementType.CREATE_TABLE, tableDescriptor)
     }
 
     override fun visitPrimaryKeyTableConstraint(ctx: MySqlParser.PrimaryKeyTableConstraintContext): StatementData? {
@@ -102,16 +106,16 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         }
         val (databaseName, tableName) = parseFullId(ctx.tables().tableName(0).fullId())
 
-        val table = Table(null, databaseName, tableName)
-        table.ifExists = if (ctx.ifExists() != null) true else false
-        return StatementData(StatementType.DROP_TABLE, table)
+        val tableDescriptor = TableDescriptor(null, databaseName, tableName)
+        tableDescriptor.ifExists = if (ctx.ifExists() != null) true else false
+        return StatementData(StatementType.DROP_TABLE, tableDescriptor)
     }
 
     override fun visitTruncateTable(ctx: MySqlParser.TruncateTableContext): StatementData {
         val (databaseName, tableName) = parseFullId(ctx.tableName().fullId())
 
-        val table = Table(null, databaseName, tableName)
-        return StatementData(StatementType.TRUNCATE_TABLE, table)
+        val tableDescriptor = TableDescriptor(null, databaseName, tableName)
+        return StatementData(StatementType.TRUNCATE_TABLE, tableDescriptor)
     }
 
     override fun visitRenameTable(ctx: MySqlParser.RenameTableContext): StatementData {
@@ -124,7 +128,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): StatementData {
         val databaseName = ctx.uid().text
-        val data = Database(databaseName)
+        val data = SchemaDescriptor(databaseName)
         return StatementData(StatementType.USE, data)
     }
 
@@ -214,7 +218,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             tables.add(TableName(databaseName, tableName))
         }
 
-        return StatementData(StatementType.ANALYZE_TABLE, TableData(tables))
+        return StatementData(StatementType.ANALYZE_TABLE, TableLineage(tables))
     }
 
     //-----------------------------------DML-------------------------------------------------

@@ -309,7 +309,7 @@ showDataStmt
 
 createTableStatement
     : CREATE EXTERNAL? TABLE (IF NOT EXISTS)? qualifiedName
-          '(' columnDesc (',' columnDesc)* (',' indexDesc)* ')'
+          LEFT_PAREN columnDesc (COMMA columnDesc)* (COMMA indexDesc)* RIGHT_PAREN
           engineDesc?
           charsetDesc?
           keyDesc?
@@ -333,7 +333,7 @@ charsetName
     ;
 
 defaultDesc
-    : DEFAULT (string | NULL | CURRENT_TIMESTAMP | '(' qualifiedName '(' ')' ')')
+    : DEFAULT (string | NULL | CURRENT_TIMESTAMP | '(' qualifiedName '(' RIGHT_PAREN RIGHT_PAREN)
     ;
 
 indexDesc
@@ -372,7 +372,7 @@ aggDesc
     ;
 
 rollupDesc
-    : ROLLUP '(' rollupItem (',' rollupItem)* ')'
+    : ROLLUP LEFT_PAREN rollupItem (COMMA rollupItem)* RIGHT_PAREN
     ;
 
 rollupItem
@@ -394,7 +394,7 @@ createTemporaryTableStatement
 
 createTableAsSelectStatement
     : CREATE TABLE (IF NOT EXISTS)? qualifiedName
-        ('(' identifier (',' identifier)* ')')?
+        (LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN)?
         keyDesc?
         comment?
         partitionDesc?
@@ -408,9 +408,9 @@ dropTableStatement
     ;
 
 alterTableStatement
-    : ALTER TABLE qualifiedName alterClause (',' alterClause)*
-    | ALTER TABLE qualifiedName ADD ROLLUP rollupItem (',' rollupItem)*
-    | ALTER TABLE qualifiedName DROP ROLLUP identifier (',' identifier)*
+    : ALTER TABLE qualifiedName alterClause (COMMA alterClause)*
+    | ALTER TABLE qualifiedName ADD ROLLUP rollupItem (COMMA rollupItem)*
+    | ALTER TABLE qualifiedName DROP ROLLUP identifier (COMMA identifier)*
     ;
 
 createIndexStatement
@@ -445,14 +445,14 @@ showTableStatusStatement
     ;
 
 refreshTableStatement
-    : REFRESH EXTERNAL TABLE qualifiedName (PARTITION '(' string (',' string)* ')')?
+    : REFRESH EXTERNAL TABLE qualifiedName (PARTITION LEFT_PAREN string (COMMA string)* RIGHT_PAREN)?
     ;
 
 showAlterStatement
     : SHOW ALTER TABLE (COLUMN | ROLLUP) ((FROM | IN) db=qualifiedName)?
-        (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+        (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     | SHOW ALTER MATERIALIZED VIEW ((FROM | IN) db=qualifiedName)?
-              (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+              (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 
 descTableStatement
@@ -476,14 +476,14 @@ truncateTableStatement
     ;
 
 cancelAlterTableStatement
-    : CANCEL ALTER TABLE (COLUMN | ROLLUP)? FROM qualifiedName ('(' INTEGER_VALUE (',' INTEGER_VALUE)* ')')?
+    : CANCEL ALTER TABLE (COLUMN | ROLLUP)? FROM qualifiedName (LEFT_PAREN INTEGER_VALUE (COMMA INTEGER_VALUE)* RIGHT_PAREN)?
     | CANCEL ALTER MATERIALIZED VIEW FROM qualifiedName
     ;
 
 showPartitionsStatement
     : SHOW TEMPORARY? PARTITIONS FROM table=qualifiedName
     (WHERE expression)?
-    (ORDER BY sortItem (',' sortItem)*)? limitElement?
+    (ORDER BY sortItem (COMMA sortItem)*)? limitElement?
     ;
 
 recoverPartitionStatement
@@ -494,13 +494,13 @@ recoverPartitionStatement
 
 createViewStatement
     : CREATE VIEW (IF NOT EXISTS)? qualifiedName
-        ('(' columnNameWithComment (',' columnNameWithComment)* ')')?
+        (LEFT_PAREN columnNameWithComment (COMMA columnNameWithComment)* RIGHT_PAREN)?
         comment? AS queryStatement
     ;
 
 alterViewStatement
     : ALTER VIEW qualifiedName
-    ('(' columnNameWithComment (',' columnNameWithComment)* ')')?
+    (LEFT_PAREN columnNameWithComment (COMMA columnNameWithComment)* RIGHT_PAREN)?
     AS queryStatement
     ;
 
@@ -555,7 +555,7 @@ cancelRefreshMaterializedViewStatement
 // ------------------------------------------- Admin Statement ---------------------------------------------------------
 
 adminSetConfigStatement
-    : ADMIN SET FRONTEND CONFIG '(' property ')'
+    : ADMIN SET FRONTEND CONFIG LEFT_PAREN property RIGHT_PAREN
     ;
 adminSetReplicaStatusStatement
     : ADMIN SET REPLICA STATUS properties
@@ -581,7 +581,7 @@ adminCancelRepairTableStatement
     ;
 
 adminCheckTabletsStatement
-    : ADMIN CHECK tabletList PROPERTIES '('property')'
+    : ADMIN CHECK tabletList PROPERTIES LEFT_PARENpropertyRIGHT_PAREN
     ;
 
 killStatement
@@ -599,7 +599,7 @@ alterSystemStatement
     ;
 
 cancelAlterSystemStatement
-    : CANCEL DECOMMISSION BACKEND string (',' string)*
+    : CANCEL DECOMMISSION BACKEND string (COMMA string)*
     ;
 
 showComputeNodesStatement
@@ -714,15 +714,15 @@ modifyFrontendHostClause
   ;
 
 addBackendClause
-   : ADD BACKEND string (',' string)*
+   : ADD BACKEND string (COMMA string)*
    ;
 
 dropBackendClause
-   : DROP BACKEND string (',' string)* FORCE?
+   : DROP BACKEND string (COMMA string)* FORCE?
    ;
 
 decommissionBackendClause
-   : DECOMMISSION BACKEND string (',' string)*
+   : DECOMMISSION BACKEND string (COMMA string)*
    ;
 
 modifyBackendHostClause
@@ -730,16 +730,16 @@ modifyBackendHostClause
    ;
 
 addComputeNodeClause
-   : ADD COMPUTE NODE string (',' string)*
+   : ADD COMPUTE NODE string (COMMA string)*
    ;
 
 dropComputeNodeClause
-   : DROP COMPUTE NODE string (',' string)*
+   : DROP COMPUTE NODE string (COMMA string)*
    ;
 
 modifyBrokerClause
-    : ADD BROKER identifierOrString string (',' string)*
-    | DROP BROKER identifierOrString string (',' string)*
+    : ADD BROKER identifierOrString string (COMMA string)*
+    | DROP BROKER identifierOrString string (COMMA string)*
     | DROP ALL BROKER identifierOrString
     ;
 
@@ -778,7 +778,7 @@ addColumnClause
     ;
 
 addColumnsClause
-    : ADD COLUMN '(' columnDesc (',' columnDesc)* ')' ((TO | IN) rollupName=identifier)? properties?
+    : ADD COLUMN LEFT_PAREN columnDesc (COMMA columnDesc)* RIGHT_PAREN ((TO | IN) rollupName=identifier)? properties?
     ;
 
 dropColumnClause
@@ -817,7 +817,7 @@ truncatePartitionClause
     ;
 
 modifyPartitionClause
-    : MODIFY PARTITION (identifier | identifierList | '(' ASTERISK_SYMBOL ')') SET propertyList
+    : MODIFY PARTITION (identifier | identifierList | LEFT_PAREN ASTERISK_SYMBOL RIGHT_PAREN) SET propertyList
     | MODIFY PARTITION distributionDesc
     ;
 
@@ -834,7 +834,7 @@ partitionRenameClause
 insertStatement
     : explainDesc? INSERT (INTO | OVERWRITE) qualifiedName partitionNames?
         (WITH LABEL label=identifier)? columnAliases?
-        (queryStatement | (VALUES expressionsWithDefault (',' expressionsWithDefault)*))
+        (queryStatement | (VALUES expressionsWithDefault (COMMA expressionsWithDefault)*))
     ;
 
 updateStatement
@@ -848,7 +848,7 @@ deleteStatement
 // ------------------------------------------- Routine Statement -----------------------------------------------------------
 createRoutineLoadStatement
     : CREATE ROUTINE LOAD (db=qualifiedName '.')? name=identifier ON table=qualifiedName
-        (loadProperties (',' loadProperties)*)?
+        (loadProperties (COMMA loadProperties)*)?
         jobProperties?
         FROM source=identifier
         dataSourceProperties?
@@ -856,7 +856,7 @@ createRoutineLoadStatement
 
 alterRoutineLoadStatement
     : ALTER ROUTINE LOAD FOR (db=qualifiedName '.')? name=identifier
-        (loadProperties (',' loadProperties)*)?
+        (loadProperties (COMMA loadProperties)*)?
         jobProperties?
         dataSource?
     ;
@@ -886,9 +886,9 @@ importColumns
     ;
 
 columnProperties
-    : '('
-        (qualifiedName | assignment) (',' (qualifiedName | assignment))*
-      ')'
+    : LEFT_PAREN
+        (qualifiedName | assignment) (COMMA (qualifiedName | assignment))*
+      RIGHT_PAREN
     ;
 
 jobProperties
@@ -914,7 +914,7 @@ pauseRoutineLoadStatement
 showRoutineLoadStatement
     : SHOW ALL? ROUTINE LOAD (FOR (db=qualifiedName '.')? name=identifier)?
         (FROM db=qualifiedName)?
-        (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+        (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 
 showRoutineLoadTaskStatement
@@ -926,12 +926,12 @@ showRoutineLoadTaskStatement
 showStreamLoadStatement
     : SHOW ALL? STREAM LOAD (FOR (db=qualifiedName '.')? name=identifier)?
         (FROM db=qualifiedName)?
-        (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+        (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 // ------------------------------------------- Analyze Statement -------------------------------------------------------
 
 analyzeStatement
-    : ANALYZE (FULL | SAMPLE)? TABLE qualifiedName ('(' identifier (',' identifier)* ')')?
+    : ANALYZE (FULL | SAMPLE)? TABLE qualifiedName (LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN)?
         (WITH (SYNC | ASYNC) MODE)?
         properties?
     ;
@@ -941,20 +941,20 @@ dropStatsStatement
     ;
 
 analyzeHistogramStatement
-    : ANALYZE TABLE qualifiedName UPDATE HISTOGRAM ON identifier (',' identifier)*
+    : ANALYZE TABLE qualifiedName UPDATE HISTOGRAM ON identifier (COMMA identifier)*
         (WITH (SYNC | ASYNC) MODE)?
         (WITH bucket=INTEGER_VALUE BUCKETS)?
         properties?
     ;
 
 dropHistogramStatement
-    : ANALYZE TABLE qualifiedName DROP HISTOGRAM ON identifier (',' identifier)*
+    : ANALYZE TABLE qualifiedName DROP HISTOGRAM ON identifier (COMMA identifier)*
     ;
 
 createAnalyzeStatement
     : CREATE ANALYZE (FULL | SAMPLE)? ALL properties?
     | CREATE ANALYZE (FULL | SAMPLE)? DATABASE db=identifier properties?
-    | CREATE ANALYZE (FULL | SAMPLE)? TABLE qualifiedName ('(' identifier (',' identifier)* ')')? properties?
+    | CREATE ANALYZE (FULL | SAMPLE)? TABLE qualifiedName (LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN)? properties?
     ;
 
 dropAnalyzeJobStatement
@@ -981,7 +981,7 @@ killAnalyzeStatement
 
 createResourceGroupStatement
     : CREATE RESOURCE GROUP (IF NOT EXISTS)? (OR REPLACE)? identifier
-        TO classifier (',' classifier)*  WITH '(' property (',' property)* ')'
+        TO classifier (COMMA classifier)*  WITH LEFT_PAREN property (COMMA property)* RIGHT_PAREN
     ;
 
 dropResourceGroupStatement
@@ -989,10 +989,10 @@ dropResourceGroupStatement
     ;
 
 alterResourceGroupStatement
-    : ALTER RESOURCE GROUP identifier ADD classifier (',' classifier)*
-    | ALTER RESOURCE GROUP identifier DROP '(' INTEGER_VALUE (',' INTEGER_VALUE)* ')'
+    : ALTER RESOURCE GROUP identifier ADD classifier (COMMA classifier)*
+    | ALTER RESOURCE GROUP identifier DROP LEFT_PAREN INTEGER_VALUE (COMMA INTEGER_VALUE)* RIGHT_PAREN
     | ALTER RESOURCE GROUP identifier DROP ALL
-    | ALTER RESOURCE GROUP identifier WITH '(' property (',' property)* ')'
+    | ALTER RESOURCE GROUP identifier WITH LEFT_PAREN property (COMMA property)* RIGHT_PAREN
     ;
 
 showResourceGroupStatement
@@ -1017,7 +1017,7 @@ showResourceStatement
     ;
 
 classifier
-    : '(' expressionList ')'
+    : LEFT_PAREN expressionList RIGHT_PAREN
     ;
 
 // ------------------------------------------- UDF Statement ----------------------------------------------------
@@ -1027,15 +1027,15 @@ showFunctionsStatement
     ;
 
 dropFunctionStatement
-    : DROP GLOBAL? FUNCTION qualifiedName '(' typeList ')'
+    : DROP GLOBAL? FUNCTION qualifiedName LEFT_PAREN typeList RIGHT_PAREN
     ;
 
 createFunctionStatement
-    : CREATE GLOBAL? functionType=(TABLE | AGGREGATE)? FUNCTION qualifiedName '(' typeList ')' RETURNS returnType=type (INTERMEDIATE intermediateType =  type)? properties?
+    : CREATE GLOBAL? functionType=(TABLE | AGGREGATE)? FUNCTION qualifiedName LEFT_PAREN typeList RIGHT_PAREN RETURNS returnType=type (INTERMEDIATE intermediateType =  type)? properties?
     ;
 
 typeList
-    : type?  ( ',' type)* (',' DOTDOTDOT) ?
+    : type?  ( COMMA type)* (COMMA DOTDOTDOT) ?
     ;
 
 // ------------------------------------------- Load Statement ----------------------------------------------------------
@@ -1057,7 +1057,7 @@ labelName
     ;
 
 dataDescList
-    : '(' dataDesc (',' dataDesc)* ')'
+    : LEFT_PAREN dataDesc (COMMA dataDesc)* RIGHT_PAREN
     ;
 
 dataDesc
@@ -1082,12 +1082,12 @@ dataDesc
     ;
 
 formatProps
-    :  '('
+    :  LEFT_PAREN
             (SKIP_HEADER '=' INTEGER_VALUE)?
             (TRIM_SPACE '=' booleanValue)?
             (ENCLOSE '=' encloseCharacter=string)?
             (ESCAPE '=' escapeCharacter=string)?
-        ')'
+        RIGHT_PAREN
     ;
 
 brokerDesc
@@ -1100,7 +1100,7 @@ resourceDesc
     ;
 
 showLoadStatement
-    : SHOW LOAD (FROM identifier)? (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? limitElement?
+    : SHOW LOAD (FROM identifier)? (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? limitElement?
     ;
 
 showLoadWarningsStatement
@@ -1189,7 +1189,7 @@ showStatusStatement
 
 showTabletStatement
     : SHOW TABLET INTEGER_VALUE
-    | SHOW TABLET FROM qualifiedName partitionNames? (WHERE expression)? (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+    | SHOW TABLET FROM qualifiedName partitionNames? (WHERE expression)? (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 
 showTransactionStatement
@@ -1281,7 +1281,7 @@ grantRevokeClause
     ;
 
 grantPrivilegeStatement
-    : GRANT IMPERSONATE ON USER user (',' user)* TO grantRevokeClause (WITH GRANT OPTION)?              #grantOnUser
+    : GRANT IMPERSONATE ON USER user (COMMA user)* TO grantRevokeClause (WITH GRANT OPTION)?              #grantOnUser
     | GRANT privilegeTypeList ON privObjectNameList TO grantRevokeClause (WITH GRANT OPTION)?           #grantOnTableBrief
 
     | GRANT privilegeTypeList ON GLOBAL? FUNCTION privFunctionObjectNameList
@@ -1295,7 +1295,7 @@ grantPrivilegeStatement
     ;
 
 revokePrivilegeStatement
-    : REVOKE IMPERSONATE ON USER user (',' user)* FROM grantRevokeClause                                #revokeOnUser
+    : REVOKE IMPERSONATE ON USER user (COMMA user)* FROM grantRevokeClause                                #revokeOnUser
     | REVOKE privilegeTypeList ON privObjectNameList FROM grantRevokeClause                             #revokeOnTableBrief
     | REVOKE privilegeTypeList ON GLOBAL? FUNCTION privFunctionObjectNameList
         FROM grantRevokeClause                                                                          #revokeOnFunc
@@ -1322,15 +1322,15 @@ privObjectName
     ;
 
 privObjectNameList
-    : privObjectName (',' privObjectName)*
+    : privObjectName (COMMA privObjectName)*
     ;
 
 privFunctionObjectNameList
-    : qualifiedName '(' typeList ')' (',' qualifiedName '(' typeList ')')*
+    : qualifiedName LEFT_PAREN typeList RIGHT_PAREN (COMMA qualifiedName LEFT_PAREN typeList RIGHT_PAREN)*
     ;
 
 privilegeTypeList
-    :  privilegeType (',' privilegeType)*
+    :  privilegeType (COMMA privilegeType)*
     ;
 
 privilegeType
@@ -1355,7 +1355,7 @@ privObjectTypePlural
 backupStatement
     : BACKUP SNAPSHOT qualifiedName
     TO identifier
-    (ON '(' tableDesc (',' tableDesc) * ')')?
+    (ON LEFT_PAREN tableDesc (COMMA tableDesc) * RIGHT_PAREN)?
     (PROPERTIES propertyList)?
     ;
 
@@ -1370,7 +1370,7 @@ showBackupStatement
 restoreStatement
     : RESTORE SNAPSHOT qualifiedName
     FROM identifier
-    (ON '(' restoreTableDesc (',' restoreTableDesc) * ')')?
+    (ON LEFT_PAREN restoreTableDesc (COMMA restoreTableDesc) * RIGHT_PAREN)?
     (PROPERTIES propertyList)?
     ;
 
@@ -1405,7 +1405,7 @@ addSqlBlackListStatement
     ;
 
 delSqlBlackListStatement
-    : DELETE SQLBLACKLIST INTEGER_VALUE (',' INTEGER_VALUE)*
+    : DELETE SQLBLACKLIST INTEGER_VALUE (COMMA INTEGER_VALUE)*
     ;
 
 showSqlBlackListStatement
@@ -1429,7 +1429,7 @@ cancelExportStatement
 showExportStatement
     : SHOW EXPORT ((FROM | IN) catalog=qualifiedName)?
         ((LIKE pattern=string) | (WHERE expression))?
-        (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+        (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 
 // ------------------------------------------- Plugin Statement --------------------------------------------------------
@@ -1459,15 +1459,15 @@ showSmallFilesStatement
 // ------------------------------------------- Set Statement -----------------------------------------------------------
 
 setStatement
-    : SET setVar (',' setVar)*
+    : SET setVar (COMMA setVar)*
     ;
 
 setVar
     : (CHAR SET | CHARSET | CHARACTER SET) (identifierOrString | DEFAULT)                       #setNames
     | NAMES (charset = identifierOrString | DEFAULT)
         (COLLATE (collate = identifierOrString | DEFAULT))?                                     #setNames
-    | PASSWORD '=' (string | PASSWORD '(' string ')')                                           #setPassword
-    | PASSWORD FOR user '=' (string | PASSWORD '(' string ')')                                  #setPassword
+    | PASSWORD '=' (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                           #setPassword
+    | PASSWORD FOR user '=' (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                  #setPassword
     | userVariable '=' expression                                                               #setUserVar
     | varType? identifier '=' setExprOrDefault                                                  #setSystemVar
     | systemVariable '=' setExprOrDefault                                                       #setSystemVar
@@ -1477,8 +1477,8 @@ setVar
 transaction_characteristics
     : transaction_access_mode
     | isolation_level
-    | transaction_access_mode ',' isolation_level
-    | isolation_level ',' transaction_access_mode
+    | transaction_access_mode COMMA isolation_level
+    | isolation_level COMMA transaction_access_mode
     ;
 
 transaction_access_mode
@@ -1509,7 +1509,7 @@ setUserPropertyStatement
     ;
 
 roleList
-    : identifierOrString (',' identifierOrString)*
+    : identifierOrString (COMMA identifierOrString)*
     ;
 
 setWarehouseStatement
@@ -1525,7 +1525,7 @@ unsupportedStatement
     | BEGIN WORK?
     | COMMIT WORK? (AND NO? CHAIN)? (NO? RELEASE)?
     | ROLLBACK WORK? (AND NO? CHAIN)? (NO? RELEASE)?
-    | LOCK TABLES lock_item (',' lock_item)*
+    | LOCK TABLES lock_item (COMMA lock_item)*
     | UNLOCK TABLES
     ;
 
@@ -1548,11 +1548,11 @@ queryRelation
     ;
 
 withClause
-    : WITH commonTableExpression (',' commonTableExpression)*
+    : WITH commonTableExpression (COMMA commonTableExpression)*
     ;
 
 queryNoWith
-    : queryPrimary (ORDER BY sortItem (',' sortItem)*)? (limitElement)?
+    : queryPrimary (ORDER BY sortItem (COMMA sortItem)*)? (limitElement)?
     ;
 
 temporalClause
@@ -1572,11 +1572,11 @@ queryPrimary
     ;
 
 subquery
-    : '(' queryRelation ')'
+    : LEFT_PAREN queryRelation RIGHT_PAREN
     ;
 
 rowConstructor
-     :'(' expressionList ')'
+     :LEFT_PAREN expressionList RIGHT_PAREN
      ;
 
 sortItem
@@ -1585,11 +1585,11 @@ sortItem
 
 limitElement
     : LIMIT limit =INTEGER_VALUE (OFFSET offset=INTEGER_VALUE)?
-    | LIMIT offset =INTEGER_VALUE ',' limit=INTEGER_VALUE
+    | LIMIT offset =INTEGER_VALUE COMMA limit=INTEGER_VALUE
     ;
 
 querySpecification
-    : SELECT setVarHint* setQuantifier? selectItem (',' selectItem)*
+    : SELECT setVarHint* setQuantifier? selectItem (COMMA selectItem)*
       fromClause
       ((QUALIFY qualifyFunction=selectItem comparisonOperator limit=INTEGER_VALUE)?
       | (WHERE where=expression)? (GROUP BY groupingElement)? (HAVING having=expression)?)
@@ -1601,18 +1601,18 @@ fromClause
     ;
 
 groupingElement
-    : ROLLUP '(' (expressionList)? ')'                                                  #rollup
-    | CUBE '(' (expressionList)? ')'                                                    #cube
-    | GROUPING SETS '(' groupingSet (',' groupingSet)* ')'                              #multipleGroupingSets
+    : ROLLUP LEFT_PAREN (expressionList)? RIGHT_PAREN                                                  #rollup
+    | CUBE LEFT_PAREN (expressionList)? RIGHT_PAREN                                                    #cube
+    | GROUPING SETS LEFT_PAREN groupingSet (COMMA groupingSet)* RIGHT_PAREN                              #multipleGroupingSets
     | expressionList                                                                    #singleGroupingSet
     ;
 
 groupingSet
-    : '(' expression? (',' expression)* ')'
+    : LEFT_PAREN expression? (COMMA expression)* RIGHT_PAREN
     ;
 
 commonTableExpression
-    : name=identifier (columnAliases)? AS '(' queryRelation ')'
+    : name=identifier (columnAliases)? AS LEFT_PAREN queryRelation RIGHT_PAREN
     ;
 
 setQuantifier
@@ -1627,25 +1627,25 @@ selectItem
     ;
 
 relations
-    : relation (',' LATERAL? relation)*
+    : relation (COMMA LATERAL? relation)*
     ;
 
 relation
     : relationPrimary joinRelation*
-    | '(' relationPrimary joinRelation* ')'
+    | LEFT_PAREN relationPrimary joinRelation* RIGHT_PAREN
     ;
 
 relationPrimary
     : qualifiedName temporalClause? partitionNames? tabletList? (
         AS? alias=identifier)? bracketHint?                                             #tableAtom
-    | '(' VALUES rowConstructor (',' rowConstructor)* ')'
+    | LEFT_PAREN VALUES rowConstructor (COMMA rowConstructor)* RIGHT_PAREN
         (AS? alias=identifier columnAliases?)?                                          #inlineTable
     | subquery (AS? alias=identifier columnAliases?)?                                   #subqueryWithAlias
-    | qualifiedName '(' expressionList ')'
+    | qualifiedName LEFT_PAREN expressionList RIGHT_PAREN
         (AS? alias=identifier columnAliases?)?                                          #tableFunction
-    | TABLE '(' qualifiedName '(' expressionList ')' ')'
+    | TABLE LEFT_PAREN qualifiedName LEFT_PAREN expressionList RIGHT_PAREN RIGHT_PAREN
         (AS? alias=identifier columnAliases?)?                                          #normalizedTableFunction
-    | '(' relations ')'                                                                 #parenthesizedRelation
+    | LEFT_PAREN relations RIGHT_PAREN                                                                 #parenthesizedRelation
     ;
 
 joinRelation
@@ -1669,11 +1669,11 @@ outerAndSemiJoinType
     ;
 
 bracketHint
-    : '[' identifier (',' identifier)* ']'
+    : '[' identifier (COMMA identifier)* ']'
     ;
 
 setVarHint
-    : '/*+' SET_VAR '(' hintMap (',' hintMap)* ')' '*/'
+    : '/*+' SET_VAR LEFT_PAREN hintMap (COMMA hintMap)* RIGHT_PAREN '*/'
     ;
 
 hintMap
@@ -1682,20 +1682,20 @@ hintMap
 
 joinCriteria
     : ON expression
-    | USING '(' identifier (',' identifier)* ')'
+    | USING LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN
     ;
 
 columnAliases
-    : '(' identifier (',' identifier)* ')'
+    : LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN
     ;
 
 partitionNames
-    : TEMPORARY? (PARTITION | PARTITIONS) '(' identifier (',' identifier)* ')'
+    : TEMPORARY? (PARTITION | PARTITIONS) LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN
     | TEMPORARY? (PARTITION | PARTITIONS) identifier
     ;
 
 tabletList
-    : TABLET '(' INTEGER_VALUE (',' INTEGER_VALUE)* ')'
+    : TABLET LEFT_PAREN INTEGER_VALUE (COMMA INTEGER_VALUE)* RIGHT_PAREN
     ;
 
 // ------------------------------------------- Expression --------------------------------------------------------------
@@ -1720,7 +1720,7 @@ tabletList
  */
 
 expressionsWithDefault
-    : '(' expressionOrDefault (',' expressionOrDefault)* ')'
+    : LEFT_PAREN expressionOrDefault (COMMA expressionOrDefault)* RIGHT_PAREN
     ;
 
 expressionOrDefault
@@ -1739,14 +1739,14 @@ expression
     ;
 
 expressionList
-    : expression (',' expression)*
+    : expression (COMMA expression)*
     ;
 
 booleanExpression
     : predicate                                                                           #booleanExpressionDefault
     | booleanExpression IS NOT? NULL                                                      #isNull
     | left = booleanExpression comparisonOperator right = predicate                       #comparison
-    | booleanExpression comparisonOperator '(' queryRelation ')'                          #scalarSubquery
+    | booleanExpression comparisonOperator LEFT_PAREN queryRelation RIGHT_PAREN                          #scalarSubquery
     ;
 
 predicate
@@ -1755,12 +1755,12 @@ predicate
     ;
 
 tupleInSubquery
-    : '(' expression (',' expression)+ ')' NOT? IN '(' queryRelation ')'
+    : LEFT_PAREN expression (COMMA expression)+ RIGHT_PAREN NOT? IN LEFT_PAREN queryRelation RIGHT_PAREN
     ;
 
 predicateOperations [ParserRuleContext value]
-    : NOT? IN '(' queryRelation ')'                                                       #inSubquery
-    | NOT? IN '(' expressionList ')'                                                      #inList
+    : NOT? IN LEFT_PAREN queryRelation RIGHT_PAREN                                                       #inSubquery
+    | NOT? IN LEFT_PAREN expressionList RIGHT_PAREN                                                      #inList
     | NOT? BETWEEN lower = valueExpression AND upper = predicate                          #between
     | NOT? (LIKE | RLIKE | REGEXP) pattern=valueExpression                                #like
     ;
@@ -1796,11 +1796,11 @@ primaryExpression
     | left = primaryExpression CONCAT right = primaryExpression                           #concat
     | operator = (MINUS_SYMBOL | PLUS_SYMBOL | BITNOT) primaryExpression                  #arithmeticUnary
     | operator = LOGICAL_NOT primaryExpression                                            #arithmeticUnary
-    | '(' expression ')'                                                                  #parenthesizedExpression
-    | EXISTS '(' queryRelation ')'                                                        #exists
+    | LEFT_PAREN expression RIGHT_PAREN                                                                  #parenthesizedExpression
+    | EXISTS LEFT_PAREN queryRelation RIGHT_PAREN                                                        #exists
     | subquery                                                                            #subqueryExpression
-    | CAST '(' expression AS type ')'                                                     #cast
-    | CONVERT '(' expression ',' type ')'                                                 #convert
+    | CAST LEFT_PAREN expression AS type RIGHT_PAREN                                                     #cast
+    | CONVERT LEFT_PAREN expression COMMA type RIGHT_PAREN                                                 #convert
     | CASE caseExpr=expression whenClause+ (ELSE elseExpression=expression)? END          #simpleCase
     | CASE whenClause+ (ELSE elseExpression=expression)? END                              #searchedCase
     | arrayType? '[' (expressionList)? ']'                                                #arrayConstructor
@@ -1808,7 +1808,7 @@ primaryExpression
     | primaryExpression '[' start=INTEGER_VALUE? ':' end=INTEGER_VALUE? ']'               #arraySlice
     | primaryExpression ARROW string                                                      #arrowExpression
     | (identifier | identifierList) '->' expression                                       #lambdaFunctionExpr
-    | identifierList '->' '('(expressionList)?')'                                         #lambdaFunctionExpr
+    | identifierList '->' LEFT_PAREN(expressionList)?RIGHT_PAREN                                         #lambdaFunctionExpr
     ;
 
 literalExpression
@@ -1823,25 +1823,25 @@ literalExpression
     ;
 
 functionCall
-    : EXTRACT '(' identifier FROM valueExpression ')'                                     #extract
-    | GROUPING '(' (expression (',' expression)*)? ')'                                    #groupingOperation
-    | GROUPING_ID '(' (expression (',' expression)*)? ')'                                 #groupingOperation
+    : EXTRACT LEFT_PAREN identifier FROM valueExpression RIGHT_PAREN                                     #extract
+    | GROUPING LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN                                    #groupingOperation
+    | GROUPING_ID LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN                                 #groupingOperation
     | informationFunctionExpression                                                       #informationFunction
     | specialDateTimeExpression                                                           #specialDateTime
     | specialFunctionExpression                                                           #specialFunction
     | aggregationFunction over?                                                           #aggregationFunctionCall
     | windowFunction over                                                                 #windowFunctionCall
-    | qualifiedName '(' (expression (',' expression)*)? ')'  over?                        #simpleFunctionCall
+    | qualifiedName LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN  over?                        #simpleFunctionCall
     ;
 
 aggregationFunction
-    : AVG '(' DISTINCT? expression ')'
-    | COUNT '(' ASTERISK_SYMBOL? ')'
-    | COUNT '(' (DISTINCT bracketHint?)? (expression (',' expression)*)? ')'
-    | MAX '(' DISTINCT? expression ')'
-    | MIN '(' DISTINCT? expression ')'
-    | SUM '(' DISTINCT? expression ')'
-    | ARRAY_AGG '(' expression (ORDER BY sortItem (',' sortItem)*)? ')'
+    : AVG LEFT_PAREN DISTINCT? expression RIGHT_PAREN
+    | COUNT LEFT_PAREN ASTERISK_SYMBOL? RIGHT_PAREN
+    | COUNT LEFT_PAREN (DISTINCT bracketHint?)? (expression (COMMA expression)*)? RIGHT_PAREN
+    | MAX LEFT_PAREN DISTINCT? expression RIGHT_PAREN
+    | MIN LEFT_PAREN DISTINCT? expression RIGHT_PAREN
+    | SUM LEFT_PAREN DISTINCT? expression RIGHT_PAREN
+    | ARRAY_AGG LEFT_PAREN expression (ORDER BY sortItem (COMMA sortItem)*)? RIGHT_PAREN
     ;
 
 userVariable
@@ -1857,57 +1857,57 @@ columnReference
     ;
 
 informationFunctionExpression
-    : name = DATABASE '(' ')'
-    | name = SCHEMA '(' ')'
-    | name = USER '(' ')'
-    | name = CONNECTION_ID '(' ')'
-    | name = CURRENT_USER ('(' ')')?
-    | name = CURRENT_ROLE ('(' ')')?
-    | name = CURRENT_CATALOG ('(' ')')?
+    : name = DATABASE LEFT_PAREN RIGHT_PAREN
+    | name = SCHEMA LEFT_PAREN RIGHT_PAREN
+    | name = USER LEFT_PAREN RIGHT_PAREN
+    | name = CONNECTION_ID LEFT_PAREN RIGHT_PAREN
+    | name = CURRENT_USER (LEFT_PAREN RIGHT_PAREN)?
+    | name = CURRENT_ROLE (LEFT_PAREN RIGHT_PAREN)?
+    | name = CURRENT_CATALOG (LEFT_PAREN RIGHT_PAREN)?
     ;
 
 specialDateTimeExpression
-    : name = CURRENT_DATE ('(' ')')?
-    | name = CURRENT_TIME ('(' ')')?
-    | name = CURRENT_TIMESTAMP ('(' ')')?
-    | name = LOCALTIME ('(' ')')?
-    | name = LOCALTIMESTAMP ('(' ')')?
+    : name = CURRENT_DATE (LEFT_PAREN RIGHT_PAREN)?
+    | name = CURRENT_TIME (LEFT_PAREN RIGHT_PAREN)?
+    | name = CURRENT_TIMESTAMP (LEFT_PAREN RIGHT_PAREN)?
+    | name = LOCALTIME (LEFT_PAREN RIGHT_PAREN)?
+    | name = LOCALTIMESTAMP (LEFT_PAREN RIGHT_PAREN)?
     ;
 
 specialFunctionExpression
-    : CHAR '(' expression ')'
-    | DAY '(' expression ')'
-    | HOUR '(' expression ')'
-    | IF '(' (expression (',' expression)*)? ')'
-    | LEFT '(' expression ',' expression ')'
-    | LIKE '(' expression ',' expression ')'
-    | MINUTE '(' expression ')'
-    | MOD '(' expression ',' expression ')'
-    | MONTH '(' expression ')'
-    | QUARTER '(' expression ')'
-    | REGEXP '(' expression ',' expression ')'
-    | REPLACE '(' (expression (',' expression)*)? ')'
-    | RIGHT '(' expression ',' expression ')'
-    | RLIKE '(' expression ',' expression ')'
-    | SECOND '(' expression ')'
-    | TIMESTAMPADD '(' unitIdentifier ',' expression ',' expression ')'
-    | TIMESTAMPDIFF '(' unitIdentifier ',' expression ',' expression ')'
-    //| WEEK '(' expression ')' TODO: Support week(expr) function
-    | YEAR '(' expression ')'
-    | PASSWORD '(' string ')'
-    | FLOOR '(' expression ')'
-    | CEIL '(' expression ')'
+    : CHAR LEFT_PAREN expression RIGHT_PAREN
+    | DAY LEFT_PAREN expression RIGHT_PAREN
+    | HOUR LEFT_PAREN expression RIGHT_PAREN
+    | IF LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN
+    | LEFT LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | LIKE LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | MINUTE LEFT_PAREN expression RIGHT_PAREN
+    | MOD LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | MONTH LEFT_PAREN expression RIGHT_PAREN
+    | QUARTER LEFT_PAREN expression RIGHT_PAREN
+    | REGEXP LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | REPLACE LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN
+    | RIGHT LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | RLIKE LEFT_PAREN expression COMMA expression RIGHT_PAREN
+    | SECOND LEFT_PAREN expression RIGHT_PAREN
+    | TIMESTAMPADD LEFT_PAREN unitIdentifier COMMA expression COMMA expression RIGHT_PAREN
+    | TIMESTAMPDIFF LEFT_PAREN unitIdentifier COMMA expression COMMA expression RIGHT_PAREN
+    //| WEEK LEFT_PAREN expression RIGHT_PAREN TODO: Support week(expr) function
+    | YEAR LEFT_PAREN expression RIGHT_PAREN
+    | PASSWORD LEFT_PAREN string RIGHT_PAREN
+    | FLOOR LEFT_PAREN expression RIGHT_PAREN
+    | CEIL LEFT_PAREN expression RIGHT_PAREN
     ;
 
 windowFunction
-    : name = ROW_NUMBER '(' ')'
-    | name = RANK '(' ')'
-    | name = DENSE_RANK '(' ')'
-    | name = NTILE  '(' expression? ')'
-    | name = LEAD  '(' (expression ignoreNulls? (',' expression)*)? ')'
-    | name = LAG '(' (expression ignoreNulls? (',' expression)*)? ')'
-    | name = FIRST_VALUE '(' (expression ignoreNulls? (',' expression)*)? ')'
-    | name = LAST_VALUE '(' (expression ignoreNulls? (',' expression)*)? ')'
+    : name = ROW_NUMBER LEFT_PAREN RIGHT_PAREN
+    | name = RANK LEFT_PAREN RIGHT_PAREN
+    | name = DENSE_RANK LEFT_PAREN RIGHT_PAREN
+    | name = NTILE  LEFT_PAREN expression? RIGHT_PAREN
+    | name = LEAD  LEFT_PAREN (expression ignoreNulls? (COMMA expression)*)? RIGHT_PAREN
+    | name = LAG LEFT_PAREN (expression ignoreNulls? (COMMA expression)*)? RIGHT_PAREN
+    | name = FIRST_VALUE LEFT_PAREN (expression ignoreNulls? (COMMA expression)*)? RIGHT_PAREN
+    | name = LAST_VALUE LEFT_PAREN (expression ignoreNulls? (COMMA expression)*)? RIGHT_PAREN
     ;
 
 whenClause
@@ -1915,11 +1915,11 @@ whenClause
     ;
 
 over
-    : OVER '('
-        (bracketHint? PARTITION BY partition+=expression (',' partition+=expression)*)?
-        (ORDER BY sortItem (',' sortItem)*)?
+    : OVER LEFT_PAREN
+        (bracketHint? PARTITION BY partition+=expression (COMMA partition+=expression)*)?
+        (ORDER BY sortItem (COMMA sortItem)*)?
         windowFrame?
-      ')'
+      RIGHT_PAREN
     ;
 
 ignoreNulls
@@ -1959,9 +1959,9 @@ optimizerTrace
     ;
 
 partitionDesc
-    : PARTITION BY RANGE identifierList '(' (rangePartitionDesc (',' rangePartitionDesc)*)? ')'
-    | PARTITION BY LIST identifierList '(' (listPartitionDesc (',' listPartitionDesc)*)? ')'
-    | PARTITION BY functionCall '(' (rangePartitionDesc (',' rangePartitionDesc)*)? ')'
+    : PARTITION BY RANGE identifierList LEFT_PAREN (rangePartitionDesc (COMMA rangePartitionDesc)*)? RIGHT_PAREN
+    | PARTITION BY LIST identifierList LEFT_PAREN (listPartitionDesc (COMMA listPartitionDesc)*)? RIGHT_PAREN
+    | PARTITION BY functionCall LEFT_PAREN (rangePartitionDesc (COMMA rangePartitionDesc)*)? RIGHT_PAREN
     | PARTITION BY functionCall
     ;
 
@@ -1975,11 +1975,11 @@ singleItemListPartitionDesc
     ;
 
 multiItemListPartitionDesc
-    : PARTITION (IF NOT EXISTS)? identifier VALUES IN '(' stringList (',' stringList)* ')' propertyList?
+    : PARTITION (IF NOT EXISTS)? identifier VALUES IN LEFT_PAREN stringList (COMMA stringList)* RIGHT_PAREN propertyList?
     ;
 
 stringList
-    : '(' string (',' string)* ')'
+    : LEFT_PAREN string (COMMA string)* RIGHT_PAREN
     ;
 
 rangePartitionDesc
@@ -1992,21 +1992,21 @@ singleRangePartition
     ;
 
 multiRangePartition
-    : START '(' string ')' END '(' string ')' EVERY '(' interval ')'
-    | START '(' string ')' END '(' string ')' EVERY '(' INTEGER_VALUE ')'
+    : START LEFT_PAREN string RIGHT_PAREN END LEFT_PAREN string RIGHT_PAREN EVERY LEFT_PAREN interval RIGHT_PAREN
+    | START LEFT_PAREN string RIGHT_PAREN END LEFT_PAREN string RIGHT_PAREN EVERY LEFT_PAREN INTEGER_VALUE RIGHT_PAREN
     ;
 
 partitionRangeDesc
-    : START '(' string ')' END '(' string ')'
+    : START LEFT_PAREN string RIGHT_PAREN END LEFT_PAREN string RIGHT_PAREN
     ;
 
 partitionKeyDesc
     : LESS THAN (MAXVALUE | partitionValueList)
-    | '[' partitionValueList ',' partitionValueList ')'
+    | '[' partitionValueList COMMA partitionValueList RIGHT_PAREN
     ;
 
 partitionValueList
-    : '(' partitionValue (',' partitionValue)* ')'
+    : LEFT_PAREN partitionValue (COMMA partitionValue)* RIGHT_PAREN
     ;
 
 partitionValue
@@ -2025,13 +2025,13 @@ distributionDesc
 
 refreshSchemeDesc
     : REFRESH (IMMEDIATE | DEFERRED)? (ASYNC
-    | ASYNC (START '(' string ')')? EVERY '(' interval ')'
+    | ASYNC (START LEFT_PAREN string RIGHT_PAREN)? EVERY LEFT_PAREN interval RIGHT_PAREN
     | INCREMENTAL
     | MANUAL)
     ;
 
 properties
-    : PROPERTIES '(' property (',' property)* ')'
+    : PROPERTIES LEFT_PAREN property (COMMA property)* RIGHT_PAREN
     ;
 
 extProperties
@@ -2039,11 +2039,11 @@ extProperties
     ;
 
 propertyList
-    : '(' property (',' property)* ')'
+    : LEFT_PAREN property (COMMA property)* RIGHT_PAREN
     ;
 
 userPropertyList
-    : property (',' property)*
+    : property (COMMA property)*
     ;
 
 property
@@ -2116,7 +2116,7 @@ arrayType
     ;
 
 mapType
-    : MAP '<' type ',' type '>'
+    : MAP '<' type COMMA type '>'
     ;
 
 subfieldDesc
@@ -2124,7 +2124,7 @@ subfieldDesc
     ;
 
 subfieldDescs
-    : subfieldDesc (',' subfieldDesc)*
+    : subfieldDesc (COMMA subfieldDesc)*
     ;
 
 structType
@@ -2132,7 +2132,7 @@ structType
     ;
 
 typeParameter
-    : '(' INTEGER_VALUE ')'
+    : LEFT_PAREN INTEGER_VALUE RIGHT_PAREN
     ;
 
 baseType
@@ -2163,7 +2163,7 @@ baseType
     ;
 
 decimalType
-    : (DECIMAL | DECIMALV2 | DECIMAL32 | DECIMAL64 | DECIMAL128) ('(' precision=INTEGER_VALUE (',' scale=INTEGER_VALUE)? ')')?
+    : (DECIMAL | DECIMALV2 | DECIMAL32 | DECIMAL64 | DECIMAL128) (LEFT_PAREN precision=INTEGER_VALUE (COMMA scale=INTEGER_VALUE)? RIGHT_PAREN)?
     ;
 
 qualifiedName
@@ -2178,7 +2178,7 @@ identifier
     ;
 
 identifierList
-    : '(' identifier (',' identifier)* ')'
+    : LEFT_PAREN identifier (COMMA identifier)* RIGHT_PAREN
     ;
 
 identifierOrString
@@ -2187,7 +2187,7 @@ identifierOrString
     ;
 
 identifierOrStringList
-    : identifierOrString (',' identifierOrString)*
+    : identifierOrString (COMMA identifierOrString)*
     ;
 
 identifierOrStringOrStar
@@ -2207,7 +2207,7 @@ assignment
     ;
 
 assignmentList
-    : assignment (',' assignment)*
+    : assignment (COMMA assignment)*
     ;
 
 number

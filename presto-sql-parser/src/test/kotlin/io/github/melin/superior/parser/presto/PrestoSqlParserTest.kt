@@ -1,8 +1,8 @@
 package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.Table
-import io.github.melin.superior.common.TableData
+import io.github.melin.superior.common.relational.TableDescriptor
+import io.github.melin.superior.common.relational.TableLineage
 import org.junit.Assert
 import org.junit.Test
 
@@ -20,7 +20,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableData) {
+        if (statement is TableLineage) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
@@ -37,7 +37,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableData) {
+        if (statement is TableLineage) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -53,7 +53,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableData) {
+        if (statement is TableLineage) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
@@ -70,11 +70,11 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is Table) {
+        if (statement is TableDescriptor) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("dd_s_s", statement.tableName)
-            Assert.assertEquals(1, statement.tableData?.inputTables?.size)
-            Assert.assertEquals(1, statement.tableData?.limit)
+            Assert.assertEquals(1, statement.tableLineage?.inputTables?.size)
+            Assert.assertEquals(1, statement.tableLineage?.limit)
         } else {
             Assert.fail()
         }
@@ -88,9 +88,9 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is Table) {
+        if (statement is TableDescriptor) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals("bigdata", statement.databaseName)
+            Assert.assertEquals("bigdata", statement.schemaName)
             Assert.assertEquals("tdl_small_files_2", statement.tableName)
         } else {
             Assert.fail()

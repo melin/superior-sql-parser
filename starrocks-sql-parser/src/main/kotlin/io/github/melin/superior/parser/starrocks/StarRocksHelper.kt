@@ -24,11 +24,9 @@ object StarRocksHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : StatementData? {
+    @JvmStatic fun getStatementData(command: String) : StatementData {
         val trimCmd = StringUtils.trim(command)
-
-        val charStream =
-            UpperCaseCharStream(CharStreams.fromString(trimCmd))
+        val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
         val lexer = StarRocksLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -38,7 +36,6 @@ object StarRocksHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
-        parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = StarRocksAntlr4Visitor()
 
@@ -52,7 +49,6 @@ object StarRocksHelper {
                 parser.reset()
 
                 // Try Again.
-                parser.interpreter.predictionMode = PredictionMode.LL
                 return sqlVisitor.visit(parser.singleStatement())
             }
         } catch (e: ParseException) {

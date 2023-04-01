@@ -1,6 +1,8 @@
 package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.TableName
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
@@ -12,7 +14,7 @@ import org.apache.commons.lang3.StringUtils
 class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableData();
+    private val statementData = TableLineage();
     private var limit: Int? = null
 
     override fun visit(tree: ParseTree?): StatementData {
