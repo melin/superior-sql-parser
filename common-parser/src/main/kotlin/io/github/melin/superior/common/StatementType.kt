@@ -17,7 +17,6 @@ enum class StatementType: Serializable {
     REPLACE_TABLE_AS_SELECT,
     CREATE_TABLE_AS_LIKE,
     DROP_TABLE,
-    DROP_TABLE_TIDB, //mysql
     TRUNCATE_TABLE,
     RENAME_TABLE, //mysql
     MERGE_TABLE,

@@ -24,7 +24,7 @@ object MySQLHelper {
     @JvmStatic fun checkSupportedSQL(statementType: StatementType?): Boolean {
         return when (statementType) {
             StatementType.CREATE_TABLE,
-            StatementType.DROP_TABLE_TIDB,
+            StatementType.DROP_TABLE,
             StatementType.TRUNCATE_TABLE,
             StatementType.RENAME_TABLE,
             StatementType.ALTER_TABLE_CHANGE_COL,

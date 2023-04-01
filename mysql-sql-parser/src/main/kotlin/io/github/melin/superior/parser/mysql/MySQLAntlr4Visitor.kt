@@ -104,7 +104,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
         val table = Table(null, databaseName, tableName)
         table.ifExists = if (ctx.ifExists() != null) true else false
-        return StatementData(StatementType.DROP_TABLE_TIDB, table)
+        return StatementData(StatementType.DROP_TABLE, table)
     }
 
     override fun visitTruncateTable(ctx: MySqlParser.TruncateTableContext): StatementData {
