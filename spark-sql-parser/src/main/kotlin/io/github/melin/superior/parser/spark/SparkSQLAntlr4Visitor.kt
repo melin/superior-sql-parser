@@ -3,6 +3,10 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.view.AlterView
+import io.github.melin.superior.common.relational.view.CreateView
+import io.github.melin.superior.common.relational.view.DropView
+import io.github.melin.superior.common.relational.view.RenameView
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
@@ -395,9 +399,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitDropView(ctx: SparkSqlParser.DropViewContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
 
-        val viewDescriptor = ViewDescriptor(catalogName, databaseName, tableName)
-        viewDescriptor.ifExists = ctx.EXISTS() != null
-        return StatementData(StatementType.DROP_VIEW, viewDescriptor)
+        val dropView = DropView(catalogName, databaseName, tableName)
+        dropView.ifExists = ctx.EXISTS() != null
+        return StatementData(StatementType.DROP_VIEW, dropView)
     }
 
     override fun visitTruncateTable(ctx: SparkSqlParser.TruncateTableContext): StatementData {
@@ -763,9 +767,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
-        val viewDescriptor = ViewDescriptor(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
-        viewDescriptor.functionNames = tableLineage.functionNames
-        return StatementData(StatementType.CREATE_VIEW, viewDescriptor)
+        val createView = CreateView(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
+        createView.functionNames = tableLineage.functionNames
+        return StatementData(StatementType.CREATE_VIEW, createView)
     }
 
     override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): StatementData {
@@ -777,9 +781,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             querySql = StringUtils.substring(command, query.start.startIndex)
         }
 
-        val viewDescriptor = ViewDescriptor(catalogName, databaseName, tableName)
-        viewDescriptor.querySql = querySql
-        return StatementData(StatementType.ALTER_VIEW_QUERY, viewDescriptor)
+        val alterView = AlterView(catalogName, databaseName, tableName, querySql)
+        return StatementData(StatementType.ALTER_VIEW_QUERY, alterView)
     }
 
     //-----------------------------------function-------------------------------------------------

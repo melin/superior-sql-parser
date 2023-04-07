@@ -48,17 +48,6 @@ data class RenameTable(
     var newToken: CommonToken? = null
 }
 
-data class RenameView(
-    val catalogName: String?,
-    val databaseName: String?,
-    val oldName: String,
-    val newName: String) : Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, oldName)
-    }
-}
-
 data class CreateTableLike(
     val oldDatabaseName: String?,
     val oldTableName: String,

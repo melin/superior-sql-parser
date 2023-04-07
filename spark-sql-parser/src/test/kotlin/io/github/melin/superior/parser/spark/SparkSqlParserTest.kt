@@ -4,7 +4,9 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.ViewDescriptor
+import io.github.melin.superior.common.relational.view.AlterView
+import io.github.melin.superior.common.relational.view.CreateView
+import io.github.melin.superior.common.relational.view.DropView
 import org.junit.Assert
 import org.junit.Test
 
@@ -597,7 +599,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is ViewDescriptor) {
+        if (statement is DropView) {
             val name = statement.tableName
             Assert.assertEquals("sale_detail_drop2", name)
         } else {
@@ -643,7 +645,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is ViewDescriptor) {
+        if (statement is CreateView) {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
@@ -663,7 +665,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is ViewDescriptor) {
+        if (statement is CreateView) {
             val name = statement.tableName
             Assert.assertEquals("view_users", name)
             Assert.assertEquals("view test", statement.comment)
@@ -682,7 +684,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is ViewDescriptor) {
+        if (statement is AlterView) {
             val name = statement.tableName
             Assert.assertEquals("v1", name)
             Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", statement.querySql)

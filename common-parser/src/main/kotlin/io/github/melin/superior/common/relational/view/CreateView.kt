@@ -1,16 +1,17 @@
-package io.github.melin.superior.common.relational
+package io.github.melin.superior.common.relational.view
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.Statement
 
-data class ViewDescriptor(
+data class CreateView(
     val catalogName: String?,
     val schemaName: String?,
     val tableName: String,
     var querySql: String? = null,
     val comment: String? = null,
-    var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
-    var ifExists: Boolean = false) : Statement() { //是否存在 if exists 关键字
+    var ifNotExists: Boolean = false //是否存在 if not exists 关键字
+
+    ) : Statement() { //是否存在 if exists 关键字
 
     var functionNames: HashSet<String> = HashSet()
 

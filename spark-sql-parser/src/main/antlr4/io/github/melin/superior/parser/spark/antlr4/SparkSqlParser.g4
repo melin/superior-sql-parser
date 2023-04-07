@@ -87,7 +87,7 @@ statement
     | DROP namespace (IF EXISTS)? multipartIdentifier
         (RESTRICT | CASCADE)?                                          #dropNamespace
     | SHOW namespaces ((FROM | IN) multipartIdentifier)?
-        (LIKE? pattern=stringLit)?                                        #showNamespaces
+        (LIKE? pattern=stringLit)?                                     #showNamespaces
     | createTableHeader (LEFT_PAREN createOrReplaceTableColTypeList RIGHT_PAREN)? tableProvider?
         createTableClauses
         (AS? query)?                                                   #createTable
