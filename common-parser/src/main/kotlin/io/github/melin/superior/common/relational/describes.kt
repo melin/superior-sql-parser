@@ -2,6 +2,11 @@ package io.github.melin.superior.common.relational
 
 import io.github.melin.superior.common.Statement
 
+data class DescribeNamespace (
+    val namespaceId: NamespaceId,
+    val type: String
+) : Statement()
+
 data class DescribeTable (
     val tableId: TableId
 ) : Statement()

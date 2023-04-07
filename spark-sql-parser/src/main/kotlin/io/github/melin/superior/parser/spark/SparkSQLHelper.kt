@@ -22,7 +22,7 @@ object SparkSQLHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
-            DESC_DATABASE,
+            DESC_NAMESPACE,
 
             CREATE_TABLE,
             CREATE_TABLE_AS_SELECT,

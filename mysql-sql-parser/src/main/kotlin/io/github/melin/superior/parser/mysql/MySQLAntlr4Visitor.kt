@@ -2,9 +2,11 @@ package com.github.melin.superior.sql.parser.mysql
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.namespace.CreateNamespace
+import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.table.CreateTable
 import io.github.melin.superior.common.relational.table.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
@@ -28,15 +30,14 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = SchemaDescriptor(databaseName)
-        return StatementData(StatementType.CREATE_DATABASE, sqlData)
+        val createNamespace = CreateNamespace(databaseName)
+        return StatementData(StatementType.CREATE_NAMESPACE, createNamespace)
     }
 
     override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): StatementData {
         val databaseName = ctx.uid().text
-        val sqlData = SchemaDescriptor(databaseName)
-
-        return StatementData(StatementType.DROP_DATABASE, sqlData)
+        val dropNamespace = DropNamespace(databaseName)
+        return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
     }
 
     //-----------------------------------table-------------------------------------------------
@@ -129,7 +130,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): StatementData {
         val databaseName = ctx.uid().text
-        val data = SchemaDescriptor(databaseName)
+        val data = UseNamespace(databaseName)
         return StatementData(StatementType.USE, data)
     }
 

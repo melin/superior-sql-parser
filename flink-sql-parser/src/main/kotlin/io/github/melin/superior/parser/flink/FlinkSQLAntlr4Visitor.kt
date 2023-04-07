@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.SchemaId
+import io.github.melin.superior.common.relational.NamespaceId
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
@@ -100,11 +100,11 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
     }
 
-    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): SchemaId {
+    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): NamespaceId {
         if (ctx.parts.size == 2) {
-            return SchemaId(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return SchemaId(null, ctx.parts.get(0).text)
+            return NamespaceId(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }

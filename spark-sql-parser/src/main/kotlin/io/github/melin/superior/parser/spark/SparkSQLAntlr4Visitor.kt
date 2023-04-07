@@ -3,6 +3,10 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.namespace.CreateNamespace
+import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.namespace.Namespace
+import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.view.AlterView
 import io.github.melin.superior.common.relational.view.CreateView
 import io.github.melin.superior.common.relational.view.DropView
@@ -61,11 +65,11 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         this.command = command
     }
 
-    fun parseDatabase(ctx: SparkSqlParser.MultipartIdentifierContext): SchemaId {
+    fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): NamespaceId {
         if (ctx.parts.size == 2) {
-            return SchemaId(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return SchemaId(null, ctx.parts.get(0).text)
+            return NamespaceId(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -88,44 +92,51 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     //-----------------------------------database-------------------------------------------------
 
     override fun visitCreateNamespace(ctx: SparkSqlParser.CreateNamespaceContext): StatementData {
-        val (catalogName, schemaName) = parseDatabase(ctx.multipartIdentifier())
+        val schemaId = parseNamespace(ctx.multipartIdentifier())
         var location: String = ""
         if (ctx.locationSpec().size > 0) {
             location = ctx.locationSpec().get(0).stringLit().text
             location = StringUtil.cleanQuote(location)
         }
+        val type = ctx.namespace().text.uppercase()
 
-        val sqlData = SchemaDescriptor(catalogName, schemaName, location)
-        return StatementData(StatementType.CREATE_DATABASE, sqlData)
+        val createNamespace = CreateNamespace(schemaId, Namespace.valueOf(type), location)
+        return StatementData(StatementType.CREATE_NAMESPACE, createNamespace)
     }
 
     override fun visitDropNamespace(ctx: SparkSqlParser.DropNamespaceContext): StatementData {
-        val (catalogName, schemaName) = parseDatabase(ctx.multipartIdentifier())
-        val sqlData = SchemaDescriptor(catalogName, schemaName)
-        return StatementData(StatementType.DROP_DATABASE, sqlData)
+        val schemaId = parseNamespace(ctx.multipartIdentifier())
+        val type = ctx.namespace().text.uppercase()
+        val dropNamespace = DropNamespace(schemaId, Namespace.valueOf(type))
+        return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
     }
 
     override fun visitDescribeNamespace(ctx: SparkSqlParser.DescribeNamespaceContext): StatementData {
-        val (catalogName, schemaName) = parseDatabase(ctx.multipartIdentifier())
-        val sqlData = SchemaDescriptor(catalogName, schemaName)
-        return StatementData(StatementType.DESC_DATABASE, sqlData)
+        val schemaId = parseNamespace(ctx.multipartIdentifier())
+        val type = ctx.namespace().text
+        val describeNamespace = DescribeNamespace(schemaId, type)
+        return StatementData(StatementType.DESC_NAMESPACE, describeNamespace)
     }
 
     override fun visitShowTables(ctx: SparkSqlParser.ShowTablesContext): StatementData {
+        val showTables = ShowTables()
         if (ctx.childCount > 2) {
-            val (catalogName, databaseName) = parseDatabase(ctx.multipartIdentifier())
-            return StatementData(StatementType.SHOW_TABLES, SchemaDescriptor(catalogName, databaseName))
+            val schemaId = parseNamespace(ctx.multipartIdentifier())
+            showTables.namespaceId = schemaId;
+            return StatementData(StatementType.SHOW_TABLES, showTables)
         } else {
-            return StatementData(StatementType.SHOW_TABLES)
+            return StatementData(StatementType.SHOW_TABLES, showTables)
         }
     }
 
     override fun visitShowViews(ctx: SparkSqlParser.ShowViewsContext): StatementData {
+        val showViews = ShowViews()
         if (ctx.childCount > 2) {
-            val (catalogName, databaseName) = parseDatabase(ctx.multipartIdentifier())
-            return StatementData(StatementType.SHOW_VIEWS, SchemaDescriptor(catalogName, databaseName))
+            val schemaId = parseNamespace(ctx.multipartIdentifier())
+            showViews.namespaceId = schemaId;
+            return StatementData(StatementType.SHOW_VIEWS, showViews)
         } else {
-            return StatementData(StatementType.SHOW_VIEWS)
+            return StatementData(StatementType.SHOW_VIEWS, showViews)
         }
     }
 
@@ -784,9 +795,16 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitUse(ctx: SparkSqlParser.UseContext): StatementData {
-        val (catalogName, databaseName) = parseDatabase(ctx.multipartIdentifier())
-        val data = SchemaDescriptor(catalogName, databaseName)
-        return StatementData(StatementType.USE, data)
+        val schemaId = parseNamespace(ctx.multipartIdentifier())
+        val useNamespace = UseNamespace(schemaId)
+        return StatementData(StatementType.USE, useNamespace)
+    }
+
+    override fun visitUseNamespace(ctx: SparkSqlParser.UseNamespaceContext): StatementData {
+        val schemaId = parseNamespace(ctx.multipartIdentifier())
+        val type = ctx.namespace().text.uppercase()
+        val useNamespace = UseNamespace(schemaId, Namespace.valueOf(type))
+        return StatementData(StatementType.USE, useNamespace)
     }
 
     override fun visitSetConfiguration(ctx: SparkSqlParser.SetConfigurationContext?): StatementData {

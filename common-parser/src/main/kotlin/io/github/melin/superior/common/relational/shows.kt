@@ -1,9 +1,6 @@
 package io.github.melin.superior.common.relational
 
 import io.github.melin.superior.common.Statement
-import io.github.melin.superior.common.relational.FunctionId
-import io.github.melin.superior.common.relational.SchemaId
-import io.github.melin.superior.common.relational.TableId
 
 data class ShowColumns(
     val tableId: TableId
@@ -14,7 +11,7 @@ data class ShowCreateTable(
 ) : Statement()
 
 data class ShowDatabases(
-    val schemaId: SchemaId
+    val namespaceId: NamespaceId
 ) : Statement()
 
 data class ShowFunctions(
@@ -30,11 +27,11 @@ data class ShowTableExtended(
 ) : Statement()
 
 data class ShowTables(
-    val schemaId: SchemaId
+    var namespaceId: NamespaceId? = null
 ) : Statement()
 
 data class ShowViews(
-    val tableId: TableId
+    var namespaceId: NamespaceId? = null
 ) : Statement()
 
 data class ShowTblProperties(

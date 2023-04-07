@@ -3,8 +3,10 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.namespace.CreateNamespace
+import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.table.CreateTable
 import io.github.melin.superior.common.relational.table.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
@@ -23,9 +25,9 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals(StatementType.CREATE_DATABASE, statementData.type)
+        if(statement is CreateNamespace) {
+            val name = statement.namespaceId.schemaName
+            Assert.assertEquals(StatementType.CREATE_NAMESPACE, statementData.type)
             Assert.assertEquals("bigdata", name)
         } else {
             Assert.fail()
@@ -38,9 +40,9 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals(StatementType.DROP_DATABASE, statementData.type)
+        if(statement is DropNamespace) {
+            val name = statement.namespaceId.schemaName
+            Assert.assertEquals(StatementType.DROP_NAMESPACE, statementData.type)
             Assert.assertEquals("bigdata", name)
         } else {
             Assert.fail()
@@ -563,8 +565,8 @@ class MySQLParserTest {
         val statementData = MySQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.USE, statementData.type)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is UseNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
         } else {
             Assert.fail()
         }

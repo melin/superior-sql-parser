@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.flink
 
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.SchemaId
+import io.github.melin.superior.common.relational.NamespaceId
 import io.github.melin.superior.common.relational.TableId
 
 @DefaultConstructor
@@ -16,8 +16,8 @@ data class FlinkCdcCreateTable(
 
 @DefaultConstructor
 data class FlinkCdcCreateDatabase(
-    var sinkSchemaId: SchemaId,
-    var sourceSchemaId: SchemaId,
+    var sinkNamespaceId: NamespaceId,
+    var sourceNamespaceId: NamespaceId,
     var includeTable: String
 ): Statement() {
     var sinkOptions: HashMap<String, String>? = null

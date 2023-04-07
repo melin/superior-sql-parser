@@ -7,5 +7,5 @@ data class AnalyzeTable (
 ) : Statement()
 
 data class AnalyzeSchema (
-    val schemaId: SchemaId
+    val namespaceId: NamespaceId
 ) : Statement()

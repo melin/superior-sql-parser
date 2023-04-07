@@ -1,10 +1,11 @@
 package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.DescribeTable
-import io.github.melin.superior.common.relational.SchemaDescriptor
-import io.github.melin.superior.common.relational.TableDescriptor
-import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.namespace.CreateNamespace
+import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.namespace.Namespace
+import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.view.AlterView
 import io.github.melin.superior.common.relational.view.CreateView
 import io.github.melin.superior.common.relational.view.DropView
@@ -24,9 +25,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals("bigdata", name)
+        if (statement is CreateNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
+            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
         } else {
             Assert.fail()
         }
@@ -38,9 +39,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals("bigdata", name)
+        if (statement is CreateNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
+            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
             val location = statement.location;
             Assert.assertEquals("s3a://hive/s3/",location)
         } else {
@@ -54,9 +55,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals("bigdata", name)
+        if (statement is DropNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
+            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
         } else {
             Assert.fail()
         }
@@ -68,9 +69,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            val name = statement.schemaName
-            Assert.assertEquals("bigdata", name)
+        if (statement is DescribeNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
+            Assert.assertEquals("database", statement.type)
         } else {
             Assert.fail()
         }
@@ -1413,8 +1414,8 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
         var statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is ShowTables) {
+            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
         } else {
             Assert.fail()
         }
@@ -1423,8 +1424,8 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
         statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is ShowTables) {
+            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
         } else {
             Assert.fail()
         }
@@ -1440,8 +1441,8 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
         var statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is ShowViews) {
+            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
         } else {
             Assert.fail()
         }
@@ -1450,8 +1451,8 @@ class SparkSqlParserTest {
         statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
         statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is ShowViews) {
+            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
         } else {
             Assert.fail()
         }
@@ -1464,8 +1465,8 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.USE, statementData.type)
         val statement = statementData.statement
-        if (statement is SchemaDescriptor) {
-            Assert.assertEquals("bigdata", statement.schemaName)
+        if (statement is UseNamespace) {
+            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
         } else {
             Assert.fail()
         }
