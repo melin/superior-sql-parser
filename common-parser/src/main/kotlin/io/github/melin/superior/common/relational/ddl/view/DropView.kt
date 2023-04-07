@@ -1,10 +1,9 @@
-package io.github.melin.superior.common.relational.view
+package io.github.melin.superior.common.relational.ddl.view
 
 import io.github.melin.superior.common.Statement
 
-data class AlterView(
+data class DropView(
     val catalogName: String?,
     val schemaName: String?,
     val tableName: String,
-    var querySql: String?
-) : Statement()
+    var ifExists: Boolean = false) : Statement()
