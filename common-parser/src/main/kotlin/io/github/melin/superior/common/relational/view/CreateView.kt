@@ -10,8 +10,14 @@ data class CreateView(
     var querySql: String? = null,
     val comment: String? = null,
     var ifNotExists: Boolean = false //是否存在 if not exists 关键字
+) : Statement() {
 
-    ) : Statement() { //是否存在 if exists 关键字
+    var replace: Boolean = false
+    var temporary: Boolean = false
+    var global: Boolean = false
+
+    var tableProvider: String? = null
+    var properties: Map<String, String> = mapOf()
 
     var functionNames: HashSet<String> = HashSet()
 

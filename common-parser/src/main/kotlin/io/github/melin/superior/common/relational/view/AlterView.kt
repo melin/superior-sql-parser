@@ -6,4 +6,5 @@ data class AlterView(
     val catalogName: String?,
     val schemaName: String?,
     val tableName: String,
-    var querySql: String) : Statement()
+    var querySql: String?
+) : Statement()

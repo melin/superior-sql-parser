@@ -56,6 +56,7 @@ object SparkSQLHelper {
             MULTI_INSERT,
 
             CREATE_VIEW,
+            CREATE_TEMPORARY_VIEW,
             DROP_VIEW,
             ALTER_VIEW_QUERY,
             ALTER_VIEW_RENAME,

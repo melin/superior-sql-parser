@@ -10,6 +10,7 @@ import io.github.melin.superior.common.relational.view.RenameView
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PropertyListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -433,17 +434,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitSetTableProperties(ctx: SparkSqlParser.SetTablePropertiesContext): StatementData {
         val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val properties = HashMap<String, String>()
-        if (ctx.propertyList() != null) {
-            ctx.propertyList().children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
-                val property = item as SparkSqlParser.PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
-                properties.put(key, value)
-            }
-        }
-
+        val properties = parseOptions(ctx.propertyList())
         val data = TableDescriptor(catalogName, databaseName, tableName, null, null, null, null, properties, null)
         if (ctx.VIEW() == null) {
             return StatementData(StatementType.ALTER_TABLE_PROPERTIES, data)
@@ -769,7 +760,46 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val createView = CreateView(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
         createView.functionNames = tableLineage.functionNames
+        if (ctx.REPLACE() != null) {
+            createView.replace = true
+        }
+        if (ctx.TEMPORARY() != null) {
+            createView.temporary = true
+        }
+        if (ctx.GLOBAL() != null) {
+            createView.global = true
+        }
         return StatementData(StatementType.CREATE_VIEW, createView)
+    }
+
+    override fun visitCreateTempViewUsing(ctx: SparkSqlParser.CreateTempViewUsingContext): StatementData {
+        val tableName = ctx.tableIdentifier().table.text
+        var databaseName: String? = null
+        if (ctx.tableIdentifier().db != null) {
+            databaseName = ctx.tableIdentifier().db.text
+        }
+
+        var querySql = ""
+        ctx.children.filter { it is SparkSqlParser.QueryContext }.forEach { it ->
+            val query = it as SparkSqlParser.QueryContext
+            querySql = StringUtils.substring(command, query.start.startIndex)
+        }
+
+        currentOptType = StatementType.CREATE_VIEW
+
+        val createView = CreateView(null, databaseName, tableName, querySql)
+        if (ctx.REPLACE() != null) {
+            createView.replace = true
+        }
+        if (ctx.GLOBAL() != null) {
+            createView.global = true
+        }
+        createView.temporary = true
+
+        val tableProvider = ctx.tableProvider().multipartIdentifier().text
+        createView.tableProvider = tableProvider
+        createView.properties = parseOptions(ctx.propertyList())
+        return StatementData(StatementType.CREATE_TEMPORARY_VIEW, createView)
     }
 
     override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): StatementData {
@@ -1286,5 +1316,19 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             "string", "int", "bigint" -> true
             else -> throw IllegalStateException("不支持数据类型：" + dataType)
         }
+    }
+
+    private fun parseOptions(ctx: PropertyListContext?): Map<String, String> {
+        val properties = HashMap<String, String>()
+        if (ctx != null) {
+            ctx.children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
+                val property = item as SparkSqlParser.PropertyContext
+                val key = StringUtil.cleanQuote(property.key.text)
+                val value = StringUtil.cleanQuote(property.value.text)
+                properties.put(key, value)
+            }
+        }
+
+        return properties
     }
 }
