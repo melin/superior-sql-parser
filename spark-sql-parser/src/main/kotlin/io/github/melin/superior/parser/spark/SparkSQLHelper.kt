@@ -26,8 +26,6 @@ object SparkSQLHelper {
 
             CREATE_TABLE,
             CREATE_TABLE_AS_SELECT,
-            REPLACE_TABLE,
-            REPLACE_TABLE_AS_SELECT,
             CREATE_TABLE_AS_LIKE,
             DROP_TABLE,
             TRUNCATE_TABLE,

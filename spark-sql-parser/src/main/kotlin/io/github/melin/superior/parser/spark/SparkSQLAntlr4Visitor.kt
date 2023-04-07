@@ -3,6 +3,8 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.ddl.table.CreateTable
+import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
 import io.github.melin.superior.common.relational.ddl.view.AlterView
 import io.github.melin.superior.common.relational.ddl.view.CreateView
 import io.github.melin.superior.common.relational.ddl.view.DropView
@@ -10,7 +12,11 @@ import io.github.melin.superior.common.relational.ddl.view.RenameView
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateOrReplaceTableColTypeListContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateTableClausesContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PropertyListContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.QueryContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.TableProviderContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -126,158 +132,56 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     //-----------------------------------table-------------------------------------------------
     override fun visitCreateTable(ctx: SparkSqlParser.CreateTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.createTableHeader().multipartIdentifier())
-        val createTableClauses = ctx.createTableClauses();
-        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).stringLit().text) else null
-        val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
-
-        ctx.children.forEach { it ->
-            if (it is SparkSqlParser.RowFormatDelimitedContext) {
-                throw SQLParserException("不支持row format 语法")
-            } else if (it is SparkSqlParser.RowFormatSerdeContext) {
-                throw SQLParserException("不支持row format 语法")
-            }
-        }
-
-        var partitionColumns: List<Column>? = null
-        val partitionColumnNames: ArrayList<String> = arrayListOf()
-        var columns: List<Column>? = null
-        var createTableType = "spark"
-        if (ctx.query() == null) {
-            columns = ctx.createOrReplaceTableColTypeList().createOrReplaceTableColType().map {
-                val colName = it.colName.text
-                val dataType = it.dataType().text
-                val (nullable, colComment) = parseColDefinition(it.colDefinitionOption())
-                Column(colName, dataType, colComment, nullable)
-            }
-
-            if (ctx.tableProvider() == null) {
-                createTableType = "hive"
-            }
-
-            if (createTableClauses.partitioning != null) {
-                if ("spark" == createTableType) {
-                    createTableClauses.partitioning.children
-                        .filter { it is SparkSqlParser.PartitionTransformContext }.forEach { item ->
-                            val column = item as SparkSqlParser.PartitionTransformContext
-                            partitionColumnNames.add(column.text)
-                        }
-
-                    if (partitionColumnNames.size == 0) {
-                        throw SQLParserException("spark create table 语法创建表，创建分区字段语法错误，请参考文档");
-                    }
-                } else {
-                    partitionColumns = createTableClauses.partitioning.children
-                        .filter { it is SparkSqlParser.PartitionColumnContext }.map { item ->
-                            val column = item as SparkSqlParser.PartitionColumnContext
-                            val colName = column.colType().colName.text
-                            val dataType = column.colType().dataType().text
-                            checkPartitionDataType(dataType)
-
-                            partitionColumnNames.add(colName)
-                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().text) else null
-                            Column(colName, dataType, colComment)
-                        }
-                }
-            }
-        } else {
-            if (createTableClauses.partitioning != null) {
-                createTableClauses.partitioning.children
-                    .filter { it is SparkSqlParser.PartitionTransformContext }.forEach { item ->
-                        val column = item as SparkSqlParser.PartitionTransformContext
-                        partitionColumnNames.add(column.text)
-                    }
-            }
-        }
-
-        val properties = HashMap<String, String>()
-        if (createTableClauses.tableProps != null) {
-            createTableClauses.tableProps.children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
-                val property = item as SparkSqlParser.PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
-                properties.put(key, value)
-            }
-        }
-
-        var fileFormat = ctx.tableProvider()?.multipartIdentifier()?.text
-        ctx.createTableClauses().createFileFormat()
-        if (ctx.createTableClauses().createFileFormat().size == 1) {
-            fileFormat = ctx.createTableClauses().createFileFormat().get(0).fileFormat().text
-        }
-
-        val tableDescriptor = TableDescriptor(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
-        tableDescriptor.createTableType = createTableType;
-        tableDescriptor.ifNotExists = ctx.createTableHeader().NOT() != null
-        tableDescriptor.external = ctx.createTableHeader().EXTERNAL() != null
-        tableDescriptor.temporary = ctx.createTableHeader().TEMPORARY() != null
-        tableDescriptor.location = createTableClauses.locationSpec().size > 0
-        if (tableDescriptor.location) {
-            tableDescriptor.locationPath = createTableClauses.locationSpec().get(0).text
-        }
-
-        if (fileFormat != null && "hudi" == fileFormat.lowercase()) {
-            val primaryKey = properties.get("primaryKey")
-            if (StringUtils.isNotBlank(primaryKey)) {
-                tableDescriptor.hudiPrimaryKeys = StringUtils.split(primaryKey, ",").map { StringUtils.trim(it) };
-            }
-
-            val type = properties.getOrDefault("type", "COW")
-            if (StringUtils.isNotBlank(type)) {
-                tableDescriptor.hudiType = type
-            }
-
-            val preCombineField = properties.getOrDefault("preCombineField", "")
-            if (StringUtils.isNotBlank(preCombineField)) {
-                tableDescriptor.preCombineField = preCombineField
-            }
-        }
-
-        tableDescriptor.partitionColumnNames = partitionColumnNames
-
-        if (ctx.query() != null) {
-            currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
-            if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
-                querySql = StringUtils.substringBetween(querySql, "(", ")")
-            }
-
-            tableDescriptor.querySql = querySql
-            super.visitQuery(ctx.query())
-            tableDescriptor.tableLineage = tableLineage
-            return StatementData(StatementType.CREATE_TABLE_AS_SELECT, tableDescriptor, querySql)
-        } else {
-            return StatementData(StatementType.CREATE_TABLE, tableDescriptor)
-        }
+        val tableId = parseTableName(ctx.createTableHeader().multipartIdentifier())
+        return createTable(tableId,
+            false,
+            ctx.createTableHeader().TEMPORARY() != null,
+            ctx.createTableHeader().EXTERNAL() != null,
+            ctx.createOrReplaceTableColTypeList(),
+            ctx.createTableClauses(),
+            ctx.tableProvider(),
+            ctx.query())
     }
 
+
     override fun visitReplaceTable(ctx: SparkSqlParser.ReplaceTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.replaceTableHeader().multipartIdentifier())
-        val createTableClauses = ctx.createTableClauses();
+        val tableId = parseTableName(ctx.replaceTableHeader().multipartIdentifier())
+        return createTable(tableId,
+            true,
+            false,
+            false,
+            ctx.createOrReplaceTableColTypeList(),
+            ctx.createTableClauses(),
+            ctx.tableProvider(),
+            ctx.query())
+    }
+
+    private fun createTable(tableId: TableId,
+                            replace: Boolean,
+                            temporary: Boolean,
+                            external: Boolean,
+                            createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
+                            createTableClauses: CreateTableClausesContext,
+                            tableProvider: TableProviderContext?,
+                            query: QueryContext?): StatementData {
+        val (catalogName, databaseName, tableName) = tableId
+
         val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
-
-        ctx.children.forEach { it ->
-            if (it is SparkSqlParser.RowFormatDelimitedContext) {
-                throw SQLParserException("不支持row format 语法")
-            } else if (it is SparkSqlParser.RowFormatSerdeContext) {
-                throw SQLParserException("不支持row format 语法")
-            }
-        }
 
         var partitionColumns: List<Column>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columns: List<Column>? = null
         var createTableType = "hive"
-        if (ctx.query() == null) {
-            columns = ctx.createOrReplaceTableColTypeList().createOrReplaceTableColType().map {
+        if (query == null) {
+            columns = createOrReplaceTableColTypeList?.createOrReplaceTableColType()?.map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
                 val (nullable, colComment) = parseColDefinition(it.colDefinitionOption())
                 Column(colName, dataType, colComment, nullable)
             }
 
-            if (ctx.tableProvider() != null) {
+            if (tableProvider != null) {
                 createTableType = "spark"
             }
 
@@ -326,51 +230,43 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        var fileFormat = ctx.tableProvider()?.multipartIdentifier()?.text
-        ctx.createTableClauses().createFileFormat()
-        if (ctx.createTableClauses().createFileFormat().size == 1) {
-            fileFormat = ctx.createTableClauses().createFileFormat().get(0).fileFormat().text
+        var fileFormat = tableProvider?.multipartIdentifier()?.text
+        createTableClauses.createFileFormat()
+        if (createTableClauses.createFileFormat().size == 1) {
+            fileFormat = createTableClauses.createFileFormat().get(0).fileFormat().text
         }
 
-        val tableDescriptor = TableDescriptor(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
-        tableDescriptor.createTableType = createTableType;
-        tableDescriptor.location = createTableClauses.locationSpec().size > 0
-        if (tableDescriptor.location) {
-            tableDescriptor.locationPath = createTableClauses.locationSpec().get(0).text
-        }
+        if (query != null) {
+            currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+            val createTable = CreateTableAsSelect(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            createTable.createTableType = createTableType;
+            createTable.replace = replace
 
-        if (fileFormat != null && "hudi" == fileFormat.lowercase()) {
-            val primaryKey = properties.get("primaryKey")
-            if (StringUtils.isNotBlank(primaryKey)) {
-                tableDescriptor.hudiPrimaryKeys = StringUtils.split(primaryKey, ",").map { StringUtils.trim(it) };
-            }
-
-            val type = properties.getOrDefault("type", "COW")
-            if (StringUtils.isNotBlank(type)) {
-                tableDescriptor.hudiType = type
-            }
-
-            val preCombineField = properties.getOrDefault("preCombineField", "")
-            if (StringUtils.isNotBlank(preCombineField)) {
-                tableDescriptor.preCombineField = preCombineField
-            }
-        }
-
-        tableDescriptor.partitionColumnNames = partitionColumnNames
-
-        if (ctx.query() != null) {
-            currentOptType = StatementType.REPLACE_TABLE_AS_SELECT
-            var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
+            var querySql = StringUtils.substring(command, query.start.startIndex)
             if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
                 querySql = StringUtils.substringBetween(querySql, "(", ")")
             }
 
-            tableDescriptor.querySql = querySql
-            super.visitQuery(ctx.query())
-            tableDescriptor.tableLineage = tableLineage
-            return StatementData(StatementType.REPLACE_TABLE_AS_SELECT, tableDescriptor, querySql)
+            createTable.querySql = querySql
+            super.visitQuery(query)
+            createTable.tableLineage = tableLineage
+            createTable.partitionColumnNames = partitionColumnNames
+            return StatementData(currentOptType, createTable, querySql)
         } else {
-            return StatementData(StatementType.REPLACE_TABLE, tableDescriptor)
+            currentOptType = StatementType.CREATE_TABLE
+            val createTable = CreateTable(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            createTable.createTableType = createTableType;
+            createTable.replace = replace
+            createTable.external = external
+            createTable.temporary = temporary
+
+            createTable.location = createTableClauses.locationSpec().size > 0
+            if (createTable.location) {
+                createTable.locationPath = createTableClauses.locationSpec().get(0).text
+            }
+
+            createTable.partitionColumnNames = partitionColumnNames
+            return StatementData(currentOptType, createTable)
         }
     }
 
@@ -1098,7 +994,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             StatementType.CREATE_VIEW == currentOptType ||
             StatementType.INSERT_SELECT == currentOptType ||
             StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
-            StatementType.REPLACE_TABLE_AS_SELECT == currentOptType ||
             StatementType.MULTI_INSERT == currentOptType ||
             StatementType.MERGE_INTO_TABLE == currentOptType ||
             StatementType.EXPORT_TABLE == currentOptType ||
@@ -1126,12 +1021,11 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitMultipartIdentifier(ctx: SparkSqlParser.MultipartIdentifierContext): StatementData? {
         val (databaseName, tableName, metaAction) = parseTableName(ctx)
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
-            currentOptType == StatementType.REPLACE_TABLE_AS_SELECT ||
-                currentOptType == StatementType.SELECT ||
-                currentOptType == StatementType.INSERT_SELECT ||
-                currentOptType == StatementType.MERGE_INTO_TABLE ||
-                currentOptType == StatementType.EXPORT_TABLE ||
-                currentOptType == StatementType.DATATUNNEL) {
+            currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.INSERT_SELECT ||
+            currentOptType == StatementType.MERGE_INTO_TABLE ||
+            currentOptType == StatementType.EXPORT_TABLE ||
+            currentOptType == StatementType.DATATUNNEL) {
 
             val table = TableId(databaseName, tableName, metaAction)
 

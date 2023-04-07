@@ -4,6 +4,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.ddl.table.CreateTable
+import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
 import io.github.melin.superior.common.relational.ddl.view.AlterView
 import io.github.melin.superior.common.relational.ddl.view.CreateView
 import io.github.melin.superior.common.relational.ddl.view.DropView
@@ -94,7 +96,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.schemaName
             Assert.assertEquals("test", name)
             Assert.assertFalse(statement.location)
@@ -124,7 +126,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.schemaName
             Assert.assertEquals("platformtool", name)
             Assert.assertEquals(7, statement.lifeCycle)
@@ -153,7 +155,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("dc_cluster_compute", name)
             Assert.assertEquals(100, statement.lifeCycle)
@@ -177,7 +179,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("iceberg_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
@@ -205,7 +207,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("export_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
@@ -235,7 +237,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("export_test_dt", name)
             Assert.assertEquals(100, statement.lifeCycle)
@@ -259,7 +261,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("test_demo_test", name)
             Assert.assertEquals(10, statement.lifeCycle)
@@ -307,13 +309,11 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("test_hudi_table", name)
-            Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
-            Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
-            Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
-            Assert.assertEquals("MOR", statement.hudiType)
+            Assert.assertEquals("id, name", statement.properties?.get("primaryKey"))
+            Assert.assertEquals("MOR", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -341,13 +341,11 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("test_hudi_table", name)
-            Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
-            Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
-            Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
-            Assert.assertEquals("cow", statement.hudiType)
+            Assert.assertEquals("id, name", statement.properties?.get("primaryKey"))
+            Assert.assertEquals("cow", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -370,7 +368,7 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.tableName
             Assert.assertEquals("test_table_02", name)
 
@@ -399,14 +397,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.REPLACE_TABLE, statementData.type)
-        if (statement is TableDescriptor) {
+        Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+        if (statement is CreateTable) {
             val name = statement.tableName
+            Assert.assertTrue(statement.replace)
             Assert.assertEquals("test_hudi_table", name)
-            Assert.assertEquals(2, statement.hudiPrimaryKeys.size)
-            Assert.assertEquals("id", statement.hudiPrimaryKeys.get(0))
-            Assert.assertEquals("name", statement.hudiPrimaryKeys.get(1))
-            Assert.assertEquals("mor", statement.hudiType)
+            Assert.assertEquals("id, name", statement.properties?.get("primaryKey"))
+            Assert.assertEquals("mor", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
@@ -465,7 +462,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals(statement.fileFormat, "ORC")
@@ -492,7 +489,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("ICEBERG", statement.fileFormat)
@@ -510,7 +507,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("tdl_users_1", name)
@@ -530,7 +527,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("tdl_users_1", name)
@@ -549,7 +546,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("test_iceberg_1", name)
@@ -565,9 +562,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             val name = statement.tableName
-            Assert.assertEquals(StatementType.REPLACE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertTrue(statement.replace)
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", name)
             Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statementData.querySql)
@@ -1768,7 +1766,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val name = statement.schemaName
             Assert.assertEquals(statement.locationPath,"LOCATION's3a://hive/test/'");
             Assert.assertEquals("s3Db", name)
@@ -1791,7 +1789,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTable) {
             val prop = statement.properties
             Assert.assertEquals("ZSTD", prop?.get("compression"))
         } else {
