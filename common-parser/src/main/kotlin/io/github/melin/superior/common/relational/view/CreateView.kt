@@ -1,4 +1,4 @@
-package io.github.melin.superior.common.relational.ddl.view
+package io.github.melin.superior.common.relational.view
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.Statement

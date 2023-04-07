@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.starrocks
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.ddl.table.CreateTable
+import io.github.melin.superior.common.relational.table.CreateTable
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
 import org.antlr.v4.runtime.tree.ParseTree

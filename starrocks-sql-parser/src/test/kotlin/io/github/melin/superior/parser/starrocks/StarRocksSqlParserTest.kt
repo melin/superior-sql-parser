@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.starrocks
 
-import io.github.melin.superior.common.relational.ddl.table.CreateTable
+import io.github.melin.superior.common.relational.table.CreateTable
 import org.junit.Assert
 import org.junit.Test
 

@@ -3,8 +3,8 @@ package io.github.melin.superior.parser.presto
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
-import io.github.melin.superior.common.relational.ddl.table.DropTable
+import io.github.melin.superior.common.relational.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.table.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree

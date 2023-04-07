@@ -5,9 +5,10 @@ import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.ddl.table.*
-import io.github.melin.superior.common.relational.ddl.view.AlterView
-import io.github.melin.superior.common.relational.ddl.view.CreateView
-import io.github.melin.superior.common.relational.ddl.view.DropView
+import io.github.melin.superior.common.relational.view.AlterView
+import io.github.melin.superior.common.relational.view.CreateView
+import io.github.melin.superior.common.relational.view.DropView
+import io.github.melin.superior.common.relational.table.*
 import org.junit.Assert
 import org.junit.Test
 

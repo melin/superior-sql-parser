@@ -1,8 +1,8 @@
-package io.github.melin.superior.common.relational.ddl.table
+package io.github.melin.superior.common.relational.table
 
 import io.github.melin.superior.common.Statement
 import io.github.melin.superior.common.relational.TableId
 
-class RepairTable(
+class TruncateTable(
     val tableId: TableId
 ) : Statement()

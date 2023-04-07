@@ -4,10 +4,11 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.ddl.table.*
-import io.github.melin.superior.common.relational.ddl.view.AlterView
-import io.github.melin.superior.common.relational.ddl.view.CreateView
-import io.github.melin.superior.common.relational.ddl.view.DropView
-import io.github.melin.superior.common.relational.ddl.view.RenameView
+import io.github.melin.superior.common.relational.view.AlterView
+import io.github.melin.superior.common.relational.view.CreateView
+import io.github.melin.superior.common.relational.view.DropView
+import io.github.melin.superior.common.relational.view.RenameView
+import io.github.melin.superior.common.relational.table.*
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext

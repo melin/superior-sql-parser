@@ -2,8 +2,8 @@ package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
-import io.github.melin.superior.common.relational.ddl.table.DropTable
+import io.github.melin.superior.common.relational.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.table.DropTable
 import org.junit.Assert
 import org.junit.Test
 

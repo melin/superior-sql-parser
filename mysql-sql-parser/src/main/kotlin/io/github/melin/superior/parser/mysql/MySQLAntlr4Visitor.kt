@@ -5,9 +5,9 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.ddl.table.CreateTable
-import io.github.melin.superior.common.relational.ddl.table.DropTable
-import io.github.melin.superior.common.relational.ddl.table.TruncateTable
+import io.github.melin.superior.common.relational.table.CreateTable
+import io.github.melin.superior.common.relational.table.DropTable
+import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
