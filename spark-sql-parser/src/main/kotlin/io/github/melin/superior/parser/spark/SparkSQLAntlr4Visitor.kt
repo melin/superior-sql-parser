@@ -164,8 +164,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                             createTableClauses: CreateTableClausesContext,
                             tableProvider: TableProviderContext?,
                             query: QueryContext?): StatementData {
-        val (catalogName, databaseName, tableName) = tableId
-
         val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
@@ -238,7 +236,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
             createTable.createTableType = createTableType;
             createTable.replace = replace
 
@@ -254,16 +252,12 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return StatementData(currentOptType, createTable, querySql)
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(catalogName, databaseName, tableName, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
             createTable.createTableType = createTableType;
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary
-
-            createTable.location = createTableClauses.locationSpec().size > 0
-            if (createTable.location) {
-                createTable.locationPath = createTableClauses.locationSpec().get(0).text
-            }
+            createTable.location = createTableClauses.locationSpec().get(0).text
 
             createTable.partitionColumnNames = partitionColumnNames
             return StatementData(currentOptType, createTable)

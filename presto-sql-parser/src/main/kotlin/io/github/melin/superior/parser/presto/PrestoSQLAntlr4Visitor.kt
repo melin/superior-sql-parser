@@ -4,6 +4,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.ddl.table.CreateTable
+import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -17,7 +19,6 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private val statementData = TableLineage();
-    private var tableDescriptor: TableDescriptor? = null
     private var limit:Int? = null
     private var command: String? = null
     private var data: StatementData? = null
@@ -52,29 +53,29 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
         val tableSource = createTableSource(ctx.qualifiedName())
 
-        val tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
-        data = StatementData(StatementType.SHOW_CREATE_TABLE, tableDescriptor)
+        val tableId = TableId(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
+        data = StatementData(StatementType.SHOW_CREATE_TABLE, tableId)
         return data
     }
 
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-        val tableSource = createTableSource(ctx.qualifiedName())
-        tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
+        val tableId = createTableSource(ctx.qualifiedName())
+        val createTable = CreateTableAsSelect(tableId)
 
         var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
             querySql = StringUtils.substringBetween(querySql, "(", ")")
         }
 
-        tableDescriptor?.lifeCycle = 7
-        tableDescriptor?.querySql = querySql
+        createTable.lifeCycle = 7
+        createTable.querySql = querySql
         statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
 
         super.visitQuery(ctx.query())
 
-        tableDescriptor?.tableLineage = statementData
-        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, tableDescriptor)
+        createTable.tableLineage = statementData
+        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
         return data;
     }
 

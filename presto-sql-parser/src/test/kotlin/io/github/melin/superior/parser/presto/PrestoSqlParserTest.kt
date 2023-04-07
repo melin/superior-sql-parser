@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.presto
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
 import org.junit.Assert
 import org.junit.Test
 
@@ -70,9 +71,9 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableDescriptor) {
+        if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
-            Assert.assertEquals("dd_s_s", statement.tableName)
+            Assert.assertEquals("dd_s_s", statement.tableId.tableName)
             Assert.assertEquals(1, statement.tableLineage?.inputTables?.size)
             Assert.assertEquals(1, statement.tableLineage?.limit)
         } else {
