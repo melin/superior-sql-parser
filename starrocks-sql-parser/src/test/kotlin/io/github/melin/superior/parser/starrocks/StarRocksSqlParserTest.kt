@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.starrocks
 
-import io.github.melin.superior.common.relational.TableDescriptor
+import io.github.melin.superior.common.relational.ddl.table.CreateTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -26,8 +26,8 @@ class StarRocksSqlParserTest {
 
         val statementData = StarRocksHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            val name = statement.tableName
+        if (statement is CreateTable) {
+            val name = statement.tableId.tableName
             Assert.assertEquals("meta_role", name)
         } else {
             Assert.fail()

@@ -3,7 +3,6 @@ package io.github.melin.superior.common.relational
 import com.github.melin.superior.sql.parser.util.StringUtil.innerFullTableName
 import io.github.melin.superior.common.*
 
-
 data class TableDescriptor(
     val catalogName: String?,
     val schemaName: String?,

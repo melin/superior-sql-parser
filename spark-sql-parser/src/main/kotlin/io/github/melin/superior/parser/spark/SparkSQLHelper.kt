@@ -45,7 +45,7 @@ object SparkSQLHelper {
             ALTER_TABLE_RENAME_PART,
             ALTER_TABLE_SET_LOCATION,
             DESC_TABLE,
-            MSCK_TABLE,
+            REPAIR_TABLE,
             ALTER_TABLE_TOUCH,
 
             SELECT,

@@ -40,7 +40,7 @@ enum class StatementType: Serializable {
     ALTER_TABLE_ADD_UNIQUE_KEY, //mysql
     ALTER_TABLE_ADD_PRIMARY_KEY, //mysql
     DESC_TABLE,
-    MSCK_TABLE,
+    REPAIR_TABLE,
     ALTER_TABLE_TOUCH,
 
     //DML

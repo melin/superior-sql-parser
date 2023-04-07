@@ -1,8 +1,6 @@
 package io.github.melin.superior.common.relational.ddl.table
 
-import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.Column
-import io.github.melin.superior.common.CommonToken
 import io.github.melin.superior.common.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.TableLineage
@@ -25,5 +23,6 @@ data class CreateTableAsSelect(
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var createTableType: String = "hive"
 
-    constructor(tableId: TableId): this(tableId, null, null, null, null, null, null, false)
+    constructor(tableId: TableId):
+            this(tableId, null, null, null, null, null, null, false)
 }

@@ -24,4 +24,7 @@ data class CreateTable(
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var replace = false
     var createTableType: String = "hive"
+
+    constructor(tableId: TableId, comment: String?, columns: List<Column>?):
+            this(tableId, comment, null, null, columns, null, null, false)
 }

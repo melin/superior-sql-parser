@@ -26,27 +26,13 @@ data class TableSource(
             this(null, databaseName, tableName)
 
     val tokens: java.util.ArrayList<CommonToken> = ArrayList()
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
 }
 
 data class CommonToken(val start: Int, val stop: Int)
 
 data class RenameTable(
-    val catalogName: String?,
-    val databaseName: String?,
-    val oldName: String,
-    val newName: String) : Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, oldName)
-    }
-
-    var oldToken: CommonToken? = null
-    var newToken: CommonToken? = null
-}
+    val tableId: TableId,
+    val newName: String) : Statement()
 
 data class CreateTableLike(
     val oldDatabaseName: String?,
@@ -71,22 +57,8 @@ data class Column(
 }
 
 data class AlterColumn(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    val action: AlterColumnAction?) : Statement() {
-
-    constructor(catalogName: String?, databaseName: String?, tableName: String):
-            this(catalogName, databaseName, tableName, null);
-
-    constructor(databaseName: String?, tableName: String):
-            this(null, databaseName, tableName, null);
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-    var token: CommonToken? = null
-}
+    val tableId: TableId,
+    val action: AlterColumnAction? = null) : Statement()
 
 data class AlterColumnAction(
     var columName: String? = null, // 修改列名
@@ -204,27 +176,14 @@ enum class InsertMode: Serializable {
 }
 
 data class DeleteTable(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
+    val tableId: TableId,
     val where: String? = null) : Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
 }
 
 data class UpdateTable(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
+    val tableId: TableId,
     val upset: Map<String, String>? = null,
-    val where: String? = null) : Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
+    val where: String? = null) : Statement()
 
 data class MergeIntoTable(
     var sourceTables: java.util.HashSet<TableId> = HashSet(),
@@ -237,12 +196,7 @@ data class DropTablePartition(
     val tableName: String,
     var ifExists: Boolean = false,
     var partitionSpecs: List<String>
-): Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
+): Statement()
 
 data class AddTablePartition(
     val catalogName: String?,
@@ -250,20 +204,11 @@ data class AddTablePartition(
     val tableName: String,
     var ifNotExists: Boolean = false,
     var partitionSpecs: List<String>
-): Statement() {
-
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
+): Statement()
 
 data class TouchTable(
     val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
     var partitionSpecs: List<String>
-): Statement() {
-    fun getFullTableName(): String {
-        return innerFullTableName(catalogName, databaseName, tableName)
-    }
-}
+): Statement()

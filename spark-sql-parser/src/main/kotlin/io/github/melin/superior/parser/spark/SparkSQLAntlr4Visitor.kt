@@ -3,9 +3,7 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.ddl.table.CreateTable
-import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
-import io.github.melin.superior.common.relational.ddl.table.DropTable
+import io.github.melin.superior.common.relational.ddl.table.*
 import io.github.melin.superior.common.relational.ddl.view.AlterView
 import io.github.melin.superior.common.relational.ddl.view.CreateView
 import io.github.melin.superior.common.relational.ddl.view.DropView
@@ -298,28 +296,26 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitTruncateTable(ctx: SparkSqlParser.TruncateTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-        val tableDescriptor = TableDescriptor(catalogName, databaseName, tableName)
-        return StatementData(StatementType.TRUNCATE_TABLE, tableDescriptor)
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val truncateTable = TruncateTable(tableId)
+        return StatementData(StatementType.TRUNCATE_TABLE, truncateTable)
     }
 
     override fun visitRepairTable(ctx: SparkSqlParser.RepairTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-        val tableDescriptor = TableDescriptor(catalogName, databaseName, tableName)
-        return StatementData(StatementType.MSCK_TABLE, tableDescriptor)
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val repairTable = RepairTable(tableId)
+        return StatementData(StatementType.REPAIR_TABLE, repairTable)
     }
 
     override fun visitRenameTable(ctx: SparkSqlParser.RenameTableContext): StatementData {
-        val (catalogName, databaseName, oldTableName) = parseTableName(ctx.from)
+        val tableId = parseTableName(ctx.from)
         val (_, _, newTableName) = parseTableName(ctx.to)
 
         if (ctx.VIEW() != null) {
-            val dcView = RenameView(catalogName, databaseName, oldTableName, newTableName)
+            val dcView = RenameView(tableId, newTableName)
             return StatementData(StatementType.ALTER_VIEW_RENAME, dcView)
         } else {
-            val dcTable = RenameTable(catalogName, databaseName, oldTableName, newTableName)
-            dcTable.oldToken = CommonToken(ctx.from.start.startIndex, ctx.from.stop.stopIndex)
-            dcTable.newToken = CommonToken(ctx.to.start.startIndex, ctx.to.stop.stopIndex)
+            val dcTable = RenameTable(tableId, newTableName)
             return StatementData(StatementType.ALTER_TABLE_RENAME, dcTable)
         }
     }
@@ -371,7 +367,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitHiveChangeColumn(ctx: SparkSqlParser.HiveChangeColumnContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
+        val tableId = parseTableName(ctx.table)
 
         val columnName = ctx.colName.parts.get(0).text
         val dataType = ctx.colType().dataType().text
@@ -391,29 +387,27 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        val data = AlterColumn(catalogName, databaseName, tableName, action)
+        val data = AlterColumn(tableId, action)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, data)
     }
 
     override fun visitRenameTableColumn(ctx: SparkSqlParser.RenameTableColumnContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
+        val tableId = parseTableName(ctx.table)
 
         val oldName = ctx.from.text
         val newName = ctx.to.text
 
         val action = AlterColumnAction(oldName, newName)
-        val dcTable = AlterColumn(catalogName, databaseName, tableName, action)
-        dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
+        val dcTable = AlterColumn(tableId, action)
         return StatementData(StatementType.ALTER_TABLE_RENAME_COL, dcTable)
     }
 
     override fun visitAlterTableAlterColumn(ctx: SparkSqlParser.AlterTableAlterColumnContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.table)
+        val tableId = parseTableName(ctx.table)
 
         val action = parseAlterColumnAction(ctx.alterColumnAction())
         action.columName = ctx.column.text
-        val dcTable = AlterColumn(catalogName, databaseName, tableName, action)
-        dcTable.token = CommonToken(ctx.table.start.startIndex, ctx.table.stop.stopIndex)
+        val dcTable = AlterColumn(tableId, action)
         return StatementData(StatementType.ALTER_TABLE_CHANGE_COL, dcTable)
     }
 
@@ -438,10 +432,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitDropTableColumns(ctx: SparkSqlParser.DropTableColumnsContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
-
-        val dcTable = AlterColumn(catalogName, databaseName, tableName)
-        dcTable.token = CommonToken(ctx.multipartIdentifier().start.startIndex, ctx.multipartIdentifier().stop.stopIndex)
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val dcTable = AlterColumn(tableId)
         return StatementData(StatementType.ALTER_TABLE_DROP_COL, dcTable)
     }
 
@@ -939,15 +931,15 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     //-----------------------------------delta sql-------------------------------------------------
 
     override fun visitDeleteFromTable(ctx: SparkSqlParser.DeleteFromTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
+        val tableId = parseTableName(ctx.multipartIdentifier())
         val where = if (ctx.whereClause() != null) StringUtils.substring(command, ctx.whereClause().start.stopIndex + 1) else null
 
-        val update = DeleteTable(catalogName, databaseName, tableName, StringUtils.trim(where))
+        val update = DeleteTable(tableId, StringUtils.trim(where))
         return StatementData(StatementType.DELETE, update)
     }
 
     override fun visitUpdateTable(ctx: SparkSqlParser.UpdateTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
+        val tableId = parseTableName(ctx.multipartIdentifier())
 
         val upset = ctx.setClause().assignmentList().assignment().filter { it is SparkSqlParser.AssignmentContext }.map {
             val assign = it as SparkSqlParser.AssignmentContext
@@ -955,7 +947,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }.toMap()
         val where = if (ctx.whereClause() != null) StringUtils.substring(command, ctx.whereClause().start.stopIndex + 1) else null
 
-        val update = UpdateTable(catalogName, databaseName, tableName, upset, StringUtils.trim(where))
+        val update = UpdateTable(tableId, upset, StringUtils.trim(where))
         return StatementData(StatementType.UPDATE, update)
     }
 
@@ -970,10 +962,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val deltaMerge = MergeIntoTable(targetTable = targetTable)
 
         if (ctx.source != null) {
-            val (catalogName, sourceDatabase, sourceTableName) = parseTableName(ctx.source)
-
-            val table = TableId(catalogName, sourceDatabase, sourceTableName)
-            deltaMerge.sourceTables.add(table)
+            val tableId = parseTableName(ctx.source)
+            deltaMerge.sourceTables.add(tableId)
         } else if (ctx.sourceQuery != null && ctx.sourceQuery is SparkSqlParser.QueryContext) {
             val query = ctx.sourceQuery as SparkSqlParser.QueryContext
             super.visitQuery(query)

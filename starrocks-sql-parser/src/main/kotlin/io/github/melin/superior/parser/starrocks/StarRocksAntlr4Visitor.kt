@@ -2,8 +2,8 @@ package io.github.melin.superior.parser.starrocks
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.ddl.table.CreateTable
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -34,9 +34,8 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
             Column(columnName, dataType, colComment)
         }
 
-        val tableDescriptor = TableDescriptor(tableId.schemaName, tableId.tableName, comment, columns)
-
-        return StatementData(StatementType.CREATE_TABLE, tableDescriptor)
+        val createTable = CreateTable(tableId, comment, columns)
+        return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
 
