@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.ddl.table.CreateTable
 import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.ddl.table.DropTable
 import io.github.melin.superior.common.relational.ddl.view.AlterView
 import io.github.melin.superior.common.relational.ddl.view.CreateView
 import io.github.melin.superior.common.relational.ddl.view.DropView
@@ -583,8 +584,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            val name = statement.tableName
+        Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
+        if (statement is DropTable) {
+            val name = statement.tableId.tableName
             Assert.assertEquals("sale_detail_drop2", name)
         } else {
             Assert.fail()
@@ -597,6 +599,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
+        Assert.assertEquals(StatementType.DROP_VIEW, statementData.type)
         if (statement is DropView) {
             val name = statement.tableName
             Assert.assertEquals("sale_detail_drop2", name)

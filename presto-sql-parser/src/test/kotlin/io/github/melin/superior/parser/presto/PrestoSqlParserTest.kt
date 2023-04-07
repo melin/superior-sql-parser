@@ -1,9 +1,9 @@
 package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.ddl.table.DropTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -89,10 +89,10 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableDescriptor) {
+        if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals("bigdata", statement.schemaName)
-            Assert.assertEquals("tdl_small_files_2", statement.tableName)
+            Assert.assertEquals("bigdata", statement.tableId.schemaName)
+            Assert.assertEquals("tdl_small_files_2", statement.tableId.tableName)
         } else {
             Assert.fail()
         }

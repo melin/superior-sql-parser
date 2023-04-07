@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.ddl.table.CreateTable
 import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.ddl.table.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
@@ -80,13 +81,11 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
     }
 
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
-        val tableSource = createTableSource(ctx.qualifiedName())
+        val tableId = createTableSource(ctx.qualifiedName())
 
-        val tableDescriptor = TableDescriptor(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
-        val token = CommonToken(ctx.qualifiedName().start.startIndex, ctx.qualifiedName().stop.stopIndex)
-        tableDescriptor.ifExists = ctx.EXISTS() != null
-        tableDescriptor.token = token
-        data = StatementData(StatementType.DROP_TABLE, tableDescriptor)
+        val dropTable = DropTable(tableId)
+        dropTable.ifExists = ctx.EXISTS() != null
+        data = StatementData(StatementType.DROP_TABLE, dropTable)
         return data
     }
 

@@ -5,6 +5,7 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.ddl.table.CreateTable
 import io.github.melin.superior.common.relational.ddl.table.CreateTableAsSelect
+import io.github.melin.superior.common.relational.ddl.table.DropTable
 import io.github.melin.superior.common.relational.ddl.view.AlterView
 import io.github.melin.superior.common.relational.ddl.view.CreateView
 import io.github.melin.superior.common.relational.ddl.view.DropView
@@ -257,7 +258,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary
-            createTable.location = createTableClauses.locationSpec().get(0).text
+
+            if (createTableClauses.locationSpec().size > 0) {
+                createTable.location = createTableClauses.locationSpec().get(0).text
+            }
 
             createTable.partitionColumnNames = partitionColumnNames
             return StatementData(currentOptType, createTable)
@@ -278,13 +282,11 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitDropTable(ctx: SparkSqlParser.DropTableContext): StatementData {
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
+        val tableId = parseTableName(ctx.multipartIdentifier())
 
-        val tableDescriptor = TableDescriptor(catalogName, databaseName, tableName)
-        val token = CommonToken(ctx.multipartIdentifier().start.startIndex, ctx.multipartIdentifier().stop.stopIndex)
-        tableDescriptor.ifExists = ctx.EXISTS() != null
-        tableDescriptor.token = token
-        return StatementData(StatementType.DROP_TABLE, tableDescriptor)
+        val dropTable = DropTable(tableId)
+        dropTable.ifExists = ctx.EXISTS() != null
+        return StatementData(StatementType.DROP_TABLE, dropTable)
     }
 
     override fun visitDropView(ctx: SparkSqlParser.DropViewContext): StatementData {
