@@ -1,10 +1,10 @@
 package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.DescribeTable
 import io.github.melin.superior.common.relational.SchemaDescriptor
 import io.github.melin.superior.common.relational.TableDescriptor
 import io.github.melin.superior.common.relational.TableLineage
-import io.github.melin.superior.common.relational.ddl.table.*
 import io.github.melin.superior.common.relational.view.AlterView
 import io.github.melin.superior.common.relational.view.CreateView
 import io.github.melin.superior.common.relational.view.DropView
@@ -419,9 +419,8 @@ class SparkSqlParserTest {
         val sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            val name = statement.tableName
-            Assert.assertEquals("users", name)
+        if (statement is DescribeTable) {
+            Assert.assertEquals("users", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -433,9 +432,9 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
+        if (statement is DescribeTable) {
             Assert.assertEquals(StatementType.DESC_TABLE, statementData.type)
-            Assert.assertEquals("user", statement.tableName)
+            Assert.assertEquals("user", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -970,8 +969,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         Assert.assertEquals(StatementType.ALTER_TABLE_DROP_PARTS, statementData.type)
         if (statement is DropTablePartition) {
-            val name = statement.tableName
-            Assert.assertEquals("page_view", name)
+            Assert.assertEquals("page_view", statement.tableId.tableName)
             Assert.assertTrue(statement.ifExists)
             Assert.assertEquals(2, statement.partitionSpecs.size)
         } else {
@@ -987,8 +985,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         Assert.assertEquals(StatementType.ALTER_TABLE_DROP_PARTS, statementData.type)
         if (statement is DropTablePartition) {
-            val name = statement.tableName
-            Assert.assertEquals("page_view", name)
+            Assert.assertEquals("page_view", statement.tableId.tableName)
             Assert.assertFalse(statement.ifExists)
             Assert.assertEquals(2, statement.partitionSpecs.size)
         } else {
@@ -1036,9 +1033,8 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            val name = statement.tableName
-            Assert.assertEquals("page_view", name)
+        if (statement is RenameTablePartition) {
+            Assert.assertEquals("page_view", statement.tableId.tableName)
         } else {
             Assert.fail()
         }

@@ -190,14 +190,6 @@ data class MergeIntoTable(
     var targetTable: TableSource
 ): Statement()
 
-data class DropTablePartition(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    var ifExists: Boolean = false,
-    var partitionSpecs: List<String>
-): Statement()
-
 data class AddTablePartition(
     val catalogName: String?,
     val databaseName: String?,
