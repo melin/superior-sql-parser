@@ -22,8 +22,6 @@ object SparkSQLHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
-            DESC_NAMESPACE,
-
             CREATE_TABLE,
             CREATE_TABLE_AS_SELECT,
             CREATE_TABLE_AS_LIKE,
@@ -36,7 +34,6 @@ object SparkSQLHelper {
             ANALYZE_TABLE,
 
             ALTER_TABLE,
-            DESC_TABLE,
             REPAIR_TABLE,
 
             SELECT,
@@ -48,17 +45,7 @@ object SparkSQLHelper {
             CREATE_TEMPORARY_VIEW,
             DROP_VIEW,
 
-            SHOW, //mysql 命令
-            SHOW_COLUMNS,
-            SHOW_PARTITIONS,
-            SHOW_TABLES,
-            SHOW_VIEWS,
-            SHOW_TABLE_EXTENDED,
-            SHOW_TABLE_PROPERTIES,
-            SHOW_CREATE_TABLE,
-
-            SHOW_FUNCTIONS,
-            DESC_FUNCTION,
+            SHOW,
 
             CACHE,
             UNCACHE,

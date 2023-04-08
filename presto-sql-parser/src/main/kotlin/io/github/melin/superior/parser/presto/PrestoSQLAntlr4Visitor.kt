@@ -49,14 +49,6 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitShowCreateTable(ctx: PrestoSqlBaseParser.ShowCreateTableContext): StatementData? {
-        val tableSource = createTableSource(ctx.qualifiedName())
-
-        val tableId = TableId(tableSource.catalogName, tableSource.schemaName, tableSource.tableName)
-        data = StatementData(StatementType.SHOW_CREATE_TABLE, tableId)
-        return data
-    }
-
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = createTableSource(ctx.qualifiedName())

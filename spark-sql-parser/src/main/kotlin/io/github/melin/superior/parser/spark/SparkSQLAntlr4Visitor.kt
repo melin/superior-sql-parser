@@ -56,7 +56,14 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val data = super.visitSingleStatement(ctx)
 
         if (data == null) {
-            throw SQLParserException("不支持的SQL: " + command)
+            val startToken = StringUtils.lowerCase(ctx.getStart().text)
+            if ("show".equals(startToken)) {
+                return StatementData(StatementType.SHOW)
+            } else if ("desc".equals(startToken) || "describe".equals(startToken)) {
+                return StatementData(StatementType.DESC)
+            } else {
+                throw SQLParserException("不支持的SQL: " + command)
+            }
         }
 
         return data
@@ -110,35 +117,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val type = ctx.namespace().text.uppercase()
         val dropNamespace = DropNamespace(schemaId, Namespace.valueOf(type))
         return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
-    }
-
-    override fun visitDescribeNamespace(ctx: SparkSqlParser.DescribeNamespaceContext): StatementData {
-        val schemaId = parseNamespace(ctx.multipartIdentifier())
-        val type = ctx.namespace().text
-        val describeNamespace = DescribeNamespace(schemaId, type)
-        return StatementData(StatementType.DESC_NAMESPACE, describeNamespace)
-    }
-
-    override fun visitShowTables(ctx: SparkSqlParser.ShowTablesContext): StatementData {
-        val showTables = ShowTables()
-        if (ctx.childCount > 2) {
-            val schemaId = parseNamespace(ctx.multipartIdentifier())
-            showTables.namespaceId = schemaId;
-            return StatementData(StatementType.SHOW_TABLES, showTables)
-        } else {
-            return StatementData(StatementType.SHOW_TABLES, showTables)
-        }
-    }
-
-    override fun visitShowViews(ctx: SparkSqlParser.ShowViewsContext): StatementData {
-        val showViews = ShowViews()
-        if (ctx.childCount > 2) {
-            val schemaId = parseNamespace(ctx.multipartIdentifier())
-            showViews.namespaceId = schemaId;
-            return StatementData(StatementType.SHOW_VIEWS, showViews)
-        } else {
-            return StatementData(StatementType.SHOW_VIEWS, showViews)
-        }
     }
 
     //-----------------------------------table-------------------------------------------------
@@ -481,36 +459,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.REFRESH_TABLE, data)
     }
 
-    override fun visitDescribeRelation(ctx: SparkSqlParser.DescribeRelationContext): StatementData {
-        val tableId = parseTableName(ctx.multipartIdentifier())
-        val describeTable = DescribeTable(tableId)
-        return StatementData(StatementType.DESC_TABLE, describeTable)
-    }
-
-    override fun visitShowColumns(ctx: SparkSqlParser.ShowColumnsContext): StatementData {
-        val tableId = parseTableName(ctx.table)
-        val showColumns = ShowColumns(tableId)
-        return StatementData(StatementType.SHOW_COLUMNS, showColumns)
-    }
-
-    override fun visitShowCreateTable(ctx: SparkSqlParser.ShowCreateTableContext): StatementData {
-        val tableId = parseTableName(ctx.multipartIdentifier())
-        val showCreateTable = ShowCreateTable(tableId)
-        return StatementData(StatementType.SHOW_CREATE_TABLE, showCreateTable)
-    }
-
-    override fun visitShowTableExtended(ctx: SparkSqlParser.ShowTableExtendedContext): StatementData {
-        val tableId = parseTableName(ctx.multipartIdentifier())
-        val showTableExtended = ShowTableExtended(tableId)
-        return StatementData(StatementType.SHOW_TABLE_EXTENDED, showTableExtended)
-    }
-
-    override fun visitShowTblProperties(ctx: SparkSqlParser.ShowTblPropertiesContext): StatementData {
-        val tableId = parseTableName(ctx.table)
-        val showTblProperties = ShowTblProperties(tableId)
-        return StatementData(StatementType.SHOW_TABLE_PROPERTIES, showTblProperties)
-    }
-
     override fun visitAnalyze(ctx: SparkSqlParser.AnalyzeContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val analyzeTable = AnalyzeTable(tableId)
@@ -621,12 +569,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
-    override fun visitShowPartitions(ctx: SparkSqlParser.ShowPartitionsContext): StatementData {
-        val tableId = parseTableName(ctx.multipartIdentifier())
-        val showPartitions = ShowPartitions(tableId)
-        return StatementData(StatementType.SHOW_PARTITIONS, showPartitions)
-    }
-
     //-----------------------------------view-------------------------------------------------
 
     override fun visitCreateView(ctx: SparkSqlParser.CreateViewContext): StatementData {
@@ -734,17 +676,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val data = Function(name)
         return StatementData(StatementType.DROP_FUNCTION, data)
     }
-
-    override fun visitDescribeFunction(ctx: SparkSqlParser.DescribeFunctionContext): StatementData {
-        val name = ctx.describeFuncName().text
-        val data = Function(name)
-        return StatementData(StatementType.DESC_FUNCTION, data)
-    }
-
-    override fun visitShowFunctions(ctx: SparkSqlParser.ShowFunctionsContext): StatementData {
-        return StatementData(StatementType.SHOW_FUNCTIONS)
-    }
-
     //-----------------------------------cache-------------------------------------------------
 
     override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext?): StatementData {

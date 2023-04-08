@@ -9,7 +9,6 @@ import java.io.Serializable
 enum class StatementType: Serializable {
     CREATE_NAMESPACE,
     DROP_NAMESPACE,
-    DESC_NAMESPACE,
 
     CREATE_TABLE,
     CREATE_TABLE_AS_SELECT,
@@ -24,7 +23,6 @@ enum class StatementType: Serializable {
 
     ALTER_TABLE,
 
-    DESC_TABLE,
     REPAIR_TABLE,
 
     //DML
@@ -44,17 +42,8 @@ enum class StatementType: Serializable {
     CREATE_FUNCTION,
     DROP_FUNCTION,
 
-    SHOW, //mysql 命令
-    SHOW_COLUMNS,
-    SHOW_PARTITIONS,
-    SHOW_TABLES,
-    SHOW_VIEWS,
-    SHOW_TABLE_EXTENDED,
-    SHOW_TABLE_PROPERTIES,
-    SHOW_CREATE_TABLE,
-
-    SHOW_FUNCTIONS,
-    DESC_FUNCTION,
+    SHOW,
+    DESC,
 
     CACHE,
     UNCACHE,

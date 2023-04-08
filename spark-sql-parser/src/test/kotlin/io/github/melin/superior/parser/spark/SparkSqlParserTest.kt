@@ -63,20 +63,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun descDatabaseTest() {
-        val sql = "desc database bigdata"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is DescribeNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
-            Assert.assertEquals("database", statement.type)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun createTableTest() {
         val sql = """CREATE TABLE if not exists test.users (
                 name         STRING COMMENT 'Employee name',
@@ -418,26 +404,7 @@ class SparkSqlParserTest {
     fun descTableTest0() {
         val sql = "desc table users"
         val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is DescribeTable) {
-            Assert.assertEquals("users", statement.tableId.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun descPartitionTest() {
-        val sql = "DESC formatted user partition(ds=20190708)"
-
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is DescribeTable) {
-            Assert.assertEquals(StatementType.DESC_TABLE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
-        } else {
-            Assert.fail()
-        }
+        Assert.assertEquals(StatementType.DESC, statementData.type)
     }
 
     @Test
@@ -1117,19 +1084,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun descFunctionTest() {
-        val sql = "desc function random_int"
-        val statementData = SparkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if (statement is io.github.melin.superior.common.Function) {
-            val name = statement.name
-            Assert.assertEquals("random_int", name)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun queryTest0() {
         val sql = "select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101"
         val statementData = SparkSQLHelper.getStatementData(sql)
@@ -1431,60 +1385,6 @@ class SparkSqlParserTest {
             Assert.assertEquals("sample_07", statement.inputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outpuTables.size)
             Assert.assertEquals("toodey3", statement.outpuTables.get(2).tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun showTablesTest() {
-        var sql = "show Tables"
-        var statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
-
-        sql = "show Tables in bigdata"
-        statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
-        var statement = statementData.statement
-        if (statement is ShowTables) {
-            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
-        } else {
-            Assert.fail()
-        }
-
-        sql = "show Tables from bigdata"
-        statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_TABLES, statementData.type)
-        statement = statementData.statement
-        if (statement is ShowTables) {
-            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun showViewsTest() {
-        var sql = "show views"
-        var statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
-
-        sql = "show views in bigdata"
-        statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
-        var statement = statementData.statement
-        if (statement is ShowViews) {
-            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
-        } else {
-            Assert.fail()
-        }
-
-        sql = "show views from bigdata"
-        statementData = SparkSQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SHOW_VIEWS, statementData.type)
-        statement = statementData.statement
-        if (statement is ShowViews) {
-            Assert.assertEquals("bigdata", statement.namespaceId?.schemaName)
         } else {
             Assert.fail()
         }

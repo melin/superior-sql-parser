@@ -20,7 +20,7 @@ object PrestoSQLHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
-            StatementType.SHOW_CREATE_TABLE -> true
+            StatementType.SHOW -> true
             StatementType.DROP_TABLE -> true
             StatementType.EXPLAIN -> true
             StatementType.SELECT -> true
