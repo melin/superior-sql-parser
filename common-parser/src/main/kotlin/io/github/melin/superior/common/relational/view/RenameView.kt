@@ -5,4 +5,5 @@ import io.github.melin.superior.common.relational.TableId
 
 data class RenameView(
     val tableId: TableId,
-    val newName: String) : Statement()
+    val newName: String
+) : Statement()

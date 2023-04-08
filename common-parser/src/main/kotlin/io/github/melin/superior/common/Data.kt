@@ -1,6 +1,5 @@
 package io.github.melin.superior.common
 
-import com.github.melin.superior.sql.parser.util.StringUtil.innerFullTableName
 import io.github.melin.superior.common.relational.TableId
 import java.io.Serializable
 
@@ -30,10 +29,6 @@ data class TableSource(
 
 data class CommonToken(val start: Int, val stop: Int)
 
-data class RenameTable(
-    val tableId: TableId,
-    val newName: String) : Statement()
-
 data class CreateTableLike(
     val oldDatabaseName: String?,
     val oldTableName: String,
@@ -55,22 +50,6 @@ data class Column(
     var position: String? = null
     var afterCol: String? = null
 }
-
-data class AlterColumn(
-    val tableId: TableId,
-    val action: AlterColumnAction? = null) : Statement()
-
-data class AlterColumnAction(
-    var columName: String? = null, // 修改列名
-    var newColumName: String? = null, // 修改列名，新列名称
-    var dataType: String? = null,
-    var comment: String? = null,
-    var position: String? = null,
-    var afterCol: String? = null,
-    var setOrDrop: String? = null,
-    var defaultExpression: String? = null,
-    var dropDefault: Boolean = false,
-)
 
 data class Function(
     val name: String,
@@ -190,17 +169,3 @@ data class MergeIntoTable(
     var targetTable: TableSource
 ): Statement()
 
-data class AddTablePartition(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    var ifNotExists: Boolean = false,
-    var partitionSpecs: List<String>
-): Statement()
-
-data class TouchTable(
-    val catalogName: String?,
-    val databaseName: String?,
-    val tableName: String,
-    var partitionSpecs: List<String>
-): Statement()

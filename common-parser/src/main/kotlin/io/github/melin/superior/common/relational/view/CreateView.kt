@@ -2,6 +2,7 @@ package io.github.melin.superior.common.relational.view
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.Statement
+import io.github.melin.superior.common.relational.TableId
 
 data class CreateView(
     val catalogName: String?,
@@ -20,6 +21,8 @@ data class CreateView(
     var properties: Map<String, String> = mapOf()
 
     var functionNames: HashSet<String> = HashSet()
+
+    var inputTables: List<TableId> = listOf()
 
     fun getFullTableName(): String {
         return StringUtil.innerFullTableName(catalogName, schemaName, tableName)

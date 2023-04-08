@@ -6,7 +6,6 @@ import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.Namespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
-import io.github.melin.superior.common.relational.view.AlterView
 import io.github.melin.superior.common.relational.view.CreateView
 import io.github.melin.superior.common.relational.view.DropView
 import io.github.melin.superior.common.relational.table.*
@@ -675,6 +674,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("bigdata.test", statement.functionNames.first())
 
             Assert.assertEquals("select *, bigdata.test(name) from account", statement.querySql)
+            Assert.assertEquals("account", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -711,10 +711,12 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is AlterView) {
-            val name = statement.tableName
-            Assert.assertEquals("v1", name)
-            Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", statement.querySql)
+        if (statement is AlterTable) {
+            Assert.assertEquals("v1", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterViewAction
+            Assert.assertEquals(AlterType.ALTER_VIEW_QUERY, statement.alterType)
+            Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", action.querySql)
+            Assert.assertEquals("t2", action.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -726,9 +728,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is RenameTable) {
-            val name = statement.newName
-            Assert.assertEquals("new_table_name", name)
+        if (statement is AlterTable) {
+            val action = statement.firstAction() as AlterTableAction
+            Assert.assertEquals(AlterType.RENAME_TABLE, statement.alterType)
+            Assert.assertEquals("new_table_name", action.newTableName)
         } else {
             Assert.fail()
         }
@@ -740,9 +743,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_TOUCH, statementData.type)
-        if (statement is TouchTable) {
-            Assert.assertEquals("table_name", statement.tableName)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
+            Assert.assertEquals("table_name", statement.tableId.tableName)
+            Assert.assertEquals(AlterType.TOUCH_TABLE, statement.alterType)
         } else {
             Assert.fail()
         }
@@ -754,10 +758,12 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_TOUCH, statementData.type)
-        if (statement is TouchTable) {
-            Assert.assertEquals("table_name", statement.tableName)
-            Assert.assertEquals(2, statement.partitionSpecs.size)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
+            Assert.assertEquals("table_name", statement.tableId.tableName)
+            Assert.assertEquals(AlterType.TOUCH_TABLE, statement.alterType)
+            val action = statement.firstAction() as AlterTableAction
+            Assert.assertEquals(2, action.partitions?.size)
         } else {
             Assert.fail()
         }
@@ -769,10 +775,11 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_PROPERTIES, statementData.type)
-            val name = statement.tableName
-            Assert.assertEquals("sale_detail", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sale_detail", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterTableAction
+            Assert.assertEquals(2, action.properties?.size)
         } else {
             Assert.fail()
         }
@@ -784,11 +791,11 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_ADD_COLS, statementData.type)
-            val name = statement.tableName
-            Assert.assertEquals("sale_detail", name)
-            Assert.assertEquals(2, statement.columns?.size)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sale_detail", statement.tableId.tableName)
+            val cols = statement.actions as List<AlterColumnAction>
+            Assert.assertEquals(2, cols.size)
         } else {
             Assert.fail()
         }
@@ -800,11 +807,11 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableDescriptor) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_ADD_COL, statementData.type)
-            val name = statement.tableName
-            Assert.assertEquals("sample", name)
-            Assert.assertEquals(1, statement.columns?.size)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("first", action.position)
         } else {
             Assert.fail()
         }
@@ -816,11 +823,11 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_RENAME_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
-            Assert.assertEquals("payload", statement.action?.newColumName)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("payload", action.newColumName)
         } else {
             Assert.fail()
         }
@@ -831,10 +838,11 @@ class SparkSqlParserTest {
         var sql = "ALTER TABLE db.sample ALTER COLUMN location.lat TYPE double"
         var statementData = SparkSQLHelper.getStatementData(sql)
         var statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("double", action.dataType)
         } else {
             Assert.fail()
         }
@@ -842,10 +850,11 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN id DROP NOT NULL"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("id", action.columName)
         } else {
             Assert.fail()
         }
@@ -853,10 +862,13 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN point.z AFTER y"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("after", action.position)
+            Assert.assertEquals("y", action.afterCol)
         } else {
             Assert.fail()
         }
@@ -864,12 +876,12 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE db.sample ALTER COLUMN id COMMENT 'unique id'"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
-            Assert.assertNull(statement.action?.dataType)
-            Assert.assertEquals("unique id", statement.action?.comment)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("unique id", action.comment)
         } else {
             Assert.fail()
         }
@@ -877,12 +889,13 @@ class SparkSqlParserTest {
         sql = "ALTER TABLE demo CHANGE COLUMN price Type float COMMENT '价格'"
         statementData = SparkSQLHelper.getStatementData(sql)
         statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("demo", name)
-            Assert.assertEquals("float", statement.action?.dataType)
-            Assert.assertEquals("价格", statement.action?.comment)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("demo", statement.tableId.tableName)
+
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("float", action.dataType)
+            Assert.assertEquals("价格", action.comment)
         } else {
             Assert.fail()
         }
@@ -893,14 +906,15 @@ class SparkSqlParserTest {
         val sql = "ALTER TABLE test_user11_dt ALTER COLUMN ds comment 'ddd'"
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_CHANGE_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("test_user11_dt", name)
-            Assert.assertEquals("ds", statement.action?.columName)
-            Assert.assertNull(statement.action?.newColumName)
-            Assert.assertNull(statement.action?.dataType)
-            Assert.assertEquals("ddd", statement.action?.comment)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("test_user11_dt", statement.tableId.tableName)
+
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("ds", action.columName)
+            Assert.assertNull(action.newColumName)
+            Assert.assertNull(action.dataType)
+            Assert.assertEquals("ddd", action.comment)
         } else {
             Assert.fail()
         }
@@ -912,10 +926,12 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is AlterColumn) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_DROP_COL, statementData.type)
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sample", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("sample", statement.tableId.tableName)
+
+            val action = statement.firstAction() as DropColumnAction
+            Assert.assertEquals("id", action.columNames.get(0))
         } else {
             Assert.fail()
         }
@@ -927,10 +943,11 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is TableSource) {
-            Assert.assertEquals(StatementType.ALTER_TABLE_SET_LOCATION, statementData.type)
-            val name = statement.tableName
-            Assert.assertEquals("demo", name)
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals("demo", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterTableAction
+            Assert.assertEquals("/user/hive", action.location)
         } else {
             Assert.fail()
         }
@@ -942,10 +959,12 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is AlterColumn) {
-            val name = statement.tableId.tableName
-            Assert.assertEquals("sale_detail", name)
-            Assert.assertEquals("sdsd", statement.action?.comment)
+        if (statement is AlterTable) {
+            Assert.assertEquals("sale_detail", statement.tableId.tableName)
+
+            val action = statement.firstAction() as AlterColumnAction
+            Assert.assertEquals("new_col_name", action.newColumName)
+            Assert.assertEquals("sdsd", action.comment)
         } else {
             Assert.fail()
         }
@@ -954,9 +973,11 @@ class SparkSqlParserTest {
 
         val statementData1 = SparkSQLHelper.getStatementData(sql1)
         val statement1 = statementData1.statement
-        if (statement1 is AlterColumn) {
-            val name = statement1.tableId.tableName
-            Assert.assertEquals("test_users_dt", name)
+        if (statement1 is AlterTable) {
+            Assert.assertEquals("test_users_dt", statement1.tableId.tableName)
+
+            val action = statement1.firstAction() as AlterColumnAction
+            Assert.assertEquals("age3", action.newColumName)
         } else {
             Assert.fail()
         }
@@ -968,11 +989,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_DROP_PARTS, statementData.type)
-        if (statement is DropTablePartition) {
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
             Assert.assertEquals("page_view", statement.tableId.tableName)
-            Assert.assertTrue(statement.ifExists)
-            Assert.assertEquals(2, statement.partitionSpecs.size)
+            val action = statement.firstAction() as DropPartitionAction
+            Assert.assertTrue(action.ifExists)
+            Assert.assertEquals(AlterType.DROP_PARTITION, statement.alterType)
+            Assert.assertEquals(2, action.partitions.size)
         } else {
             Assert.fail()
         }
@@ -984,11 +1007,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_DROP_PARTS, statementData.type)
-        if (statement is DropTablePartition) {
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
             Assert.assertEquals("page_view", statement.tableId.tableName)
-            Assert.assertFalse(statement.ifExists)
-            Assert.assertEquals(2, statement.partitionSpecs.size)
+            val action = statement.firstAction() as DropPartitionAction
+            Assert.assertFalse(action.ifExists)
+            Assert.assertEquals(AlterType.DROP_PARTITION, statement.alterType)
+            Assert.assertEquals(2, action.partitions.size)
         } else {
             Assert.fail()
         }
@@ -1000,12 +1025,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_ADD_PARTS, statementData.type)
-        if (statement is AddTablePartition) {
-            val name = statement.tableName
-            Assert.assertFalse(statement.ifNotExists)
-            Assert.assertEquals("page_view", name)
-            Assert.assertEquals(1, statement.partitionSpecs.size)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
+            Assert.assertEquals("page_view", statement.tableId.tableName)
+            val action = statement.firstAction() as AddPartitionAction
+            Assert.assertFalse(action.ifNotExists)
+            Assert.assertEquals(AlterType.ADD_PARTITION, statement.alterType)
+            Assert.assertEquals(1, action.partitions.size)
         } else {
             Assert.fail()
         }
@@ -1017,12 +1043,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        Assert.assertEquals(StatementType.ALTER_TABLE_ADD_PARTS, statementData.type)
-        if (statement is AddTablePartition) {
-            val name = statement.tableName
-            Assert.assertEquals("page_view", name)
-            Assert.assertTrue(statement.ifNotExists)
-            Assert.assertEquals(1, statement.partitionSpecs.size)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
+            Assert.assertEquals("page_view", statement.tableId.tableName)
+            val action = statement.firstAction() as AddPartitionAction
+            Assert.assertTrue(action.ifNotExists)
+            Assert.assertEquals(AlterType.ADD_PARTITION, statement.alterType)
+            Assert.assertEquals(1, action.partitions.size)
         } else {
             Assert.fail()
         }
@@ -1034,8 +1061,13 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is RenameTablePartition) {
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        if (statement is AlterTable) {
             Assert.assertEquals("page_view", statement.tableId.tableName)
+            val action = statement.firstAction() as RenamePartitionAction
+            Assert.assertEquals(AlterType.RENAME_PARTITION, statement.alterType)
+            Assert.assertEquals(1, action.fromPartitionVals.size)
+            Assert.assertEquals(1, action.toPartitionVals.size)
         } else {
             Assert.fail()
         }

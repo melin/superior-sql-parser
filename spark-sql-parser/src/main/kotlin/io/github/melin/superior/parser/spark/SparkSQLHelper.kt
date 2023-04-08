@@ -35,18 +35,9 @@ object SparkSQLHelper {
             EXPORT_TABLE,
             ANALYZE_TABLE,
 
-            ALTER_TABLE_RENAME,
-            ALTER_TABLE_ADD_COLS,
-            ALTER_TABLE_PROPERTIES,
-            ALTER_TABLE_RENAME_COL,
-            ALTER_TABLE_CHANGE_COL,
-            ALTER_TABLE_DROP_PARTS,
-            ALTER_TABLE_ADD_PARTS,
-            ALTER_TABLE_RENAME_PART,
-            ALTER_TABLE_SET_LOCATION,
+            ALTER_TABLE,
             DESC_TABLE,
             REPAIR_TABLE,
-            ALTER_TABLE_TOUCH,
 
             SELECT,
             INSERT_VALUES,
@@ -56,9 +47,6 @@ object SparkSQLHelper {
             CREATE_VIEW,
             CREATE_TEMPORARY_VIEW,
             DROP_VIEW,
-            ALTER_VIEW_QUERY,
-            ALTER_VIEW_RENAME,
-            ALTER_VIEW_PROPERTIES,
 
             SHOW, //mysql 命令
             SHOW_COLUMNS,
