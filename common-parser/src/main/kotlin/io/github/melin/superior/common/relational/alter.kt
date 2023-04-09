@@ -7,15 +7,21 @@ import io.github.melin.superior.common.TableType
 import java.util.ArrayList
 
 data class AlterTable(
-    val tableId: TableId,
     val alterType: AlterType,
-    val tableType: TableType = TableType.TABLE
+    val tableId: TableId,
+    private val action: AlterAction?,
+    val tableType: TableType = TableType.TABLE,
 ): Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.ALTER
     val actions: ArrayList<AlterAction> = ArrayList()
 
-    fun addAction(action: AlterAction) {
-        actions.add(action)
+    init {
+        if (action != null) {
+            actions.add(action)
+        }
     }
+
+    constructor(alterType: AlterType, tableId: TableId): this(alterType, tableId, null)
 
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)

@@ -1,8 +1,6 @@
 package io.github.melin.superior.common.relational
 
-import io.github.melin.superior.common.Statement
-
-data class TableId(val catalogName: String?, val schemaName: String?, val tableName: String, val metaType: String?): Statement() {
+data class TableId(val catalogName: String?, val schemaName: String?, val tableName: String, val metaType: String?) {
     constructor(catalogName: String?, schemaName: String?, tableName: String):
             this(catalogName, schemaName, tableName, null)
 

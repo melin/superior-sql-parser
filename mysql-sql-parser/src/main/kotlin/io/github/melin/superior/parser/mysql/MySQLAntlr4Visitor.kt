@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
+import io.github.melin.superior.common.relational.table.Column
 import io.github.melin.superior.common.relational.table.CreateTable
 import io.github.melin.superior.common.relational.table.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
@@ -123,8 +124,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val newTableId = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
         val action = AlterTableAction(newTableId.tableName)
-        val alterTable = AlterTable(tableId, AlterType.RENAME_TABLE)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(AlterType.RENAME_TABLE, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -157,8 +157,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             val action = AlterColumnAction(columnName, dataType, comment)
             action.newColumName = newColumnName
 
-            val alterTable = AlterTable(tableId, AlterType.ALTER_COLUMN)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
             val columnName = StringUtil.cleanBackQuote(statement.uid().get(0).text)
@@ -171,42 +170,35 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             }
 
             val action = AlterColumnAction(columnName, dataType, comment)
-            val alterTable = AlterTable(tableId, AlterType.ADD_COLUMN)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ADD_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
             val columnName = StringUtil.cleanBackQuote(statement.uid().text)
             val action = DropColumnAction(listOf(columnName))
-            val alterTable = AlterTable(tableId, AlterType.DROP_COLUMN)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.DROP_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {
             val columnName = StringUtil.cleanBackQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
 
             val action = AlterColumnAction(columnName, dataType)
-            val alterTable = AlterTable(tableId, AlterType.ALTER_COLUMN)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddIndexContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(tableId, AlterType.ADD_INDEX)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByDropIndexContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(tableId, AlterType.DROP_INDEX)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(tableId, AlterType.ADD_PRIMARY_KEY)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ADD_PRIMARY_KEY, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(tableId, AlterType.ADD_UNIQUE_KEY)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         }
 

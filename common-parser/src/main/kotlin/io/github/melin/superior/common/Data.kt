@@ -6,56 +6,26 @@ import java.io.Serializable
 @Target(AnnotationTarget.CLASS)
 annotation class DefaultConstructor
 
-data class StatementData(val type: StatementType,
-                         val statement: Statement?,
-                         var querySql: String? = null,
-                         var values: ArrayList<List<String>>? = null): Serializable {
+data class StatementData(
+    val type: StatementType,
+     val statement: Statement?,
+     var querySql: String? = null,
+     var values: ArrayList<List<String>>? = null
+): Serializable {
     constructor(type: StatementType): this(type, null)
 }
 
-abstract class Statement: Serializable
-
-@DefaultConstructor
-data class TableSource(
-    val catalogName: String?,
-    var databaseName: String?,
-    var tableName: String
-): Statement() {
-    constructor(databaseName: String?, tableName: String):
-            this(null, databaseName, tableName)
-
-    val tokens: java.util.ArrayList<CommonToken> = ArrayList()
-}
-
-data class CommonToken(val start: Int, val stop: Int)
-
-data class CreateTableLike(
-    val oldDatabaseName: String?,
-    val oldTableName: String,
-    val newDatabaseName: String?,
-    val newTableName: String,
-    var ifNotExists: Boolean = false,
-    var external: Boolean = false,
-    var temporary: Boolean = false) : Statement()
-
-data class Column(
-    val name: String,
-    val type: String? = null,
-    val comment: String? = null,
-    val nullable: Boolean = false) : Statement() {
-
-    var defaultExpression: String? = null // 默认值表达式
-    var expression: String? = null // 计算表达式
-    var isPk: Boolean = false
-    var position: String? = null
-    var afterCol: String? = null
+abstract class Statement: Serializable {
+    abstract val privilegeType: PrivilegeType
 }
 
 data class Function(
     val name: String,
     var temporary: Boolean = false,
     val className: String?,
-    val file: String?) : Statement() {
+    val file: String?
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.CREATE
     constructor(name: String): this(name,  false, null, null)
 }
 
@@ -63,7 +33,10 @@ data class MergeData(
     val catalogName: String?,
     val databaseName: String?,
     val tableName: String,
-    val partitionVals: List<String>?) : Statement()
+    val partitionVals: List<String>?
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
+}
 
 data class DataTunnelExpr(
     val srcType: String,
@@ -71,7 +44,9 @@ data class DataTunnelExpr(
     val transformSql: String?,
     val distType: String,
     var distOptions: Map<String, String>,
-    var cte: Boolean = false) : Statement() {
+    var cte: Boolean = false
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
 
     var inputTables: java.util.ArrayList<TableId>? = null
     var cteTempTables: ArrayList<String>? = null
@@ -84,7 +59,9 @@ data class SyncSchemaExpr(
     val sourceCatalog: String?,
     val sourceSchema: String,
     val owner: String?
-) : Statement()
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 data class SyncTableExpr(
     val targetCatalog: String?,
@@ -94,13 +71,17 @@ data class SyncTableExpr(
     val sourceSchema: String?,
     val sourceTable: String,
     val owner: String?
-) : Statement()
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 data class CallExpr(
     val catalogName: String?,
     val namespace: String?,
     val procedureName: String
-) : Statement()
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 data class LoadData(
     val catalogName: String?,
@@ -108,7 +89,10 @@ data class LoadData(
     val tableName: String,
     val loadMode: String? = null,
     val resourceName: String? = null,
-    val partitionVals: List<String>? = null) : Statement()
+    val partitionVals: List<String>? = null
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
+}
 
 data class ExportData(
     val catalogName: String?,
@@ -117,38 +101,56 @@ data class ExportData(
     val cte: Boolean = false,
     var inputTables: java.util.ArrayList<TableId> = ArrayList(),
     var cteTempTables: ArrayList<String>? = null,
-    var functionNames: HashSet<String>? = null) : Statement()
+    var functionNames: HashSet<String>? = null
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.READ
+}
 
 data class RefreshData(
     val catalogName: String?,
     val databaseName: String?,
-    val tableName: String) : Statement()
+    val tableName: String
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
-data class SetData(val key: String,
-                   val value: String?) : Statement()
+data class SetData(
+    val key: String,
+    val value: String?
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
-data class UnSetData(val key: String) : Statement()
+data class UnSetData(
+    val key: String
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 @DefaultConstructor
 data class StreamTable(
     var tableName: String,
     var columns: List<StreamColumn>,
     var properties: Map<String, String>
-) : Statement()
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 data class StreamColumn(
     val name: String,
     val type: String? = null,
     val comment: String? = null,
     val jsonPath: String? = null,
-    val pattern: String? = null) : Statement()
+    val pattern: String? = null)
 
 @DefaultConstructor
 data class StreamInsertStatement(
     val databaseName: String?,
     val tableName: String,
     var querySql: String? = null
-) : Statement()
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
+}
 
 enum class InsertMode: Serializable {
     INTO, OVERWRITE
@@ -156,16 +158,23 @@ enum class InsertMode: Serializable {
 
 data class DeleteTable(
     val tableId: TableId,
-    val where: String? = null) : Statement() {
+    val where: String? = null
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
 }
 
 data class UpdateTable(
     val tableId: TableId,
     val upset: Map<String, String>? = null,
-    val where: String? = null) : Statement()
+    val where: String? = null
+) : Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
+}
 
 data class MergeIntoTable(
     var sourceTables: java.util.HashSet<TableId> = HashSet(),
-    var targetTable: TableSource
-): Statement()
+    var targetTable: TableId
+): Statement() {
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
+}
 

@@ -303,13 +303,11 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         return if (ctx.VIEW() != null) {
             val action = AlterTableAction(newTableName)
-            val alterTable = AlterTable(tableId, RENAME_TABLE, TableType.VIEW)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         } else {
             val action = AlterTableAction(newTableName)
-            val alterTable = AlterTable(tableId, RENAME_TABLE)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(RENAME_TABLE, tableId, action)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         }
     }
@@ -321,12 +319,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         action.properties = properties
 
         return if (ctx.VIEW() == null) {
-            val alterTable = AlterTable(tableId, SET_TABLE_PROPERTIES, TableType.VIEW)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(SET_TABLE_PROPERTIES, tableId, action, TableType.VIEW)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         } else {
-            val alterTable = AlterTable(tableId, SET_TABLE_PROPERTIES)
-            alterTable.addAction(action)
+            val alterTable = AlterTable(SET_TABLE_PROPERTIES, tableId, action)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         }
     }
@@ -355,7 +351,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                 AlterColumnAction(columnName, dataType, comment, position, afterCol)
             }
 
-        val alterTable = AlterTable(tableId, ADD_COLUMN)
+        val alterTable = AlterTable(ADD_COLUMN, tableId)
         alterTable.addActions(columns)
         return if ("columns" == ctx.getChild(4).text) {
             StatementData(StatementType.ALTER_TABLE, alterTable)
@@ -384,8 +380,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        val alterTable = AlterTable(tableId, ALTER_COLUMN)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(ALTER_COLUMN, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -397,8 +392,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val action = AlterColumnAction(columnName)
         action.newColumName = newColumnName
-        val alterTable = AlterTable(tableId, RENAME_COLUMN)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(RENAME_COLUMN, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -407,28 +401,24 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val action = parseAlterColumnAction(ctx.alterColumnAction())
         action.columName = ctx.column.text
-        val alterTable = AlterTable(tableId, ALTER_COLUMN)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(ALTER_COLUMN, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
     override fun visitTouchTable(ctx: SparkSqlParser.TouchTableContext): StatementData {
         val tableId = parseTableName(ctx.table)
-
-        val alterTable = AlterTable(tableId, TOUCH_TABLE)
         val action = AlterTableAction()
+        val alterTable = AlterTable(TOUCH_TABLE, tableId, action)
         action.partitions = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
-        alterTable.addAction(action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
     override fun visitDropTableColumns(ctx: SparkSqlParser.DropTableColumnsContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val alterTable = AlterTable(tableId, DROP_COLUMN)
 
         val columns = ctx.columns.multipartIdentifier().map { id -> id.text }
         val action = DropColumnAction(columns)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(DROP_COLUMN, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -436,10 +426,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val location = StringUtil.cleanQuote(ctx.locationSpec().stringLit().text)
 
-        val alterTable = AlterTable(tableId, SET_TABLE_LOCATION)
         val action = AlterTableAction()
         action.location = location
-        alterTable.addAction(action)
+        val alterTable = AlterTable(SET_TABLE_LOCATION, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -543,8 +532,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val ifNotExists = ctx.NOT() != null
 
         val action = AddPartitionAction(ifNotExists, partitions)
-        val alterTable = AlterTable(tableId, ADD_PARTITION)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(ADD_PARTITION, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -554,8 +542,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val ifExists = ctx.EXISTS() != null
 
         val action = DropPartitionAction(ifExists, partitions)
-        val alterTable = AlterTable(tableId, DROP_PARTITION)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(DROP_PARTITION, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -564,8 +551,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val fromPartition = parsePartitionSpec(ctx.from)
         val toPartition = parsePartitionSpec(ctx.to)
         val action = RenamePartitionAction(fromPartition, toPartition)
-        val alterTable = AlterTable(tableId, RENAME_PARTITION)
-        alterTable.addAction(action)
+        val alterTable = AlterTable(RENAME_PARTITION, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -578,7 +564,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             comment = StringUtil.cleanQuote(comment)
         }
 
-        val (catalogName, databaseName, tableName) = parseTableName(ctx.multipartIdentifier())
+        val tableId = parseTableName(ctx.multipartIdentifier())
         val ifNotExists = ctx.NOT() != null
 
         var querySql = ""
@@ -590,7 +576,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
-        val createView = CreateView(catalogName, databaseName, tableName, querySql, comment, ifNotExists)
+        val createView = CreateView(tableId, querySql, comment, ifNotExists)
         createView.functionNames = tableLineage.functionNames
         if (ctx.REPLACE() != null) {
             createView.replace = true
@@ -620,7 +606,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         currentOptType = StatementType.CREATE_VIEW
 
-        val createView = CreateView(null, databaseName, tableName, querySql)
+        val tableId = TableId(null, databaseName, tableName)
+        val createView = CreateView(tableId, querySql)
         if (ctx.REPLACE() != null) {
             createView.replace = true
         }
@@ -648,8 +635,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         visitQuery(ctx.query())
 
         val action = AlterViewAction(querySql, tableLineage.inputTables)
-        val alterView = AlterTable(tableId, ALTER_VIEW_QUERY)
-        alterView.addAction(action)
+        val alterView = AlterTable(ALTER_VIEW_QUERY, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterView)
     }
 
@@ -904,11 +890,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): StatementData {
         currentOptType = StatementType.MERGE_INTO_TABLE
 
-        val (catalogName, targetDatabase, targetTableName) = parseTableName(ctx.target)
-        val targetTable = TableSource(catalogName, targetDatabase, targetTableName)
-        val token = CommonToken(ctx.start.startIndex, ctx.stop.stopIndex)
-        targetTable.tokens.add(token)
-
+        val targetTable = parseTableName(ctx.target)
         val deltaMerge = MergeIntoTable(targetTable = targetTable)
 
         if (ctx.source != null) {

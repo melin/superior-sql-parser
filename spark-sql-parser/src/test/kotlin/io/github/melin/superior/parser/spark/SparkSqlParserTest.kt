@@ -612,9 +612,8 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateView) {
-            val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_VIEW, statementData.type)
-            Assert.assertEquals("view_users", name)
+            Assert.assertEquals("view_users", statement.tableId.tableName)
             Assert.assertEquals("view test", statement.comment)
             Assert.assertEquals("select * from account", statement.querySql)
         } else {
@@ -633,9 +632,8 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateView) {
-            val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_VIEW, statementData.type)
-            Assert.assertEquals("view_users", name)
+            Assert.assertEquals("view_users", statement.tableId.tableName)
             Assert.assertEquals("view test", statement.comment)
             Assert.assertEquals(1, statement.functionNames.size)
             Assert.assertEquals("bigdata.test", statement.functionNames.first())
@@ -663,9 +661,8 @@ class SparkSqlParserTest {
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateView) {
-            val name = statement.tableName
             Assert.assertEquals(StatementType.CREATE_TEMPORARY_VIEW, statementData.type)
-            Assert.assertEquals("jdbcTable", name)
+            Assert.assertEquals("jdbcTable", statement.tableId.tableName)
             Assert.assertEquals("org.apache.spark.sql.jdbc", statement.tableProvider)
         } else {
             Assert.fail()
