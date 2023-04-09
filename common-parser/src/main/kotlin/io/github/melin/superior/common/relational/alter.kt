@@ -38,7 +38,7 @@ data class AlterTableAction(
 ): AlterAction() {
     var location: String? = null
     var properties: Map<String, String>? = null
-    var partitions: List<String>? = null //spark touch
+    var partitionVals: LinkedHashMap<String, String>? = null //spark touch
 }
 
 data class AlterViewAction(
@@ -65,15 +65,15 @@ data class DropColumnAction(
 
 data class AddPartitionAction(
     var ifNotExists: Boolean = false,
-    var partitions: List<List<String>>
+    var partitions: List<LinkedHashMap<String, String>>
 ): AlterAction()
 
 data class DropPartitionAction(
     var ifExists: Boolean = false,
-    var partitions: List<List<String>>
+    var partitions: List<LinkedHashMap<String, String>>
 ): AlterAction()
 
 data class RenamePartitionAction(
-    var fromPartitionVals: List<String>,
-    var toPartitionVals: List<String>
+    var fromPartitionVals: LinkedHashMap<String, String>,
+    var toPartitionVals: LinkedHashMap<String, String>
 ): AlterAction()

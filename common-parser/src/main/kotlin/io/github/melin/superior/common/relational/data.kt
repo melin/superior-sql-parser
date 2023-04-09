@@ -9,9 +9,7 @@ annotation class DefaultConstructor
 
 data class StatementData(
     val type: StatementType,
-    val statement: Statement?,
-    var querySql: String? = null,
-    var values: ArrayList<List<String>>? = null
+    val statement: Statement?
 ): Serializable {
     constructor(type: StatementType): this(type, null)
 }
@@ -141,10 +139,6 @@ data class StreamInsertStatement(
     var querySql: String? = null
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
-}
-
-enum class InsertMode: Serializable {
-    INTO, OVERWRITE
 }
 
 data class DeleteTable(

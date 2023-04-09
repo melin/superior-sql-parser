@@ -4,6 +4,8 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import io.github.melin.superior.common.relational.function.CreateFunction
 import io.github.melin.superior.common.relational.function.DropFunction
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
@@ -18,9 +20,11 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnAc
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateOrReplaceTableColTypeListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateTableClausesContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.InsertIntoContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PartitionSpecContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PropertyListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.QueryContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.SingleInsertQueryContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.TableProviderContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
@@ -41,11 +45,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     private var multiInsertToken: String? = null
     private var limit: Int? = null
     private var command: String? = null
-    private var insertMode: InsertMode = InsertMode.OVERWRITE
-    private var querySql: String? = null
-    private var values: ArrayList<List<String>> = ArrayList()
-    private var singleValues: ArrayList<List<String>> = ArrayList()
-    private var partitions: LinkedHashMap<String, String> = LinkedHashMap()
+    private var rows: ArrayList<List<String>> = ArrayList()
 
     private var insertSql: Boolean = false;
     private var isCTE: Boolean = false;
@@ -242,7 +242,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             super.visitQuery(query)
             createTable.tableLineage = tableLineage
             createTable.partitionColumnNames = partitionColumnNames
-            return StatementData(currentOptType, createTable, querySql)
+            return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
             val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
@@ -413,7 +413,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val tableId = parseTableName(ctx.table)
         val action = AlterTableAction()
         val alterTable = AlterTable(TOUCH_TABLE, tableId, action)
-        action.partitions = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
+        action.partitionVals = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
@@ -773,86 +773,44 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitDmlStatement(ctx: SparkSqlParser.DmlStatementContext): StatementData? {
-        val node = ctx.getChild(0)
-        if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
+        val node = if (ctx.ctes() != null) {
             isCTE = true
+            currentOptType = StatementType.INSERT_SELECT
+            super.visitCtes(ctx.ctes())
+            ctx.getChild(1)
+        } else {
+            ctx.getChild(0)
+        }
 
-            val childNode = ctx.getChild(1)
-            if (childNode is SparkSqlParser.SingleInsertQueryContext) {
-                if (StringUtils.equalsIgnoreCase("insert", childNode.start.text)) {
-                    insertSql = true
-                    super.visitDmlStatement(ctx)
+        if (node is SingleInsertQueryContext) {
+            currentOptType = StatementType.INSERT_SELECT
+            insertSql = true
+            super.visitQuery(node.query())
+            val singleInsertStmt = parseInsertInto(node.insertInto())
 
-                    val tableContext = childNode.getChild(0)
-                    val multipartIdentifier: SparkSqlParser.MultipartIdentifierContext = if (tableContext is SparkSqlParser.InsertIntoTableContext) {
-                        tableContext.multipartIdentifier()
-                    } else {
-                        (tableContext as SparkSqlParser.InsertOverwriteTableContext).multipartIdentifier()
-                    }
-
-                    val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-                    val table = TableId(catalogName, databaseName, tableName)
-                    tableLineage.outpuTables.add(table)
-                    tableLineage.partitions = partitions
-
-                    if (StringUtils.endsWithIgnoreCase("into", tableContext.getChild(1).text)) {
-                        insertMode = InsertMode.INTO
-                    }
-                    tableLineage.insertMode = insertMode
-
-                    tableLineage.cteTempTables.forEach { name ->
-                        for ((index, table) in tableLineage.inputTables.withIndex()) {
-                            if (table.schemaName.isNullOrBlank() && name == table.tableName) {
-                                tableLineage.inputTables.removeAt(index)
-                                break
-                            }
-                        }
-                    }
-
-                    for ((index, table) in tableLineage.inputTables.withIndex()) {
-                        if (databaseName == table.schemaName && tableName == table.tableName) {
-                            tableLineage.inputTables.removeAt(index)
-                            break
-                        }
-                    }
-
-                    if (currentOptType == StatementType.INSERT_SELECT) {
-                        return StatementData(StatementType.INSERT_SELECT, tableLineage, querySql = querySql)
+            tableLineage.cteTempTables.forEach { name ->
+                for ((index, table) in tableLineage.inputTables.withIndex()) {
+                    if (table.schemaName.isNullOrBlank() && name == table.tableName) {
+                        tableLineage.inputTables.removeAt(index)
+                        break
                     }
                 }
             }
-            return null
-        } else if (StringUtils.equalsIgnoreCase("insert", ctx.start.text)) {
-            insertSql = true
-            val tableContext = ctx.dmlStatementNoWith().getChild(0)
-            super.visitDmlStatement(ctx)
-
-            val multipartIdentifier: SparkSqlParser.MultipartIdentifierContext = if (tableContext is SparkSqlParser.InsertIntoTableContext) {
-                tableContext.multipartIdentifier()
-            } else if (tableContext is SparkSqlParser.InsertOverwriteTableContext) {
-                tableContext.multipartIdentifier()
-            } else {
-                throw SQLParserException("不支持SQL");
-            }
-
-            val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-            val table = TableId(catalogName, databaseName, tableName)
-            tableLineage.outpuTables.add(table)
-            tableLineage.partitions = partitions
-
-            if (StringUtils.endsWithIgnoreCase("into", tableContext.getChild(1).text)) {
-                insertMode = InsertMode.INTO
-            }
-            tableLineage.insertMode = insertMode
 
             if (currentOptType == StatementType.INSERT_VALUES) {
-                if (values.size != 0) {
-                    return StatementData(StatementType.INSERT_VALUES, tableLineage, values = values)
-                } else {
-                    return StatementData(StatementType.INSERT_VALUES, tableLineage, values = singleValues)
-                }
+                singleInsertStmt.rows = rows
             } else {
-                return StatementData(StatementType.INSERT_SELECT, tableLineage, querySql = querySql)
+                val querySql = StringUtils.substring(command, node.query().start.startIndex)
+                singleInsertStmt.querySql = querySql
+                singleInsertStmt.inputTables = tableLineage.inputTables
+                singleInsertStmt.functionNames = tableLineage.functionNames
+                singleInsertStmt.cteTempTables = tableLineage.cteTempTables
+            }
+
+            return if (currentOptType == StatementType.INSERT_VALUES) {
+                StatementData(StatementType.INSERT_VALUES, singleInsertStmt)
+            } else {
+                StatementData(StatementType.INSERT_SELECT, singleInsertStmt)
             }
         } else if (StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
             currentOptType = StatementType.MULTI_INSERT
@@ -865,6 +823,36 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return super.visitDmlStatement(ctx)
         } else {
             return null
+        }
+    }
+
+    private fun parseInsertInto(ctx: InsertIntoContext): SingleInsertStmt {
+        return if (ctx is SparkSqlParser.InsertIntoTableContext) {
+            val tableId = parseTableName(ctx.multipartIdentifier())
+            val partitionVals = parsePartitionSpec(ctx.partitionSpec())
+            val stmt = SingleInsertStmt(InsertMode.INTO, tableId)
+            stmt.partitionVals = partitionVals
+            stmt
+        } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
+            val tableId = parseTableName(ctx.multipartIdentifier())
+            val partitionVals = parsePartitionSpec(ctx.partitionSpec())
+            val stmt = SingleInsertStmt(InsertMode.OVERWRITE, tableId)
+            stmt.partitionVals = partitionVals
+            stmt
+        } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
+            val tableId = parseTableName(ctx.multipartIdentifier())
+            SingleInsertStmt(InsertMode.INTO_REPLACE, tableId)
+        } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
+            val path: String? = if (ctx.path != null) ctx.path.STRING().text else null;
+            val properties = parseOptions(ctx.propertyList())
+            val tableProvider = ctx.tableProvider().multipartIdentifier().text
+
+            val stmt = SingleInsertStmt(InsertMode.OVERWRITE_DIR, path)
+            stmt.properties = properties
+            stmt.tableProvider = tableProvider
+            stmt
+        } else {
+            throw SQLParserException("not support InsertMode.OVERWRITE_HIVE_DIR")
         }
     }
 
@@ -926,13 +914,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitFunctionName(ctx)
     }
 
-    override fun visitQueryTermDefault(ctx: SparkSqlParser.QueryTermDefaultContext): StatementData? {
-        if (querySql == null) {
-            querySql = StringUtils.substring(command, ctx.start.startIndex)
-        }
-        return super.visitQueryTermDefault(ctx)
-    }
-
     override fun visitNamedQuery(ctx: SparkSqlParser.NamedQueryContext): StatementData? {
         if (isCTE) {
             tableLineage.cteTempTables.add(ctx.getChild(0).text)
@@ -969,27 +950,16 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitInlineTableDefault1(ctx)
     }
 
-    override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): StatementData? {
+    /*override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): StatementData? {
         val row = ctx.children.filter { it is SparkSqlParser.NamedExpressionContext }.map {
             var text = it.text
             text = StringUtil.cleanQuote(text)
             text
         }.toList()
 
-        values.add(row)
+        rows.add(row)
         return super.visitRowConstructor(ctx)
-    }
-
-    override fun visitPartitionVal(ctx: SparkSqlParser.PartitionValContext): StatementData? {
-        if (ctx.childCount == 1) {
-            partitions.put(ctx.getChild(0).text, "__dynamic__")
-        } else {
-            var value = ctx.getChild(2).text
-            value = StringUtil.cleanQuote(value)
-            partitions.put(ctx.getChild(0).text, value)
-        }
-        return super.visitPartitionVal(ctx)
-    }
+    }*/
 
     override fun visitInlineTable(ctx: SparkSqlParser.InlineTableContext): StatementData? {
         ctx.children.filter { it is SparkSqlParser.ExpressionContext }.forEach {
@@ -997,17 +967,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             text = StringUtils.substringBetween(text, "(", ")").trim()
             text = StringUtil.cleanQuote(text)
             val list = listOf(text)
-            singleValues.add(list)
+            rows.add(list)
         }
-
         return super.visitInlineTable(ctx)
-    }
-
-    override fun visitQueryPrimaryDefault(ctx: SparkSqlParser.QueryPrimaryDefaultContext?): StatementData? {
-        if (insertSql) {
-            currentOptType = StatementType.INSERT_SELECT
-        }
-        return super.visitQueryPrimaryDefault(ctx)
     }
 
     override fun visitFromClause(ctx: SparkSqlParser.FromClauseContext): StatementData? {
@@ -1159,7 +1121,20 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return properties
     }
 
-    private fun parsePartitionSpec(ctx: PartitionSpecContext): List<String> {
-        return ctx.partitionVal().map { it.text }
+    private fun parsePartitionSpec(ctx: PartitionSpecContext?): LinkedHashMap<String, String> {
+        val partitions: LinkedHashMap<String, String> = LinkedHashMap()
+        if (ctx != null) {
+            val count = ctx.partitionVal().size
+            ctx.partitionVal().forEach {
+                if (count == 1) {
+                    partitions.put(it.identifier().text, "__dynamic__")
+                } else {
+                    var value = it.getChild(2).text
+                    value = StringUtil.cleanQuote(value)
+                    partitions.put(it.identifier().text, value)
+                }
+            }
+        }
+        return partitions
     }
 }
