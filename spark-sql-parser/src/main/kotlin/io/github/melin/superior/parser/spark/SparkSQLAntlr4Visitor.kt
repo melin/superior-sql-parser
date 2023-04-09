@@ -147,14 +147,16 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             ctx.query())
     }
 
-    private fun createTable(tableId: TableId,
-                            replace: Boolean,
-                            temporary: Boolean,
-                            external: Boolean,
-                            createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
-                            createTableClauses: CreateTableClausesContext,
-                            tableProvider: TableProviderContext?,
-                            query: QueryContext?): StatementData {
+    private fun createTable(
+        tableId: TableId,
+        replace: Boolean,
+        temporary: Boolean,
+        external: Boolean,
+        createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
+        createTableClauses: CreateTableClausesContext,
+        tableProvider: TableProviderContext?,
+        query: QueryContext?): StatementData {
+
         val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
@@ -166,8 +168,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             columns = createOrReplaceTableColTypeList?.createOrReplaceTableColType()?.map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
-                val (nullable, colComment) = parseColDefinition(it.colDefinitionOption())
-                Column(colName, dataType, colComment, nullable)
+                val (nullable, defaultExpr, colComment) = parseColDefinition(it.colDefinitionOption())
+                Column(colName, dataType, colComment, nullable, defaultExpr)
             }
 
             if (tableProvider != null) {
@@ -1048,9 +1050,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitTypeConstructor(ctx)
     }
 
-    private fun parseColDefinition(colDef: List<ColDefinitionOptionContext>): Pair<Boolean, String?> {
+    private fun parseColDefinition(colDef: List<ColDefinitionOptionContext>): Triple<Boolean, String?, String?> {
         var nullable: Boolean = false
         var comment: String? = null
+        var defaultExpr: String? = null
 
         if (colDef.size > 0) {
             colDef.forEach { col ->
@@ -1061,10 +1064,20 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                 if (col.commentSpec() != null) {
                     comment = StringUtil.cleanQuote(col.commentSpec().stringLit().text);
                 }
+
+                if (col.defaultExpression() != null) {
+                    defaultExpr = StringUtils.substring(command,
+                        col.defaultExpression().start.startIndex,
+                        col.defaultExpression().stop.stopIndex + 1)
+
+                    if (defaultExpr != null) {
+                        defaultExpr = StringUtil.cleanQuote(defaultExpr!!)
+                    }
+                }
             }
         }
 
-        return Pair(nullable, comment)
+        return Triple(nullable, defaultExpr, comment)
     }
 
     private fun parseAlterColumnAction(context: AlterColumnActionContext): AlterColumnAction {
