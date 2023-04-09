@@ -9,7 +9,6 @@ import io.github.melin.superior.parser.starrocks.antlr4.StarRocksLexer
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 
