@@ -8,25 +8,15 @@ annotation class DefaultConstructor
 
 data class StatementData(
     val type: StatementType,
-     val statement: Statement?,
-     var querySql: String? = null,
-     var values: ArrayList<List<String>>? = null
+    val statement: Statement?,
+    var querySql: String? = null,
+    var values: ArrayList<List<String>>? = null
 ): Serializable {
     constructor(type: StatementType): this(type, null)
 }
 
 abstract class Statement: Serializable {
     abstract val privilegeType: PrivilegeType
-}
-
-data class Function(
-    val name: String,
-    var temporary: Boolean = false,
-    val className: String?,
-    val file: String?
-) : Statement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.CREATE
-    constructor(name: String): this(name,  false, null, null)
 }
 
 data class MergeData(

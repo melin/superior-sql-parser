@@ -2,6 +2,8 @@ package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.function.CreateFunction
+import io.github.melin.superior.common.relational.function.DropFunction
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.Namespace
@@ -1039,14 +1041,14 @@ class SparkSqlParserTest {
 
     @Test
     fun createFuncTest() {
-        val sql = "CREATE FUNCTION train_perceptron AS 'hivemall.classifier.PerceptronUDTF' " +
+        val sql = "CREATE FUNCTION test.train_perceptron AS 'hivemall.classifier.PerceptronUDTF' " +
                 "using jar 'hdfs://tdhdfs/user/datacompute/platformtool/resources/132/latest/hivemall-spark.jar'"
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is io.github.melin.superior.common.Function) {
-            val name = statement.name
-            Assert.assertEquals("train_perceptron", name)
+        if (statement is CreateFunction) {
+            Assert.assertEquals("test", statement.schemaName)
+            Assert.assertEquals("train_perceptron", statement.funcName)
         } else {
             Assert.fail()
         }
@@ -1054,13 +1056,13 @@ class SparkSqlParserTest {
 
     @Test
     fun createFuncTest1() {
-        val sql = "CREATE TEMPORARY FUNCTION IF NOT EXISTS stream_json_extract_value AS 'com.dataworker.spark.jobserver.driver.udf.GenericUDTFJsonExtractValue'"
+        val sql = "CREATE TEMPORARY FUNCTION IF NOT EXISTS stream_json_extract_value " +
+                "AS 'com.dataworker.spark.jobserver.driver.udf.GenericUDTFJsonExtractValue'"
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is io.github.melin.superior.common.Function) {
-            val name = statement.name
-            Assert.assertEquals("stream_json_extract_value", name)
+        if (statement is CreateFunction) {
+            Assert.assertEquals("stream_json_extract_value", statement.funcName)
         } else {
             Assert.fail()
         }
@@ -1072,9 +1074,8 @@ class SparkSqlParserTest {
 
         val statementData = SparkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is io.github.melin.superior.common.Function) {
-            val name = statement.name
-            Assert.assertEquals("train_perceptron", name)
+        if (statement is DropFunction) {
+            Assert.assertEquals("train_perceptron", statement.funcName)
         } else {
             Assert.fail()
         }

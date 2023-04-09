@@ -4,6 +4,8 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.function.CreateFunction
+import io.github.melin.superior.common.relational.function.DropFunction
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.Namespace
@@ -642,7 +644,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     //-----------------------------------function-------------------------------------------------
 
     override fun visitCreateFunction(ctx: SparkSqlParser.CreateFunctionContext): StatementData {
-        val name = ctx.multipartIdentifier().parts.get(0).text
+        val functionId = parseTableName(ctx.multipartIdentifier())
         val classNmae = ctx.className.text
 
         var temporary: Boolean = false
@@ -653,13 +655,13 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             file = ctx.resource(0).stringLit().text
         }
 
-        val data = Function(name, temporary, classNmae, file)
+        val data = CreateFunction(functionId.schemaName, functionId.tableName, temporary, classNmae, file)
         return StatementData(StatementType.CREATE_FUNCTION, data)
     }
 
     override fun visitDropFunction(ctx: SparkSqlParser.DropFunctionContext): StatementData {
-        val name = ctx.multipartIdentifier().parts.get(0).text
-        val data = Function(name)
+        val functionId = parseTableName(ctx.multipartIdentifier())
+        val data = DropFunction(functionId.schemaName, functionId.tableName)
         return StatementData(StatementType.DROP_FUNCTION, data)
     }
     //-----------------------------------cache-------------------------------------------------
