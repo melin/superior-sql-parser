@@ -29,7 +29,7 @@ class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
                     }.map { item ->
                         val column = item as SparkStreamSqlParser.ColTypeContext
                         val colName = column.ID().text
-                        var dataType = column.dataType().text
+                        val dataType = column.dataType().text
                         val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
                         val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
                         val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
@@ -58,7 +58,7 @@ class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
         var value = StringUtil.cleanQuote(ctx.valueKeyExpr().text)
         value = StringUtil.cleanQuote(value)
 
-        var data = SetData(key, value)
+        val data = SetData(key, value)
         return StatementData(StatementType.SET, data)
     }
 
@@ -68,7 +68,7 @@ class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
 
         val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
 
-        var table = StreamInsertStatement(dbName, tableName, querySql)
+        val table = StreamInsertStatement(dbName, tableName, querySql)
         return StatementData(StatementType.INSERT_SELECT, table)
     }
 

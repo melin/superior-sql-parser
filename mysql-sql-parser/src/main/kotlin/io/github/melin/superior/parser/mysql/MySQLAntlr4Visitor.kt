@@ -1,4 +1,4 @@
-package com.github.melin.superior.sql.parser.mysql
+package io.github.melin.superior.parser.mysql
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*

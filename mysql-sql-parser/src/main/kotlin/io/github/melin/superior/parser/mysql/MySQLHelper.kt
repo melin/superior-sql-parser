@@ -12,6 +12,7 @@ import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.parser.mysql.MySQLAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 
