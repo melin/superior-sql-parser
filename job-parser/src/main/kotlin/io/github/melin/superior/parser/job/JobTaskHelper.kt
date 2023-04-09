@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.common.StatementData
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.parser.job.antlr4.JobTaskLexer
 import io.github.melin.superior.parser.job.antlr4.JobTaskParser
 

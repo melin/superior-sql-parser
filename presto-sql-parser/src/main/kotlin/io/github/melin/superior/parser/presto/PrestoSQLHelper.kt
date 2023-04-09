@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.presto
 
-import io.github.melin.superior.common.StatementData
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream

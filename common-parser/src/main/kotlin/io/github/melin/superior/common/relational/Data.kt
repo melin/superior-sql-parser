@@ -1,5 +1,7 @@
-package io.github.melin.superior.common
+package io.github.melin.superior.common.relational
 
+import io.github.melin.superior.common.PrivilegeType
+import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import java.io.Serializable
 

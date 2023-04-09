@@ -1,9 +1,9 @@
 package io.github.melin.superior.parser.spark
 
-import io.github.melin.superior.common.SetData
+import io.github.melin.superior.common.relational.SetData
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.StreamInsertStatement
-import io.github.melin.superior.common.StreamTable
+import io.github.melin.superior.common.relational.StreamInsertStatement
+import io.github.melin.superior.common.relational.StreamTable
 import org.junit.Assert
 import org.junit.Test
 

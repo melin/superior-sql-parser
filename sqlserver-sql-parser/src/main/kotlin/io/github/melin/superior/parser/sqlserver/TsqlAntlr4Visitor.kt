@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.sqlserver
 
 import io.github.melin.superior.common.SQLParserException
-import io.github.melin.superior.common.StatementData
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.parser.sqlserver.antlr4.TSqlParser

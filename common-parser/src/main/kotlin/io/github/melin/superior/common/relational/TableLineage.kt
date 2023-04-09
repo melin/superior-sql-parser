@@ -1,9 +1,9 @@
 package io.github.melin.superior.common.relational
 
-import io.github.melin.superior.common.DefaultConstructor
-import io.github.melin.superior.common.InsertMode
+import io.github.melin.superior.common.relational.DefaultConstructor
+import io.github.melin.superior.common.relational.InsertMode
 import io.github.melin.superior.common.PrivilegeType
-import io.github.melin.superior.common.Statement
+import io.github.melin.superior.common.relational.Statement
 
 @DefaultConstructor
 data class TableLineage(

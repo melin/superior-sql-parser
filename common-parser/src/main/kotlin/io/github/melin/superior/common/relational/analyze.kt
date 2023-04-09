@@ -1,7 +1,7 @@
 package io.github.melin.superior.common.relational
 
 import io.github.melin.superior.common.PrivilegeType
-import io.github.melin.superior.common.Statement
+import io.github.melin.superior.common.relational.Statement
 
 data class AnalyzeTable (
     val tableId: TableId

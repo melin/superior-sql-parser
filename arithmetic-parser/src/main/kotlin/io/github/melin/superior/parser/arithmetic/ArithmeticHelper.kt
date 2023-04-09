@@ -1,6 +1,6 @@
 package com.github.melin.superior.sql.parser.arithmetic
 
-import io.github.melin.superior.common.StatementData
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.parser.antlr4.arithmetic.ArithmeticLexer
 import io.github.melin.superior.parser.antlr4.arithmetic.ArithmeticParser

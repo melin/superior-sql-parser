@@ -1,8 +1,8 @@
 package io.github.melin.superior.parser.job
 
-import io.github.melin.superior.common.SetData
+import io.github.melin.superior.common.relational.SetData
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.UnSetData
+import io.github.melin.superior.common.relational.UnSetData
 import org.junit.Assert
 import org.junit.Test
 

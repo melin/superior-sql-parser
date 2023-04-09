@@ -1,7 +1,7 @@
 package io.github.melin.superior.common.relational.namespace
 
 import io.github.melin.superior.common.PrivilegeType
-import io.github.melin.superior.common.Statement
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.NamespaceId
 
 class UseNamespace(

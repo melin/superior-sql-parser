@@ -1,10 +1,10 @@
 package io.github.melin.superior.parser.job
 
 import com.github.melin.superior.sql.parser.util.StringUtil
-import io.github.melin.superior.common.SetData
-import io.github.melin.superior.common.StatementData
+import io.github.melin.superior.common.relational.SetData
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.UnSetData
+import io.github.melin.superior.common.relational.UnSetData
 import io.github.melin.superior.parser.job.antlr4.JobTaskParser
 import io.github.melin.superior.parser.job.antlr4.JobTaskParserBaseVisitor
 import org.apache.commons.lang3.StringUtils

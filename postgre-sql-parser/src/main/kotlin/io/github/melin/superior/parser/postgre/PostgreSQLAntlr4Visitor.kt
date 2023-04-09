@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParser

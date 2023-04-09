@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.flink
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.NamespaceId
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.Column
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser

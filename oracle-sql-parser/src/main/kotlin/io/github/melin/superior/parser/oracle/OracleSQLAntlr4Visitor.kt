@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.parser.oracle.antlr4.PlSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
