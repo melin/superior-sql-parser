@@ -2,11 +2,12 @@ package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
-import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSQLParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -15,8 +16,9 @@ import org.apache.commons.lang3.StringUtils
 class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableLineage();
+
     private var limit: Int? = null
+    private var inputTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
         val statementData = super.visit(tree)
@@ -28,13 +30,17 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         return statementData;
     }
 
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+        return if (currentResult == null) true else false
+    }
+
     override fun visitSelectstmt(ctx: PostgreSQLParser.SelectstmtContext): StatementData {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitSelectstmt(ctx)
 
-            statementData.limit = limit
-            return StatementData(StatementType.SELECT, statementData)
+            val queryStmt = QueryStmt(inputTables, limit)
+            return StatementData(StatementType.SELECT, queryStmt)
         } else {
             throw SQLParserException("not support")
         }
@@ -44,7 +50,7 @@ class PostgreSQLAntlr4Visitor: PostgreSQLParserBaseVisitor<StatementData>() {
         if (currentOptType == StatementType.SELECT) {
             val (_, database, tableName) = parseTableName(ctx)
             val table = TableId(database, tableName)
-            statementData.inputTables.add(table)
+            inputTables.add(table)
             return null
         } else {
             throw SQLParserException("not support")

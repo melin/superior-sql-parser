@@ -4,6 +4,8 @@ import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
@@ -285,7 +287,7 @@ class MySQLParserTest {
 
         val tableData = MySQLHelper.getStatementData(sql)
         val statement = tableData.statement
-        if(statement is TableLineage) {
+        if(statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, tableData.type)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(1, statement.limit)
@@ -300,7 +302,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableLineage) {
+        if(statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
@@ -359,10 +361,10 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableLineage) {
+        if(statement is SingleInsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals("bigdata", statement.outpuTables.get(0).schemaName)
-            Assert.assertEquals("user", statement.outpuTables.get(0).tableName)
+            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
+            Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -592,7 +594,7 @@ class MySQLParserTest {
         val statementData = MySQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SELECT, statementData.type)
         val statement = statementData.statement
-        if (statement is TableLineage) {
+        if (statement is QueryStmt) {
             Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()

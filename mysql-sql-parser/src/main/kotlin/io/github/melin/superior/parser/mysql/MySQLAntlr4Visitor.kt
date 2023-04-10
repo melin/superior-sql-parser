@@ -3,6 +3,9 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import io.github.melin.superior.common.relational.namespace.CreateNamespace
 import io.github.melin.superior.common.relational.namespace.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
@@ -21,9 +24,11 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val tableLineage = TableLineage()
     private var limit: Int? = null
     private val primaryKeys = ArrayList<String>()
+
+    private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
 
     //-----------------------------------database-------------------------------------------------
 
@@ -222,20 +227,24 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             currentOptType = StatementType.SELECT
             super.visitDmlStatement(ctx)
 
-            tableLineage.limit = limit
-            return StatementData(StatementType.SELECT, tableLineage)
+            val queryStmt = QueryStmt(inputTables, limit)
+            return StatementData(StatementType.SELECT, queryStmt)
         } else if (ctx.insertStatement() != null) {
             val statement = ctx.insertStatement()
             val tableId = parseFullId(statement.tableName().fullId())
-            tableLineage.outpuTables.add(tableId)
+            outputTables.add(tableId)
 
             if (statement.insertStatementValue().selectStatement() != null) {
                 currentOptType = StatementType.INSERT_SELECT
                 super.visit(ctx.insertStatement().insertStatementValue().selectStatement())
-                return StatementData(StatementType.INSERT_SELECT, tableLineage)
+
+                val singleInsertStmt = SingleInsertStmt(InsertMode.INTO, tableId)
+                singleInsertStmt.inputTables = inputTables
+                return StatementData(StatementType.INSERT_SELECT, singleInsertStmt)
             } else {
                 currentOptType = StatementType.INSERT_VALUES
-                return StatementData(StatementType.INSERT_VALUES, tableLineage)
+                val singleInsertStmt = SingleInsertStmt(InsertMode.INTO, tableId)
+                return StatementData(StatementType.INSERT_VALUES, singleInsertStmt)
             }
         } else if (ctx.updateStatement() != null) {
             val statement = ctx.updateStatement()
@@ -266,7 +275,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         if(StatementType.SELECT == currentOptType ||
                 StatementType.INSERT_SELECT == currentOptType) {
             val tableId = parseFullId(ctx.fullId())
-            tableLineage.inputTables.add(tableId)
+            inputTables.add(tableId)
         }
         return null
     }

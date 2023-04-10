@@ -19,7 +19,7 @@ data class CreateView(
     var tableProvider: String? = null
     var properties: Map<String, String> = mapOf()
 
-    var functionNames: HashSet<String> = HashSet()
+    var functionNames: HashSet<String> = hashSetOf()
 
     var inputTables: List<TableId> = listOf()
 }

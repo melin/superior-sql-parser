@@ -37,9 +37,9 @@ data class DataTunnelExpr(
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
 
-    var inputTables: java.util.ArrayList<TableId>? = null
-    var cteTempTables: ArrayList<String>? = null
-    var functionNames: HashSet<String>? = null
+    lateinit var inputTables: List<TableId>
+    lateinit var cteTempTables: List<String>
+    lateinit var functionNames: HashSet<String>
 }
 
 data class SyncSchemaExpr(
@@ -88,11 +88,12 @@ data class ExportData(
     val databaseName: String?,
     val tableName: String,
     val cte: Boolean = false,
-    var inputTables: java.util.ArrayList<TableId> = ArrayList(),
-    var cteTempTables: ArrayList<String>? = null,
-    var functionNames: HashSet<String>? = null
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
+
+    lateinit var inputTables: ArrayList<TableId>
+    lateinit var cteTempTables: List<String>
+    lateinit var functionNames: HashSet<String>
 }
 
 data class RefreshData(

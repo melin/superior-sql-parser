@@ -2,13 +2,14 @@ package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
-import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.CreateTableAsSelect
 import io.github.melin.superior.common.relational.table.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -18,17 +19,17 @@ import org.apache.commons.lang3.StringUtils
 class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableLineage();
-    private var limit:Int? = null
     private var command: String? = null
-    private var data: StatementData? = null
+
+    private var limit:Int? = null
+    private var inputTables: ArrayList<TableId> = arrayListOf()
 
     fun setCommand(command: String) {
         this.command = command
     }
 
     override fun visit(tree: ParseTree?): StatementData? {
-        super.visit(tree)
+        val data = super.visit(tree)
 
         if (data == null) {
             throw SQLParserException("不支持的SQL")
@@ -37,14 +38,18 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return data;
     }
 
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+        return if (currentResult == null) true else false
+    }
+
     override fun visitStatementDefault(ctx: PrestoSqlBaseParser.StatementDefaultContext): StatementData? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
 
-            statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
-            data = StatementData(StatementType.SELECT, statementData)
-            return data
+            val limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
+            val queryStmt = QueryStmt(inputTables, limit)
+            return StatementData(StatementType.SELECT, queryStmt)
         } else {
             return null
         }
@@ -62,13 +67,11 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
         createTable.lifeCycle = 7
         createTable.querySql = querySql
-        statementData.limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
+        createTable.inputTables = inputTables
 
         super.visitQuery(ctx.query())
 
-        createTable.tableLineage = statementData
-        data = StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
-        return data;
+        return StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
     }
 
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
@@ -76,13 +79,11 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = ctx.EXISTS() != null
-        data = StatementData(StatementType.DROP_TABLE, dropTable)
-        return data
+        return StatementData(StatementType.DROP_TABLE, dropTable)
     }
 
     override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): StatementData? {
-        data = StatementData(StatementType.EXPLAIN)
-        return data
+        return StatementData(StatementType.EXPLAIN)
     }
 
     override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): StatementData? {
@@ -90,12 +91,11 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
             return null
         }
 
-        if (currentOptType == StatementType.SELECT) {
+        if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
+
             val tableName = createTableSource(ctx)
-            statementData.inputTables.add(tableName)
-        } else if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
-            val tableName = createTableSource(ctx)
-            statementData.inputTables.add(tableName)
+            inputTables.add(tableName)
         }
         return null
     }

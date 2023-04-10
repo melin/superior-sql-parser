@@ -3,7 +3,6 @@ package io.github.melin.superior.common.relational.table
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.TableLineage
 
 data class CreateTable(
     val tableId: TableId,
@@ -18,7 +17,6 @@ data class CreateTable(
     var temporary: Boolean = false,
     var location: String? = null,
     var querySql: String? = null,
-    var tableLineage: TableLineage? = null,
     var partitionColumnNames: List<String>? = null
 ) : Statement() { //是否存在 if exists 关键字
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE

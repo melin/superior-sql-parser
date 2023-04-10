@@ -5,6 +5,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.MultiInsertStmt
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import io.github.melin.superior.common.relational.function.CreateFunction
 import io.github.melin.superior.common.relational.function.DropFunction
@@ -41,9 +43,14 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterType: AlterType = AlterType.UNKOWN
-    private val tableLineage = TableLineage()
     private var multiInsertToken: String? = null
+
     private var limit: Int? = null
+    private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<String> = arrayListOf()
+    private var functionNames: HashSet<String> = hashSetOf()
+
     private var command: String? = null
     private var rows: ArrayList<List<String>> = ArrayList()
 
@@ -59,10 +66,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         if (data == null) {
             val startToken = StringUtils.lowerCase(ctx.getStart().text)
-            if ("show".equals(startToken)) {
-                return StatementData(StatementType.SHOW)
+            return if ("show".equals(startToken)) {
+                StatementData(StatementType.SHOW)
             } else if ("desc".equals(startToken) || "describe".equals(startToken)) {
-                return StatementData(StatementType.DESC)
+                StatementData(StatementType.DESC)
             } else {
                 throw SQLParserException("不支持的SQL: " + command)
             }
@@ -76,24 +83,24 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): NamespaceId {
-        if (ctx.parts.size == 2) {
-            return NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
+        return if (ctx.parts.size == 2) {
+            NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return NamespaceId(null, ctx.parts.get(0).text)
+            NamespaceId(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
     }
 
     fun parseTableName(ctx: SparkSqlParser.MultipartIdentifierContext): TableId {
-        if (ctx.parts.size == 4) {
-            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
+        return if (ctx.parts.size == 4) {
+            TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text, ctx.parts.get(3).text)
         } else if (ctx.parts.size == 3) {
-            return TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+            TableId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
         } else if (ctx.parts.size == 2) {
-            return TableId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
+            TableId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return TableId(null, null, ctx.parts.get(0).text)
+            TableId(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -240,7 +247,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             createTable.querySql = querySql
             super.visitQuery(query)
-            createTable.tableLineage = tableLineage
+            createTable.inputTables = inputTables
+            createTable.functionNames = functionNames
             createTable.partitionColumnNames = partitionColumnNames
             return StatementData(currentOptType, createTable)
         } else {
@@ -495,9 +503,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions, isCTE)
 
-        data.inputTables = tableLineage.inputTables
-        data.cteTempTables = tableLineage.cteTempTables
-        data.functionNames = tableLineage.functionNames
+        data.inputTables = inputTables
+        data.cteTempTables = cteTempTables
+        data.functionNames = functionNames
         return StatementData(StatementType.DATATUNNEL, data)
     }
 
@@ -581,7 +589,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         this.visitQuery(ctx.query())
 
         val createView = CreateView(tableId, querySql, comment, ifNotExists)
-        createView.functionNames = tableLineage.functionNames
+        createView.functionNames = functionNames
+        createView.inputTables = inputTables
         if (ctx.REPLACE() != null) {
             createView.replace = true
         }
@@ -591,7 +600,6 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         if (ctx.GLOBAL() != null) {
             createView.global = true
         }
-        createView.inputTables = tableLineage.inputTables
         return StatementData(StatementType.CREATE_VIEW, createView)
     }
 
@@ -638,7 +646,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         currentAlterType = ALTER_VIEW_QUERY
         visitQuery(ctx.query())
 
-        val action = AlterViewAction(querySql, tableLineage.inputTables)
+        val action = AlterViewAction(querySql, inputTables)
         val alterView = AlterTable(ALTER_VIEW_QUERY, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterView)
     }
@@ -706,18 +714,19 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         super.visitExportTable(ctx)
 
         if (isCTE) {
-            tableLineage.cteTempTables.forEach { tableName ->
-                for ((index, table) in tableLineage.inputTables.withIndex()) {
+            cteTempTables.forEach { tableName ->
+                for ((index, table) in inputTables.withIndex()) {
                     if (table.schemaName.isNullOrBlank() && tableName == table.tableName) {
-                        tableLineage.inputTables.removeAt(index)
+                        inputTables.removeAt(index)
                         break
                     }
                 }
             }
-            data.inputTables.addAll(tableLineage.inputTables)
         }
-        data.functionNames = tableLineage.functionNames
-        data.cteTempTables = tableLineage.cteTempTables
+
+        data.inputTables = inputTables
+        data.functionNames = functionNames
+        data.cteTempTables = cteTempTables
         return StatementData(StatementType.EXPORT_TABLE, data)
     }
 
@@ -742,31 +751,28 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitStatementDefault(ctx: SparkSqlParser.StatementDefaultContext): StatementData? {
         val node = ctx.getChild(0)
-        if (StringUtils.equalsIgnoreCase("with", ctx.start.text)) {
-            isCTE = true
+        if (node is QueryContext) {
+            if (node.ctes() != null) {
+                isCTE = true
+            }
+            currentOptType = StatementType.SELECT
+            super.visitStatementDefault(ctx)
 
-            val childnode = node.getChild(1)
-            if (StringUtils.startsWithIgnoreCase(childnode.text, "select")) {
-                currentOptType = StatementType.SELECT
-                super.visitStatementDefault(ctx)
-                tableLineage.limit = limit
-
-                tableLineage.cteTempTables.forEach { tableName ->
-                    for ((index, table) in tableLineage.inputTables.withIndex()) {
+            if (isCTE) {
+                cteTempTables.forEach { tableName ->
+                    for ((index, table) in inputTables.withIndex()) {
                         if (table.schemaName.isNullOrBlank() && tableName == table.tableName) {
-                            tableLineage.inputTables.removeAt(index)
+                            inputTables.removeAt(index)
                             break
                         }
                     }
                 }
-                return StatementData(StatementType.SELECT, tableLineage)
             }
-        } else if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
-            currentOptType = StatementType.SELECT
-            super.visitStatementDefault(ctx)
 
-            tableLineage.limit = limit
-            return StatementData(StatementType.SELECT, tableLineage)
+            val queryStmt = QueryStmt(inputTables, limit)
+            queryStmt.functionNames = functionNames
+            queryStmt.cteTempTables = cteTempTables
+            return StatementData(StatementType.SELECT, queryStmt)
         }
 
         return null
@@ -788,10 +794,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             super.visitQuery(node.query())
             val singleInsertStmt = parseInsertInto(node.insertInto())
 
-            tableLineage.cteTempTables.forEach { name ->
-                for ((index, table) in tableLineage.inputTables.withIndex()) {
-                    if (table.schemaName.isNullOrBlank() && name == table.tableName) {
-                        tableLineage.inputTables.removeAt(index)
+            cteTempTables.forEach { tableName ->
+                for ((index, table) in inputTables.withIndex()) {
+                    if (table.schemaName.isNullOrBlank() && tableName == table.tableName) {
+                        inputTables.removeAt(index)
                         break
                     }
                 }
@@ -802,9 +808,9 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             } else {
                 val querySql = StringUtils.substring(command, node.query().start.startIndex)
                 singleInsertStmt.querySql = querySql
-                singleInsertStmt.inputTables = tableLineage.inputTables
-                singleInsertStmt.functionNames = tableLineage.functionNames
-                singleInsertStmt.cteTempTables = tableLineage.cteTempTables
+                singleInsertStmt.inputTables = inputTables
+                singleInsertStmt.functionNames = functionNames
+                singleInsertStmt.cteTempTables = cteTempTables
             }
 
             return if (currentOptType == StatementType.INSERT_VALUES) {
@@ -816,7 +822,8 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType = StatementType.MULTI_INSERT
             super.visitDmlStatement(ctx)
 
-            return StatementData(StatementType.MULTI_INSERT, tableLineage)
+            val multiInsertStmt = MultiInsertStmt(inputTables, outputTables, functionNames)
+            return StatementData(StatementType.MULTI_INSERT, multiInsertStmt)
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||
                 node is SparkSqlParser.MergeIntoTableContext) {
@@ -892,7 +899,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val query = ctx.sourceQuery as QueryContext
             super.visitQuery(query)
 
-            deltaMerge.sourceTables.addAll(tableLineage.inputTables)
+            deltaMerge.sourceTables.addAll(inputTables)
         }
         return StatementData(StatementType.MERGE_INTO_TABLE, deltaMerge)
     }
@@ -909,14 +916,14 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             StatementType.EXPORT_TABLE == currentOptType ||
             StatementType.DATATUNNEL == currentOptType) {
 
-            tableLineage.functionNames.add(StringUtils.lowerCase(ctx.qualifiedName().text))
+            functionNames.add(StringUtils.lowerCase(ctx.qualifiedName().text))
         }
         return super.visitFunctionName(ctx)
     }
 
     override fun visitNamedQuery(ctx: SparkSqlParser.NamedQueryContext): StatementData? {
         if (isCTE) {
-            tableLineage.cteTempTables.add(ctx.getChild(0).text)
+            cteTempTables.add(ctx.getChild(0).text)
         }
         return super.visitNamedQuery(ctx)
     }
@@ -933,13 +940,13 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             currentAlterType == ALTER_VIEW_QUERY) {
 
-            val index = tableLineage.inputTables.indexOf(tableId)
+            val index = inputTables.indexOf(tableId)
             if (index == -1) {
-                tableLineage.inputTables.add(tableId)
+                inputTables.add(tableId)
             }
         } else if (currentOptType == StatementType.MULTI_INSERT) {
             if ("from" == multiInsertToken) {
-                tableLineage.inputTables.add(tableId)
+                inputTables.add(tableId)
             }
         }
         return null
@@ -985,13 +992,13 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
             val table = TableId(catalogName, databaseName, tableName)
-            tableLineage.outpuTables.add(table)
+            outputTables.add(table)
         } else if (obj is SparkSqlParser.InsertIntoTableContext) {
             val multipartIdentifier = obj.multipartIdentifier()
             val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
 
             val table = TableId(catalogName, databaseName, tableName)
-            tableLineage.outpuTables.add(table)
+            outputTables.add(table)
         }
         return super.visitMultiInsertQueryBody(ctx)
     }

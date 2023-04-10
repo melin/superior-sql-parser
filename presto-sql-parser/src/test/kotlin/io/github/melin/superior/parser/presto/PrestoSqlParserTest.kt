@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.presto
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.TableLineage
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.CreateTableAsSelect
 import io.github.melin.superior.common.relational.table.DropTable
 import org.junit.Assert
@@ -21,7 +21,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableLineage) {
+        if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
@@ -38,7 +38,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableLineage) {
+        if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -54,7 +54,7 @@ class PrestoSqlParserTest {
 
         val statementData = PrestoSQLHelper.getStatementData(sql)
         val statement = statementData?.statement
-        if (statement is TableLineage) {
+        if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
@@ -74,8 +74,7 @@ class PrestoSqlParserTest {
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals("dd_s_s", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.tableLineage?.inputTables?.size)
-            Assert.assertEquals(1, statement.tableLineage?.limit)
+            Assert.assertEquals(1, statement.inputTables?.size)
         } else {
             Assert.fail()
         }

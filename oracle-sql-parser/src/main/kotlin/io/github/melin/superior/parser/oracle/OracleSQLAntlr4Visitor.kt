@@ -2,7 +2,6 @@ package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
-import io.github.melin.superior.common.relational.TableLineage
 import io.github.melin.superior.parser.oracle.antlr4.PlSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
 
@@ -12,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree
 class OracleSQLAntlr4Visitor: PlSqlParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private val statementData = TableLineage();
     private var limit: Int? = null
 
     override fun visit(tree: ParseTree?): StatementData {

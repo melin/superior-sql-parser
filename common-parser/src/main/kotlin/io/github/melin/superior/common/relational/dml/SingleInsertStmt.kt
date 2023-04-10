@@ -20,7 +20,8 @@ data class SingleInsertStmt(
     var partitionVals: LinkedHashMap<String, String>? = null
     var querySql: String? = null
     var rows: ArrayList<List<String>>? = null
-    var inputTables: List<TableId> = listOf()
-    var functionNames: HashSet<String> = hashSetOf()
-    var cteTempTables: ArrayList<String>? = null
+
+    lateinit var inputTables: ArrayList<TableId>
+    lateinit var functionNames: HashSet<String>
+    lateinit var cteTempTables: List<String>
 }

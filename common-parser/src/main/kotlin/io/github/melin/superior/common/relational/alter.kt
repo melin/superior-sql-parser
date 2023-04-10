@@ -43,7 +43,7 @@ data class AlterTableAction(
 
 data class AlterViewAction(
     var querySql: String, // 修改表，新列名称
-    var inputTables: List<TableId> = listOf(),
+    var inputTables: List<TableId>
 ): AlterAction()
 
 data class AlterColumnAction(
