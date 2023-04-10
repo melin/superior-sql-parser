@@ -270,8 +270,8 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is TableLineage) {
-            val table = statement.inputTables.get(0)
+        if (statement is AnalyzeTable) {
+            val table = statement.tableIds.get(0)
 
             Assert.assertEquals(StatementType.ANALYZE_TABLE, statementData.type)
             Assert.assertEquals("bigdata", table.schemaName)

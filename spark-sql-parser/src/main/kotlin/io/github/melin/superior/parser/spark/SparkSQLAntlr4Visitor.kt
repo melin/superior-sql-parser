@@ -462,7 +462,7 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitAnalyze(ctx: SparkSqlParser.AnalyzeContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val analyzeTable = AnalyzeTable(tableId)
+        val analyzeTable = AnalyzeTable(listOf(tableId))
         return StatementData(StatementType.ANALYZE_TABLE, analyzeTable)
     }
 

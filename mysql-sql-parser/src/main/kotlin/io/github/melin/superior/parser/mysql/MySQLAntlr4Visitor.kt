@@ -217,7 +217,8 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             tables.add(tableId)
         }
 
-        return StatementData(StatementType.ANALYZE_TABLE, TableLineage(tables))
+        val analyze = AnalyzeTable(tables)
+        return StatementData(StatementType.ANALYZE_TABLE, analyze)
     }
 
     //-----------------------------------DML-------------------------------------------------

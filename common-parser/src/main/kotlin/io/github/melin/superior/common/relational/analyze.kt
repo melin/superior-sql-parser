@@ -3,7 +3,7 @@ package io.github.melin.superior.common.relational
 import io.github.melin.superior.common.PrivilegeType
 
 data class AnalyzeTable (
-    val tableId: TableId
+    val tableIds: List<TableId>
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
 }
