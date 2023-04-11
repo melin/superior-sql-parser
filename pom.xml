@@ -13,7 +13,7 @@
         <module>spark-sql-parser</module>
         <module>mysql-sql-parser</module>
         <module>arithmetic-parser</module>
-        <module>job-parser</module>
+        <module>appjar-parser</module>
         <module>postgre-sql-parser</module>
         <module>presto-sql-parser</module>
         <module>sqlserver-sql-parser</module>
