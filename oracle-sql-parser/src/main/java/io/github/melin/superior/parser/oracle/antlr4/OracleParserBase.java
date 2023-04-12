@@ -2,12 +2,12 @@ package io.github.melin.superior.parser.oracle.antlr4;
 
 import org.antlr.v4.runtime.*;
 
-public abstract class PlSqlParserBase extends Parser {
+public abstract class OracleParserBase extends Parser {
     private boolean _isVersion12 = true;
     private boolean _isVersion10 = true;
-    public PlSqlParserBase self;
+    public OracleParserBase self;
 
-    public PlSqlParserBase(TokenStream input) {
+    public OracleParserBase(TokenStream input) {
         super(input);
         self = this;
     }

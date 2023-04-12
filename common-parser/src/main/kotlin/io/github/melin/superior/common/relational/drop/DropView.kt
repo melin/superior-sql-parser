@@ -1,4 +1,4 @@
-package io.github.melin.superior.common.relational.view
+package io.github.melin.superior.common.relational.drop
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.relational.Statement

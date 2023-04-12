@@ -18,19 +18,15 @@
  * limitations under the License.
  */
 
-lexer grammar PlSqlLexer;
+lexer grammar OracleLexer;
 
 options {
-    superClass=PlSqlLexerBase;
-    caseInsensitive = true;
-}
-
-@lexer::postinclude {
-#include <PlSqlLexerBase.h>
+    superClass=OracleLexerBase;
 }
 
 ABORT:                        'ABORT';
 ABS:                          'ABS';
+ABSENT:                       'ABSENT';
 ACCESS:                       'ACCESS';
 ACCESSED:                     'ACCESSED';
 ACCOUNT:                      'ACCOUNT';
@@ -200,6 +196,7 @@ CARDINALITY:                  'CARDINALITY';
 CASCADE:                      'CASCADE';
 CASE:                         'CASE';
 CAST:                         'CAST';
+CASESENSITIVE:                'CASE-SENSITIVE';
 CATEGORY:                     'CATEGORY';
 CDBDEFAULT:                   'CDB$DEFAULT';
 CEIL:                         'CEIL';
@@ -779,6 +776,7 @@ JSON_SERIALIZE:               'JSON_SERIALIZE';
 JSON_TABLE:                   'JSON_TABLE';
 JSON_TEXTCONTAINS2:           'JSON_TEXTCONTAINS2';
 JSON_TEXTCONTAINS:            'JSON_TEXTCONTAINS';
+JSON_TRANSFORM:               'JSON_TRANSFORM';
 JSON_VALUE:                   'JSON_VALUE';
 K_LETTER:                     'K';
 KEEP_DUPLICATES:              'KEEP_DUPLICATES';
@@ -924,6 +922,8 @@ MINVALUE:                     'MINVALUE';
 MIRRORCOLD:                   'MIRRORCOLD';
 MIRRORHOT:                    'MIRRORHOT';
 MIRROR:                       'MIRROR';
+MISSING:                      'MISSING';
+MISMATCH:                     'MISMATCH';
 MLSLABEL:                     'MLSLABEL';
 MODEL_COMPILE_SUBQUERY:       'MODEL_COMPILE_SUBQUERY';
 MODEL_DONTVERIFY_UNIQUENESS:  'MODEL_DONTVERIFY_UNIQUENESS';
@@ -1565,6 +1565,7 @@ SCRUB:                        'SCRUB';
 SD_ALL:                       'SD_ALL';
 SD_INHIBIT:                   'SD_INHIBIT';
 SDO_GEOM_MBR:                 'SDO_GEOM_MBR';
+SDO_GEOMETRY:                 'SDO_GEOMETRY';
 SD_SHOW:                      'SD_SHOW';
 SEARCH:                       'SEARCH';
 SECOND:                       'SECOND';

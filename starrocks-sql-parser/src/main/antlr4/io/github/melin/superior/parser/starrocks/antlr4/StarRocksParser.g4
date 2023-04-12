@@ -581,7 +581,7 @@ adminCancelRepairTableStatement
     ;
 
 adminCheckTabletsStatement
-    : ADMIN CHECK tabletList PROPERTIES LEFT_PARENpropertyRIGHT_PAREN
+    : ADMIN CHECK tabletList PROPERTIES LEFT_PAREN property RIGHT_PAREN
     ;
 
 killStatement

@@ -6,11 +6,11 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
-import io.github.melin.superior.common.relational.namespace.CreateNamespace
-import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.create.CreateNamespace
+import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
-import io.github.melin.superior.common.relational.table.CreateTable
-import io.github.melin.superior.common.relational.table.DropTable
+import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
 import org.junit.Assert
 import org.junit.Test

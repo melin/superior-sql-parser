@@ -4,8 +4,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.table.CreateTableAsSelect
-import io.github.melin.superior.common.relational.table.DropTable
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree

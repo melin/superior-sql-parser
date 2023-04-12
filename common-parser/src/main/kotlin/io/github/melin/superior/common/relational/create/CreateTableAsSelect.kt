@@ -1,8 +1,9 @@
-package io.github.melin.superior.common.relational.table
+package io.github.melin.superior.common.relational.create
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.table.Column
 
 data class CreateTableAsSelect(
     val tableId: TableId,

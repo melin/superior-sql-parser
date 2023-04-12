@@ -3,10 +3,10 @@ package io.github.melin.superior.parser.oracle.antlr4;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 
-public abstract class PlSqlLexerBase extends Lexer {
-    public PlSqlLexerBase self;
+public abstract class OracleLexerBase extends Lexer {
+    public OracleLexerBase self;
 
-    public PlSqlLexerBase(CharStream input) {
+    public OracleLexerBase(CharStream input) {
         super(input);
         self = this;
     }

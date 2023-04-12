@@ -5,8 +5,8 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.parser.oracle.antlr4.PlSqlLexer
-import io.github.melin.superior.parser.oracle.antlr4.PlSqlParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleLexer
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:58 上午
  */
-object OracleSQLHelper {
+object OracleSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
@@ -29,17 +29,17 @@ object OracleSQLHelper {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = PlSqlLexer(charStream)
+        val lexer = OracleLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = PlSqlParser(tokenStream)
+        val parser = OracleParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = OracleSQLAntlr4Visitor()
+        val sqlVisitor = OracleSqlAntlr4Visitor()
 
         try {
             try {

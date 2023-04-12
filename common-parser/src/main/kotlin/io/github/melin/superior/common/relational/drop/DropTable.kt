@@ -1,11 +1,12 @@
-package io.github.melin.superior.common.relational.function
+package io.github.melin.superior.common.relational.drop
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.common.relational.TableId
 
-data class DropFunction(
-    val schemaName: String?,
-    val funcName: String
+data class DropTable(
+    val tableId: TableId,
+    var ifExists: Boolean = false
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.DROP
 }

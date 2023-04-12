@@ -2,18 +2,18 @@ package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.MultiInsertStmt
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
-import io.github.melin.superior.common.relational.function.CreateFunction
-import io.github.melin.superior.common.relational.function.DropFunction
-import io.github.melin.superior.common.relational.namespace.CreateNamespace
-import io.github.melin.superior.common.relational.namespace.DropNamespace
+import io.github.melin.superior.common.relational.drop.DropFunction
+import io.github.melin.superior.common.relational.drop.DropNamespace
+import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.namespace.Namespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
-import io.github.melin.superior.common.relational.view.CreateView
-import io.github.melin.superior.common.relational.view.DropView
+import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.drop.DropView
 import io.github.melin.superior.common.relational.table.*
 import org.junit.Assert
 import org.junit.Test
