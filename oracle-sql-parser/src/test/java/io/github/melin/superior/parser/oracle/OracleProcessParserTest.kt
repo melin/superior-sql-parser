@@ -1,6 +1,8 @@
 package io.github.melin.superior.parser.oracle
 
+import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.create.CreateNamespace
+import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.namespace.Namespace
 import org.junit.Assert
 import org.junit.Test
@@ -15,16 +17,16 @@ class OracleProcessParserTest {
             BEGIN
                 FOR ORD IN C_ORDERS
                     LOOP
-                        dbms_output.put_line( ORD.CUSTOMER_NAME || ': ${'$'}' ||  ORD.PRICE );
+                        dbms_output.put_line(ORD.CUSTOMER_NAME || ORD.PRICE);
                     END LOOP;
             END;
         """.trimIndent()
 
         val statementData = OracleSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is CreateNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
-            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.PROCEDURE, statementData.type)
+            Assert.assertEquals(1, statement.queryStmts.size)
         } else {
             Assert.fail()
         }

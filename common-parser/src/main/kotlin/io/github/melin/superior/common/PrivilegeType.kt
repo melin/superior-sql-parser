@@ -7,5 +7,6 @@ enum class PrivilegeType {
     DROP,
     ADMIN,
     CREATE,
+    PROCEDURE,
     OTHER
 }

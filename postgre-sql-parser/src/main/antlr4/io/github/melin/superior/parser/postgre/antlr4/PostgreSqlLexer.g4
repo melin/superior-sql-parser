@@ -28,13 +28,13 @@ https://github.com/tunnelvisionlabs/antlr4-grammar-postgresql/blob/master/src/co
  *    promote the sale, use or other dealings in this Software without prior
  *    written authorization from Tunnel Vision Laboratories, LLC.
  */
-lexer grammar PostgreSQLLexer;
+lexer grammar PostgreSqlLexer;
 /* Reference:
  * http://www.postgresql.org/docs/9.3/static/sql-syntax-lexical.html
  */
 
 options {
-   superClass = PostgreSQLLexerBase;
+   superClass = PostgreSqlLexerBase;
 }
 
 @ header

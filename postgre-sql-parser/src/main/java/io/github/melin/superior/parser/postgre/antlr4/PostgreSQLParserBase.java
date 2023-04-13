@@ -3,21 +3,21 @@ package io.github.melin.superior.parser.postgre.antlr4;
 import java.util.List;
 import org.antlr.v4.runtime.*;
 
-public abstract class PostgreSQLParserBase extends Parser {
+public abstract class PostgreSqlParserBase extends Parser {
 
-    public PostgreSQLParserBase(TokenStream input) {
+    public PostgreSqlParserBase(TokenStream input) {
         super(input);
     }
 
     ParserRuleContext GetParsedSqlTree(String script, int line) {
-        PostgreSQLParser ph = getPostgreSQLParser(script);
+        PostgreSqlParser ph = getPostgreSQLParser(script);
         ParserRuleContext result = ph.root();
         return result;
     }
 
-    public void ParseRoutineBody(PostgreSQLParser.Createfunc_opt_listContext _localctx) {
+    public void ParseRoutineBody(PostgreSqlParser.Createfunc_opt_listContext _localctx) {
         String lang = null;
-        for (PostgreSQLParser.Createfunc_opt_itemContext coi : _localctx.createfunc_opt_item()) {
+        for (PostgreSqlParser.Createfunc_opt_itemContext coi : _localctx.createfunc_opt_item()) {
             if (coi.LANGUAGE() != null) {
                 if (coi.nonreservedword_or_sconst() != null)
                     if (coi.nonreservedword_or_sconst().nonreservedword() != null)
@@ -31,8 +31,8 @@ public abstract class PostgreSQLParserBase extends Parser {
             }
         }
         if (null == lang) return;
-        PostgreSQLParser.Createfunc_opt_itemContext func_as = null;
-        for (PostgreSQLParser.Createfunc_opt_itemContext a : _localctx.createfunc_opt_item()) {
+        PostgreSqlParser.Createfunc_opt_itemContext func_as = null;
+        for (PostgreSqlParser.Createfunc_opt_itemContext a : _localctx.createfunc_opt_item()) {
             if (a.func_as() != null) {
                 func_as = a;
                 break;
@@ -43,7 +43,7 @@ public abstract class PostgreSQLParserBase extends Parser {
         if (func_as != null) {
             String txt = GetRoutineBodyString(func_as.func_as().sconst(0));
             int line = func_as.func_as().sconst(0).start.getLine();
-            PostgreSQLParser ph = getPostgreSQLParser(txt);
+            PostgreSqlParser ph = getPostgreSQLParser(txt);
             switch (lang) {
                 case "plpgsql":
                     func_as.func_as().Definition = ph.plsqlroot();
@@ -72,8 +72,8 @@ public abstract class PostgreSQLParserBase extends Parser {
         return r.toString();
     }
 
-    public String GetRoutineBodyString(PostgreSQLParser.SconstContext rule) {
-        PostgreSQLParser.AnysconstContext anysconst = rule.anysconst();
+    public String GetRoutineBodyString(PostgreSqlParser.SconstContext rule) {
+        PostgreSqlParser.AnysconstContext anysconst = rule.anysconst();
         org.antlr.v4.runtime.tree.TerminalNode StringConstant = anysconst.StringConstant();
         if (null != StringConstant) return unquote(TrimQuotes(StringConstant.getText()));
         org.antlr.v4.runtime.tree.TerminalNode UnicodeEscapeStringConstant = anysconst.UnicodeEscapeStringConstant();
@@ -88,11 +88,11 @@ public abstract class PostgreSQLParserBase extends Parser {
         return result;
     }
 
-    public PostgreSQLParser getPostgreSQLParser(String script) {
+    public PostgreSqlParser getPostgreSQLParser(String script) {
         CharStream charStream = CharStreams.fromString(script);
-        Lexer lexer = new PostgreSQLLexer(charStream);
+        Lexer lexer = new PostgreSqlLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        PostgreSQLParser parser = new PostgreSQLParser(tokens);
+        PostgreSqlParser parser = new PostgreSqlParser(tokens);
         lexer.removeErrorListeners();
         parser.removeErrorListeners();
         LexerDispatchingErrorListener listener_lexer = new LexerDispatchingErrorListener((Lexer)(((CommonTokenStream)(this.getInputStream())).getTokenSource()));

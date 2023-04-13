@@ -231,10 +231,10 @@ statement
         (OPTIONS options=propertyList)?                                #loadTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
-    | ctes? DATATUNNEL SOURCE LEFT_PAREN srcName=STRING RIGHT_PAREN OPTIONS
+    | ctes? DATATUNNEL SOURCE LEFT_PAREN srcName=stringLit RIGHT_PAREN OPTIONS
         readOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=stringLit)?
-        SINK LEFT_PAREN distName=STRING RIGHT_PAREN
+        SINK LEFT_PAREN distName=stringLit RIGHT_PAREN
         (OPTIONS writeOpts=dtPropertyList)?                            #dtunnelExpr
     | CALL multipartIdentifier
         LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
@@ -266,12 +266,21 @@ dtPropertyList
     : LEFT_PAREN dtProperty (COMMA dtProperty)* RIGHT_PAREN
     ;
 
+columnDef
+    : LEFT_BRACE dtColProperty (COMMA dtColProperty)* RIGHT_BRACE
+    ;
+
 dtProperty
     : key=dtPropertyKey (EQ? value=dtPropertyValue)?
     ;
 
+dtColProperty
+    : key=dtPropertyKey (COLON? value=dtPropertyValue)?
+    ;
+
 dtPropertyKey
     : identifier (DOT identifier)*
+    | DOUBLEQUOTED_STRING
     | STRING
     ;
 
@@ -279,8 +288,10 @@ dtPropertyValue
     : INTEGER_VALUE
     | DECIMAL_VALUE
     | booleanValue
+    | DOUBLEQUOTED_STRING
     | STRING
     | LEFT_BRACKET dtPropertyValue (',' dtPropertyValue)* RIGHT_BRACKET
+    | LEFT_BRACKET columnDef (COMMA columnDef)* RIGHT_BRACKET
     ;
 
 unsupportedHiveNativeCommands

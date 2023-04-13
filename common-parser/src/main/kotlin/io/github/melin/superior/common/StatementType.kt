@@ -22,7 +22,6 @@ enum class StatementType: Serializable {
     ANALYZE_TABLE,
 
     ALTER_TABLE,
-
     REPAIR_TABLE,
 
     //DML
@@ -41,6 +40,8 @@ enum class StatementType: Serializable {
 
     CREATE_FUNCTION,
     DROP_FUNCTION,
+
+    PROCEDURE,
 
     SHOW,
     DESC,

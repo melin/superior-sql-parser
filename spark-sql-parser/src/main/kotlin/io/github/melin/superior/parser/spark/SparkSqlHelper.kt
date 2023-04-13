@@ -18,7 +18,7 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
  *
  * Created by libinsong on 2018/1/10.
  */
-object SparkSQLHelper {
+object SparkSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
@@ -81,7 +81,7 @@ object SparkSQLHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = SparkSQLAntlr4Visitor()
+        val sqlVisitor = SparkSqlAntlr4Visitor()
         sqlVisitor.setCommand(trimCmd)
 
         try {

@@ -27,7 +27,7 @@ class SparkStreamSqlParserTest {
                 "  kafka.group.id = \"cn-north-1\"\n" +
                 ")"
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is StreamTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
@@ -74,7 +74,7 @@ set spark.test = dsd(id)%=2;
 
             """
 
-        val statementDatas = SparkStreamSQLHelper.getStatementData(sql)
+        val statementDatas = SparkStreamSqlHelper.getStatementData(sql)
         Assert.assertEquals(16, statementDatas.size)
         val statement = statementDatas.get(0).statement
         if (statement is StreamTable) {
@@ -93,7 +93,7 @@ set spark.test = dsd(id)%=2;
                 "    tableName = \"hudi_stream_json_dt\"" +
                 "    )"
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is StreamTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
@@ -108,7 +108,7 @@ set spark.test = dsd(id)%=2;
     fun setConfigTest() {
         val sql = "set spark.test = false";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is SetData) {
             Assert.assertEquals(StatementType.SET, statementData.type)
@@ -123,7 +123,7 @@ set spark.test = dsd(id)%=2;
     fun setConfigTest1() {
         val sql = "set spark.test = 'hello world'";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is SetData) {
             Assert.assertEquals(StatementType.SET, statementData.type)
@@ -138,7 +138,7 @@ set spark.test = dsd(id)%=2;
     fun setConfigTest2() {
         val sql = "set spark.test = 12 ";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is SetData) {
             Assert.assertEquals(StatementType.SET, statementData.type)
@@ -153,7 +153,7 @@ set spark.test = dsd(id)%=2;
     fun setConfigTest3() {
         val sql = "set spark.test = 'demo' ";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is SetData) {
             Assert.assertEquals(StatementType.SET, statementData.type)
@@ -168,7 +168,7 @@ set spark.test = dsd(id)%=2;
     fun insertSqlTest() {
         val sql = "insert into bigdata.test_result1 select * from users";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is StreamInsertStatement) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
@@ -190,7 +190,7 @@ set spark.test = dsd(id)%=2;
                 "FROM (select userid, money, proctime from orders LEFT JOIN LATERAL TABLE(demoFunc(a)) as T(newuserid) ON TRUE) a\n" +
                 "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;";
 
-        val statementData = SparkStreamSQLHelper.getStatementData(sql).get(0)
+        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
         if (statement is StreamInsertStatement) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)

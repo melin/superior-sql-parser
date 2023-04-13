@@ -1,8 +1,8 @@
-parser grammar PostgreSQLParser;
+parser grammar PostgreSqlParser;
 
 
-options { tokenVocab = PostgreSQLLexer;
-superClass = PostgreSQLParserBase;
+options { tokenVocab = PostgreSqlLexer;
+superClass = PostgreSqlParserBase;
 }
 
 @header

@@ -4,14 +4,17 @@ import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import io.github.melin.superior.common.relational.create.CreateNamespace
 import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
+import javafx.scene.control.Tab
 import org.junit.Assert
 import org.junit.Test
 
@@ -463,9 +466,15 @@ class MySQLParserTest {
 
     @Test
     fun addIndexTest() {
-        val sql = "ALTER TABLE sj_resource_charges add index INDEX_NAME (name);"
+        val sql = "ALTER TABLE sj_resource_charges add index index_test (name);"
         val statementData = MySQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is AlterTable) {
+            val createIndex = statement.firstAction() as CreateIndex
+            Assert.assertEquals("index_test", createIndex.indexName)
+        }
     }
 
     @Test
@@ -598,6 +607,36 @@ class MySQLParserTest {
             Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
+        }
+    }
+
+    @Test
+    fun createIndexTest() {
+        val sql = "CREATE INDEX test_index ON demo.orders (column_name)"
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is AlterTable) {
+            Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
+            val createIndex = statement.firstAction() as CreateIndex
+            Assert.assertEquals("test_index", createIndex.indexName)
+        }
+    }
+
+    @Test
+    fun dropIndexTest() {
+        val sql = "DROP INDEX test_index ON demo.orders"
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is AlterTable) {
+            Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
+            val dropIndex = statement.firstAction() as DropIndex
+            Assert.assertEquals("test_index", dropIndex.indexName)
         }
     }
 }

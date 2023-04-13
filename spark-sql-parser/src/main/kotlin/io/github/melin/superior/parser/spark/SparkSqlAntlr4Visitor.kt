@@ -9,19 +9,20 @@ import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.MultiInsertStmt
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
-import io.github.melin.superior.common.relational.drop.DropFunction
-import io.github.melin.superior.common.relational.drop.DropNamespace
-import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.namespace.Namespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.create.CreateView
-import io.github.melin.superior.common.relational.drop.DropView
+import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.common.relational.table.*
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateOrReplaceTableColTypeListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateTableClausesContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtColPropertyContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyListContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.IdentifierContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.InsertIntoContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PartitionSpecContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PropertyListContext
@@ -39,7 +40,7 @@ import kotlin.collections.LinkedHashMap
  *
  * Created by libinsong on 2018/1/10.
  */
-class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
+class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterType: AlterType = AlterType.UNKOWN
@@ -104,6 +105,10 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
+    }
+
+    fun parseIdentifier(ctx: List<IdentifierContext>): String {
+        return ctx.map { iden -> iden.text }.joinToString(",")
     }
 
     //-----------------------------------database-------------------------------------------------
@@ -476,37 +481,56 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             this.visitCtes(ctx.ctes())
         }
 
-        val srcOptions = HashMap<String, String>()
-        if (ctx.readOpts != null) {
-            ctx.readOpts.dtProperty().map { item ->
-                val property = item as SparkSqlParser.DtPropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
-                srcOptions.put(key, value)
-            }
-        }
+        val srcOptions = parseDtOptions(ctx.readOpts)
 
         var transformSql: String? = null
         if (ctx.transfromSql != null) {
             transformSql = StringUtil.cleanQuote(ctx.transfromSql.text)
         }
 
-        val distOptions = HashMap<String, String>()
-        if (ctx.writeOpts != null) {
-            ctx.writeOpts.dtProperty().map { item ->
-                val property = item as SparkSqlParser.DtPropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
-                distOptions.put(key, value)
-            }
-        }
+        val distOptions = parseDtOptions(ctx.writeOpts)
 
         val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions, isCTE)
-
         data.inputTables = inputTables
         data.cteTempTables = cteTempTables
         data.functionNames = functionNames
         return StatementData(StatementType.DATATUNNEL, data)
+    }
+
+    private fun parseDtOptions(ctx: DtPropertyListContext?): HashMap<String, Any> {
+        val options = HashMap<String, Any>()
+        if (ctx != null) {
+            ctx.dtProperty().map { item ->
+                val property = item as DtPropertyContext
+                val key = StringUtil.cleanQuote(property.key.text)
+                if (property.value.columnDef().size > 0) {
+                    val list = arrayListOf<Any>()
+                    property.value.columnDef().map { col ->
+                        val map = HashMap<String, String>()
+                        col.dtColProperty().map { pt ->
+                            val colProperty = pt as DtColPropertyContext
+                            val colKey = StringUtil.cleanQuote(colProperty.key.text)
+                            val colValue = StringUtil.cleanQuote(colProperty.value.text)
+                            map.put(colKey, colValue)
+                        }
+                        list.add(map)
+                    }
+                    options.put(key, list)
+                } else if (property.value.dtPropertyValue().size > 0) {
+                    val list = arrayListOf<Any>()
+                    property.value.dtPropertyValue().map { col ->
+                        val value = StringUtil.cleanQuote(col.text)
+                        list.add(value)
+                    }
+                    options.put(key, list)
+                } else {
+                    val value = StringUtil.cleanQuote(property.value.text)
+                    options.put(key, value)
+                }
+            }
+        }
+
+        return options
     }
 
     override fun visitCall(ctx: SparkSqlParser.CallContext): StatementData {
@@ -649,6 +673,22 @@ class SparkSQLAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val action = AlterViewAction(querySql, inputTables)
         val alterView = AlterTable(ALTER_VIEW_QUERY, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterView)
+    }
+
+    override fun visitCreateIndex(ctx: SparkSqlParser.CreateIndexContext): StatementData {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val indexName = parseIdentifier(ctx.identifier())
+        val createIndex = CreateIndex(indexName)
+        val alterTable = AlterTable(ADD_INDEX, tableId, createIndex)
+        return StatementData(StatementType.ALTER_TABLE, alterTable)
+    }
+
+    override fun visitDropIndex(ctx: SparkSqlParser.DropIndexContext): StatementData {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val indexName = ctx.identifier().text
+        val dropIndex = DropIndex(indexName)
+        val alterTable = AlterTable(DROP_INDEX, tableId, dropIndex)
+        return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
     //-----------------------------------function-------------------------------------------------

@@ -6,10 +6,10 @@ import org.antlr.v4.runtime.Lexer;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public abstract class PostgreSQLLexerBase extends Lexer {
+public abstract class PostgreSqlLexerBase extends Lexer {
     protected final Deque<String> tags = new ArrayDeque<>();
 
-    protected PostgreSQLLexerBase(CharStream input) {
+    protected PostgreSqlLexerBase(CharStream input) {
         super(input);
 
     }
@@ -36,12 +36,12 @@ public abstract class PostgreSQLLexerBase extends Lexer {
 
     public void HandleNumericFail() {
         getInputStream().seek(getInputStream().index() - 2);
-        setType(PostgreSQLLexer.Integral);
+        setType(PostgreSqlLexer.Integral);
     }
 
     public void HandleLessLessGreaterGreater() {
-        if (getText() == "<<") setType(PostgreSQLLexer.LESS_LESS);
-        if (getText() == ">>") setType(PostgreSQLLexer.GREATER_GREATER);
+        if (getText() == "<<") setType(PostgreSqlLexer.LESS_LESS);
+        if (getText() == ">>") setType(PostgreSqlLexer.GREATER_GREATER);
     }
 
     public void UnterminatedBlockCommentDebugAssert() {

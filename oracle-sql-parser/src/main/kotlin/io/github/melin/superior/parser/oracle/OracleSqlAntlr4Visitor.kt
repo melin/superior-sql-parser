@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.oracle
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
@@ -17,6 +18,8 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
 
+
+    private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
     private var inputTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
@@ -33,10 +36,27 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return if (currentResult == null) true else false
     }
 
+    override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): StatementData {
+        super.visitCreate_procedure_body(ctx)
+        val procedure = CreateProcedure(ctx.procedure_name().text)
+        procedure.queryStmts = queryStmts
+        return StatementData(StatementType.PROCEDURE, procedure)
+    }
+
+    override fun visitAnonymous_block(ctx: OracleParser.Anonymous_blockContext?): StatementData {
+        super.visitAnonymous_block(ctx)
+
+        val procedure = CreateProcedure()
+        procedure.queryStmts = queryStmts
+        return StatementData(StatementType.PROCEDURE, procedure)
+    }
+
     override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): StatementData {
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
         val queryStmt = QueryStmt(inputTables)
+
+        queryStmts.add(queryStmt)
         return StatementData(StatementType.SELECT, queryStmt)
     }
 
@@ -50,7 +70,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     }
 
     private fun parseTableViewName(ctx: OracleParser.Tableview_nameContext): TableId {
-        if (ctx.childCount == 0) {
+        if (ctx.childCount == 1) {
             return TableId(null, null, ctx.getChild(0).text)
         } else if (ctx.childCount == 3) {
             return TableId(null, ctx.getChild(0).text, ctx.getChild(2).text)

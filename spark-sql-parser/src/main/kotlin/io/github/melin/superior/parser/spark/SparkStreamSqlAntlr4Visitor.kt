@@ -7,7 +7,7 @@ import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
 
-class SparkStreamSQLAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementData>() {
+class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementData>() {
 
     private var command: String? = null
 

@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.SingleInsertStmt
@@ -11,6 +12,7 @@ import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.table.Column
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
@@ -190,12 +192,12 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddIndexContext) {
-            val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, action)
+            val createIndex = CreateIndex(statement.uid().text)
+            val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByDropIndexContext) {
-            val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, action)
+            val dropIndex = DropIndex(statement.uid().text)
+            val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
             val action = AlterTableAction()
@@ -268,6 +270,20 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         } else {
             throw SQLParserException("不支持的DML")
         }
+    }
+
+    override fun visitCreateIndex(ctx: MySqlParser.CreateIndexContext): StatementData {
+        val tableId = parseFullId(ctx.tableName().fullId())
+        val createIndex = CreateIndex(ctx.uid().text)
+        val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
+        return StatementData(StatementType.ALTER_TABLE, alterTable)
+    }
+
+    override fun visitDropIndex(ctx: MySqlParser.DropIndexContext): StatementData {
+        val tableId = parseFullId(ctx.tableName().fullId())
+        val dropIndex = DropIndex(ctx.uid().text)
+        val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
+        return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
     //-----------------------------------private method-------------------------------------------------

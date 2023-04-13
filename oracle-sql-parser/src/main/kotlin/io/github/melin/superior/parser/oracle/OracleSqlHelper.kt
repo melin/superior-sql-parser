@@ -37,7 +37,7 @@ object OracleSqlHelper {
         val parser = OracleParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.SLL
+        //parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = OracleSqlAntlr4Visitor()
 

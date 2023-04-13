@@ -13,7 +13,7 @@ import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlLexer
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 
-object SparkStreamSQLHelper {
+object SparkStreamSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
@@ -41,7 +41,7 @@ object SparkStreamSQLHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = SparkStreamSQLAntlr4Visitor()
+        val sqlVisitor = SparkStreamSqlAntlr4Visitor()
         sqlVisitor.setCommand(trimCmd)
         try {
             try {

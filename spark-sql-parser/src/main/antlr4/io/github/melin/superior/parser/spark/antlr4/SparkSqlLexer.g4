@@ -79,6 +79,8 @@ COMMA: ',';
 DOT: '.';
 LEFT_BRACKET: '[';
 RIGHT_BRACKET: ']';
+LEFT_BRACE: '{';
+RIGHT_BRACE: '}';
 ARROW1: '=>';
 
 // NOTE: If you add a new token in the list below, you should update the list of keywords

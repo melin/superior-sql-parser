@@ -29,10 +29,10 @@ data class MergeData(
 
 data class DataTunnelExpr(
     val srcType: String,
-    var srcOptions: Map<String, String>,
+    var srcOptions: Map<String, Any>,
     val transformSql: String?,
     val distType: String,
-    var distOptions: Map<String, String>,
+    var distOptions: Map<String, Any>,
     var cte: Boolean = false
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
