@@ -32,8 +32,14 @@ object PostgreSqlHelper {
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
         val lexer = PostgreSqlLexer(charStream)
+        lexer.removeErrorListeners()
+        lexer.addErrorListener(ParseErrorListener())
+
         val tokenStream = CommonTokenStream(lexer)
         val parser = PostgreSqlParser(tokenStream)
+        parser.removeErrorListeners()
+        parser.addErrorListener(ParseErrorListener())
+        parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = PostgreSqlAntlr4Visitor()
 
