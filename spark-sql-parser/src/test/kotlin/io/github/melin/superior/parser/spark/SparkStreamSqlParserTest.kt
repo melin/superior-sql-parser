@@ -1,9 +1,9 @@
 package io.github.melin.superior.parser.spark
 
-import io.github.melin.superior.common.relational.SetData
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.StreamInsertStatement
-import io.github.melin.superior.common.relational.StreamTable
+import io.github.melin.superior.common.relational.common.SetData
+import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.dml.SingleInsertStmt
 import org.junit.Assert
 import org.junit.Test
 
@@ -29,10 +29,10 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is StreamTable) {
+        if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
-            Assert.assertEquals("student_scores", statement.tableName)
-            Assert.assertEquals("cn-north-1", statement.properties.get("kafka.group.id"))
+            Assert.assertEquals("student_scores", statement.tableId.tableName)
+            Assert.assertEquals("cn-north-1", statement.properties?.get("kafka.group.id"))
         } else {
             Assert.fail()
         }
@@ -42,43 +42,42 @@ class SparkStreamSqlParserTest {
     fun createTableTest4() {
         val sql = """
             CREATE Stream TABLE orders (
-	userid string,
-	money bigint
-)
-WITH (
-	type = 'kafka',
-	topic = 'flink-topic-input',
-	encode = 'json',
-	kafka.bootstrap.servers = 'localhost:9092',
-	kafka.group.id = 'flink-group'
-);
-
-insert into stat_orders SELECT userid, SUM(money) as total_money FROM orders
-GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;
-
-set spark.test = 'hello world';
-set spark.test = setsd,sd,resr;
-set spark.test = hello world;
-set spark.test = hello-world;
-set spark.test = hello $\{usename} test;
-#set spark.test = hello comment;
-set spark.test = hello 'test' world;
-set spark.test = hello "test" world;
-set spark.test = hdfs://user/hive;
-set spark.test = 12,12;
-set spark.test = 3.45;
-set spark.test = ibdex.json;
-set spark.test = dw.eset_sdfe_sd;
-set spark.test = demo.test;
-set spark.test = dsd(id)%=2;
-
+                userid string,
+                money bigint
+            )
+            WITH (
+                type = 'kafka',
+                topic = 'flink-topic-input',
+                encode = 'json',
+                kafka.bootstrap.servers = 'localhost:9092',
+                kafka.group.id = 'flink-group'
+            );
+            
+            insert into stat_orders SELECT userid, SUM(money) as total_money FROM orders
+            GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;
+            
+            set spark.test = 'hello world';
+            set spark.test = setsd,sd,resr;
+            set spark.test = hello world;
+            set spark.test = hello-world;
+            set spark.test = hello $\{usename} test;
+            #set spark.test = hello comment;
+            set spark.test = hello 'test' world;
+            set spark.test = hello "test" world;
+            set spark.test = hdfs://user/hive;
+            set spark.test = 12,12;
+            set spark.test = 3.45;
+            set spark.test = ibdex.json;
+            set spark.test = dw.eset_sdfe_sd;
+            set spark.test = demo.test;
+            set spark.test = dsd(id)%=2;
             """
 
         val statementDatas = SparkStreamSqlHelper.getStatementData(sql)
         Assert.assertEquals(16, statementDatas.size)
         val statement = statementDatas.get(0).statement
-        if (statement is StreamTable) {
-            Assert.assertEquals("orders", statement.tableName)
+        if (statement is CreateTable) {
+            Assert.assertEquals("orders", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -95,10 +94,10 @@ set spark.test = dsd(id)%=2;
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is StreamTable) {
+        if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
-            Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableName)
-            Assert.assertEquals("hudi", statement.properties.get("type"))
+            Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableId.tableName)
+            Assert.assertEquals("hudi", statement.properties?.get("type"))
         } else {
             Assert.fail()
         }
@@ -170,9 +169,9 @@ set spark.test = dsd(id)%=2;
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is StreamInsertStatement) {
+        if (statement is SingleInsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals("test_result1", statement.tableName)
+            Assert.assertEquals("test_result1", statement.tableId?.tableName)
             Assert.assertEquals("select * from users", statement.querySql)
         } else {
             Assert.fail()
@@ -192,9 +191,9 @@ set spark.test = dsd(id)%=2;
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is StreamInsertStatement) {
+        if (statement is SingleInsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals("stat_orders_kafka", statement.tableName)
+            Assert.assertEquals("stat_orders_kafka", statement.tableId?.tableName)
         } else {
             Assert.fail()
         }

@@ -3,6 +3,11 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.common.SetData
+import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.SingleInsertStmt
+import io.github.melin.superior.common.relational.table.Column
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -32,8 +37,9 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
                         val dataType = column.dataType().text
                         val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
                         val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
-                        val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
-                        StreamColumn(colName, dataType, colComment, jsonPath, pattern)
+                        //val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
+
+                        Column(colName, dataType, colComment, true, jsonPath)
                     }
         } else {
             emptyList()
@@ -49,8 +55,8 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
             }
         }
 
-        val table = StreamTable(tableName, columns, properties)
-        return StatementData(StatementType.CREATE_TABLE, table)
+        val createTable = CreateTable(TableId(tableName), null, null, null, columns, properties)
+        return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
     override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): StatementData {
@@ -63,12 +69,13 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
     }
 
     override fun visitInsertStatement(ctx: SparkStreamSqlParser.InsertStatementContext): StatementData {
-        val dbName = if (ctx.tableName.db != null) ctx.tableName.db.ID().text else null;
+        val schemaName = if (ctx.tableName.db != null) ctx.tableName.db.ID().text else null;
         val tableName = ctx.tableName.table.ID().text
 
+        val tableId = TableId(schemaName, tableName)
         val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
-
-        val table = StreamInsertStatement(dbName, tableName, querySql)
+        val table = SingleInsertStmt(InsertMode.INTO, tableId)
+        table.querySql = querySql
         return StatementData(StatementType.INSERT_SELECT, table)
     }
 

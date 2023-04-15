@@ -227,8 +227,8 @@ statement
 
     | MERGE TABLE multipartIdentifier partitionSpec?
             (OPTIONS options=propertyList)?                            #mergeTable
-    | LOAD DATA path=STRING TABLE multipartIdentifier
-        (OPTIONS options=propertyList)?                                #loadTempTable
+    | IMPORT DATA path=STRING TABLE multipartIdentifier
+        (OPTIONS options=propertyList)?                                #importTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
     | ctes? DATATUNNEL SOURCE LEFT_PAREN srcName=stringLit RIGHT_PAREN OPTIONS

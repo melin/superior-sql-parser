@@ -1,12 +1,12 @@
-package io.github.melin.superior.common.relational.drop
+package io.github.melin.superior.parser.spark.relational
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class DropView(
+data class MergeData(
     val tableId: TableId,
-    var ifExists: Boolean = false
+    val partitionVals: List<String>?
 ) : Statement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.DROP
+    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
 }
