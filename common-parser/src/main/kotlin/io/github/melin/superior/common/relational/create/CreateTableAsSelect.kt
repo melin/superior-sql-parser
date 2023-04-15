@@ -24,8 +24,8 @@ data class CreateTableAsSelect(
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var createTableType: String = "hive"
 
-    lateinit var inputTables: List<TableId>
-    lateinit var functionNames: HashSet<String>
+    var inputTables: List<TableId> = listOf()
+    var functionNames: HashSet<String> = hashSetOf()
 
     constructor(tableId: TableId):
             this(tableId, null, null, null, null, null, null, false)
