@@ -13,6 +13,7 @@ data class FlinkCdcCreateTable(
     var sourceTableId: TableId,
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
+    override val sqlType: SqlType = SqlType.DML
 
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
@@ -26,6 +27,7 @@ data class FlinkCdcCreateDatabase(
     var includeTable: String
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
+    override val sqlType: SqlType = SqlType.DML
 
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null

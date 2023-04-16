@@ -1,6 +1,7 @@
 package io.github.melin.superior.common.relational.create
 
 import io.github.melin.superior.common.PrivilegeType
+import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 
 data class CreateFunction(
@@ -11,4 +12,5 @@ data class CreateFunction(
     val file: String?
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
+    override val sqlType: SqlType = SqlType.DDL
 }

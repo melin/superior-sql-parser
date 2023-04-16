@@ -2,16 +2,18 @@ package io.github.melin.superior.common.relational
 
 import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.PrivilegeType
+import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.TableType
 import java.util.ArrayList
 
 data class AlterTable(
     val alterType: AlterType,
-    val tableId: TableId,
+    override val tableId: TableId,
     private val action: AlterAction?,
     val tableType: TableType = TableType.TABLE,
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.ALTER
+    override val sqlType: SqlType = SqlType.DDL
     val actions: ArrayList<AlterAction> = ArrayList()
 
     init {
@@ -43,7 +45,8 @@ data class AlterTableAction(
 
 data class AlterViewAction(
     var querySql: String, // 修改表，新列名称
-    var inputTables: List<TableId>
+    var inputTables: List<TableId>,
+    var functionNames: HashSet<String>
 ): AlterAction()
 
 data class AlterColumnAction(

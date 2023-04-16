@@ -1,12 +1,13 @@
 package io.github.melin.superior.common.relational.create
 
 import io.github.melin.superior.common.PrivilegeType
+import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.Column
 
 data class CreateTable(
-    val tableId: TableId,
+    override val tableId: TableId,
     val comment: String?,
     var lifeCycle: Int?,
     var partitionColumns: List<Column>?,
@@ -21,6 +22,7 @@ data class CreateTable(
     var partitionColumnNames: List<String>? = null
 ) : Statement() { //是否存在 if exists 关键字
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
+    override val sqlType: SqlType = SqlType.DDL
 
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var replace = false

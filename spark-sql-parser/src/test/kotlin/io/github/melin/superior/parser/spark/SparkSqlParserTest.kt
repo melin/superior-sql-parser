@@ -415,9 +415,8 @@ class SparkSqlParserTest {
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateTableLike) {
-            val name = statement.newTableName
-            Assert.assertEquals("sale_detail", statement.oldTableName)
-            Assert.assertEquals("sale_detail_like", name)
+            Assert.assertEquals(TableId("demo", "sale_detail"), statement.oldTableId)
+            Assert.assertEquals(TableId("test", "sale_detail_like"), statement.tableId)
         } else {
             Assert.fail()
         }

@@ -279,10 +279,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val oldDatabaseName = ctx.source.db?.text
         val oldTableName = ctx.source.table.text
 
-        val dcTable = CreateTableLike(oldDatabaseName, oldTableName, newDatabaseName, newTableName)
-        dcTable.ifNotExists = ctx.NOT() != null
+        val createTableLike = CreateTableLike(TableId(oldDatabaseName, oldTableName),
+            TableId(newDatabaseName, newTableName))
 
-        return StatementData(StatementType.CREATE_TABLE_AS_LIKE, dcTable)
+        createTableLike.ifNotExists = ctx.NOT() != null
+        return StatementData(StatementType.CREATE_TABLE_AS_LIKE, createTableLike)
     }
 
     override fun visitDropTable(ctx: SparkSqlParser.DropTableContext): StatementData {
@@ -668,7 +669,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         currentAlterType = ALTER_VIEW_QUERY
         visitQuery(ctx.query())
 
-        val action = AlterViewAction(querySql, inputTables)
+        val action = AlterViewAction(querySql, inputTables, functionNames)
         val alterView = AlterTable(ALTER_VIEW_QUERY, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterView)
     }
