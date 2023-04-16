@@ -1105,6 +1105,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             } else {
                 action.setOrDrop = "SET";
             }
+
+            if (context.NOT() != null) {
+                action.nullable = false
+            }
         }
 
         if (context.defaultExpression() != null) {

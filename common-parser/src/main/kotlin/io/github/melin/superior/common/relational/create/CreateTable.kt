@@ -30,4 +30,7 @@ data class CreateTable(
 
     constructor(tableId: TableId, comment: String?, columns: List<Column>?):
             this(tableId, comment, null, null, columns, null, null, false)
+
+    constructor(tableId: TableId, comment: String?, lifeCycle: Int?, columns: List<Column>?):
+            this(tableId, comment, lifeCycle, null, columns, null, null, false)
 }
