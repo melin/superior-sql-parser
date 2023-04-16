@@ -179,7 +179,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
             val columnName = StringUtil.cleanBackQuote(statement.uid().text)
-            val action = DropColumnAction(listOf(columnName))
+            val action = DropColumnAction(columnName)
             val alterTable = AlterTable(AlterType.DROP_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {

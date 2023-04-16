@@ -4,7 +4,7 @@ import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.TableType
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 data class AlterTable(
     val alterType: AlterType,
@@ -63,8 +63,14 @@ data class AlterColumnAction(
 }
 
 data class DropColumnAction(
-    var columNames: List<String> = listOf()
-): AlterAction()
+    var columNames: ArrayList<String> = arrayListOf()
+): AlterAction() {
+    fun firstColumn(): String {
+        return columNames.first()
+    }
+
+    constructor(columName: String): this(arrayListOf(columName))
+}
 
 data class AddPartitionAction(
     var ifNotExists: Boolean = false,

@@ -368,11 +368,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val alterTable = AlterTable(ADD_COLUMN, tableId)
         alterTable.addActions(columns)
-        return if ("columns" == ctx.getChild(4).text) {
-            StatementData(StatementType.ALTER_TABLE, alterTable)
-        } else {
-            StatementData(StatementType.ALTER_TABLE, alterTable)
-        }
+        return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
     override fun visitHiveChangeColumn(ctx: SparkSqlParser.HiveChangeColumnContext): StatementData {
@@ -432,7 +428,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val columns = ctx.columns.multipartIdentifier().map { id -> id.text }
-        val action = DropColumnAction(columns)
+        val action = DropColumnAction(columns.joinToString("."))
         val alterTable = AlterTable(DROP_COLUMN, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
