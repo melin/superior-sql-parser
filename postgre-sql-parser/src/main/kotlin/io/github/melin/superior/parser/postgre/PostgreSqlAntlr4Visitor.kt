@@ -52,9 +52,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
-            val (_, database, tableName) = parseTableName(ctx)
-            val table = TableId(database, tableName)
-            inputTables.add(table)
+            val tableId = parseTableName(ctx)
+            inputTables.add(tableId)
             return null
         } else {
             throw SQLParserException("not support")

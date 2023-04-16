@@ -1,6 +1,13 @@
 package io.github.melin.superior.common.relational
 
-data class TableId(val catalogName: String?, val schemaName: String?, val tableName: String, val metaType: String?) {
+import org.apache.commons.lang3.StringUtils
+
+data class TableId(
+    val catalogName: String?,
+    val schemaName: String?,
+    val tableName: String,
+    val metaType: String?) {
+
     constructor(catalogName: String?, schemaName: String?, tableName: String):
             this(catalogName, schemaName, tableName, null)
 
@@ -20,5 +27,17 @@ data class TableId(val catalogName: String?, val schemaName: String?, val tableN
         }
 
         return tableName
+    }
+
+    fun getLowerCatalogName(): String {
+        return StringUtils.lowerCase(catalogName)
+    }
+
+    fun getLowerSchemaName(): String {
+        return StringUtils.lowerCase(schemaName)
+    }
+
+    fun getLowerTableName(): String {
+        return StringUtils.lowerCase(tableName)
     }
 }

@@ -314,14 +314,14 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitRenameTable(ctx: SparkSqlParser.RenameTableContext): StatementData {
         val tableId = parseTableName(ctx.from)
-        val (_, _, newTableName) = parseTableName(ctx.to)
+        val newTableId = parseTableName(ctx.to)
 
         return if (ctx.VIEW() != null) {
-            val action = AlterTableAction(newTableName)
+            val action = AlterTableAction(newTableId.tableName)
             val alterTable = AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         } else {
-            val action = AlterTableAction(newTableName)
+            val action = AlterTableAction(newTableId.tableName)
             val alterTable = AlterTable(RENAME_TABLE, tableId, action)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         }
@@ -532,8 +532,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitCall(ctx: SparkSqlParser.CallContext): StatementData {
-        val (catalogName, schemaName, procedureName) = parseTableName(ctx.multipartIdentifier())
-        val data = CallExpr(NamespaceId(catalogName, schemaName!!), procedureName)
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val data = CallExpr(NamespaceId(tableId.catalogName, tableId.schemaName!!), tableId.tableName)
         return StatementData(StatementType.CALL, data)
     }
 
@@ -1027,16 +1027,12 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val obj = ctx.insertInto()
         if (obj is SparkSqlParser.InsertOverwriteTableContext) {
             val multipartIdentifier = obj.multipartIdentifier()
-            val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-
-            val table = TableId(catalogName, databaseName, tableName)
-            outputTables.add(table)
+            val tableId = parseTableName(multipartIdentifier)
+            outputTables.add(tableId)
         } else if (obj is SparkSqlParser.InsertIntoTableContext) {
             val multipartIdentifier = obj.multipartIdentifier()
-            val (catalogName, databaseName, tableName) = parseTableName(multipartIdentifier)
-
-            val table = TableId(catalogName, databaseName, tableName)
-            outputTables.add(table)
+            val tableId = parseTableName(multipartIdentifier)
+            outputTables.add(tableId)
         }
         return super.visitMultiInsertQueryBody(ctx)
     }
