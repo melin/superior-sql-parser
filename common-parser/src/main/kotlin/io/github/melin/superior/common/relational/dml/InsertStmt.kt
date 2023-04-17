@@ -5,13 +5,24 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class SingleInsertStmt(
+data class InsertStmt(
     val mode: InsertMode,
-    override val tableId: TableId?,
-    val path: String?,
+    override val tableId: TableId? = null,
+    val path: String? = null,
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.WRITE
     override val sqlType: SqlType = SqlType.DML
+
+    var inputTables: ArrayList<TableId> = arrayListOf()
+    var outputTables: ArrayList<TableId> = arrayListOf()
+    var functionNames: HashSet<String> = hashSetOf()
+    var cteTempTables: List<String> = listOf()
+
+    init {
+        if (tableId != null) {
+            outputTables.add(tableId)
+        }
+    }
 
     constructor(mode: InsertMode, tableId: TableId?): this(mode, tableId, null)
 
@@ -22,8 +33,4 @@ data class SingleInsertStmt(
     var partitionVals: LinkedHashMap<String, String>? = null
     var querySql: String? = null
     var rows: ArrayList<List<String>>? = null
-
-    var inputTables: ArrayList<TableId> = arrayListOf()
-    var functionNames: HashSet<String> = hashSetOf()
-    var cteTempTables: List<String> = listOf()
 }

@@ -1231,7 +1231,7 @@ class SparkSqlParserTest {
         val sql = "insert into TABLE users PARTITION(ds='20170220') values('libinsong', 12, 'test'), ('libinsong', 13, 'test')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
             Assert.assertEquals("users", statement.tableId?.tableName)
@@ -1246,7 +1246,7 @@ class SparkSqlParserTest {
         val sql = "insert into bigdata.delta_lsw_test values('lsw'),('lsw1')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
             Assert.assertEquals("delta_lsw_test", statement.tableId?.tableName)
@@ -1261,7 +1261,7 @@ class SparkSqlParserTest {
         val sql = "INSERT INTO test_demo_test (name) VALUES('lisi')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
             Assert.assertEquals("test_demo_test", statement.tableId?.tableName)
@@ -1275,7 +1275,7 @@ class SparkSqlParserTest {
         val sql = "insert OVERWRITE TABLE users PARTITION(ds='20170220') values('libinsong')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
             Assert.assertEquals(1, statement.partitionVals?.size)
@@ -1290,7 +1290,7 @@ class SparkSqlParserTest {
         val sql = "insert OVERWRITE TABLE users PARTITION(ds) values('libinsong', '20170220')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_VALUES, statementData.type)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
             Assert.assertEquals(1, statement.partitionVals?.size)
@@ -1305,7 +1305,7 @@ class SparkSqlParserTest {
         val sql = "insert INTO users PARTITION(ds='20170220') select * from account a join address b on a.addr_id=b.id"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("users", statement.tableId?.tableName)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
@@ -1325,7 +1325,7 @@ class SparkSqlParserTest {
         val sql = "insert INTO users select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("users", statement.tableId?.tableName)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
@@ -1348,7 +1348,7 @@ class SparkSqlParserTest {
                 "select * from account2"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("users", statement.tableId?.tableName)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
@@ -1375,7 +1375,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MultiInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.MULTI_INSERT, statementData.type)
             Assert.assertEquals("sample_07", statement.inputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
@@ -1651,7 +1651,7 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(3, statement.inputTables.size)
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals(5, statement.cteTempTables.size)

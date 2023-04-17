@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.spark
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.common.SetData
 import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.dml.SingleInsertStmt
+import io.github.melin.superior.common.relational.dml.InsertStmt
 import org.junit.Assert
 import org.junit.Test
 
@@ -169,7 +169,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("test_result1", statement.tableId?.tableName)
             Assert.assertEquals("select * from users", statement.querySql)
@@ -191,7 +191,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SingleInsertStmt) {
+        if (statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("stat_orders_kafka", statement.tableId?.tableName)
         } else {

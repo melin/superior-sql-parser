@@ -856,8 +856,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType = StatementType.MULTI_INSERT
             super.visitDmlStatement(ctx)
 
-            val multiInsertStmt = MultiInsertStmt(inputTables, outputTables, functionNames)
-            return StatementData(StatementType.MULTI_INSERT, multiInsertStmt)
+            val insertStmt = InsertStmt(InsertMode.OVERWRITE)
+            insertStmt.inputTables = inputTables
+            insertStmt.outputTables = outputTables
+            insertStmt.functionNames = functionNames
+            return StatementData(StatementType.MULTI_INSERT, insertStmt)
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||
                 node is SparkSqlParser.MergeIntoTableContext) {
@@ -867,28 +870,28 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    private fun parseInsertInto(ctx: InsertIntoContext): SingleInsertStmt {
+    private fun parseInsertInto(ctx: InsertIntoContext): InsertStmt {
         return if (ctx is SparkSqlParser.InsertIntoTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = SingleInsertStmt(InsertMode.INTO, tableId)
+            val stmt = InsertStmt(InsertMode.INTO, tableId)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = SingleInsertStmt(InsertMode.OVERWRITE, tableId)
+            val stmt = InsertStmt(InsertMode.OVERWRITE, tableId)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
-            SingleInsertStmt(InsertMode.INTO_REPLACE, tableId)
+            InsertStmt(InsertMode.INTO_REPLACE, tableId)
         } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
             val path: String? = if (ctx.path != null) ctx.path.STRING().text else null;
             val properties = parseOptions(ctx.propertyList())
             val tableProvider = ctx.tableProvider().multipartIdentifier().text
 
-            val stmt = SingleInsertStmt(InsertMode.OVERWRITE_DIR, path)
+            val stmt = InsertStmt(InsertMode.OVERWRITE_DIR, path)
             stmt.properties = properties
             stmt.tableProvider = tableProvider
             stmt

@@ -239,13 +239,13 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                 currentOptType = StatementType.INSERT_SELECT
                 super.visit(ctx.insertStatement().insertStatementValue().selectStatement())
 
-                val singleInsertStmt = SingleInsertStmt(InsertMode.INTO, tableId)
-                singleInsertStmt.inputTables = inputTables
-                return StatementData(StatementType.INSERT_SELECT, singleInsertStmt)
+                val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+                insertStmt.inputTables = inputTables
+                return StatementData(StatementType.INSERT_SELECT, insertStmt)
             } else {
                 currentOptType = StatementType.INSERT_VALUES
-                val singleInsertStmt = SingleInsertStmt(InsertMode.INTO, tableId)
-                return StatementData(StatementType.INSERT_VALUES, singleInsertStmt)
+                val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+                return StatementData(StatementType.INSERT_VALUES, insertStmt)
             }
         } else if (ctx.updateStatement() != null) {
             val statement = ctx.updateStatement()

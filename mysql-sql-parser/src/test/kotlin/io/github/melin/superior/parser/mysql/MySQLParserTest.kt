@@ -6,7 +6,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.SingleInsertStmt
+import io.github.melin.superior.common.relational.dml.InsertStmt
 import io.github.melin.superior.common.relational.create.CreateNamespace
 import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
@@ -16,7 +16,6 @@ import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
-import javafx.scene.control.Tab
 import org.junit.Assert
 import org.junit.Test
 
@@ -366,7 +365,7 @@ class MySQLParserTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is SingleInsertStmt) {
+        if(statement is InsertStmt) {
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
