@@ -33,4 +33,8 @@ data class InsertStmt(
     var partitionVals: LinkedHashMap<String, String>? = null
     var querySql: String? = null
     var rows: ArrayList<List<String>>? = null
+
+    fun getOutputTable(): TableId {
+        return outputTables.first()
+    }
 }
