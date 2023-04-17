@@ -244,8 +244,8 @@ class MySQLParserTest {
         val statement = statementData.statement
         if(statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals("bigdata", statement.tableId.schemaName)
-            Assert.assertEquals("users", statement.tableId.tableName)
+            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
+            Assert.assertEquals("users", statement.tableId?.tableName)
         } else {
             Assert.fail()
         }

@@ -11,11 +11,12 @@ data class AlterTable(
     val alterType: AlterType,
     override val tableId: TableId,
     private val action: AlterAction?,
-    val tableType: TableType = TableType.TABLE,
+    val tableType: TableType = TableType.TABLE
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.ALTER
     override val sqlType: SqlType = SqlType.DDL
     val actions: ArrayList<AlterAction> = ArrayList()
+    var ifExists: Boolean = false
 
     init {
         if (action != null) {

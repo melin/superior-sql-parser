@@ -294,7 +294,7 @@ COLUMN
    : 'COLUMN'
    ;
 
-CONSTRAINT
+ CONSTRAINT
    : 'CONSTRAINT'
    ;
 

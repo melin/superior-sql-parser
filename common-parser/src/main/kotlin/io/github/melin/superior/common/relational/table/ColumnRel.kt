@@ -4,7 +4,7 @@ data class ColumnRel(
     val name: String,
     val type: String? = null,
     val comment: String? = null,
-    val nullable: Boolean = true,
+    var nullable: Boolean = true,
     var defaultExpr: String? = null // 默认值表达式
 ) {
     var expression: String? = null // 计算表达式

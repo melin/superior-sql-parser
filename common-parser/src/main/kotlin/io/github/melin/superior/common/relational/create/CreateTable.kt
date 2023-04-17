@@ -8,11 +8,11 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 
 data class CreateTable(
     override val tableId: TableId,
-    val comment: String?,
-    var lifeCycle: Int?,
-    var partitionColumnRels: List<ColumnRel>?,
-    var columnRels: List<ColumnRel>?,
-    var properties: Map<String, String>?,
+    val comment: String? = null,
+    var lifeCycle: Int? = null,
+    var partitionColumnRels: List<ColumnRel>? = null,
+    var columnRels: List<ColumnRel>? = null,
+    var properties: Map<String, String>? = null,
     var fileFormat: String? = null,
     var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
     var external: Boolean = false,

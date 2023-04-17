@@ -90,8 +90,8 @@ class PrestoSqlParserTest {
         val statement = statementData?.statement
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals("bigdata", statement.tableId.schemaName)
-            Assert.assertEquals("tdl_small_files_2", statement.tableId.tableName)
+            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
+            Assert.assertEquals("tdl_small_files_2", statement.tableId?.tableName)
         } else {
             Assert.fail()
         }

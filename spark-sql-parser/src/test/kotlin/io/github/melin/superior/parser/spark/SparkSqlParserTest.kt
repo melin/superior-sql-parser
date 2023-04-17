@@ -551,7 +551,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
         if (statement is DropTable) {
-            val name = statement.tableId.tableName
+            val name = statement.tableId?.tableName
             Assert.assertEquals("sale_detail_drop2", name)
         } else {
             Assert.fail()
@@ -566,7 +566,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         Assert.assertEquals(StatementType.DROP_VIEW, statementData.type)
         if (statement is DropView) {
-            Assert.assertEquals("sale_detail_drop2", statement.tableId.tableName)
+            Assert.assertEquals("sale_detail_drop2", statement.tableId?.tableName)
         } else {
             Assert.fail()
         }

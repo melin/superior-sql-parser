@@ -5,10 +5,15 @@ import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateIndex
+import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.drop.DropIndex
+import io.github.melin.superior.common.relational.drop.DropTable
+import io.github.melin.superior.common.relational.drop.DropView
+import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
 import javafx.scene.control.Tab
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
@@ -37,6 +42,34 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
         return if (currentResult == null) true else false
     }
+
+    override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): StatementData {
+        currentOptType = StatementType.CREATE_TABLE
+        val tableId = parseTableName(ctx.qualified_name(0))
+
+        val columns = ctx.opttableelementlist()?.tableelementlist()?.tableelement()?.map {
+            val colDef = it.columnDef()
+            val colName = colDef.colid().text
+            val dataType = colDef.typename().text
+            val columnRel = ColumnRel(colName, dataType)
+
+            colDef.colquallist().colconstraint().forEach {colconstraint ->
+                val child = colconstraint.getChild(0)
+                if (child is ColconstraintelemContext) {
+                    if (child.NOT() != null) {
+                        columnRel.nullable = false
+                    } else if (child.PRIMARY() != null) {
+                        columnRel.isPk = true
+                    }
+                }
+            }
+            columnRel
+        }
+
+        val createTable = CreateTable(tableId, columnRels = columns)
+        return StatementData(currentOptType, createTable)
+    }
+
 
     override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): StatementData {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
@@ -75,12 +108,37 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     override fun visitDropstmt(ctx: PostgreSqlParser.DropstmtContext): StatementData {
         if (ctx.object_type_any_name() != null) {
+            val ifExists = ctx.IF_P() != null
             if (ctx.object_type_any_name().INDEX() != null) {
-                val actions = ctx.any_name_list().any_name().map { indexName ->  DropIndex(indexName.text)}
+                val actions = ctx.any_name_list().any_name().map { indexName ->  DropIndex(indexName.text, ifExists)}
                 val tableId = TableId("")
                 val alterTable = AlterTable(AlterType.DROP_INDEX, tableId)
+                alterTable.ifExists = ifExists
                 alterTable.addActions(actions)
                 return StatementData(StatementType.ALTER_TABLE, alterTable)
+            } else if (ctx.object_type_any_name().TABLE() != null) {
+                val dropTable = DropTable(ifExists = ifExists)
+                ctx.any_name_list().any_name().map { tableName ->
+                    dropTable.tableIds.add(parseTableName(tableName))
+                }
+                return StatementData(StatementType.DROP_TABLE, dropTable)
+            } else if (ctx.object_type_any_name().VIEW() != null) {
+                val isMaterialized = if (ctx.object_type_any_name().MATERIALIZED() != null) {
+                    true
+                } else {
+                    false
+                }
+                val dropTable = DropView(ifExists = ifExists, isMaterialized = isMaterialized)
+                ctx.any_name_list().any_name().map { tableName ->
+                    dropTable.tableIds.add(parseTableName(tableName))
+                }
+                return StatementData(StatementType.DROP_TABLE, dropTable)
+            } else if (ctx.object_type_any_name().SEQUENCE() != null) {
+                val dropTable = io.github.melin.superior.common.relational.drop.DropSequence(ifExists = ifExists)
+                ctx.any_name_list().any_name().map { tableName ->
+                    dropTable.tableIds.add(parseTableName(tableName))
+                }
+                return StatementData(StatementType.DROP_TABLE, dropTable)
             }
         }
 
@@ -88,6 +146,22 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     }
 
     //----------------------------------------private methods------------------------------------
+
+
+    fun parseTableName(ctx: PostgreSqlParser.Any_nameContext): TableId {
+        val attrNames = ctx.attrs()?.attr_name()
+        if (attrNames == null) {
+            return TableId(null, null, ctx.colid().text)
+        }
+
+        if (attrNames.size == 2) {
+            return TableId(ctx.colid().text, attrNames.get(0).text, attrNames.get(1).text)
+        } else if (attrNames.size == 1) {
+            return TableId(null, ctx.colid().text, attrNames.get(0).text)
+        }
+
+        throw SQLParserException("parse schema qualified name error")
+    }
 
     fun parseTableName(ctx: PostgreSqlParser.Relation_exprContext): TableId {
         return parseTableName(ctx.qualified_name())
@@ -97,7 +171,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         if (ctx.childCount == 2) {
             val obj = ctx.getChild(1);
             if (obj.childCount == 2) {
-                return TableId(ctx.getChild(0).text, obj.getChild(0).text, obj.getChild(1).text)
+                return TableId(ctx.getChild(0).text, obj.getChild(0).getChild(1).text, obj.getChild(1).getChild(1).text)
             } else if (obj.childCount == 1) {
                 return TableId(ctx.getChild(0).text, obj.getChild(1).text)
             }

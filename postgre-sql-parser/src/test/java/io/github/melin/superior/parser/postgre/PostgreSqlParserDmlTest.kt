@@ -12,7 +12,7 @@ import org.junit.Test
 /**
  * Created by libinsong on 2020/6/30 11:04 上午
  */
-class PostgreSqlParserTest {
+class PostgreSqlParserDmlTest {
 
     @Test
     fun queryTest0() {
@@ -27,35 +27,6 @@ class PostgreSqlParserTest {
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
-        }
-    }
-
-    @Test
-    fun createIndexTest() {
-        val sql = "CREATE UNIQUE INDEX title_idx ON films (title) INCLUDE (director, rating);\n"
-
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
-
-        val statement = statementData.statement
-        if (statement is AlterTable) {
-            Assert.assertEquals(TableId("films"), statement.tableId)
-            val createIndex = statement.firstAction() as CreateIndex
-            Assert.assertEquals("title_idx", createIndex.indexName)
-        }
-    }
-
-    @Test
-    fun dropIndexTest() {
-        val sql = "DROP INDEX title_idx"
-
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
-
-        val statement = statementData.statement
-        if (statement is AlterTable) {
-            val dropIndex = statement.firstAction() as DropIndex
-            Assert.assertEquals("title_idx", dropIndex.indexName)
         }
     }
 }
