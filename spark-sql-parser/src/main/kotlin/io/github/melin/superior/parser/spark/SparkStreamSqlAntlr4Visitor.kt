@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.common.SetData
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertStmt
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -29,18 +29,20 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
         val tableName = ctx.tableName.table.ID().text
         val columns = if (ctx.columns != null) {
             ctx.columns.children
-                    .filter {
-                        it is SparkStreamSqlParser.ColTypeContext
-                    }.map { item ->
-                        val column = item as SparkStreamSqlParser.ColTypeContext
-                        val colName = column.ID().text
-                        val dataType = column.dataType().text
-                        val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
-                        val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
-                        //val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
+                .filter {
+                    it is SparkStreamSqlParser.ColTypeContext
+                }.map { item ->
+                    val column = item as SparkStreamSqlParser.ColTypeContext
+                    val colName = column.ID().text
+                    val dataType = column.dataType().text
+                    val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
+                    val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
+                    //val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
 
-                        Column(colName, dataType, colComment, true, jsonPath)
-                    }
+                    val columnRel = ColumnRel(colName, dataType, colComment, true)
+                    columnRel.jsonPath = jsonPath
+                    columnRel
+                }
         } else {
             emptyList()
         }

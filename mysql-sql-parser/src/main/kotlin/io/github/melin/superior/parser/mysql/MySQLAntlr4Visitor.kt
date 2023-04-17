@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.create.CreateNamespace
 import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropIndex
@@ -56,7 +56,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                 }
             }
         }
-        val columns = ArrayList<Column>()
+        val columnRels = ArrayList<ColumnRel>()
         val properties = HashMap<String, String>()
 
         ctx.createDefinitions().children.forEach { column ->
@@ -81,16 +81,16 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                         colComment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
                     }
                 }
-                columns.add(Column(name, dataType, colComment))
+                columnRels.add(ColumnRel(name, dataType, colComment))
             }
         }
 
         super.visitColumnCreateTable(ctx)
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
-        columns.forEach { column: Column -> if (primaryKeys.contains(column.name)) { column.isPk = true } }
+        columnRels.forEach { columnRel: ColumnRel -> if (primaryKeys.contains(columnRel.name)) { columnRel.isPk = true } }
         val createTable = CreateTable(tableId, comment,
-                null, null, columns, properties, null, ifNotExists)
+                null, null, columnRels, properties, null, ifNotExists)
 
         return StatementData(StatementType.CREATE_TABLE, createTable)
     }

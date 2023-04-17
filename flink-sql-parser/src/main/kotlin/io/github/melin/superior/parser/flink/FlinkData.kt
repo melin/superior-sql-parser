@@ -5,7 +5,7 @@ import io.github.melin.superior.common.relational.DefaultConstructor
 import io.github.melin.superior.common.relational.NamespaceId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 
 @DefaultConstructor
 data class FlinkCdcCreateTable(
@@ -17,7 +17,7 @@ data class FlinkCdcCreateTable(
 
     var sinkOptions: HashMap<String, String>? = null
     var sourceOptions: HashMap<String, String>? = null
-    var computeCols: List<Column>? = null
+    var computeCols: List<ColumnRel>? = null
 }
 
 @DefaultConstructor

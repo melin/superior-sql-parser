@@ -5,7 +5,7 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.NamespaceId
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
@@ -57,21 +57,21 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
             val colDefs = ctx.computeColList().computeColDef();
             val columns = colDefs.map { colDef ->
                 val colName = colDef.colName.text
-                val column = Column(colName)
+                val columnRel = ColumnRel(colName)
 
                 val expression = colDef.expression();
                 val expr = StringUtils.substring(command, expression.start.startIndex, expression.stop.stopIndex + 1)
-                column.expression = expr
+                columnRel.expression = expr
 
                 if (colDef.FIRST() != null) {
-                    column.position = "FIRST"
+                    columnRel.position = "FIRST"
                 }
                 if (colDef.AFTER() != null) {
-                    column.position = "AFTER"
-                    column.afterCol = colDef.name.text
+                    columnRel.position = "AFTER"
+                    columnRel.afterCol = colDef.name.text
                 }
 
-                column
+                columnRel
             }
 
             createTable.computeCols = columns

@@ -4,14 +4,14 @@ import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 
 data class CreateTableAsSelect(
     override val tableId: TableId,
     val comment: String?,
     var lifeCycle: Int?,
-    var partitionColumns: List<Column>?,
-    var columns: List<Column>?,
+    var partitionColumnRels: List<ColumnRel>?,
+    var columnRels: List<ColumnRel>?,
     var properties: Map<String, String>?,
     var fileFormat: String? = null,
     var ifNotExists: Boolean = false, //是否存在 if not exists 关键字

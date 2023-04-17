@@ -117,7 +117,7 @@ class SparkSqlParserTest {
             val schemaName = statement.tableId.schemaName
             Assert.assertEquals("platformtool", schemaName)
             Assert.assertEquals(7, statement.lifeCycle)
-            Assert.assertEquals("姓名", statement.columns?.get(0)?.comment)
+            Assert.assertEquals("姓名", statement.columnRels?.get(0)?.comment)
             Assert.assertEquals("hive", statement.createTableType)
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
@@ -147,7 +147,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("dc_cluster_compute", tableName)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("hive", statement.createTableType)
-            Assert.assertEquals("数据中心", statement.columns?.get(1)?.comment)
+            Assert.assertEquals("数据中心", statement.columnRels?.get(1)?.comment)
         } else {
             Assert.fail()
         }

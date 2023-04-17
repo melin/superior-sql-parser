@@ -4,7 +4,7 @@ import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.TableType
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 import kotlin.collections.ArrayList
 
 data class AlterTable(
@@ -63,9 +63,9 @@ data class AlterColumnAction(
 ): AlterAction() {
     var newColumName: String? = null // 修改列名，新列名称
 
-    fun getColumn(): Column? {
+    fun getColumn(): ColumnRel? {
         return if (columName != null) {
-            Column(columName!!, dataType, comment, nullable, defaultExpression)
+            ColumnRel(columName!!, dataType, comment, nullable, defaultExpression)
         } else {
             null
         }

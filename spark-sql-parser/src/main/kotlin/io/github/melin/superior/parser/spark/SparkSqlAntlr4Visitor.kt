@@ -171,16 +171,16 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
-        var partitionColumns: List<Column>? = null
+        var partitionColumnRels: List<ColumnRel>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
-        var columns: List<Column>? = null
+        var columnRels: List<ColumnRel>? = null
         var createTableType = "hive"
         if (query == null) {
-            columns = createOrReplaceTableColTypeList?.createOrReplaceTableColType()?.map {
+            columnRels = createOrReplaceTableColTypeList?.createOrReplaceTableColType()?.map {
                 val colName = it.colName.text
                 val dataType = it.dataType().text
                 val (nullable, defaultExpr, colComment) = parseColDefinition(it.colDefinitionOption())
-                Column(colName, dataType, colComment, nullable, defaultExpr)
+                ColumnRel(colName, dataType, colComment, nullable, defaultExpr)
             }
 
             if (tableProvider != null) {
@@ -199,7 +199,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
                         throw SQLParserException("spark create table 语法创建表，创建分区字段语法错误，请参考文档");
                     }
                 } else {
-                    partitionColumns = createTableClauses.partitioning.children
+                    partitionColumnRels = createTableClauses.partitioning.children
                         .filter { it is SparkSqlParser.PartitionColumnContext }.map { item ->
                             val column = item as SparkSqlParser.PartitionColumnContext
                             val colName = column.colType().colName.text
@@ -208,7 +208,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
                             partitionColumnNames.add(colName)
                             val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().text) else null
-                            Column(colName, dataType, colComment)
+                            ColumnRel(colName, dataType, colComment)
                         }
                 }
             }
@@ -240,7 +240,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat)
             createTable.createTableType = createTableType;
             createTable.replace = replace
 
@@ -257,7 +257,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumns, columns, properties, fileFormat)
+            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat)
             createTable.createTableType = createTableType;
             createTable.replace = replace
             createTable.external = external

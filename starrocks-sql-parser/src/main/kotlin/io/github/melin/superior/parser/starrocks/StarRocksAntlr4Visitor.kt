@@ -4,7 +4,7 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.table.Column
+import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
@@ -29,14 +29,14 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
     override fun visitCreateTableStatement(ctx: StarRocksParserParser.CreateTableStatementContext): StatementData {
         val tableId = parseTableName(ctx.qualifiedName())
         val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
-        val columns: List<Column> = ctx.columnDesc().map { column ->
+        val columnRels: List<ColumnRel> = ctx.columnDesc().map { column ->
             val columnName = column.identifier().text
             val dataType = column.type().text
             val colComment = if (column.comment() != null) StringUtil.cleanQuote(column.comment().string().text) else null
-            Column(columnName, dataType, colComment)
+            ColumnRel(columnName, dataType, colComment)
         }
 
-        val createTable = CreateTable(tableId, comment, columns)
+        val createTable = CreateTable(tableId, comment, columnRels)
         return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
