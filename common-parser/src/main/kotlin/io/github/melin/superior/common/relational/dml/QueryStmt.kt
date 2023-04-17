@@ -11,7 +11,4 @@ data class QueryStmt(
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DQL
-
-    lateinit var functionNames: HashSet<String>
-    var cteTempTables: List<String>? = null
 }

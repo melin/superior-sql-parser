@@ -15,8 +15,6 @@ data class InsertStmt(
 
     var inputTables: ArrayList<TableId> = arrayListOf()
     var outputTables: ArrayList<TableId> = arrayListOf()
-    var functionNames: HashSet<String> = hashSetOf()
-    var cteTempTables: List<String> = listOf()
 
     init {
         if (tableId != null) {

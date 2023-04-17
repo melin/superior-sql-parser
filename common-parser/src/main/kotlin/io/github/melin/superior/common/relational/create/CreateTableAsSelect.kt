@@ -27,7 +27,6 @@ data class CreateTableAsSelect(
     var createTableType: String = "hive"
 
     var inputTables: List<TableId> = listOf()
-    var functionNames: HashSet<String> = hashSetOf()
 
     constructor(tableId: TableId):
             this(tableId, null, null, null, null, null, null, false)

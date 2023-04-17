@@ -13,6 +13,4 @@ data class ExportData(
     override val sqlType: SqlType = SqlType.DML
 
     lateinit var inputTables: ArrayList<TableId>
-    lateinit var cteTempTables: List<String>
-    lateinit var functionNames: HashSet<String>
 }

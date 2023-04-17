@@ -17,6 +17,4 @@ data class DataTunnelExpr(
     override val sqlType: SqlType = SqlType.DML
 
     lateinit var inputTables: List<TableId>
-    lateinit var cteTempTables: List<String>
-    lateinit var functionNames: HashSet<String>
 }
