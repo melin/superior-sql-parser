@@ -259,7 +259,7 @@ class MySQLParserDdlTest {
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
             val action = statement.firstAction() as AlterTableAction
-            Assert.assertEquals("dc_users", action.newTableName)
+            Assert.assertEquals("dc_users", action.newTableId?.tableName)
         } else {
             Assert.fail()
         }

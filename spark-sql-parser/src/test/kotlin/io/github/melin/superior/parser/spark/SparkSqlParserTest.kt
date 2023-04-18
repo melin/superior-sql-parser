@@ -694,7 +694,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             val action = statement.firstAction() as AlterTableAction
             Assert.assertEquals(AlterType.RENAME_TABLE, statement.alterType)
-            Assert.assertEquals("new_table_name", action.newTableName)
+            Assert.assertEquals("new_table_name", action.newTableId?.tableName)
         } else {
             Assert.fail()
         }

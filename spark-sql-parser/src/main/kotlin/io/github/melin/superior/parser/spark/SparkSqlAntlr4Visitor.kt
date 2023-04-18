@@ -317,11 +317,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val newTableId = parseTableName(ctx.to)
 
         return if (ctx.VIEW() != null) {
-            val action = AlterTableAction(newTableId.tableName)
+            val action = AlterTableAction(newTableId)
             val alterTable = AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         } else {
-            val action = AlterTableAction(newTableId.tableName)
+            val action = AlterTableAction(newTableId)
             val alterTable = AlterTable(RENAME_TABLE, tableId, action)
             StatementData(StatementType.ALTER_TABLE, alterTable)
         }

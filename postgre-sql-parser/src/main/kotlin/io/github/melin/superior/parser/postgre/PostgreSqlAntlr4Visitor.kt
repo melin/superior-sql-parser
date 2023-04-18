@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.AlterTable
+import io.github.melin.superior.common.relational.AlterTableAction
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateIndex
@@ -46,8 +47,17 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): StatementData {
         currentOptType = StatementType.CREATE_TABLE
-        val tableId = parseTableName(ctx.qualified_name(0))
 
+        if (ctx.PARTITION() != null) {
+            val partitionTableId = parseTableName(ctx.qualified_name(0))
+            val action = AlterTableAction(partitionTableId)
+
+            val tableId = parseTableName(ctx.qualified_name(1))
+            val alterTable = AlterTable(AlterType.ADD_PARTITION, tableId, action)
+            return StatementData(StatementType.ALTER_TABLE, alterTable)
+        }
+
+        val tableId = parseTableName(ctx.qualified_name(0))
         val columns = ctx.opttableelementlist()?.tableelementlist()?.tableelement()?.map {
             val colDef = it.columnDef()
             val colName = colDef.colid().text
@@ -157,6 +167,24 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         throw SQLParserException("not support")
+    }
+
+    override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): StatementData {
+        if (ctx.TABLE() != null) {
+            if (ctx.relation_expr() != null) {
+                val tableId = parseTableName(ctx.relation_expr())
+                val alterTable = if (ctx.partition_cmd().ATTACH() != null) {
+                    AlterTable(AlterType.ATTACH_PARTITION, tableId)
+                } else {
+                    AlterTable(AlterType.DETACH_PARTITION, tableId)
+                }
+
+                alterTable.ifExists = ctx.IF_P() != null
+                return StatementData(StatementType.ALTER_TABLE, alterTable)
+            }
+        }
+
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
     }
 
     //----------------------------------------private methods------------------------------------

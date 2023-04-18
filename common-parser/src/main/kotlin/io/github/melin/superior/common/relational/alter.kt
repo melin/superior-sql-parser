@@ -26,6 +26,8 @@ data class AlterTable(
 
     constructor(alterType: AlterType, tableId: TableId): this(alterType, tableId, null)
 
+    constructor(alterType: AlterType): this(alterType, TableId("__UNKOWN__"), null)
+
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)
     }
@@ -38,7 +40,7 @@ data class AlterTable(
 abstract class AlterAction(val privilegeType: PrivilegeType = PrivilegeType.ALTER)
 
 data class AlterTableAction(
-    var newTableName: String? = null, // 修改表，新列名称
+    var newTableId: TableId? = null, // 修改表，新列名称
 ): AlterAction() {
     var location: String? = null
     var properties: Map<String, String>? = null

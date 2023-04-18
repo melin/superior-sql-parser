@@ -22,6 +22,8 @@ enum class AlterType : Serializable {
     DROP_COLUMN,
     DROP_INDEX,
 
+    DETACH_PARTITION,
+    ATTACH_PARTITION,
     RENAME_PARTITION,
     TRUNCATE_PARTITION,
 
