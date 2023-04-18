@@ -5,10 +5,10 @@ data class ColumnRel(
     val type: String? = null,
     val comment: String? = null,
     var nullable: Boolean = true,
-    var defaultExpr: String? = null // 默认值表达式
+    var defaultExpr: String? = null,
+    var isPk: Boolean = false,
 ) {
     var expression: String? = null // 计算表达式
-    var isPk: Boolean = false
     var position: String? = null
     var afterCol: String? = null
     var jsonPath: String? = null

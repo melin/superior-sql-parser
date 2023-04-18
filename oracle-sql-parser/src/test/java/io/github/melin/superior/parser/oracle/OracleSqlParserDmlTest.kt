@@ -2,13 +2,11 @@ package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateNamespace
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.namespace.Namespace
 import org.junit.Assert
 import org.junit.Test
 
-class OracleSqlParserTest {
+class OracleSqlParserDmlTest {
     @Test
     fun querySqlTest0() {
         val sql = """
