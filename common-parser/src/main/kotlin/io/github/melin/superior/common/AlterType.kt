@@ -10,18 +10,20 @@ enum class AlterType : Serializable {
     TOUCH_TABLE,
 
     RENAME_COLUMN,
-    ADD_COLUMN,
     ALTER_COLUMN,
-    DROP_COLUMN,
+
+    ADD_PARTITION,
+    ADD_COLUMN,
+    ADD_INDEX,
+    ADD_UNIQUE_KEY,
+    ADD_PRIMARY_KEY,
 
     DROP_PARTITION,
-    ADD_PARTITION,
-    RENAME_PARTITION,
+    DROP_COLUMN,
+    DROP_INDEX,
 
-    ADD_INDEX, //mysql
-    DROP_INDEX, //mysql
-    ADD_UNIQUE_KEY, //mysql
-    ADD_PRIMARY_KEY, //mysql
+    RENAME_PARTITION,
+    TRUNCATE_PARTITION,
 
     UNKOWN
 }

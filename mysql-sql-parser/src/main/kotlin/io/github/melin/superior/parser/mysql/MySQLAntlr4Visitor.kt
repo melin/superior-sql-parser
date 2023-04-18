@@ -92,6 +92,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val createTable = CreateTable(tableId, comment,
                 null, null, columnRels, properties, null, ifNotExists)
 
+        if (ctx.partitionDefinitions() != null) {
+            createTable.partitionType = "PARTITION"
+        }
+
         return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
@@ -204,6 +208,18 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
             val action = AlterTableAction()
             val alterTable = AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
+            return StatementData(StatementType.ALTER_TABLE, alterTable)
+        } else if(statement is MySqlParser.AlterByAddPartitionContext) {
+            val action = AlterTableAction()
+            val alterTable = AlterTable(AlterType.ADD_PARTITION, tableId, action)
+            return StatementData(StatementType.ALTER_TABLE, alterTable)
+        } else if(statement is MySqlParser.AlterByDropPartitionContext) {
+            val action = AlterTableAction()
+            val alterTable = AlterTable(AlterType.DROP_PARTITION, tableId, action)
+            return StatementData(StatementType.ALTER_TABLE, alterTable)
+        } else if(statement is MySqlParser.AlterByTruncatePartitionContext) {
+            val action = AlterTableAction()
+            val alterTable = AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         }
 

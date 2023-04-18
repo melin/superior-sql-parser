@@ -1,11 +1,7 @@
 package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.drop.DropIndex
 import org.junit.Assert
 import org.junit.Test
 

@@ -5,14 +5,10 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.create.CreateIndex
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.InsertStmt
 import io.github.melin.superior.common.relational.create.CreateNamespace
 import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
@@ -23,7 +19,7 @@ import org.junit.Test
  *
  * Created by libinsong on 2018/1/10.
  */
-class MySQLParserTest {
+class MySQLParserDdlTest {
 
     @Test
     fun createDatabaseTest() {
@@ -160,7 +156,7 @@ class MySQLParserTest {
                 "  PRIMARY KEY (`id`,`gmt_create`),\n" +
                 "  KEY `channel_report_index` (`gmt_create`,`partner_code`,`app_channel`,`app_name`,`app_version`,`event_type`)\n" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=33703438 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='渠道反作弊日统计表'\n" +
-                "/*!50100 PARTITION BY RANGE (month(gmt_create)-1)\n" +
+                " PARTITION BY RANGE (month(gmt_create)-1)\n" +
                 "(PARTITION part0 VALUES LESS THAN (1) COMMENT = '1月份' ENGINE = InnoDB,\n" +
                 " PARTITION part1 VALUES LESS THAN (2) COMMENT = '2月份' ENGINE = InnoDB,\n" +
                 " PARTITION part2 VALUES LESS THAN (3) COMMENT = '3月份' ENGINE = InnoDB,\n" +
@@ -172,13 +168,14 @@ class MySQLParserTest {
                 " PARTITION part8 VALUES LESS THAN (9) COMMENT = '9月份' ENGINE = InnoDB,\n" +
                 " PARTITION part9 VALUES LESS THAN (10) COMMENT = '10月份' ENGINE = InnoDB,\n" +
                 " PARTITION part10 VALUES LESS THAN (11) COMMENT = '11月份' ENGINE = InnoDB,\n" +
-                " PARTITION part11 VALUES LESS THAN (12) COMMENT = '12月份' ENGINE = InnoDB) */"
+                " PARTITION part11 VALUES LESS THAN (12) COMMENT = '12月份' ENGINE = InnoDB)"
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if(statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
             Assert.assertEquals("app_channel_daily_report", statement.tableId.tableName)
+            Assert.assertEquals("PARTITION", statement.partitionType)
         } else {
             Assert.fail()
         }
@@ -286,64 +283,6 @@ class MySQLParserTest {
     }
 
     @Test
-    fun selectTest0() {
-        val sql = "select * from users limit 1"
-
-        val tableData = MySQLHelper.getStatementData(sql)
-        val statement = tableData.statement
-        if(statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, tableData.type)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(1, statement.limit)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun selectTest1() {
-        val sql = "select * from users a left outer join address b on a.address_id = b.id limit 100, 10"
-
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if(statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals(10, statement.limit)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun deleteTest() {
-        val sql = "delete from user where id=1"
-
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if(statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun updateTest() {
-        val sql = "update user set name='xxx' where id=2"
-
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if(statement is UpdateTable) {
-            Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun truncateTableTest() {
         val sql = "TRUNCATE TABLE test.user"
 
@@ -353,23 +292,6 @@ class MySQLParserTest {
             Assert.assertEquals(StatementType.TRUNCATE_TABLE, statementData.type)
             Assert.assertEquals("test", statement.tableId.schemaName)
             Assert.assertEquals("user", statement.tableId.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun insertValuesTest() {
-        //val sql = "insert into user values('name')"
-        val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
-
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if(statement is InsertStmt) {
-            Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
-            Assert.assertEquals("user", statement.tableId?.tableName)
-            Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -598,20 +520,6 @@ class MySQLParserTest {
     }
 
     @Test
-    fun countCondTest() {
-        var sql = "select count(type='mac' or null) From test_table where a=2"
-
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SELECT, statementData.type)
-        val statement = statementData.statement
-        if (statement is QueryStmt) {
-            Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun createIndexTest() {
         val sql = "CREATE INDEX test_index ON demo.orders (column_name)"
 
@@ -635,9 +543,24 @@ class MySQLParserTest {
 
         val statement = statementData.statement
         if (statement is AlterTable) {
+            Assert.assertEquals(AlterType.DROP_INDEX, statement.alterType)
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
             val dropIndex = statement.firstAction() as DropIndex
             Assert.assertEquals("test_index", dropIndex.indexName)
+        }
+    }
+
+    @Test
+    fun truncatePartitionTest() {
+        val sql = "ALTER TABLE demo.orders TRUNCATE PARTITION p1998\n"
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is AlterTable) {
+            Assert.assertEquals(AlterType.TRUNCATE_PARTITION, statement.alterType)
+            Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
         }
     }
 }

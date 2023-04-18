@@ -18,6 +18,7 @@ import javafx.scene.control.Tab
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
+import java.util.Optional
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -67,6 +68,19 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         val createTable = CreateTable(tableId, columnRels = columns)
+        if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
+            createTable.temporary = true
+        }
+
+        val partitionspec = ctx.optpartitionspec()?.partitionspec()
+        if (partitionspec != null) {
+            val partitionType = partitionspec.colid().text.uppercase()
+            val partitionColumns = partitionspec.part_params().part_elem().map { it.text }
+
+            createTable.partitionColumnNames = partitionColumns
+            createTable.partitionType = partitionType
+        }
+
         return StatementData(currentOptType, createTable)
     }
 

@@ -18,20 +18,25 @@ class PostgreSqlParserDdlTest {
     @Test
     fun createTable0() {
         val sql = """
-            CREATE TABLE test.public.authors (
+            CREATE TEMPORARY TABLE test.public.authors (
                 id INTEGER NOT NULL PRIMARY KEY,
                 last_name TEXT,
-                first_name TEXT
-            )
+                first_name TEXT,
+                age int not null
+            ) PARTITION BY RANGE (age); 
         """.trimIndent()
 
         val statementData = PostgreSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertTrue(statement.temporary)
             Assert.assertEquals(TableId("test", "public", "authors"), statement.tableId)
-            Assert.assertEquals(3, statement.columnRels?.size)
-            Assert.assertEquals(true, statement.columnRels?.get(0)?.isPk)
+            Assert.assertEquals(4, statement.columnRels?.size)
+            Assert.assertTrue(statement.columnRels?.get(0)?.isPk!!)
+
+            Assert.assertEquals("RANGE", statement.partitionType)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
         } else {
             Assert.fail()
         }

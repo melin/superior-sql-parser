@@ -8,12 +8,18 @@ import java.io.Serializable
 
 enum class StatementType: Serializable {
     CREATE_NAMESPACE,
-    DROP_NAMESPACE,
-
     CREATE_TABLE,
     CREATE_TABLE_AS_SELECT,
     CREATE_TABLE_AS_LIKE,
+    CREATE_VIEW,
+    CREATE_TEMPORARY_VIEW,
+    CREATE_FUNCTION,
+
+    DROP_NAMESPACE,
     DROP_TABLE,
+    DROP_VIEW,
+    DROP_FUNCTION,
+
     TRUNCATE_TABLE,
     MERGE_TABLE,
     REFRESH_TABLE,
@@ -33,13 +39,6 @@ enum class StatementType: Serializable {
     INSERT_SELECT,
     MULTI_INSERT,
     MERGE_INTO_TABLE,
-
-    CREATE_VIEW,
-    CREATE_TEMPORARY_VIEW,
-    DROP_VIEW,
-
-    CREATE_FUNCTION,
-    DROP_FUNCTION,
 
     PROCEDURE,
 
