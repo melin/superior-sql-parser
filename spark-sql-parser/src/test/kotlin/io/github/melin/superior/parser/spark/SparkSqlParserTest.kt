@@ -429,10 +429,9 @@ class SparkSqlParserTest {
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateTableAsSelect) {
-            val tableName = statement.tableId.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
             Assert.assertEquals(statement.fileFormat, "ORC")
-            Assert.assertEquals("tdl_users_1", tableName)
+            Assert.assertEquals("tdl_users_1", statement.tableId.tableName)
             Assert.assertEquals("select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals("users", statement.inputTables.get(0).tableName)

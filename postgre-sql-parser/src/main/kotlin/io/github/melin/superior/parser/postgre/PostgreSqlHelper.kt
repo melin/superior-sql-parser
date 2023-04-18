@@ -22,6 +22,7 @@ object PostgreSqlHelper {
         return when (statementType) {
             StatementType.ALTER_TABLE -> true
             StatementType.SELECT -> true
+            StatementType.CREATE_TABLE_AS_SELECT -> true
             else -> false
         }
     }

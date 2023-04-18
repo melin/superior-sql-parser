@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
 import org.junit.Test
@@ -21,6 +22,25 @@ class PostgreSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createAsQueryTest0() {
+        val sql = """
+            CREATE TABLE films_recent AS
+            SELECT * FROM films WHERE date_prod >= '2002-01-01';
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CreateTableAsSelect) {
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals("films_recent", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("films", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }

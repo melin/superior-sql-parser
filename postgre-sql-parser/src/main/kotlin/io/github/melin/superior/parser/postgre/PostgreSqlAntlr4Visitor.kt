@@ -7,6 +7,7 @@ import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
@@ -107,8 +108,19 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
     }
 
+    override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): StatementData {
+        currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+        val tableId = parseTableName(ctx.create_as_target().qualified_name())
+        val createTable = CreateTableAsSelect(tableId)
+        super.visitSelectstmt(ctx.selectstmt())
+
+        createTable.inputTables = inputTables
+        return StatementData(currentOptType, createTable)
+    }
+
     override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
-        if (currentOptType == StatementType.SELECT) {
+        if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
             val tableId = parseTableName(ctx)
             inputTables.add(tableId)
             return null
