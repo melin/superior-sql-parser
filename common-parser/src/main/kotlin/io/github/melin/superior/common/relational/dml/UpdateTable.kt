@@ -7,8 +7,7 @@ import io.github.melin.superior.common.relational.TableId
 
 data class UpdateTable(
     override val tableId: TableId,
-    val upset: Map<String, String>? = null,
-    val where: String? = null
+    val inputTables: ArrayList<TableId> = arrayListOf()
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.WRITE
     override val sqlType: SqlType = SqlType.DML

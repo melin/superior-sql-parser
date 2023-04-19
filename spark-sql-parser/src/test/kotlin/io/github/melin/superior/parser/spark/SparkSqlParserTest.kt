@@ -1451,14 +1451,17 @@ class SparkSqlParserTest {
 
     @Test
     fun deleteTest() {
-        val sql = "delete from aa.user where name='xc'"
+        val sql = """
+            DELETE FROM films
+            WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
+        """.trimIndent()
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
-            Assert.assertEquals("name='xc'", statement.where)
+            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -1466,14 +1469,17 @@ class SparkSqlParserTest {
 
     @Test
     fun updateTest0() {
-        val sql = "update user set name='xxx', age=20 where id=2"
+        val sql = """
+            UPDATE employees SET sales_count = sales_count + 1 WHERE id =
+            (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
+        """.trimIndent()
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
-            Assert.assertEquals("id=2", statement.where)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }

@@ -269,18 +269,24 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                 throw SQLParserException("不支持更新多个表")
             }
 
+            currentOptType = StatementType.UPDATE
+            this.visit(ctx.updateStatement().singleUpdateStatement().expression())
+
             val tableId = parseFullId(ctx.updateStatement().singleUpdateStatement().tableName().fullId())
-            val tableSource = UpdateTable(tableId)
-            return StatementData(StatementType.UPDATE, tableSource)
+            val updateTable = UpdateTable(tableId, inputTables)
+            return StatementData(StatementType.UPDATE, updateTable)
         } else if (ctx.deleteStatement() != null) {
             val statement = ctx.deleteStatement()
             if (statement.multipleDeleteStatement() != null) {
                 throw SQLParserException("不支持删除多个表")
             }
 
+            currentOptType = StatementType.DELETE
+            this.visit(ctx.deleteStatement().singleDeleteStatement().expression())
+
             val tableId = parseFullId(ctx.deleteStatement().singleDeleteStatement().tableName().fullId())
-            val tableSource = DeleteTable(tableId)
-            return StatementData(StatementType.DELETE, tableSource)
+            val deleteTable = DeleteTable(tableId, inputTables)
+            return StatementData(StatementType.DELETE, deleteTable)
         } else {
             throw SQLParserException("不支持的DML")
         }
@@ -304,7 +310,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitTableName(ctx: MySqlParser.TableNameContext): StatementData? {
         if(StatementType.SELECT == currentOptType ||
-                StatementType.INSERT_SELECT == currentOptType) {
+            StatementType.INSERT_SELECT == currentOptType ||
+            StatementType.UPDATE == currentOptType ||
+            StatementType.DELETE == currentOptType) {
+
             val tableId = parseFullId(ctx.fullId())
             inputTables.add(tableId)
         }

@@ -6,7 +6,9 @@ import io.github.melin.superior.common.relational.AlterTableAction
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.*
+import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
@@ -143,11 +145,32 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, createTable)
     }
 
+    override fun visitUpdatestmt(ctx: PostgreSqlParser.UpdatestmtContext): StatementData {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        super.visitWhere_or_current_clause(ctx.where_or_current_clause())
+
+        val update = UpdateTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
+    }
+
+    override fun visitDeletestmt(ctx: PostgreSqlParser.DeletestmtContext): StatementData {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        super.visitWhere_or_current_clause(ctx.where_or_current_clause())
+
+        val update = DeleteTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
+    }
+
     override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
-            currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
+            currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE) {
+
             val tableId = parseTableName(ctx)
             inputTables.add(tableId)
             return null

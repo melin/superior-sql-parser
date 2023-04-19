@@ -903,24 +903,21 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     //-----------------------------------delta sql-------------------------------------------------
 
     override fun visitDeleteFromTable(ctx: SparkSqlParser.DeleteFromTableContext): StatementData {
+        currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val where = if (ctx.whereClause() != null) StringUtils.substring(command, ctx.whereClause().start.stopIndex + 1) else null
+        super.visitWhereClause(ctx.whereClause())
 
-        val update = DeleteTable(tableId, StringUtils.trim(where))
-        return StatementData(StatementType.DELETE, update)
+        val update = DeleteTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
     }
 
     override fun visitUpdateTable(ctx: SparkSqlParser.UpdateTableContext): StatementData {
+        currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.multipartIdentifier())
+        super.visitWhereClause(ctx.whereClause())
 
-        val upset = ctx.setClause().assignmentList().assignment().filter { it is SparkSqlParser.AssignmentContext }.map {
-            val assign = it as SparkSqlParser.AssignmentContext
-            assign.key.text to assign.value.text
-        }.toMap()
-        val where = if (ctx.whereClause() != null) StringUtils.substring(command, ctx.whereClause().start.stopIndex + 1) else null
-
-        val update = UpdateTable(tableId, upset, StringUtils.trim(where))
-        return StatementData(StatementType.UPDATE, update)
+        val update = UpdateTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
     }
 
     override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): StatementData {
@@ -974,6 +971,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.MERGE_INTO_TABLE ||
             currentOptType == StatementType.EXPORT_TABLE ||
             currentOptType == StatementType.DATATUNNEL ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE ||
 
             currentAlterType == ALTER_VIEW) {
 

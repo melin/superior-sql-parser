@@ -8,7 +8,9 @@ import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
@@ -124,6 +126,14 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.PROCEDURE, procedure)
     }
 
+    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    }
+
+    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
+    }
+
     override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): StatementData {
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
@@ -133,18 +143,30 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.SELECT, queryStmt)
     }
 
-    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): StatementData {
-        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    override fun visitDelete_statement(ctx: OracleParser.Delete_statementContext): StatementData {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
+        super.visitWhere_clause(ctx.where_clause())
+
+        val update = DeleteTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
     }
 
-    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): StatementData {
-        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
+    override fun visitUpdate_statement(ctx: OracleParser.Update_statementContext): StatementData {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
+        super.visitWhere_clause(ctx.where_clause())
+
+        val update = UpdateTable(tableId, inputTables)
+        return StatementData(currentOptType, update)
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
-            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW) {
+            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE) {
 
             if (ctx.parent is Select_list_elementsContext) {
                 return null

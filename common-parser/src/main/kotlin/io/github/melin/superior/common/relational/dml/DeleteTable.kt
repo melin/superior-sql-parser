@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.TableId
 
 data class DeleteTable(
     override val tableId: TableId,
-    val where: String? = null
+    val inputTables: ArrayList<TableId> = arrayListOf()
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.WRITE
     override val sqlType: SqlType = SqlType.DML

@@ -2,7 +2,9 @@ package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.UpdateTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -41,6 +43,42 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals("films_recent", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals("films", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest() {
+        val sql = """
+            DELETE FROM films
+            WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest0() {
+        val sql = """
+            UPDATE employees SET sales_count = sales_count + 1 WHERE id =
+            (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
