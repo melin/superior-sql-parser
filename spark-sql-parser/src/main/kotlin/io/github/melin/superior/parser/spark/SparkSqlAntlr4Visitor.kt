@@ -662,11 +662,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             querySql = StringUtils.substring(command, query.start.startIndex)
         }
 
-        currentAlterType = ALTER_VIEW_QUERY
+        currentAlterType = ALTER_VIEW
         visitQuery(ctx.query())
 
         val action = AlterViewAction(querySql, inputTables, functionNames)
-        val alterView = AlterTable(ALTER_VIEW_QUERY, tableId, action)
+        val alterView = AlterTable(ALTER_VIEW, tableId, action)
         return StatementData(StatementType.ALTER_TABLE, alterView)
     }
 
@@ -975,7 +975,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.EXPORT_TABLE ||
             currentOptType == StatementType.DATATUNNEL ||
 
-            currentAlterType == ALTER_VIEW_QUERY) {
+            currentAlterType == ALTER_VIEW) {
 
             val index = inputTables.indexOf(tableId)
             if (index == -1) {

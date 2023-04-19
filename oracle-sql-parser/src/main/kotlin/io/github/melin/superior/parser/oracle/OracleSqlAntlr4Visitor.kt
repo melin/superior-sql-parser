@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.oracle
 
-import com.google.common.collect.Table
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateProcedure
@@ -102,6 +102,14 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
         queryStmts.add(queryStmt)
         return StatementData(StatementType.SELECT, queryStmt)
+    }
+
+    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    }
+
+    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {

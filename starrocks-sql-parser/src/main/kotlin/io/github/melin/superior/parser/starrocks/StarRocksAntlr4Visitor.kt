@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -40,6 +41,13 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
+    override fun visitAlterTableStatement(ctx: StarRocksParserParser.AlterTableStatementContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    }
+
+    override fun visitAlterViewStatement(ctx: StarRocksParserParser.AlterViewStatementContext?): StatementData {
+        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
+    }
 
     fun parseTableName(ctx: StarRocksParserParser.QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 2) {

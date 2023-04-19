@@ -676,7 +676,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals("v1", statement.tableId.tableName)
             val action = statement.firstAction() as AlterViewAction
-            Assert.assertEquals(AlterType.ALTER_VIEW_QUERY, statement.alterType)
+            Assert.assertEquals(AlterType.ALTER_VIEW, statement.alterType)
             Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", action.querySql)
             Assert.assertEquals("t2", action.inputTables.get(0).tableName)
         } else {

@@ -3,14 +3,12 @@ package io.github.melin.superior.common
 import java.io.Serializable
 
 enum class AlterType : Serializable {
-    RENAME_TABLE,
-    ALTER_VIEW_QUERY,
     SET_TABLE_LOCATION,
     SET_TABLE_PROPERTIES,
     TOUCH_TABLE,
 
-    RENAME_COLUMN,
     ALTER_COLUMN,
+    ALTER_VIEW,
 
     ADD_PARTITION,
     ADD_COLUMN,
@@ -22,9 +20,12 @@ enum class AlterType : Serializable {
     DROP_COLUMN,
     DROP_INDEX,
 
+    RENAME_COLUMN,
+    RENAME_PARTITION,
+    RENAME_TABLE,
+
     DETACH_PARTITION,
     ATTACH_PARTITION,
-    RENAME_PARTITION,
     TRUNCATE_PARTITION,
 
     UNKOWN
