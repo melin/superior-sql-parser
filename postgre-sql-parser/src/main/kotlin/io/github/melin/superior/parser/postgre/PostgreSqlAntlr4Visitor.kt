@@ -5,9 +5,7 @@ import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.AlterTableAction
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateIndex
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
@@ -95,6 +93,33 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, createTable)
     }
 
+    override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): StatementData {
+        currentOptType = StatementType.CREATE_VIEW
+        val tableId = parseTableName(ctx.qualified_name())
+        val replace = if (ctx.REPLACE() != null) true else false
+        val createView = CreateView(tableId)
+        createView.replace = replace
+
+        if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
+            createView.temporary = true
+        }
+
+        super.visitSelectstmt(ctx.selectstmt())
+        createView.inputTables = inputTables
+        return StatementData(currentOptType, createView)
+    }
+
+    override fun visitCreatematviewstmt(ctx: PostgreSqlParser.CreatematviewstmtContext): StatementData {
+        currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
+        val tableId = parseTableName(ctx.create_mv_target().qualified_name())
+        val ifNotExists = if (ctx.IF_P() != null) true else false
+        val createView = CreateMaterializedView(tableId)
+        createView.ifNotExists = ifNotExists
+
+        super.visitSelectstmt(ctx.selectstmt())
+        createView.inputTables = inputTables
+        return StatementData(currentOptType, createView)
+    }
 
     override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): StatementData {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
@@ -120,6 +145,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.CREATE_VIEW ||
+            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
             currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
             val tableId = parseTableName(ctx)
             inputTables.add(tableId)

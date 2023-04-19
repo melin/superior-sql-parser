@@ -22,7 +22,6 @@ lexer grammar OracleLexer;
 
 options {
     superClass=OracleLexerBase;
-    caseInsensitive = true;
 }
 
 ABORT:                        'ABORT';

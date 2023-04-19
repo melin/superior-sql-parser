@@ -29,7 +29,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <kotlin.version>1.8.10</kotlin.version>
-        <antlr4.version>4.9.3</antlr4.version>
+        <antlr4.version>4.9.2</antlr4.version>
     </properties>
 
     <description>
@@ -219,6 +219,8 @@
                 <version>${antlr4.version}</version>
                 <executions>
                     <execution>
+                        <id>antlr</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>

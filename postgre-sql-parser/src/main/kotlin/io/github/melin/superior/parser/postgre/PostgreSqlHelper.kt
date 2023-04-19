@@ -20,7 +20,13 @@ object PostgreSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
+            StatementType.CREATE_TABLE -> true
+            StatementType.CREATE_VIEW -> true
             StatementType.ALTER_TABLE -> true
+
+            StatementType.DROP_TABLE -> true
+            StatementType.DROP_VIEW -> true
+
             StatementType.SELECT -> true
             StatementType.CREATE_TABLE_AS_SELECT -> true
             else -> false
@@ -40,7 +46,7 @@ object PostgreSqlHelper {
         val parser = PostgreSqlParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.SLL
+        //parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = PostgreSqlAntlr4Visitor()
 

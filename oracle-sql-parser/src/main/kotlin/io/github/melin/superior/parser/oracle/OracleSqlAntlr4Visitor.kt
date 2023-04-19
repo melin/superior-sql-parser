@@ -4,11 +4,14 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
@@ -80,6 +83,32 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, createTable)
     }
 
+    override fun visitCreate_view(ctx: OracleParser.Create_viewContext): StatementData {
+        currentOptType = StatementType.CREATE_VIEW
+        val schemaName = if (ctx.schema_name() != null) ctx.schema_name().text else null
+        val tableName = ctx.v.text
+        val tableId = TableId(schemaName, tableName)
+
+        val replace = if (ctx.REPLACE() != null) true else false
+        val createView = CreateView(tableId)
+        createView.replace = replace
+
+        super.visitSelect_only_statement(ctx.select_only_statement())
+        createView.inputTables = inputTables
+        return StatementData(currentOptType, createView)
+    }
+
+    override fun visitCreate_materialized_view(ctx: OracleParser.Create_materialized_viewContext): StatementData {
+        currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
+        val tableId = parseTableViewName(ctx.tableview_name())
+        //val ifNotExists = if (ctx.IF_P() != null) true else false
+        val createView = CreateMaterializedView(tableId)
+
+        super.visitSelect_only_statement(ctx.select_only_statement())
+        createView.inputTables = inputTables
+        return StatementData(currentOptType, createView)
+    }
+
     override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): StatementData {
         super.visitCreate_procedure_body(ctx)
         val procedure = CreateProcedure(ctx.procedure_name().text)
@@ -113,7 +142,14 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {
-        if (currentOptType == StatementType.SELECT) {
+        if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.CREATE_VIEW ||
+            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW) {
+
+            if (ctx.parent is Select_list_elementsContext) {
+                return null
+            }
+
             val tableId = parseTableViewName(ctx)
             inputTables.add(tableId)
         }
