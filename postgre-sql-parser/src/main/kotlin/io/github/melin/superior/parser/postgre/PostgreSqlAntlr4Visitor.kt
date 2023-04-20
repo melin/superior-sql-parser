@@ -149,6 +149,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
+        super.visitFrom_clause(ctx.from_clause())
 
         val update = UpdateTable(tableId, inputTables)
         return StatementData(currentOptType, update)
@@ -158,6 +159,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
+        super.visitUsing_clause(ctx.using_clause())
 
         val update = DeleteTable(tableId, inputTables)
         return StatementData(currentOptType, update)

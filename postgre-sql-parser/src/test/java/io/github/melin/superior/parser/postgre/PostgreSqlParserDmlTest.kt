@@ -49,7 +49,7 @@ class PostgreSqlParserDmlTest {
     }
 
     @Test
-    fun deleteTest() {
+    fun deleteTest0() {
         val sql = """
             DELETE FROM films
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
@@ -61,6 +61,26 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
             Assert.assertEquals("films", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest1() {
+        val sql = """
+            DELETE FROM films USING producers
+            WHERE producer_id = producers.id AND producers.name = 'foo';
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+
+            Assert.assertEquals("producers", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -79,6 +99,28 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest1() {
+        val sql = """
+            UPDATE product p
+            SET net_price = price - price * discount
+            FROM product_segment s
+            WHERE p.segment_id = s.id;
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals("product", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+
+            Assert.assertEquals("product_segment", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
