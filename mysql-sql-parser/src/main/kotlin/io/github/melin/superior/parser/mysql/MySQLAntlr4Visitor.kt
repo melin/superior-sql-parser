@@ -27,8 +27,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     private var limit: Int? = null
     private val primaryKeys = ArrayList<String>()
 
-    private var inputTables: ArrayList<TableId> = arrayListOf()
-    private var outputTables: ArrayList<TableId> = arrayListOf()
+    private val inputTables: ArrayList<TableId> = arrayListOf()
 
     //-----------------------------------database-------------------------------------------------
 
@@ -249,7 +248,6 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         } else if (ctx.insertStatement() != null) {
             val statement = ctx.insertStatement()
             val tableId = parseFullId(statement.tableName().fullId())
-            outputTables.add(tableId)
 
             if (statement.insertStatementValue().selectStatement() != null) {
                 currentOptType = StatementType.INSERT_SELECT
@@ -263,33 +261,48 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
                 val insertStmt = InsertStmt(InsertMode.INTO, tableId)
                 return StatementData(StatementType.INSERT_VALUES, insertStmt)
             }
-        } else if (ctx.updateStatement() != null) {
-            val statement = ctx.updateStatement()
-            if (statement.multipleUpdateStatement() != null) {
-                throw SQLParserException("不支持更新多个表")
-            }
-
-            currentOptType = StatementType.UPDATE
-            this.visit(ctx.updateStatement().singleUpdateStatement().expression())
-
-            val tableId = parseFullId(ctx.updateStatement().singleUpdateStatement().tableName().fullId())
-            val updateTable = UpdateTable(tableId, inputTables)
-            return StatementData(StatementType.UPDATE, updateTable)
-        } else if (ctx.deleteStatement() != null) {
-            val statement = ctx.deleteStatement()
-            if (statement.multipleDeleteStatement() != null) {
-                throw SQLParserException("不支持删除多个表")
-            }
-
-            currentOptType = StatementType.DELETE
-            this.visit(ctx.deleteStatement().singleDeleteStatement().expression())
-
-            val tableId = parseFullId(ctx.deleteStatement().singleDeleteStatement().tableName().fullId())
-            val deleteTable = DeleteTable(tableId, inputTables)
-            return StatementData(StatementType.DELETE, deleteTable)
-        } else {
-            throw SQLParserException("不支持的DML")
         }
+
+        return super.visitDmlStatement(ctx);
+    }
+
+    override fun visitDeleteStatement(ctx: MySqlParser.DeleteStatementContext): StatementData {
+        currentOptType = StatementType.DELETE
+
+        val deleteTable = if (ctx.multipleDeleteStatement() != null) {
+            this.visit(ctx.multipleDeleteStatement().expression())
+
+            val outputTables = ctx.multipleDeleteStatement().tableName().map { parseFullId(it.fullId()) }
+            val deleteTable = DeleteTable(inputTables)
+            super.visitTableSources(ctx.multipleDeleteStatement().tableSources())
+            deleteTable.outputTables = outputTables
+            deleteTable
+        } else {
+            this.visit(ctx.singleDeleteStatement().expression())
+
+            val tableId = parseFullId(ctx.singleDeleteStatement().tableName().fullId())
+            DeleteTable(tableId, inputTables)
+        }
+
+        return StatementData(StatementType.DELETE, deleteTable)
+    }
+
+    override fun visitUpdateStatement(ctx: MySqlParser.UpdateStatementContext): StatementData {
+        currentOptType = StatementType.UPDATE
+        val updateTable = if (ctx.multipleUpdateStatement() != null) {
+            val updateTable = UpdateTable(inputTables.toMutableList())
+            this.visit(ctx.multipleUpdateStatement().expression())
+            inputTables.clear()
+            super.visitTableSources(ctx.multipleUpdateStatement().tableSources())
+            updateTable.outputTables = inputTables
+            updateTable
+        } else {
+            this.visit(ctx.singleUpdateStatement().expression())
+            val tableId = parseFullId(ctx.singleUpdateStatement().tableName().fullId())
+            UpdateTable(tableId, inputTables)
+        }
+
+        return StatementData(StatementType.UPDATE, updateTable)
     }
 
     override fun visitCreateIndex(ctx: MySqlParser.CreateIndexContext): StatementData {

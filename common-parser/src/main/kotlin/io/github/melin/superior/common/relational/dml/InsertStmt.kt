@@ -13,12 +13,12 @@ data class InsertStmt(
     override val privilegeType: PrivilegeType = PrivilegeType.WRITE
     override val sqlType: SqlType = SqlType.DML
 
-    var inputTables: ArrayList<TableId> = arrayListOf()
-    var outputTables: ArrayList<TableId> = arrayListOf()
+    var inputTables: List<TableId> = listOf()
+    var outputTables: List<TableId> = listOf()
 
     init {
         if (tableId != null) {
-            outputTables.add(tableId)
+            outputTables = outputTables + tableId
         }
     }
 

@@ -1460,7 +1460,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals("films", statement.firstTableId().tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -1478,7 +1478,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals("employees", statement.firstTableId().tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -1493,7 +1493,7 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("user", statement.tableId.tableName)
+            Assert.assertEquals("user", statement.firstTableId().tableName)
         } else {
             Assert.fail()
         }

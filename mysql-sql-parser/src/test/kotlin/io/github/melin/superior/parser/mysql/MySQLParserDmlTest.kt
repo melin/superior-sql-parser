@@ -46,7 +46,7 @@ class MySQLParserDmlTest {
     }
 
     @Test
-    fun deleteTest() {
+    fun deleteTest0() {
         val sql = """
             DELETE FROM films
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
@@ -56,8 +56,46 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals("films", statement.firstTableId().tableName)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest1() {
+        val sql = """
+            DELETE t1, t2 FROM t1 INNER JOIN t2 INNER JOIN t3
+            WHERE t1.id=t2.id AND t2.id=t3.id;
+        """.trimIndent()
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals("t1", statement.firstTableId().tableName)
+            Assert.assertEquals(2, statement.outputTables.size)
+            Assert.assertEquals(3, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest2() {
+        val sql = """
+            DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3
+            WHERE t1.id=t2.id AND t2.id=t3.id;
+        """.trimIndent()
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals("t1", statement.firstTableId().tableName)
+            Assert.assertEquals(2, statement.outputTables.size)
+            Assert.assertEquals(3, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -74,8 +112,27 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals("employees", statement.firstTableId().tableName)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest1() {
+        val sql = """
+            UPDATE product p LEFT JOIN product_price pp ON p.productid= pp.productid 
+            SET p.isdelete = 1 WHERE pp.productid IS NULL;
+        """.trimIndent()
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals("product", statement.firstTableId().tableName)
+            Assert.assertEquals(2, statement.outputTables.size)
+            Assert.assertEquals(0, statement.inputTables.size)
         } else {
             Assert.fail()
         }
