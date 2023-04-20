@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
@@ -81,6 +82,22 @@ class OracleSqlParserDdlTest {
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
+        }
+    }
+
+    @Test
+    fun commentTest0() {
+        val sql = """
+            COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CommentData) {
+            Assert.assertEquals(StatementType.COMMENT, statementData.type)
+            Assert.assertEquals("employees.job_id", statement.objValue)
+            Assert.assertEquals("abbreviated job title", statement.comment)
+            Assert.assertFalse(statement.isNull)
         }
     }
 }

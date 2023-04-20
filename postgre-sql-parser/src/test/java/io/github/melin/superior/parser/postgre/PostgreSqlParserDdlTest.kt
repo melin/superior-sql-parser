@@ -5,6 +5,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.AlterTableAction
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -177,6 +178,21 @@ class PostgreSqlParserDdlTest {
 
             val action = statement.firstAction() as AlterTableAction
             Assert.assertEquals("pkslow_person_r1", action.newTableId?.tableName)
+        }
+    }
+
+    @Test
+    fun commentTest0() {
+        val sql = """
+            COMMENT ON TABLE my_schema.my_table IS 'Employee Information';
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CommentData) {
+            Assert.assertEquals(StatementType.COMMENT, statementData.type)
+            Assert.assertEquals("Employee Information", statement.comment)
+            Assert.assertFalse(statement.isNull)
         }
     }
 }

@@ -1,10 +1,12 @@
 package io.github.melin.superior.parser.postgre
 
+import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.AlterTableAction
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -20,6 +22,7 @@ import javafx.scene.control.Tab
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
+import org.omg.CORBA.Object
 import java.util.Optional
 
 /**
@@ -249,6 +252,29 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    }
+
+    override fun visitCommentstmt(ctx: PostgreSqlParser.CommentstmtContext): StatementData {
+        val objType: String? = if (ctx.object_type_any_name() != null) {
+            ctx.object_type_any_name().children.map { it.text }.joinToString(" ")
+        } else if (ctx.object_type_name() != null) {
+            ctx.object_type_name().children.map { it.text }.joinToString(" ")
+        } else if (ctx.object_type_name_on_any_name() != null) {
+            ctx.object_type_name_on_any_name().children.map { it.text }.joinToString(" ")
+        } else if (ctx.COLUMN() != null) {
+            ctx.COLUMN().text
+        } else if (ctx.FUNCTION() != null) {
+            ctx.FUNCTION().text
+        } else {
+            null
+        }
+
+        val objValue = if (ctx.any_name() != null) ctx.any_name().text else null
+
+        val isNull = if (ctx.comment_text().NULL_P() != null) true else false
+        val text: String? = if (ctx.comment_text().text != null) StringUtil.cleanQuote(ctx.comment_text().sconst().text) else null
+        val comment = CommentData(text, isNull, objType, objValue)
+        return StatementData(StatementType.COMMENT, comment)
     }
 
     //----------------------------------------private methods------------------------------------

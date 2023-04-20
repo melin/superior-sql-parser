@@ -30,6 +30,7 @@ enum class StatementType: Serializable {
 
     ALTER_TABLE,
     REPAIR_TABLE,
+    COMMENT,
 
     //DML
     QUERY,

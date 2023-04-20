@@ -1,9 +1,11 @@
 package io.github.melin.superior.parser.oracle
 
+import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -159,6 +161,30 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
         val update = UpdateTable(tableId, inputTables)
         return StatementData(currentOptType, update)
+    }
+
+    override fun visitComment_on_column(ctx: OracleParser.Comment_on_columnContext): StatementData {
+        val objValue = ctx.column_name().text
+        val isNull = false
+        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val comment = CommentData(text, isNull, "COLUMN", objValue)
+        return StatementData(StatementType.COMMENT, comment)
+    }
+
+    override fun visitComment_on_table(ctx: OracleParser.Comment_on_tableContext): StatementData {
+        val objValue = ctx.tableview_name().text
+        val isNull = false
+        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val comment = CommentData(text, isNull, "TABLE", objValue)
+        return StatementData(StatementType.COMMENT, comment)
+    }
+
+    override fun visitComment_on_materialized(ctx: OracleParser.Comment_on_materializedContext): StatementData {
+        val objValue = ctx.tableview_name().text
+        val isNull = false
+        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val comment = CommentData(text, isNull, "MATERIALIZED VIEW", objValue)
+        return StatementData(StatementType.COMMENT, comment)
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {
