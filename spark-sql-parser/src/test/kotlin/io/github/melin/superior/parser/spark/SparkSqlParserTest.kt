@@ -1635,7 +1635,6 @@ class SparkSqlParserTest {
         if (statement is QueryStmt) {
             Assert.assertEquals("test", statement.inputTables.get(0).tableName)
             Assert.assertEquals(StatementType.SELECT, statementData.type)
-            Assert.assertEquals(2, statement.cteTempTables?.size)
         } else {
             Assert.fail()
         }
@@ -1659,7 +1658,6 @@ class SparkSqlParserTest {
         if (statement is InsertStmt) {
             Assert.assertEquals(3, statement.inputTables.size)
             Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
-            Assert.assertEquals(5, statement.cteTempTables.size)
         } else {
             Assert.fail()
         }
@@ -1680,7 +1678,6 @@ class SparkSqlParserTest {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(StatementType.EXPORT_TABLE, statementData.type)
             Assert.assertEquals("druid_result", statement.tableId.tableName)
-            Assert.assertEquals("a", statement.cteTempTables.get(0))
         } else {
             Assert.fail()
         }
@@ -1848,7 +1845,8 @@ class SparkSqlParserTest {
     @Test
     fun dtunnelTest3() {
         val sql = """
-            WITH tmp_demo_test2 AS (SELECT *, test(id) FROM bigdata.test_demo_test2 where name is not null) 
+            WITH tmp_demo_test2 AS (SELECT *, test(id) FROM bigdata.test_demo_test2 where name is not null), 
+                 tmp_demo_test3 AS (select * from tmp_demo_test2) 
                 datatunnel SOURCE('hive') OPTIONS(
                 databaseName='bigdata',
                 tableName='tmp_demo_test2',
@@ -1861,7 +1859,6 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
             Assert.assertEquals("hive", statement.srcType)
 
-            Assert.assertTrue(statement.cte)
             Assert.assertEquals("log", statement.distType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(1, statement.functionNames.size)
@@ -1901,7 +1898,6 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
             Assert.assertEquals("oracle", statement.srcType)
 
-            Assert.assertFalse(statement.cte)
             Assert.assertEquals("log", statement.distType)
             val list = statement.srcOptions.get("columns") as List<HashMap<String, String>>
             Assert.assertEquals(12, list.size )

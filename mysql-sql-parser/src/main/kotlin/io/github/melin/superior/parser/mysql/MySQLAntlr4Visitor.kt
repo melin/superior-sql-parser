@@ -15,6 +15,7 @@ import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
+import javafx.scene.control.Tab
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 
 /**
@@ -28,6 +29,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     private val primaryKeys = ArrayList<String>()
 
     private val inputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     //-----------------------------------database-------------------------------------------------
 
@@ -239,15 +241,21 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     //-----------------------------------DML-------------------------------------------------
 
     override fun visitDmlStatement(ctx: MySqlParser.DmlStatementContext): StatementData {
-        if (ctx.selectStatement() != null) {
-            currentOptType = StatementType.SELECT
-            super.visitDmlStatement(ctx)
-
-            val queryStmt = QueryStmt(inputTables, limit)
-            return StatementData(StatementType.SELECT, queryStmt)
+        if (ctx.withStatement() != null) {
+            super.visitWithStatement(ctx.withStatement())
+            if (ctx.withStatement().selectStatement() != null) {
+                return this.visitSelectStatement(ctx.withStatement().selectStatement())
+            }
         }
 
         return super.visitDmlStatement(ctx);
+    }
+
+    override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): StatementData {
+        currentOptType = StatementType.SELECT
+        super.visitSelectStatement(ctx)
+        val queryStmt = QueryStmt(inputTables, limit)
+        return StatementData(StatementType.SELECT, queryStmt)
     }
 
     override fun visitInsertStatement(ctx: MySqlParser.InsertStatementContext): StatementData {
@@ -341,14 +349,25 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     //-----------------------------------private method-------------------------------------------------
 
+    override fun visitCommonTableExpressions(ctx: MySqlParser.CommonTableExpressionsContext): StatementData? {
+        val tableId = TableId(ctx.cteName().text)
+        cteTempTables.add(tableId)
+
+        super.visitCommonTableExpressions(ctx)
+        return null
+    }
+
     override fun visitTableName(ctx: MySqlParser.TableNameContext): StatementData? {
-        if(StatementType.SELECT == currentOptType ||
+        if (StatementType.SELECT == currentOptType ||
             StatementType.INSERT_SELECT == currentOptType ||
             StatementType.UPDATE == currentOptType ||
             StatementType.DELETE == currentOptType) {
 
             val tableId = parseFullId(ctx.fullId())
-            inputTables.add(tableId)
+
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                inputTables.add(tableId)
+            }
         }
         return null
     }

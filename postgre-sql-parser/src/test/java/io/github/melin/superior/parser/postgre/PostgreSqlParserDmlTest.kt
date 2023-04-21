@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -24,6 +25,39 @@ class PostgreSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
             Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun cteSqlTest0() {
+        val sql = """
+            WITH regional_sales AS (
+                SELECT region, SUM(amount) AS total_sales
+                FROM orders
+                GROUP BY region
+            ), 
+            top_regions AS (
+                SELECT region
+                FROM regional_sales
+                WHERE total_sales > (SELECT SUM(total_sales)/10 FROM regional_sales)
+            )
+            SELECT region,
+                   product,
+                   SUM(quantity) AS product_units,
+                   SUM(amount) AS product_sales
+            FROM orders
+            WHERE region IN (SELECT region FROM top_regions)
+            GROUP BY region, product;
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(TableId("orders"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }

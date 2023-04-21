@@ -30,6 +30,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
     private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
         val statementData = super.visit(tree)
@@ -187,6 +188,14 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.COMMENT, comment)
     }
 
+    override fun visitSubquery_factoring_clause(ctx: OracleParser.Subquery_factoring_clauseContext): StatementData? {
+        ctx.factoring_element().forEach {
+            cteTempTables.add(TableId(it.query_name().text))
+        }
+
+        return super.visitSubquery_factoring_clause(ctx)
+    }
+
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
@@ -199,7 +208,9 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
             }
 
             val tableId = parseTableViewName(ctx)
-            inputTables.add(tableId)
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                inputTables.add(tableId)
+            }
         }
 
         return null

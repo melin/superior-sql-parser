@@ -34,6 +34,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     private var limit: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
         val statementData = super.visit(tree)
@@ -127,15 +128,11 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): StatementData {
-        if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
-            currentOptType = StatementType.SELECT
-            super.visitSelectstmt(ctx)
+        currentOptType = StatementType.SELECT
+        super.visitSelectstmt(ctx)
 
-            val queryStmt = QueryStmt(inputTables, limit)
-            return StatementData(StatementType.SELECT, queryStmt)
-        } else {
-            throw SQLParserException("not support")
-        }
+        val queryStmt = QueryStmt(inputTables, limit)
+        return StatementData(StatementType.SELECT, queryStmt)
     }
 
     override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): StatementData {
@@ -168,6 +165,13 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, update)
     }
 
+    override fun visitCte_list(ctx: PostgreSqlParser.Cte_listContext): StatementData {
+        ctx.common_table_expr().forEach {
+            cteTempTables.add(TableId(it.name().text))
+        }
+        return super.visitCte_list(ctx)
+    }
+
     override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
@@ -177,7 +181,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.DELETE) {
 
             val tableId = parseTableName(ctx)
-            inputTables.add(tableId)
+
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                inputTables.add(tableId)
+            }
             return null
         } else {
             throw SQLParserException("not support")

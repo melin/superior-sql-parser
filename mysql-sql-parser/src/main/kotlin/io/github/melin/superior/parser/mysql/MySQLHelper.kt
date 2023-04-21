@@ -58,14 +58,13 @@ object MySQLHelper {
         val parser = MySqlParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.LL
 
         val sqlVisitor = MySQLAntlr4Visitor()
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
                 val data = sqlVisitor.visit(parser.sqlStatement())
-                if(data == null) {
+                if (data == null) {
                     return StatementData(StatementType.UNKOWN)
                 } else {
                     return data

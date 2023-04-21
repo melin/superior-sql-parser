@@ -175,13 +175,35 @@ class MySQLParserDmlTest {
 
     @Test
     fun countCondTest() {
-        var sql = "select count(type='mac' or null) From test_table where a=2"
+        val sql = "select count(type='mac' or null) From test_table where a=2"
 
         val statementData = MySQLHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SELECT, statementData.type)
         val statement = statementData.statement
         if (statement is QueryStmt) {
             Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun cteTest0() {
+        val sql = """
+            WITH
+              cte1 AS (SELECT a, b FROM table1),
+              cte2 AS (SELECT c, d FROM table2)
+            SELECT b, d FROM cte1 JOIN cte2
+            WHERE cte1.a = cte2.c;
+        """.trimIndent()
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SELECT, statementData.type)
+        val statement = statementData.statement
+        if (statement is QueryStmt) {
+            Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
+
+            Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
         }

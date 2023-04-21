@@ -27,6 +27,27 @@ class OracleSqlParserDmlTest {
     }
 
     @Test
+    fun cteSqlTest0() {
+        val sql = """
+            WITH
+              cte1 AS (SELECT a, b FROM table1),
+              cte2 AS (SELECT c, d FROM table2)
+            SELECT b, d FROM cte1 JOIN cte2
+            WHERE cte1.a = cte2.c;
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(TableId("table1"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun deleteTest() {
         val sql = """
             DELETE FROM films

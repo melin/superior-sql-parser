@@ -892,21 +892,21 @@ replaceStatement
     ;
 
 selectStatement
-    : querySpecification lockClause?                                #simpleSelect
-    | queryExpression lockClause?                                   #parenthesisSelect
+    : querySpecification lockClause?
+    | queryExpression lockClause?
     | querySpecificationNointo unionStatement+
         (
           UNION unionType=(ALL | DISTINCT)?
           (querySpecification | queryExpression)
         )?
-        orderByClause? limitClause? lockClause?                     #unionSelect
+        orderByClause? limitClause? lockClause?
     | queryExpressionNointo unionParenthesis+
         (
           UNION unionType=(ALL | DISTINCT)?
           queryExpression
         )?
-        orderByClause? limitClause? lockClause?                     #unionParenthesisSelect
-    | querySpecificationNointo (',' lateralStatement)+              #withLateralStatement
+        orderByClause? limitClause? lockClause?
+    | querySpecificationNointo (',' lateralStatement)+
     ;
 
 updateStatement
@@ -2031,6 +2031,7 @@ signalConditionInformation
 
 withStatement
   : WITH RECURSIVE? commonTableExpressions (',' commonTableExpressions)*
+    selectStatement
   ;
 
 diagnosticsStatement

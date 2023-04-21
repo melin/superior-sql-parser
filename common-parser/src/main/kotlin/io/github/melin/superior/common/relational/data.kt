@@ -21,5 +21,4 @@ abstract class Statement: Serializable {
     abstract val sqlType: SqlType
 
     var functionNames: HashSet<String> = hashSetOf()
-    var cteTempTables: List<String> = listOf()
 }

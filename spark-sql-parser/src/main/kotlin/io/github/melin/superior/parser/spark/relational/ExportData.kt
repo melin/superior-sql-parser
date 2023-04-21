@@ -6,8 +6,7 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
 data class ExportData(
-    override val tableId: TableId,
-    val cte: Boolean = false,
+    override val tableId: TableId
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DML

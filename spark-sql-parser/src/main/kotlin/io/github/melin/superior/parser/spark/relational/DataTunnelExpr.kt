@@ -10,8 +10,7 @@ data class DataTunnelExpr(
     var srcOptions: Map<String, Any>,
     val transformSql: String?,
     val distType: String,
-    var distOptions: Map<String, Any>,
-    var cte: Boolean = false
+    var distOptions: Map<String, Any>
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
     override val sqlType: SqlType = SqlType.DML
