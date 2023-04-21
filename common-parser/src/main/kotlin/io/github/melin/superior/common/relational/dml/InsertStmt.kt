@@ -32,6 +32,8 @@ data class InsertStmt(
     var querySql: String? = null
     var rows: ArrayList<List<String>>? = null
 
+    var mysqlReplace: Boolean = false
+
     fun getOutputTable(): TableId {
         return outputTables.first()
     }

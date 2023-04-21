@@ -156,6 +156,24 @@ class MySQLParserDmlTest {
     }
 
     @Test
+    fun replaceValuesTest() {
+        //val sql = "insert into user values('name')"
+        val sql = "REPLACE into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if(statement is InsertStmt) {
+            Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
+            Assert.assertEquals("user", statement.tableId?.tableName)
+            Assert.assertTrue(statement.mysqlReplace)
+            Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun countCondTest() {
         var sql = "select count(type='mac' or null) From test_table where a=2"
 

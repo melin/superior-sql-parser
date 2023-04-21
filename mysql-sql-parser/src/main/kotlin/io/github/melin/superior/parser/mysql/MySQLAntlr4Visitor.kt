@@ -245,25 +245,45 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
             val queryStmt = QueryStmt(inputTables, limit)
             return StatementData(StatementType.SELECT, queryStmt)
-        } else if (ctx.insertStatement() != null) {
-            val statement = ctx.insertStatement()
-            val tableId = parseFullId(statement.tableName().fullId())
-
-            if (statement.insertStatementValue().selectStatement() != null) {
-                currentOptType = StatementType.INSERT_SELECT
-                super.visit(ctx.insertStatement().insertStatementValue().selectStatement())
-
-                val insertStmt = InsertStmt(InsertMode.INTO, tableId)
-                insertStmt.inputTables = inputTables
-                return StatementData(StatementType.INSERT_SELECT, insertStmt)
-            } else {
-                currentOptType = StatementType.INSERT_VALUES
-                val insertStmt = InsertStmt(InsertMode.INTO, tableId)
-                return StatementData(StatementType.INSERT_VALUES, insertStmt)
-            }
         }
 
         return super.visitDmlStatement(ctx);
+    }
+
+    override fun visitInsertStatement(ctx: MySqlParser.InsertStatementContext): StatementData {
+        val tableId = parseFullId(ctx.tableName().fullId())
+
+        return if (ctx.insertStatementValue().selectStatement() != null) {
+            currentOptType = StatementType.INSERT_SELECT
+            super.visit(ctx.insertStatementValue().selectStatement())
+
+            val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+            insertStmt.inputTables = inputTables
+            StatementData(StatementType.INSERT_SELECT, insertStmt)
+        } else {
+            currentOptType = StatementType.INSERT_VALUES
+            val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+            StatementData(StatementType.INSERT_VALUES, insertStmt)
+        }
+    }
+
+    override fun visitReplaceStatement(ctx: MySqlParser.ReplaceStatementContext): StatementData {
+        val tableId = parseFullId(ctx.tableName().fullId())
+
+        return if (ctx.insertStatementValue().selectStatement() != null) {
+            currentOptType = StatementType.INSERT_SELECT
+            super.visit(ctx.insertStatementValue().selectStatement())
+
+            val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+            insertStmt.inputTables = inputTables
+            insertStmt.mysqlReplace = true
+            StatementData(StatementType.INSERT_SELECT, insertStmt)
+        } else {
+            currentOptType = StatementType.INSERT_VALUES
+            val insertStmt = InsertStmt(InsertMode.INTO, tableId)
+            insertStmt.mysqlReplace = true
+            StatementData(StatementType.INSERT_VALUES, insertStmt)
+        }
     }
 
     override fun visitDeleteStatement(ctx: MySqlParser.DeleteStatementContext): StatementData {
