@@ -914,7 +914,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitUpdateTable(ctx: SparkSqlParser.UpdateTableContext): StatementData {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.multipartIdentifier())
-        super.visitWhereClause(ctx.whereClause())
+        if (ctx.whereClause() != null) {
+            super.visitWhereClause(ctx.whereClause())
+        }
 
         val update = UpdateTable(tableId, inputTables)
         return StatementData(currentOptType, update)
