@@ -235,7 +235,10 @@ statement
         readOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=stringLit)?
         SINK LEFT_PAREN distName=stringLit RIGHT_PAREN
-        (OPTIONS writeOpts=dtPropertyList)?                            #dtunnelExpr
+        (OPTIONS writeOpts=dtPropertyList)?                            #datatunnelExpr
+
+    | DATATUNNEL HELP (SOURCE | SINK)
+        LEFT_PAREN value=stringLit RIGHT_PAREN                    #datatunnelHelp
     | CALL multipartIdentifier
         LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
     | SYNC type=(SCHEMA|TABLE) target=multipartIdentifier FROM source=multipartIdentifier
@@ -1321,6 +1324,7 @@ ansiNonReserved
     | GROUPING
     | HOUR
     | HOURS
+    | HELP
     | IF
     | IGNORE
     | IMPORT
@@ -1614,6 +1618,7 @@ nonReserved
     | HAVING
     | HOUR
     | HOURS
+    | HELP
     | IF
     | IGNORE
     | IMPORT

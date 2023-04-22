@@ -1907,6 +1907,21 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun dtunnelHelpTest() {
+        val sql = "datatunnel help source('sftp')"
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DataTunnelHelp) {
+            Assert.assertEquals(StatementType.DATATUNNEL, statementData.type)
+
+            Assert.assertEquals("source", statement.type)
+            Assert.assertEquals("sftp", statement.value)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun callTest() {
         val sql = "CALL catalog_name.system.rollback_to_snapshot('db.sample', 1)"
         val statementData = SparkSqlHelper.getStatementData(sql)

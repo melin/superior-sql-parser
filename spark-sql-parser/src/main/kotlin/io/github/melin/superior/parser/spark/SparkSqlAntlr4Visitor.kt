@@ -464,7 +464,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.ANALYZE_TABLE, analyzeTable)
     }
 
-    override fun visitDtunnelExpr(ctx: SparkSqlParser.DtunnelExprContext): StatementData {
+    override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): StatementData {
         val srcType = StringUtil.cleanQuote(ctx.srcName.text)
         val distType = StringUtil.cleanQuote(ctx.distName.text)
 
@@ -487,6 +487,12 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         data.inputTables = inputTables
         data.functionNames = functionNames
         return StatementData(StatementType.DATATUNNEL, data)
+    }
+
+    override fun visitDatatunnelHelp(ctx: SparkSqlParser.DatatunnelHelpContext): StatementData {
+        val type = if (ctx.SOURCE() != null) "source" else "sink";
+        val value = StringUtil.cleanQuote(ctx.value.text)
+        return StatementData(StatementType.DATATUNNEL, DataTunnelHelp(type, value))
     }
 
     private fun parseDtOptions(ctx: DtPropertyListContext?): HashMap<String, Any> {

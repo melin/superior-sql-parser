@@ -57,7 +57,7 @@ enum class StatementType: Serializable {
     JOB,
     USE,
 
-    DATATUNNEL,
+    DATATUNNEL, // spark
     CALL,
     SYNC,
 
