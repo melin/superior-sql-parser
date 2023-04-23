@@ -9,6 +9,7 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.MergeTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.drop.DropIndex
@@ -18,12 +19,8 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
-import javafx.scene.control.Tab
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
-import org.apache.commons.lang3.StringUtils
-import org.omg.CORBA.Object
-import java.util.Optional
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -165,6 +162,22 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, update)
     }
 
+    override fun visitMergestmt(ctx: PostgreSqlParser.MergestmtContext): StatementData {
+        currentOptType = StatementType.MERGE
+
+        val mergeTableId = parseTableName(ctx.qualified_name(0))
+        val mergeTable = MergeTable(mergeTableId)
+
+        if (ctx.qualified_name().size == 2) {
+            val tableId = parseTableName(ctx.qualified_name(1))
+            inputTables.add(tableId)
+        } else if (ctx.select_with_parens() != null) {
+            super.visitSelect_with_parens(ctx.select_with_parens())
+        }
+        mergeTable.inputTables = inputTables
+        return StatementData(StatementType.MERGE, mergeTable)
+    }
+
     override fun visitCte_list(ctx: PostgreSqlParser.Cte_listContext): StatementData {
         ctx.common_table_expr().forEach {
             cteTempTables.add(TableId(it.name().text))
@@ -178,7 +191,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
             currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
             currentOptType == StatementType.UPDATE ||
-            currentOptType == StatementType.DELETE) {
+            currentOptType == StatementType.DELETE ||
+            currentOptType == StatementType.MERGE) {
 
             val tableId = parseTableName(ctx)
 

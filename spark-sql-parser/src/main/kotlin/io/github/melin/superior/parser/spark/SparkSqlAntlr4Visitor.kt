@@ -887,21 +887,20 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): StatementData {
-        currentOptType = StatementType.MERGE_TABLE
+        currentOptType = StatementType.MERGE
 
         val targetTable = parseTableName(ctx.target)
-        val deltaMerge = MergeIntoTable(targetTable = targetTable)
+        val mergeTable = MergeTable(targetTable = targetTable)
 
         if (ctx.source != null) {
             val tableId = parseTableName(ctx.source)
-            deltaMerge.sourceTables.add(tableId)
+            inputTables.add(tableId)
         } else if (ctx.sourceQuery != null && ctx.sourceQuery is QueryContext) {
             val query = ctx.sourceQuery as QueryContext
             super.visitQuery(query)
-
-            deltaMerge.sourceTables.addAll(inputTables)
         }
-        return StatementData(StatementType.MERGE_TABLE, deltaMerge)
+        mergeTable.inputTables = inputTables
+        return StatementData(StatementType.MERGE, mergeTable)
     }
 
     //-----------------------------------private method-------------------------------------------------
@@ -912,7 +911,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             StatementType.INSERT_SELECT == currentOptType ||
             StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
             StatementType.MULTI_INSERT == currentOptType ||
-            StatementType.MERGE_TABLE == currentOptType ||
+            StatementType.MERGE == currentOptType ||
             StatementType.EXPORT_TABLE == currentOptType ||
             StatementType.DATATUNNEL == currentOptType) {
 
@@ -934,7 +933,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.INSERT_SELECT ||
-            currentOptType == StatementType.MERGE_TABLE ||
+            currentOptType == StatementType.MERGE ||
             currentOptType == StatementType.EXPORT_TABLE ||
             currentOptType == StatementType.DATATUNNEL ||
             currentOptType == StatementType.UPDATE ||

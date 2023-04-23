@@ -1511,10 +1511,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MergeIntoTable) {
-            Assert.assertEquals(StatementType.MERGE_TABLE, statementData.type)
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
             Assert.assertEquals("logs", statement.targetTable.tableName)
-            Assert.assertEquals(1, statement.sourceTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -1532,10 +1532,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MergeIntoTable) {
-            Assert.assertEquals(StatementType.MERGE_TABLE, statementData.type)
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
             Assert.assertEquals("logs", statement.targetTable.tableName)
-            Assert.assertEquals(1, statement.sourceTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -1564,10 +1564,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MergeIntoTable) {
-            Assert.assertEquals(StatementType.MERGE_TABLE, statementData.type)
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
             Assert.assertEquals("customers", statement.targetTable.tableName)
-            Assert.assertEquals(2, statement.sourceTables.size)
+            Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -1590,10 +1590,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MergeIntoTable) {
-            Assert.assertEquals(StatementType.MERGE_TABLE, statementData.type)
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
             Assert.assertEquals("target", statement.targetTable.tableName)
-            Assert.assertEquals(1, statement.sourceTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -1613,10 +1613,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is MergeIntoTable) {
-            Assert.assertEquals(StatementType.MERGE_TABLE, statementData.type)
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
             Assert.assertEquals("merge_test", statement.targetTable.tableName)
-            Assert.assertEquals(1, statement.sourceTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }

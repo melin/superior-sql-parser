@@ -11,6 +11,7 @@ import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.MergeTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -164,6 +165,17 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, update)
     }
 
+    override fun visitMerge_statement(ctx: OracleParser.Merge_statementContext): StatementData {
+        currentOptType = StatementType.MERGE
+
+        val mergeTableId = parseTableViewName(ctx.tableview_name())
+        val mergeTable = MergeTable(mergeTableId)
+        super.visitSelected_tableview(ctx.selected_tableview())
+
+        mergeTable.inputTables = inputTables
+        return StatementData(StatementType.MERGE, mergeTable)
+    }
+
     override fun visitComment_on_column(ctx: OracleParser.Comment_on_columnContext): StatementData {
         val objValue = ctx.column_name().text
         val isNull = false
@@ -201,7 +213,8 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
             currentOptType == StatementType.UPDATE ||
-            currentOptType == StatementType.DELETE) {
+            currentOptType == StatementType.DELETE ||
+            currentOptType == StatementType.MERGE) {
 
             if (ctx.parent is Select_list_elementsContext) {
                 return null

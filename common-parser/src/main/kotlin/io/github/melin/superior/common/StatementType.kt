@@ -36,10 +36,10 @@ enum class StatementType: Serializable {
     SELECT,
     DELETE,
     UPDATE,
+    MERGE,
     INSERT_VALUES,
     INSERT_SELECT,
     MULTI_INSERT,
-    MERGE_TABLE,
 
     PROCEDURE,
 

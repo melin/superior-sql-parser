@@ -27,7 +27,7 @@ object SparkSqlHelper {
             CREATE_TABLE_AS_LIKE,
             DROP_TABLE,
             TRUNCATE_TABLE,
-            MERGE_TABLE,
+            MERGE,
             REFRESH_TABLE,
             LOAD_TEMP_TABLE,
             EXPORT_TABLE,
@@ -57,7 +57,7 @@ object SparkSqlHelper {
 
             DELETE,
             UPDATE,
-            MERGE_TABLE,
+            MERGE,
 
             EXPLAIN
             -> true

@@ -4,6 +4,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.MergeTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.UpdateTable
 import org.junit.Assert
@@ -155,6 +156,31 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals(1, statement.inputTables.size)
 
             Assert.assertEquals("product_segment", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deltaMergeTest() {
+        val sql = """
+            MERGE INTO wines w
+            USING wine_stock_changes s
+            ON s.winename = w.winename
+            WHEN NOT MATCHED AND s.stock_delta > 0 THEN
+              INSERT VALUES(s.winename, s.stock_delta)
+            WHEN MATCHED AND w.stock + s.stock_delta > 0 THEN
+              UPDATE SET stock = w.stock + s.stock_delta
+            WHEN MATCHED THEN
+              DELETE;
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statementData.type)
+            Assert.assertEquals("wines", statement.targetTable.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
