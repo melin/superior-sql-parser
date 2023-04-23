@@ -57,7 +57,7 @@ object SparkSqlHelper {
 
             DELETE,
             UPDATE,
-            MERGE_INTO_TABLE,
+            MERGE_TABLE,
 
             EXPLAIN
             -> true

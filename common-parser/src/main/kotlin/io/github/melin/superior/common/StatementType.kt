@@ -22,7 +22,6 @@ enum class StatementType: Serializable {
     DROP_FUNCTION,
 
     TRUNCATE_TABLE,
-    MERGE_TABLE,
     REFRESH_TABLE,
     LOAD_TEMP_TABLE,
     EXPORT_TABLE,
@@ -40,7 +39,7 @@ enum class StatementType: Serializable {
     INSERT_VALUES,
     INSERT_SELECT,
     MULTI_INSERT,
-    MERGE_INTO_TABLE,
+    MERGE_TABLE,
 
     PROCEDURE,
 
@@ -54,10 +53,11 @@ enum class StatementType: Serializable {
     EXPLAIN,
     SET,
     UNSET,
-    JOB,
     USE,
 
     DATATUNNEL, // spark
+    MERGE_FILE, // spark
+    APP_JAR, // spark
     CALL,
     SYNC,
 

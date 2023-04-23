@@ -442,13 +442,13 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.ALTER_TABLE, alterTable)
     }
 
-    override fun visitMergeTable(ctx: SparkSqlParser.MergeTableContext): StatementData {
+    override fun visitMergeFile(ctx: SparkSqlParser.MergeFileContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val partitionVals = ctx.partitionSpec()?.partitionVal()?.map {
             partitionValContext -> partitionValContext.text }?.toList()
         val data = MergeData(tableId, partitionVals)
-        return StatementData(StatementType.MERGE_TABLE, data)
+        return StatementData(StatementType.MERGE_FILE, data)
     }
 
     override fun visitRefreshTable(ctx: SparkSqlParser.RefreshTableContext): StatementData {
@@ -887,7 +887,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): StatementData {
-        currentOptType = StatementType.MERGE_INTO_TABLE
+        currentOptType = StatementType.MERGE_TABLE
 
         val targetTable = parseTableName(ctx.target)
         val deltaMerge = MergeIntoTable(targetTable = targetTable)
@@ -901,7 +901,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             deltaMerge.sourceTables.addAll(inputTables)
         }
-        return StatementData(StatementType.MERGE_INTO_TABLE, deltaMerge)
+        return StatementData(StatementType.MERGE_TABLE, deltaMerge)
     }
 
     //-----------------------------------private method-------------------------------------------------
@@ -912,7 +912,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             StatementType.INSERT_SELECT == currentOptType ||
             StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
             StatementType.MULTI_INSERT == currentOptType ||
-            StatementType.MERGE_INTO_TABLE == currentOptType ||
+            StatementType.MERGE_TABLE == currentOptType ||
             StatementType.EXPORT_TABLE == currentOptType ||
             StatementType.DATATUNNEL == currentOptType) {
 
@@ -934,7 +934,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.INSERT_SELECT ||
-            currentOptType == StatementType.MERGE_INTO_TABLE ||
+            currentOptType == StatementType.MERGE_TABLE ||
             currentOptType == StatementType.EXPORT_TABLE ||
             currentOptType == StatementType.DATATUNNEL ||
             currentOptType == StatementType.UPDATE ||

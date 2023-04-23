@@ -8,6 +8,12 @@
     <artifactId>superior-sql-parser</artifactId>
     <version>3.3.1</version>
 </dependency>
+
+<dependency>
+    <groupId>io.github.melin</groupId>
+    <artifactId>superior-sql-parser</artifactId>
+    <version>3.4.0-SNAPSHOT</version>
+</dependency>
 ```
 
 ## Build

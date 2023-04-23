@@ -226,7 +226,7 @@ statement
     | DROP INDEX (IF EXISTS)? identifier ON TABLE? multipartIdentifier #dropIndex
 
     | MERGE TABLE multipartIdentifier partitionSpec?
-            (OPTIONS options=propertyList)?                            #mergeTable
+            (OPTIONS options=propertyList)?                            #mergeFile
     | IMPORT DATA path=STRING TABLE multipartIdentifier
         (OPTIONS options=propertyList)?                                #importTempTable
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
@@ -237,8 +237,8 @@ statement
         SINK LEFT_PAREN distName=stringLit RIGHT_PAREN
         (OPTIONS writeOpts=dtPropertyList)?                            #datatunnelExpr
 
-    | DATATUNNEL HELP (SOURCE | SINK)
-        LEFT_PAREN value=stringLit RIGHT_PAREN                    #datatunnelHelp
+    | DATATUNNEL HELP (SOURCE | SINK | ALL)
+        LEFT_PAREN value=stringLit RIGHT_PAREN                         #datatunnelHelp
     | CALL multipartIdentifier
         LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
     | SYNC type=(SCHEMA|TABLE) target=multipartIdentifier FROM source=multipartIdentifier

@@ -72,7 +72,7 @@ class AppJarParserTest {
         statementData = statementDatas.get(15)
         statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("tet_test-demo_1.23-sdfd.jar", statement.resourceName)
             Assert.assertEquals("com.example.Demo1", statement.className)
             Assert.assertEquals(8, statement.params?.size)
@@ -93,7 +93,7 @@ class AppJarParserTest {
         var statementData = statementDatas.get(0)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("demo.jar", statement.resourceName)
             Assert.assertEquals("com.example.Demo", statement.className)
             Assert.assertEquals(3, statement.params?.size)
@@ -130,7 +130,7 @@ class AppJarParserTest {
         var statementData = statementDatas.get(13)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.dw.psi.StartDCJob", statement.className)
             Assert.assertEquals("1,3,sd,qw", statement.params?.get(0))
@@ -166,7 +166,7 @@ new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar com.example.dw.inde
         var statementData = statementDatas.get(15)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.dw.index.StartDCJob", statement.className)
             Assert.assertEquals("2018-03-18", statement.params?.get(1))
@@ -193,7 +193,7 @@ createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar imei_test.euSaveHBase gaea_of
         var statementData = statementDatas.get(7)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("imei_test.euSaveHBase", statement.className)
             Assert.assertEquals("/xiaoyong.fu/sh/mobile/loan", statement.params?.get(5))
@@ -225,7 +225,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         var statementData = statementDatas.get(9)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("province-1.0-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.screen_dc.ScreenJob", statement.className)
             Assert.assertEquals("/xiaoyong.fu/2017-22-03/sh/mobile/loan/", statement.params?.get(0))
@@ -248,7 +248,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         var statementData = statementDatas.get(0)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("raph.edgesSNAPSHOT.eventType.jar", statement.resourceName)
             Assert.assertEquals("com.example.graph.PhoenixCSVWriterJob", statement.className)
             Assert.assertEquals("hdfs://192.168.40.37,hdfs://192.168.39.130", statement.params?.get(6))
@@ -269,7 +269,7 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         var statementData = statementDatas.get(5)
         var statement = statementData.statement
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.JOB, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
             Assert.assertEquals("/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar", statement.resourceName)
             Assert.assertEquals("com.example.pontus.core.Engine", statement.className)
             Assert.assertEquals(4, statement.params?.size)

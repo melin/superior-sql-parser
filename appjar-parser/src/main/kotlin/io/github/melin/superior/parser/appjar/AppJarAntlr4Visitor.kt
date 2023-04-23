@@ -48,7 +48,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<StatementData>() {
         }
 
         val jobData = AppJarInfo(resourceName, className, params)
-        return StatementData(StatementType.JOB, jobData)
+        return StatementData(StatementType.APP_JAR, jobData)
     }
 
     override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): StatementData {
