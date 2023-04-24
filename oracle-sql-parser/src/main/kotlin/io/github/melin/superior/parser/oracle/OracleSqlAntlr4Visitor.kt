@@ -2,14 +2,9 @@ package io.github.melin.superior.parser.oracle
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.StatementData
-import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
-import io.github.melin.superior.common.relational.create.CreateMaterializedView
-import io.github.melin.superior.common.relational.create.CreateProcedure
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.MergeTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -31,6 +26,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
     private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
@@ -117,17 +113,37 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
     override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): StatementData {
         super.visitCreate_procedure_body(ctx)
-        val procedure = CreateProcedure(ctx.procedure_name().text)
-        procedure.queryStmts = queryStmts
-        return StatementData(StatementType.PROCEDURE, procedure)
+        val procedureName = ctx.procedure_name()
+        val procedureId = if (procedureName.id_expression() != null) {
+            ProcedureId(procedureName.identifier().text, procedureName.id_expression().text)
+        } else {
+            ProcedureId(procedureName.identifier().text)
+        }
+        val procedure = CreateProcedure(procedureId)
+        procedure.inputTables = inputTables
+        procedure.outputTables = outputTables
+        return StatementData(StatementType.CREATE_PROCEDURE, procedure)
+    }
+
+    override fun visitCreate_function_body(ctx: OracleParser.Create_function_bodyContext): StatementData {
+        super.visitCreate_function_body(ctx)
+        val funcName = ctx.function_name()
+        val functionId = if (funcName.id_expression() != null) {
+            FunctionId(funcName.identifier().text, funcName.id_expression().text)
+        } else {
+            FunctionId(funcName.identifier().text)
+        }
+        val function = CreateFunction(functionId)
+
+        function.inputTables = inputTables
+        return StatementData(StatementType.CREATE_FUNCTION, function)
     }
 
     override fun visitAnonymous_block(ctx: OracleParser.Anonymous_blockContext?): StatementData {
         super.visitAnonymous_block(ctx)
-
         val procedure = CreateProcedure()
-        procedure.queryStmts = queryStmts
-        return StatementData(StatementType.PROCEDURE, procedure)
+        procedure.inputTables = inputTables
+        return StatementData(StatementType.CREATE_PROCEDURE, procedure)
     }
 
     override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): StatementData {
@@ -214,7 +230,9 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
-            currentOptType == StatementType.MERGE) {
+            currentOptType == StatementType.MERGE ||
+            currentOptType == StatementType.CREATE_FUNCTION ||
+            currentOptType == StatementType.CREATE_PROCEDURE) {
 
             if (ctx.parent is Select_list_elementsContext) {
                 return null

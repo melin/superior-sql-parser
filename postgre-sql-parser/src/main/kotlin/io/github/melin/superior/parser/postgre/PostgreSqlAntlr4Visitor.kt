@@ -2,10 +2,7 @@ package io.github.melin.superior.parser.postgre
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.AlterTableAction
-import io.github.melin.superior.common.relational.StatementData
-import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.DeleteTable
@@ -19,6 +16,9 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Pl_functionContext
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 
@@ -94,6 +94,26 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         return StatementData(currentOptType, createTable)
+    }
+
+    override fun visitCreatefunctionstmt(ctx: PostgreSqlParser.CreatefunctionstmtContext): StatementData {
+        currentOptType = StatementType.CREATE_FUNCTION
+        val funcName = ctx.func_name()
+        val functionId = if (funcName.type_function_name() != null) {
+            FunctionId(funcName.text)
+        } else {
+            FunctionId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
+        }
+
+        val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
+        if (optItems != null) {
+            optItems.filter { it.func_as() != null }.forEach { visitPlsqlroot(it.func_as().Definition as PlsqlrootContext) }
+        }
+
+        val replace = if (ctx.opt_or_replace().REPLACE() != null) true else false
+        val createFunction = CreateFunction(functionId, replace)
+        createFunction.inputTables = inputTables
+        return StatementData(StatementType.CREATE_FUNCTION, createFunction)
     }
 
     override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): StatementData {
@@ -192,7 +212,13 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
-            currentOptType == StatementType.MERGE) {
+            currentOptType == StatementType.MERGE ||
+            currentOptType == StatementType.CREATE_FUNCTION ||
+            currentOptType == StatementType.CREATE_PROCEDURE) {
+
+            if (ctx.parent is OpttempTableNameContext) {
+                return null
+            }
 
             val tableId = parseTableName(ctx)
 

@@ -2,10 +2,10 @@ package io.github.melin.superior.common.relational
 
 import org.apache.commons.lang3.StringUtils
 
-data class FunctionId(
+data class ProcedureId(
     val catalogName: String?,
     val schemaName: String?,
-    val functionName: String) {
+    val procedureName: String) {
 
     constructor(schemaName: String?, tableName: String):
             this(null, schemaName, tableName)
@@ -15,14 +15,14 @@ data class FunctionId(
 
     fun getFullFunctionName(): String {
         if (catalogName != null) {
-            return "${catalogName}.${schemaName}.${functionName}"
+            return "${catalogName}.${schemaName}.${procedureName}"
         }
 
         if (schemaName != null) {
-            return "${schemaName}.${functionName}"
+            return "${schemaName}.${procedureName}"
         }
 
-        return functionName
+        return procedureName
     }
 
     fun getLowerCatalogName(): String {
@@ -34,6 +34,6 @@ data class FunctionId(
     }
 
     fun getLowerTableName(): String {
-        return StringUtils.lowerCase(functionName)
+        return StringUtils.lowerCase(procedureName)
     }
 }

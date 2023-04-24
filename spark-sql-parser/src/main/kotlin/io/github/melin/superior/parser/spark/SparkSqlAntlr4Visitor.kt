@@ -696,7 +696,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val functionId = parseTableName(ctx.multipartIdentifier())
         val classNmae = ctx.className.text
 
-        var temporary: Boolean = false
+        var temporary = false
         var file: String? = null
         if (ctx.TEMPORARY() != null) {
             temporary = true
@@ -704,7 +704,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             file = ctx.resource(0).stringLit().text
         }
 
-        val data = CreateFunction(functionId.schemaName, functionId.tableName, temporary, classNmae, file)
+        val replace = if (ctx.REPLACE() != null) true else false
+        val data = CreateFunction(FunctionId(functionId.schemaName, functionId.tableName), replace, temporary, classNmae, file)
         return StatementData(StatementType.CREATE_FUNCTION, data)
     }
 

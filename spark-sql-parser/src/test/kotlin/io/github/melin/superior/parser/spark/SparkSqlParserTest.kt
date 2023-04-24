@@ -1043,8 +1043,8 @@ class SparkSqlParserTest {
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateFunction) {
-            Assert.assertEquals("test", statement.schemaName)
-            Assert.assertEquals("train_perceptron", statement.funcName)
+            Assert.assertEquals("test", statement.functionId.schemaName)
+            Assert.assertEquals("train_perceptron", statement.functionId.functionName)
         } else {
             Assert.fail()
         }
@@ -1058,7 +1058,7 @@ class SparkSqlParserTest {
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CreateFunction) {
-            Assert.assertEquals("stream_json_extract_value", statement.funcName)
+            Assert.assertEquals("stream_json_extract_value", statement.functionId.functionName)
         } else {
             Assert.fail()
         }

@@ -15,11 +15,13 @@ enum class StatementType: Serializable {
     CREATE_VIEW,
     CREATE_TEMPORARY_VIEW,
     CREATE_FUNCTION,
+    CREATE_PROCEDURE,
 
     DROP_NAMESPACE,
     DROP_TABLE,
     DROP_VIEW,
     DROP_FUNCTION,
+    DROP_PROCEDURE,
 
     TRUNCATE_TABLE,
     REFRESH_TABLE,
@@ -40,8 +42,6 @@ enum class StatementType: Serializable {
     INSERT_VALUES,
     INSERT_SELECT,
     MULTI_INSERT,
-
-    PROCEDURE,
 
     SHOW,
     DESC,
