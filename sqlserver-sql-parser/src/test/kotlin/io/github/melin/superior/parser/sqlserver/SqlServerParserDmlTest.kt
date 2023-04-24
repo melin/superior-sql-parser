@@ -8,7 +8,7 @@ import org.junit.Test
 /**
  * Created by libinsong on 2020/6/30 11:05 上午
  */
-class TsqlParserTest {
+class SqlServerParserDmlTest {
 
     @Test
     fun queryTest0() {
@@ -16,7 +16,7 @@ class TsqlParserTest {
             SELECT * FROM DBName.do.TestTable TestTable
         """.trimIndent()
 
-        val statementData = TsqlHelper.getStatementData(sql)
+        val statementData = SqlServerHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)

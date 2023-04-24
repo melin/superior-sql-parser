@@ -5,8 +5,8 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.parser.sqlserver.antlr4.TSqlLexer
-import io.github.melin.superior.parser.sqlserver.antlr4.TSqlParser
+import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerLexer
+import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 10:01 上午
  */
-object TsqlHelper {
+object SqlServerHelper {
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
             StatementType.SELECT -> true
@@ -29,17 +29,17 @@ object TsqlHelper {
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
-        val lexer = TSqlLexer(charStream)
+        val lexer = SqlServerLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = TSqlParser(tokenStream)
+        val parser = SqlServerParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = TsqlAntlr4Visitor()
+        val sqlVisitor = SqlServerAntlr4Visitor()
 
         try {
             try {

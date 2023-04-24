@@ -5,8 +5,8 @@ import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.parser.sqlserver.antlr4.TSqlParser
-import io.github.melin.superior.parser.sqlserver.antlr4.TSqlParserBaseVisitor
+import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParser
+import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class TsqlAntlr4Visitor: TSqlParserBaseVisitor<StatementData>() {
+class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -35,7 +35,7 @@ class TsqlAntlr4Visitor: TSqlParserBaseVisitor<StatementData>() {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSelect_statement(ctx: TSqlParser.Select_statementContext): StatementData? {
+    override fun visitSelect_statement(ctx: SqlServerParser.Select_statementContext): StatementData? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitSelect_statement(ctx)
@@ -48,7 +48,7 @@ class TsqlAntlr4Visitor: TSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitTable_source_item(ctx: TSqlParser.Table_source_itemContext): StatementData? {
+    override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): StatementData? {
         if (currentOptType == StatementType.SELECT) {
             if (ctx.full_table_name() != null) {
                 val tableId = parseTableName(ctx.full_table_name())
@@ -58,7 +58,7 @@ class TsqlAntlr4Visitor: TSqlParserBaseVisitor<StatementData>() {
         return null
     }
 
-    fun parseTableName(ctx: TSqlParser.Full_table_nameContext): TableId {
+    fun parseTableName(ctx: SqlServerParser.Full_table_nameContext): TableId {
         if (ctx.database != null) {
             return TableId(ctx.database.text, ctx.schema.text, ctx.table.text)
         } else if (ctx.database != null) {

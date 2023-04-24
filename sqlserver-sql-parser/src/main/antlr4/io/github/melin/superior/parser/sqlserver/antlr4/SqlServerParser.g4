@@ -23,9 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-parser grammar TSqlParser;
+parser grammar SqlServerParser;
 
-options { tokenVocab=TSqlLexer; }
+options { tokenVocab=SqlServerLexer; }
 
 tsql_file
     : batch* EOF

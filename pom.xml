@@ -323,4 +323,12 @@
             </distributionManagement>
         </profile>
     </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-snapshots</id>
+            <name>maven-snapshots</name>
+            <url>http://172.18.1.33:8081/repository/maven-snapshots/</url>
+        </repository>
+    </distributionManagement>
 </project>
