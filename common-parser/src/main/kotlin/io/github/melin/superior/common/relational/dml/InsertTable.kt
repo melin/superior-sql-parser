@@ -5,7 +5,7 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class InsertStmt(
+data class InsertTable(
     val mode: InsertMode,
     override val tableId: TableId? = null,
     val path: String? = null,
@@ -15,12 +15,6 @@ data class InsertStmt(
 
     var inputTables: List<TableId> = listOf()
     var outputTables: List<TableId> = listOf()
-
-    init {
-        if (tableId != null) {
-            outputTables = outputTables + tableId
-        }
-    }
 
     constructor(mode: InsertMode, tableId: TableId?): this(mode, tableId, null)
 
@@ -34,7 +28,5 @@ data class InsertStmt(
 
     var mysqlReplace: Boolean = false
 
-    fun getOutputTable(): TableId {
-        return outputTables.first()
-    }
+    fun firstTableId() = if (outputTables.size > 0) outputTables.first() else tableId
 }

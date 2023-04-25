@@ -5,10 +5,7 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.MergeTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
@@ -21,6 +18,7 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Pl_functi
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -31,6 +29,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
     private var limit: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): StatementData {
@@ -107,7 +106,9 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
         val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
         if (optItems != null) {
-            optItems.filter { it.func_as() != null }.forEach { visitPlsqlroot(it.func_as().Definition as PlsqlrootContext) }
+            optItems.filter { it.func_as() != null && it.func_as().Definition != null}.forEach {
+                visitPlsqlroot(it.func_as().Definition as PlsqlrootContext)
+            }
         }
 
         val replace = if (ctx.opt_or_replace().REPLACE() != null) true else false
@@ -165,6 +166,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     override fun visitUpdatestmt(ctx: PostgreSqlParser.UpdatestmtContext): StatementData {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        outputTables.add(tableId)
+
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitFrom_clause(ctx.from_clause())
 
@@ -175,11 +178,30 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     override fun visitDeletestmt(ctx: PostgreSqlParser.DeletestmtContext): StatementData {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        outputTables.add(tableId)
+
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitUsing_clause(ctx.using_clause())
 
         val update = DeleteTable(tableId, inputTables)
         return StatementData(currentOptType, update)
+    }
+
+    override fun visitInsertstmt(ctx: PostgreSqlParser.InsertstmtContext): StatementData {
+        currentOptType = StatementType.INSERT
+        if (ctx.opt_with_clause() != null) {
+            this.visitOpt_with_clause(ctx.opt_with_clause())
+        }
+
+        val tableId = parseTableName(ctx.insert_target().qualified_name())
+        outputTables.add(tableId)
+
+        val insertTable = InsertTable(InsertMode.INTO, tableId)
+        super.visitInsert_rest(ctx.insert_rest())
+
+        insertTable.inputTables = inputTables
+        insertTable.outputTables = outputTables
+        return StatementData(StatementType.INSERT, insertTable)
     }
 
     override fun visitMergestmt(ctx: PostgreSqlParser.MergestmtContext): StatementData {
@@ -213,6 +235,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
             currentOptType == StatementType.MERGE ||
+            currentOptType == StatementType.INSERT ||
             currentOptType == StatementType.CREATE_FUNCTION ||
             currentOptType == StatementType.CREATE_PROCEDURE) {
 
@@ -325,7 +348,6 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     }
 
     //----------------------------------------private methods------------------------------------
-
 
     fun parseTableName(ctx: PostgreSqlParser.Any_nameContext): TableId {
         val attrNames = ctx.attrs()?.attr_name()

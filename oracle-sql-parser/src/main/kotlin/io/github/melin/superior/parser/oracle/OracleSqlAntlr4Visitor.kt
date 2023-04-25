@@ -5,12 +5,10 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.MergeTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
@@ -181,6 +179,57 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return StatementData(currentOptType, update)
     }
 
+    override fun visitInsert_statement(ctx: OracleParser.Insert_statementContext): StatementData {
+        currentOptType = StatementType.INSERT
+
+        val insertTable = if (ctx.single_table_insert() != null) {
+            val tableInsert = ctx.single_table_insert();
+            val tableId = parseTableViewName(tableInsert.insert_into_clause().general_table_ref().dml_table_expression_clause().tableview_name())
+            outputTables.add(tableId)
+
+            if (tableInsert.select_statement() != null) {
+                super.visitSelect_statement(tableInsert.select_statement())
+            }
+
+            InsertTable(InsertMode.INTO, tableId)
+        } else {
+            if (ctx.multi_table_insert().conditional_insert_clause() == null) {
+                val tableInserts = ctx.multi_table_insert().multi_table_element()
+                addOutputTableId(tableInserts)
+            } else {
+                ctx.multi_table_insert().conditional_insert_clause().conditional_insert_when_part().map {
+                    addOutputTableId(it.multi_table_element())
+                }
+
+                val elseElem = ctx.multi_table_insert().conditional_insert_clause().conditional_insert_else_part()
+                if (elseElem != null) {
+                    addOutputTableId(elseElem.multi_table_element())
+                }
+            }
+
+            if (ctx.multi_table_insert().select_statement() != null) {
+                super.visitSelect_statement(ctx.multi_table_insert().select_statement())
+            }
+
+            InsertTable(InsertMode.INTO)
+        }
+
+        insertTable.inputTables = inputTables
+        insertTable.outputTables = outputTables
+        return StatementData(StatementType.INSERT, insertTable)
+    }
+
+    private fun addOutputTableId(list: List<Multi_table_elementContext>) {
+        list.forEach {
+            val tableId = parseTableViewName(
+                it.insert_into_clause().general_table_ref().dml_table_expression_clause().tableview_name()
+            )
+            if (!outputTables.contains(tableId)) {
+                outputTables.add(tableId)
+            }
+        }
+    }
+
     override fun visitMerge_statement(ctx: OracleParser.Merge_statementContext): StatementData {
         currentOptType = StatementType.MERGE
 
@@ -231,6 +280,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
             currentOptType == StatementType.MERGE ||
+            currentOptType == StatementType.INSERT ||
             currentOptType == StatementType.CREATE_FUNCTION ||
             currentOptType == StatementType.CREATE_PROCEDURE) {
 

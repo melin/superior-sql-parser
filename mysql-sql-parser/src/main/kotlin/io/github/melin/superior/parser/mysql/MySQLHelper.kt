@@ -29,8 +29,7 @@ object MySQLHelper {
             StatementType.TRUNCATE_TABLE,
             StatementType.ALTER_TABLE,
 
-            StatementType.INSERT_SELECT,
-            StatementType.INSERT_VALUES,
+            StatementType.INSERT,
             StatementType.SELECT,
             StatementType.DELETE,
             StatementType.UPDATE,

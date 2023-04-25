@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.InsertStmt
+import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.UpdateTable
 import org.junit.Assert
@@ -56,7 +56,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("films", statement.firstTableId().tableName)
+            Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -112,7 +112,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("employees", statement.firstTableId().tableName)
+            Assert.assertEquals("employees", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -145,8 +145,8 @@ class MySQLParserDmlTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is InsertStmt) {
-            Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+        if(statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertEquals(2, statement.inputTables.size)
@@ -162,8 +162,8 @@ class MySQLParserDmlTest {
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement
-        if(statement is InsertStmt) {
-            Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+        if(statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertTrue(statement.mysqlReplace)

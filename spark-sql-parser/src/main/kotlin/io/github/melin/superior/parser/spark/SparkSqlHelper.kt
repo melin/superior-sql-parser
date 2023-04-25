@@ -37,8 +37,7 @@ object SparkSqlHelper {
             REPAIR_TABLE,
 
             SELECT,
-            INSERT_VALUES,
-            INSERT_SELECT,
+            INSERT,
             MULTI_INSERT,
 
             CREATE_VIEW,

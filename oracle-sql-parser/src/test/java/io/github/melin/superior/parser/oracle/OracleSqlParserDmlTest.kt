@@ -2,10 +2,7 @@ package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.MergeTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import org.junit.Assert
 import org.junit.Test
 
@@ -59,7 +56,7 @@ class OracleSqlParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("films", statement.firstTableId().tableName)
+            Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -77,7 +74,125 @@ class OracleSqlParserDmlTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("employees", statement.firstTableId().tableName)
+            Assert.assertEquals("employees", statement.tableId?.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest0() {
+        val sql = """
+            INSERT ALL
+              INTO pivot_dest (id, day, val) VALUES (id, 'mon', mon_val)
+              INTO pivot_dest (id, day, val) VALUES (id, 'tue', tue_val)
+              INTO pivot_dest (id, day, val) VALUES (id, 'wed', wed_val)
+              INTO pivot_dest (id, day, val) VALUES (id, 'thu', thu_val)
+              INTO pivot_dest (id, day, val) VALUES (id, 'fri', fri_val)
+            SELECT *
+            FROM   pivot_source;
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals("pivot_dest", statement.outputTables.get(0).tableName)
+            Assert.assertEquals(1, statement.outputTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest1() {
+        val sql = """
+            INSERT ALL
+              INTO dest_tab1 (id, description) VALUES (id, description)
+              INTO dest_tab2 (id, description) VALUES (id, description)
+              INTO dest_tab3 (id, description) VALUES (id, description)
+            SELECT id, description
+            FROM   source_tab;
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
+            Assert.assertEquals(3, statement.outputTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest2() {
+        val sql = """
+            INSERT ALL
+              WHEN id <= 3 THEN
+                INTO dest_tab1 (id, description) VALUES (id, description)
+              WHEN id BETWEEN 4 AND 7 THEN
+                INTO dest_tab2 (id, description) VALUES (id, description)
+              WHEN id >= 8 THEN
+                INTO dest_tab3 (id, description) VALUES (id, description)
+            SELECT id, description
+            FROM   source_tab;
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
+            Assert.assertEquals(3, statement.outputTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest3() {
+        val sql = """
+            INSERT FIRST
+              WHEN id <= 3 THEN
+                INTO dest_tab1 (id, description) VALUES (id, description)
+              WHEN id <= 5 THEN
+                INTO dest_tab2 (id, description) VALUES (id, description)
+              ELSE
+                INTO dest_tab3 (id, description) VALUES (id, description)
+            SELECT id, description
+            FROM   source_tab;
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
+            Assert.assertEquals(3, statement.outputTables.size)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest4() {
+        val sql = """
+            INSERT INTO films SELECT * FROM tmp_films WHERE date_prod < '2004-05-07';
+        """.trimIndent()
+
+        val statementData = OracleSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals("films", statement.tableId?.tableName)
+            Assert.assertEquals(1, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()

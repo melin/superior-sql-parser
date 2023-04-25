@@ -19,7 +19,7 @@ object SparkStreamSqlHelper {
         return when (statementType) {
             StatementType.CREATE_TABLE,
             StatementType.SET,
-            StatementType.INSERT_SELECT
+            StatementType.INSERT
             -> true
             else -> false
         }

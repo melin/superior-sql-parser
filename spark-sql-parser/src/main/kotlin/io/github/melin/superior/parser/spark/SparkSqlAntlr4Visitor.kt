@@ -789,8 +789,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitDmlStatement(ctx: SparkSqlParser.DmlStatementContext): StatementData? {
+        currentOptType = StatementType.INSERT
         val node = if (ctx.ctes() != null) {
-            currentOptType = StatementType.INSERT_SELECT
             this.visitCtes(ctx.ctes())
             ctx.getChild(1)
         } else {
@@ -798,34 +798,27 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
 
         if (node is SingleInsertQueryContext) {
-            currentOptType = StatementType.INSERT_SELECT
+            currentOptType = StatementType.INSERT
             insertSql = true
             super.visitQuery(node.query())
             val singleInsertStmt = parseInsertInto(node.insertInto())
 
-            if (currentOptType == StatementType.INSERT_VALUES) {
-                singleInsertStmt.rows = rows
-            } else {
-                val querySql = StringUtils.substring(command, node.query().start.startIndex)
-                singleInsertStmt.querySql = querySql
-                singleInsertStmt.inputTables = inputTables
-                singleInsertStmt.functionNames = functionNames
-            }
+            val querySql = StringUtils.substring(command, node.query().start.startIndex)
+            singleInsertStmt.querySql = querySql
+            singleInsertStmt.inputTables = inputTables
+            singleInsertStmt.functionNames = functionNames
+            singleInsertStmt.rows = rows
 
-            return if (currentOptType == StatementType.INSERT_VALUES) {
-                StatementData(StatementType.INSERT_VALUES, singleInsertStmt)
-            } else {
-                StatementData(StatementType.INSERT_SELECT, singleInsertStmt)
-            }
+            return StatementData(StatementType.INSERT, singleInsertStmt)
         } else if (StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
             currentOptType = StatementType.MULTI_INSERT
             super.visitDmlStatement(ctx)
 
-            val insertStmt = InsertStmt(InsertMode.OVERWRITE)
-            insertStmt.inputTables = inputTables
-            insertStmt.outputTables = outputTables
-            insertStmt.functionNames = functionNames
-            return StatementData(StatementType.MULTI_INSERT, insertStmt)
+            val insertTable = InsertTable(InsertMode.OVERWRITE)
+            insertTable.inputTables = inputTables
+            insertTable.outputTables = outputTables
+            insertTable.functionNames = functionNames
+            return StatementData(StatementType.MULTI_INSERT, insertTable)
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||
                 node is SparkSqlParser.MergeIntoTableContext) {
@@ -835,28 +828,28 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    private fun parseInsertInto(ctx: InsertIntoContext): InsertStmt {
+    private fun parseInsertInto(ctx: InsertIntoContext): InsertTable {
         return if (ctx is SparkSqlParser.InsertIntoTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = InsertStmt(InsertMode.INTO, tableId)
+            val stmt = InsertTable(InsertMode.INTO, tableId)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = InsertStmt(InsertMode.OVERWRITE, tableId)
+            val stmt = InsertTable(InsertMode.OVERWRITE, tableId)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
-            InsertStmt(InsertMode.INTO_REPLACE, tableId)
+            InsertTable(InsertMode.INTO_REPLACE, tableId)
         } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
             val path: String? = if (ctx.path != null) ctx.path.STRING().text else null;
             val properties = parseOptions(ctx.propertyList())
             val tableProvider = ctx.tableProvider().multipartIdentifier().text
 
-            val stmt = InsertStmt(InsertMode.OVERWRITE_DIR, path)
+            val stmt = InsertTable(InsertMode.OVERWRITE_DIR, path)
             stmt.properties = properties
             stmt.tableProvider = tableProvider
             stmt
@@ -909,7 +902,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitFunctionName(ctx: SparkSqlParser.FunctionNameContext): StatementData? {
         if (StatementType.SELECT == currentOptType ||
             StatementType.CREATE_VIEW == currentOptType ||
-            StatementType.INSERT_SELECT == currentOptType ||
+            StatementType.INSERT == currentOptType ||
             StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
             StatementType.MULTI_INSERT == currentOptType ||
             StatementType.MERGE == currentOptType ||
@@ -933,7 +926,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
             currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
-            currentOptType == StatementType.INSERT_SELECT ||
+            currentOptType == StatementType.INSERT ||
             currentOptType == StatementType.MERGE ||
             currentOptType == StatementType.EXPORT_TABLE ||
             currentOptType == StatementType.DATATUNNEL ||
@@ -951,11 +944,6 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
         return null
-    }
-
-    override fun visitInlineTableDefault1(ctx: SparkSqlParser.InlineTableDefault1Context): StatementData? {
-        currentOptType = StatementType.INSERT_VALUES
-        return super.visitInlineTableDefault1(ctx)
     }
 
     /*override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): StatementData? {
