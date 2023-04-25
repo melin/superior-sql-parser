@@ -27,6 +27,12 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
+    private fun addOutputTableId(tableId: TableId) {
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
+    }
+
     override fun visit(tree: ParseTree?): StatementData {
         val statementData = super.visit(tree)
 
@@ -164,6 +170,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     override fun visitDelete_statement(ctx: OracleParser.Delete_statementContext): StatementData {
         currentOptType = StatementType.DELETE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
+        addOutputTableId(tableId)
         super.visitWhere_clause(ctx.where_clause())
 
         val update = DeleteTable(tableId, inputTables)
@@ -173,6 +180,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
     override fun visitUpdate_statement(ctx: OracleParser.Update_statementContext): StatementData {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
+        addOutputTableId(tableId)
         super.visitWhere_clause(ctx.where_clause())
 
         val update = UpdateTable(tableId, inputTables)
@@ -185,7 +193,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         val insertTable = if (ctx.single_table_insert() != null) {
             val tableInsert = ctx.single_table_insert();
             val tableId = parseTableViewName(tableInsert.insert_into_clause().general_table_ref().dml_table_expression_clause().tableview_name())
-            outputTables.add(tableId)
+            addOutputTableId(tableId)
 
             if (tableInsert.select_statement() != null) {
                 super.visitSelect_statement(tableInsert.select_statement())
@@ -224,9 +232,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
             val tableId = parseTableViewName(
                 it.insert_into_clause().general_table_ref().dml_table_expression_clause().tableview_name()
             )
-            if (!outputTables.contains(tableId)) {
-                outputTables.add(tableId)
-            }
+            addOutputTableId(tableId)
         }
     }
 

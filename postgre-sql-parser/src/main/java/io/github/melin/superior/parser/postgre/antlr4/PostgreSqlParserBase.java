@@ -1,7 +1,10 @@
 package io.github.melin.superior.parser.postgre.antlr4;
 
 import java.util.List;
+
+import io.github.melin.superior.common.antlr4.UpperCaseCharStream;
 import org.antlr.v4.runtime.*;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class PostgreSqlParserBase extends Parser {
 
@@ -42,8 +45,7 @@ public abstract class PostgreSqlParserBase extends Parser {
         }
         if (func_as != null) {
             String txt = GetRoutineBodyString(func_as.func_as().sconst(0));
-            int line = func_as.func_as().sconst(0).start.getLine();
-            PostgreSqlParser ph = getPostgreSQLParser(txt);
+            PostgreSqlParser ph = getPostgreSQLParser(StringUtils.trim(txt));
             switch (lang) {
                 case "plpgsql":
                     func_as.func_as().Definition = ph.plsqlroot();
@@ -89,7 +91,7 @@ public abstract class PostgreSqlParserBase extends Parser {
     }
 
     public PostgreSqlParser getPostgreSQLParser(String script) {
-        CharStream charStream = CharStreams.fromString(script);
+        UpperCaseCharStream charStream = new UpperCaseCharStream(CharStreams.fromString(script));
         Lexer lexer = new PostgreSqlLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         PostgreSqlParser parser = new PostgreSqlParser(tokens);

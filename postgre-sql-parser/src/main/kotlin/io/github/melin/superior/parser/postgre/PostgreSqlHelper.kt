@@ -23,6 +23,8 @@ object PostgreSqlHelper {
             StatementType.CREATE_TABLE -> true
             StatementType.CREATE_VIEW -> true
             StatementType.ALTER_TABLE -> true
+            StatementType.CREATE_FUNCTION -> true
+            StatementType.CREATE_PROCEDURE -> true
 
             StatementType.DROP_TABLE -> true
             StatementType.DROP_VIEW -> true
@@ -49,13 +51,11 @@ object PostgreSqlHelper {
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = PostgreSqlAntlr4Visitor()
-
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
                 return sqlVisitor.visit(parser.stmt())
-            }
-            catch (e: ParseCancellationException) {
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 

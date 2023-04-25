@@ -92,12 +92,10 @@ class OracleProcessParserTest {
             CREATE OR REPLACE Procedure UpdateCourse( name_in IN varchar2 )
             IS
                cnumber number;
-
                cursor c1 is
                SELECT course_number
                 FROM courses_tbl
                 WHERE course_name = name_in;
-            
             BEGIN
                open c1;
                fetch c1 into cnumber;

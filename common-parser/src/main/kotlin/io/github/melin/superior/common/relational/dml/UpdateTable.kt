@@ -11,16 +11,8 @@ data class UpdateTable(
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.WRITE
     override val sqlType: SqlType = SqlType.DML
-
     var outputTables: List<TableId> = listOf()
 
     constructor(inputTables: List<TableId>) : this(null, inputTables)
-
-    init {
-        if (tableId != null) {
-            outputTables = outputTables + tableId
-        }
-    }
-
     fun firstTableId() = outputTables.first()
 }

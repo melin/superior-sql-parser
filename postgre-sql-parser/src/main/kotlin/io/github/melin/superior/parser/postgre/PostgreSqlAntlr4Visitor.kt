@@ -32,6 +32,12 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
+    private fun addOutputTableId(tableId: TableId) {
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
+    }
+
     override fun visit(tree: ParseTree?): StatementData {
         val statementData = super.visit(tree)
 
@@ -96,13 +102,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitCreatefunctionstmt(ctx: PostgreSqlParser.CreatefunctionstmtContext): StatementData {
-        currentOptType = StatementType.CREATE_FUNCTION
-        val funcName = ctx.func_name()
-        val functionId = if (funcName.type_function_name() != null) {
-            FunctionId(funcName.text)
-        } else {
-            FunctionId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
-        }
+        currentOptType = if (ctx.FUNCTION() != null) StatementType.CREATE_FUNCTION else StatementType.CREATE_PROCEDURE
 
         val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
         if (optItems != null) {
@@ -112,9 +112,35 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         val replace = if (ctx.opt_or_replace().REPLACE() != null) true else false
-        val createFunction = CreateFunction(functionId, replace)
-        createFunction.inputTables = inputTables
-        return StatementData(StatementType.CREATE_FUNCTION, createFunction)
+        val funcName = ctx.func_name()
+
+        if (ctx.FUNCTION() != null) {
+            val functionId = if (funcName.type_function_name() != null) {
+                FunctionId(funcName.text)
+            } else {
+                FunctionId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
+            }
+
+            val createFunction = CreateFunction(functionId, replace)
+            createFunction.inputTables = inputTables
+            return StatementData(StatementType.CREATE_FUNCTION, createFunction)
+        } else {
+            val procedureId = if (funcName.type_function_name() != null) {
+                ProcedureId(funcName.text)
+            } else {
+                ProcedureId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
+            }
+
+            val createProcedure = CreateProcedure(procedureId, replace)
+            createProcedure.inputTables = inputTables
+            createProcedure.outputTables = outputTables
+            return StatementData(StatementType.CREATE_FUNCTION, createProcedure)
+        }
+    }
+
+    override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): StatementData? {
+        super.visitProc_stmt(ctx)
+        return null
     }
 
     override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): StatementData {
@@ -166,7 +192,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     override fun visitUpdatestmt(ctx: PostgreSqlParser.UpdatestmtContext): StatementData {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
-        outputTables.add(tableId)
+        addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitFrom_clause(ctx.from_clause())
@@ -178,7 +204,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     override fun visitDeletestmt(ctx: PostgreSqlParser.DeletestmtContext): StatementData {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
-        outputTables.add(tableId)
+        addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitUsing_clause(ctx.using_clause())
@@ -194,7 +220,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         val tableId = parseTableName(ctx.insert_target().qualified_name())
-        outputTables.add(tableId)
+        addOutputTableId(tableId)
 
         val insertTable = InsertTable(InsertMode.INTO, tableId)
         super.visitInsert_rest(ctx.insert_rest())
