@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-grammar PrestoSqlBase;
+grammar TrinoSqlBase;
 
 tokens {
     DELIMITER

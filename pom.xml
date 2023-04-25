@@ -15,6 +15,7 @@
         <module>arithmetic-parser</module>
         <module>appjar-parser</module>
         <module>postgre-sql-parser</module>
+        <module>trino-sql-parser</module>
         <module>presto-sql-parser</module>
         <module>sqlserver-sql-parser</module>
         <module>flink-sql-parser</module>

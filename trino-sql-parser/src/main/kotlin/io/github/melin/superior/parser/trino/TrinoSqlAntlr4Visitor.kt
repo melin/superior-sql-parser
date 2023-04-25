@@ -1,4 +1,4 @@
-package io.github.melin.superior.parser.presto
+package io.github.melin.superior.parser.trino
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.StatementData
@@ -6,8 +6,8 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.drop.DropTable
-import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
-import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
+import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
+import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
+class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
@@ -42,7 +42,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return if (currentResult == null) true else false
     }
 
-    override fun visitStatementDefault(ctx: PrestoSqlBaseParser.StatementDefaultContext): StatementData? {
+    override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): StatementData? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
@@ -55,7 +55,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
+    override fun visitCreateTableAsSelect(ctx: TrinoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = createTableSource(ctx.qualifiedName())
         val createTable = CreateTableAsSelect(tableId)
@@ -74,7 +74,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
     }
 
-    override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): StatementData? {
+    override fun visitDropTable(ctx: TrinoSqlBaseParser.DropTableContext): StatementData? {
         val tableId = createTableSource(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
@@ -82,12 +82,12 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return StatementData(StatementType.DROP_TABLE, dropTable)
     }
 
-    override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): StatementData? {
+    override fun visitExplain(ctx: TrinoSqlBaseParser.ExplainContext): StatementData? {
         return StatementData(StatementType.EXPLAIN)
     }
 
-    override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): StatementData? {
-        if (!(ctx.parent is PrestoSqlBaseParser.TableNameContext)) {
+    override fun visitQualifiedName(ctx: TrinoSqlBaseParser.QualifiedNameContext): StatementData? {
+        if (!(ctx.parent is TrinoSqlBaseParser.TableNameContext)) {
             return null
         }
 
@@ -100,7 +100,7 @@ class PrestoSQLAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
         return null
     }
 
-    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
+    private fun createTableSource(ctx: TrinoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null

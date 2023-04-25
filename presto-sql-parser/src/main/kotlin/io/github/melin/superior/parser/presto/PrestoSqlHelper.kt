@@ -16,7 +16,7 @@ import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
  *
  * Created by libinsong on 2018/1/10.
  */
-object PrestoSQLHelper {
+object PrestoSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
@@ -45,7 +45,7 @@ object PrestoSQLHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = PrestoSQLAntlr4Visitor()
+        val sqlVisitor = PrestoSqlAntlr4Visitor()
         sqlVisitor.setCommand(trimCmd)
 
         try {

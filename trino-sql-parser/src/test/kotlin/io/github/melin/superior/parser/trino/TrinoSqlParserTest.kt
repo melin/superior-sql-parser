@@ -1,4 +1,4 @@
-package io.github.melin.superior.parser.presto
+package io.github.melin.superior.parser.trino
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -11,7 +11,7 @@ import org.junit.Test
  *
  * Created by libinsong on 2018/1/10.
  */
-class PrestoSqlParserTest {
+class TrinoSqlParserTest {
 
     @Test
     fun queryTest0() {
@@ -19,7 +19,7 @@ class PrestoSqlParserTest {
             select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
         """.trimIndent()
 
-        val statementData = PrestoSqlHelper.getStatementData(sql)
+        val statementData = TrinoSqlHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
@@ -36,7 +36,7 @@ class PrestoSqlParserTest {
             WHERE ds=date_format(CURRENT_DATE - interval '1' DAY, "%Y%m%d") ) tdbi_view
         """.trimIndent()
 
-        val statementData = PrestoSqlHelper.getStatementData(sql)
+        val statementData = TrinoSqlHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
@@ -52,7 +52,7 @@ class PrestoSqlParserTest {
             select * from preso_table limit 10
         """.trimIndent()
 
-        val statementData = PrestoSqlHelper.getStatementData(sql)
+        val statementData = TrinoSqlHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statementData.type)
@@ -69,7 +69,7 @@ class PrestoSqlParserTest {
             create table dd_s_s as select * from bigdata.test_demo_test limit 1
         """.trimIndent()
 
-        val statementData = PrestoSqlHelper.getStatementData(sql)
+        val statementData = TrinoSqlHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
@@ -86,7 +86,7 @@ class PrestoSqlParserTest {
             drop table if exists bigdata.tdl_small_files_2
         """.trimIndent()
 
-        val statementData = PrestoSqlHelper.getStatementData(sql)
+        val statementData = TrinoSqlHelper.getStatementData(sql)
         val statement = statementData?.statement
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
