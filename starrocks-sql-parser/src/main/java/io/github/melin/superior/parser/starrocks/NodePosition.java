@@ -3,7 +3,6 @@ package io.github.melin.superior.parser.starrocks;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 // Used to record element position in the sql. ParserRuleContext records the input start and end token,
@@ -22,15 +21,15 @@ public class NodePosition implements Serializable {
 
     private final int endCol;
 
-    public NodePosition(@NotNull TerminalNode node) {
+    public NodePosition(TerminalNode node) {
         this(node.getSymbol().getLine(), node.getSymbol().getCharPositionInLine());
     }
 
-    public NodePosition(@NotNull Token token) {
+    public NodePosition(Token token) {
         this(token.getLine(), token.getLine());
     }
 
-    public NodePosition(@NotNull Token start, @NotNull Token end) {
+    public NodePosition(Token start, Token end) {
         this(start.getLine(), start.getCharPositionInLine(), end.getLine(), end.getCharPositionInLine());
     }
 
