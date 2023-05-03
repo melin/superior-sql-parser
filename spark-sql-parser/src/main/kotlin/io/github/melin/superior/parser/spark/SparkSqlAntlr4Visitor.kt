@@ -734,10 +734,15 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.EXPLAIN)
     }
 
-    override fun visitImportTempTable(ctx: SparkSqlParser.ImportTempTableContext): StatementData {
+    override fun visitCreateFileView(ctx: SparkSqlParser.CreateFileViewContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val data = ImportData(tableId)
-        return StatementData(StatementType.LOAD_TEMP_TABLE, data)
+        val pattern = if (ctx.PATTERN() != null) true else false
+        val path = StringUtil.cleanQuote(ctx.path.text)
+        val fileFormat = ctx.fileformatName.text
+        val compression = ctx.compressionName.text
+
+        val data = CreateFileView(tableId, pattern, path, fileFormat, compression)
+        return StatementData(StatementType.CREATE_FILE_VIEW, data)
     }
 
     override fun visitExportTable(ctx: SparkSqlParser.ExportTableContext): StatementData {

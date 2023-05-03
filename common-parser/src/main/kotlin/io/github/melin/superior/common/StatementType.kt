@@ -13,6 +13,7 @@ enum class StatementType: Serializable {
     CREATE_TABLE_AS_LIKE,
     CREATE_MATERIALIZED_VIEW,
     CREATE_VIEW,
+    CREATE_FILE_VIEW, // spark
     CREATE_TEMPORARY_VIEW,
     CREATE_FUNCTION,
     CREATE_PROCEDURE,
@@ -25,7 +26,6 @@ enum class StatementType: Serializable {
 
     TRUNCATE_TABLE,
     REFRESH_TABLE,
-    LOAD_TEMP_TABLE,
     EXPORT_TABLE,
     ANALYZE_TABLE,
 

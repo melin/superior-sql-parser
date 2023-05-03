@@ -226,9 +226,11 @@ statement
     | DROP INDEX (IF EXISTS)? identifier ON TABLE? multipartIdentifier #dropIndex
 
     | MERGE TABLE multipartIdentifier partitionSpec?
-            (OPTIONS options=propertyList)?                            #mergeFile
-    | IMPORT DATA path=STRING TABLE multipartIdentifier
-        (OPTIONS options=propertyList)?                                #importTempTable
+        (OPTIONS options=propertyList)?                                #mergeFile
+    | CREATE VIEW multipartIdentifier fileMode=(FILES|PATTERN) path=STRING
+        (OPTIONS options=propertyList)?
+        (FILEFORMAT fileformatName = identifier)?
+        (COMPRESSION compressionName = identifier)?                    #createFileView
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
         TO name=STRING (OPTIONS options=propertyList)?                 #exportTable
     | ctes? DATATUNNEL SOURCE LEFT_PAREN srcName=stringLit RIGHT_PAREN OPTIONS
@@ -1276,6 +1278,7 @@ ansiNonReserved
     | COMMIT
     | COMPACT
     | COMPACTIONS
+    | COMPRESSION
     | COMPUTE
     | CONCATENATE
     | COST
@@ -1313,6 +1316,7 @@ ansiNonReserved
     | EXTRACT
     | FIELDS
     | FILEFORMAT
+    | FILES
     | FIRST
     | FOLLOWING
     | FORMAT
@@ -1380,6 +1384,7 @@ ansiNonReserved
     | PARTITION
     | PARTITIONED
     | PARTITIONS
+    | PATTERN
     | PERCENTLIT
     | PIVOT
     | PLACING
@@ -1551,6 +1556,7 @@ nonReserved
     | COMMIT
     | COMPACT
     | COMPACTIONS
+    | COMPRESSION
     | COMPUTE
     | CONCATENATE
     | CONSTRAINT
@@ -1601,6 +1607,7 @@ nonReserved
     | FILTER
     | FIELDS
     | FILEFORMAT
+    | FILES
     | FIRST
     | FOLLOWING
     | FOR
@@ -1686,6 +1693,7 @@ nonReserved
     | PARTITION
     | PARTITIONED
     | PARTITIONS
+    | PATTERN
     | PERCENTILE_CONT
     | PERCENTILE_DISC
     | PERCENTLIT

@@ -29,7 +29,6 @@ object SparkSqlHelper {
             TRUNCATE_TABLE,
             MERGE,
             REFRESH_TABLE,
-            LOAD_TEMP_TABLE,
             EXPORT_TABLE,
             ANALYZE_TABLE,
 
@@ -40,6 +39,7 @@ object SparkSqlHelper {
             INSERT,
             MULTI_INSERT,
 
+            CREATE_FILE_VIEW,
             CREATE_VIEW,
             CREATE_TEMPORARY_VIEW,
             DROP_VIEW,
@@ -56,7 +56,6 @@ object SparkSqlHelper {
 
             DELETE,
             UPDATE,
-            MERGE,
 
             EXPLAIN
             -> true

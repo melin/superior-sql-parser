@@ -5,12 +5,13 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class ImportData(
+data class CreateFileView(
     override val tableId: TableId,
-    val loadMode: String? = null,
-    val resourceName: String? = null,
-    val partitionVals: List<String>? = null
+    val pattern: Boolean = false,
+    val path: String,
+    val fileFormat: String? = null,
+    val compression: String? = null
 ) : Statement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.WRITE
+    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
     override val sqlType: SqlType = SqlType.DML
 }

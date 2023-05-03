@@ -1409,7 +1409,6 @@ class SparkSqlParserTest {
     @Test
     fun mergeTest() {
         val sql = "merge table test OPTIONS (mergefile=2)"
-
         SparkSqlHelper.getStatementData(sql)
     }
 
@@ -2021,6 +2020,46 @@ class SparkSqlParserTest {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
             val dropIndex = statement.firstAction() as DropIndex
             Assert.assertEquals("test_index", dropIndex.indexName)
+        }
+    }
+
+    @Test
+    fun createFileViewTest() {
+        val sql = """
+            create view tdl_spark_test Files '/user/dataworks/users/qianxiao/demo.csv' Options( delimiter=',',header='true')
+            FILEFORMAT  csv COMPRESSION gz;
+        """.trimIndent()
+
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.CREATE_FILE_VIEW, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is CreateFileView) {
+            Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
+            Assert.assertEquals("/user/dataworks/users/qianxiao/demo.csv", statement.path)
+            Assert.assertEquals("csv", statement.fileFormat)
+            Assert.assertEquals("gz", statement.compression)
+            Assert.assertFalse(statement.pattern)
+        }
+    }
+
+    @Test
+    fun createFileViewTest1() {
+        val sql = """
+            create view tdl_spark_test pattern '/user/dataworks/users/qianxiao/.*[.]csv' Options( delimiter=',',header='true')
+            FILEFORMAT  csv COMPRESSION gz;
+        """.trimIndent()
+
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.CREATE_FILE_VIEW, statementData.type)
+
+        val statement = statementData.statement
+        if (statement is CreateFileView) {
+            Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
+            Assert.assertEquals("/user/dataworks/users/qianxiao/.*[.]csv", statement.path)
+            Assert.assertEquals("csv", statement.fileFormat)
+            Assert.assertEquals("gz", statement.compression)
+            Assert.assertTrue(statement.pattern)
         }
     }
 }
