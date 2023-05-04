@@ -9,8 +9,10 @@ data class CreateFileView(
     override val tableId: TableId,
     val pattern: Boolean = false,
     val path: String,
+    var properties: Map<String, String>,
     val fileFormat: String? = null,
-    val compression: String? = null
+    val compression: String? = null,
+    val sizeLimit: String? = null
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
     override val sqlType: SqlType = SqlType.DML

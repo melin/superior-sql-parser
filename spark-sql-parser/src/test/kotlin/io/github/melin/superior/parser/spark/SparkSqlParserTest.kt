@@ -2027,7 +2027,7 @@ class SparkSqlParserTest {
     fun createFileViewTest() {
         val sql = """
             create view tdl_spark_test Files '/user/dataworks/users/qianxiao/demo.csv' Options( delimiter=',',header='true')
-            FILEFORMAT  csv COMPRESSION gz;
+            FORMAT csv COMPRESSION gz;
         """.trimIndent()
 
         val statementData = SparkSqlHelper.getStatementData(sql)
@@ -2047,7 +2047,7 @@ class SparkSqlParserTest {
     fun createFileViewTest1() {
         val sql = """
             create view tdl_spark_test pattern '/user/dataworks/users/qianxiao/.*[.]csv' Options( delimiter=',',header='true')
-            FILEFORMAT  csv COMPRESSION gz;
+            FORMAT csv COMPRESSION gz;
         """.trimIndent()
 
         val statementData = SparkSqlHelper.getStatementData(sql)

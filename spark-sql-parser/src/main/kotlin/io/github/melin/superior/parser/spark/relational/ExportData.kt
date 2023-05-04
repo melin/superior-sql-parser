@@ -6,10 +6,29 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
 data class ExportData(
-    override val tableId: TableId
+    override val tableId: TableId,
+    val path: String,
+    var properties: Map<String, String>,
+    var partitionVals: LinkedHashMap<String, String>,
+    var fileFormat: String? = null,
+    var compression: String? = null,
+    var maxFileSize: String? = null,
+    var overwrite: Boolean = false,
+    var single: Boolean = false,
+    var inputTables: ArrayList<TableId>
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DML
 
-    lateinit var inputTables: ArrayList<TableId>
+    constructor(
+        tableId: TableId,
+        path: String,
+        properties: Map<String, String>,
+        partitionVals: LinkedHashMap<String, String>,
+        fileFormat: String? = null,
+        compression: String? = null,
+        maxFileSize: String? = null,
+        overwrite: Boolean = false,
+        single: Boolean = false,):
+            this(tableId, path, properties, partitionVals, fileFormat, compression, maxFileSize, overwrite, single, arrayListOf())
 }

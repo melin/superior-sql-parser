@@ -445,9 +445,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     override fun visitMergeFile(ctx: SparkSqlParser.MergeFileContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
-        val partitionVals = ctx.partitionSpec()?.partitionVal()?.map {
-            partitionValContext -> partitionValContext.text }?.toList()
-        val data = MergeData(tableId, partitionVals)
+        val partitionVals = parsePartitionSpec(ctx.partitionSpec())
+        val properties = parseOptions(ctx.propertyList())
+        val data = MergeFileData(tableId, properties, partitionVals)
         return StatementData(StatementType.MERGE_FILE, data)
     }
 
@@ -465,8 +465,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): StatementData {
-        val srcType = StringUtil.cleanQuote(ctx.srcName.text)
-        val distType = StringUtil.cleanQuote(ctx.distName.text)
+        val srcType = StringUtil.cleanQuote(ctx.sourceName.text)
+        val distType = StringUtil.cleanQuote(ctx.sinkName.text)
 
         currentOptType = StatementType.DATATUNNEL
 
@@ -738,24 +738,53 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val pattern = if (ctx.PATTERN() != null) true else false
         val path = StringUtil.cleanQuote(ctx.path.text)
-        val fileFormat = ctx.fileformatName.text
-        val compression = ctx.compressionName.text
 
-        val data = CreateFileView(tableId, pattern, path, fileFormat, compression)
-        return StatementData(StatementType.CREATE_FILE_VIEW, data)
+        var fileFormat: String? = null
+        var compression: String? = null
+        var sizeLimit: String? = null
+
+        val causes = ctx.createFileViewClauses()
+        if (causes != null) {
+            if (causes.fileformatName != null) fileFormat = causes.fileformatName.text
+            if (causes.compressionName != null) compression = causes.compressionName.text
+            if (causes.sizelimit != null) sizeLimit = causes.sizelimit.text
+        }
+        val properties = parseOptions(ctx.propertyList())
+
+        val createFileView = CreateFileView(tableId, pattern, path, properties, fileFormat, compression, sizeLimit)
+        return StatementData(StatementType.CREATE_FILE_VIEW, createFileView)
     }
 
     override fun visitExportTable(ctx: SparkSqlParser.ExportTableContext): StatementData {
         if (ctx.ctes() != null) {
             visitCtes(ctx.ctes())
         }
-        val tableId = parseTableName(ctx.multipartIdentifier())
-        val exportData = ExportData(tableId)
-
         currentOptType = StatementType.EXPORT_TABLE
         super.visitExportTable(ctx)
 
-        exportData.inputTables = inputTables
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val filePath = StringUtil.cleanQuote(ctx.filePath.text)
+        val properties = parseOptions(ctx.propertyList())
+        val partitionVals = parsePartitionSpec(ctx.partitionSpec())
+
+        var fileFormat: String? = null
+        var compression: String? = null
+        var maxFileSize: String? = null
+        var overwrite: Boolean = false
+        var single: Boolean = false
+
+        val causes = ctx.exportTableClauses()
+        if (causes != null) {
+            if (causes.fileformatName != null) fileFormat = causes.fileformatName.text
+            if (causes.compressionName != null) compression = causes.compressionName.text
+            if (causes.maxfilesize != null) maxFileSize = causes.maxfilesize.text
+            if (causes.overwrite != null) overwrite = causes.overwrite.TRUE() != null
+            if (causes.single != null) single = causes.single.TRUE() != null
+        }
+
+        val exportData = ExportData(tableId, filePath, properties, partitionVals,
+            fileFormat, compression, maxFileSize, overwrite, single, inputTables)
+
         exportData.functionNames = functionNames
         return StatementData(StatementType.EXPORT_TABLE, exportData)
     }
@@ -1111,7 +1140,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     private fun parseOptions(ctx: PropertyListContext?): Map<String, String> {
         val properties = HashMap<String, String>()
         if (ctx != null) {
-            ctx.children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
+            ctx.property().forEach { item ->
                 val property = item as SparkSqlParser.PropertyContext
                 val key = StringUtil.cleanQuote(property.key.text)
                 val value = StringUtil.cleanQuote(property.value.text)
