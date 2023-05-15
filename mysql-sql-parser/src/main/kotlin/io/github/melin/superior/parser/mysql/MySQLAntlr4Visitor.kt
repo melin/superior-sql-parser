@@ -271,7 +271,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): StatementData {
-        if (currentOptType == null) {
+        if (currentOptType == StatementType.UNKOWN) {
             currentOptType = StatementType.SELECT
         }
         super.visitSelectStatement(ctx)
