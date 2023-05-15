@@ -9,6 +9,7 @@ import io.github.melin.superior.common.relational.drop.DropNamespace
 import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
@@ -16,6 +17,7 @@ import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import org.apache.commons.lang3.StringUtils
 
 /**
  *
@@ -57,7 +59,6 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             }
         }
         val columnRels = ArrayList<ColumnRel>()
-        val properties = HashMap<String, String>()
 
         ctx.createDefinitions().children.forEach { column ->
             if(column is MySqlParser.ColumnDeclarationContext ) {
@@ -90,13 +91,32 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         columnRels.forEach { columnRel: ColumnRel -> if (primaryKeys.contains(columnRel.name)) { columnRel.isPk = true } }
         val createTable = CreateTable(tableId, comment,
-                null, null, columnRels, properties, null, ifNotExists)
+                null, null, columnRels, null, null, ifNotExists)
 
         if (ctx.partitionDefinitions() != null) {
             createTable.partitionType = "PARTITION"
         }
 
         return StatementData(StatementType.CREATE_TABLE, createTable)
+    }
+
+    override fun visitQueryCreateTable(ctx: MySqlParser.QueryCreateTableContext): StatementData {
+        currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+        val tableId = parseFullId(ctx.tableName().fullId())
+        var comment: String? = null
+        ctx.tableOption().forEach {
+            when(it) {
+                is MySqlParser.TableOptionCommentContext -> {
+                    comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                }
+            }
+        }
+
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
+        val createTable = CreateTableAsSelect(tableId, comment, null, null, null, null, null, ifNotExists)
+        super.visitSelectStatement(ctx.selectStatement())
+        createTable.inputTables = inputTables
+        return StatementData(currentOptType, createTable)
     }
 
     override fun visitPrimaryKeyTableConstraint(ctx: MySqlParser.PrimaryKeyTableConstraintContext): StatementData? {
@@ -251,7 +271,9 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): StatementData {
-        currentOptType = StatementType.SELECT
+        if (currentOptType == null) {
+            currentOptType = StatementType.SELECT
+        }
         super.visitSelectStatement(ctx)
         val queryStmt = QueryStmt(inputTables, limit)
         return StatementData(StatementType.SELECT, queryStmt)
@@ -349,7 +371,8 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         if (StatementType.SELECT == currentOptType ||
             StatementType.INSERT == currentOptType ||
             StatementType.UPDATE == currentOptType ||
-            StatementType.DELETE == currentOptType) {
+            StatementType.DELETE == currentOptType ||
+            StatementType.CREATE_TABLE_AS_SELECT == currentOptType) {
 
             val tableId = parseFullId(ctx.fullId())
 

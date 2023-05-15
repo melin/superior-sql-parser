@@ -138,6 +138,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             false,
             ctx.createTableHeader().TEMPORARY() != null,
             ctx.createTableHeader().EXTERNAL() != null,
+            ctx.createTableHeader().IF() != null,
             ctx.createOrReplaceTableColTypeList(),
             ctx.createTableClauses(),
             ctx.tableProvider(),
@@ -151,6 +152,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             true,
             false,
             false,
+            false,
             ctx.createOrReplaceTableColTypeList(),
             ctx.createTableClauses(),
             ctx.tableProvider(),
@@ -162,6 +164,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         replace: Boolean,
         temporary: Boolean,
         external: Boolean,
+        ifNotExists: Boolean,
         createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
         createTableClauses: CreateTableClausesContext,
         tableProvider: TableProviderContext?,
@@ -239,7 +242,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat)
+            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
 
@@ -256,7 +259,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat)
+            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
             createTable.external = external

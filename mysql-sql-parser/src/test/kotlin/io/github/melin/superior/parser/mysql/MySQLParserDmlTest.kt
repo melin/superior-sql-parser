@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.mysql
 
 import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.DeleteTable
@@ -204,6 +205,21 @@ class MySQLParserDmlTest {
             Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun ctasTest0() {
+        val sql = "create table demo1 as select * from demo"
+
+        val tableData = MySQLHelper.getStatementData(sql)
+        val statement = tableData.statement
+        if (statement is CreateTableAsSelect) {
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, tableData.type)
+            Assert.assertEquals("demo1", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }

@@ -437,6 +437,8 @@ class SparkSqlParserTest {
             Assert.assertEquals("users", statement.inputTables.get(0).tableName)
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
 
+            Assert.assertTrue(statement.ifNotExists)
+
             Assert.assertEquals("bigdata.test", statement.functionNames.first())
         } else {
             Assert.fail()
