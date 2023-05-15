@@ -13,6 +13,7 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Indirection_elContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Pl_functionContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
@@ -400,7 +401,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             if (obj.childCount == 2) {
                 return TableId(ctx.getChild(0).text, obj.getChild(0).getChild(1).text, obj.getChild(1).getChild(1).text)
             } else if (obj.childCount == 1) {
-                return TableId(ctx.getChild(0).text, obj.getChild(1).text)
+                val inEl = obj.getChild(0) as Indirection_elContext
+                return TableId(ctx.colid().text, inEl.attr_name().text)
             }
         } else if (ctx.childCount == 1) {
             return TableId(ctx.getChild(0).text)

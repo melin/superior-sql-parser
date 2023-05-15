@@ -29,6 +29,23 @@ class PostgreSqlParserDmlTest {
     }
 
     @Test
+    fun queryTest1() {
+        val sql = """
+            SELECT * FROM public.usertest
+        """.trimIndent()
+
+        val statementData = PostgreSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(TableId("public", "usertest"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun cteSqlTest0() {
         val sql = """
             WITH regional_sales AS (
