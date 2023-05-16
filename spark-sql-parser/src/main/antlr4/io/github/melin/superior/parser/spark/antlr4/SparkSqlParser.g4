@@ -228,7 +228,8 @@ statement
     | MERGE TABLE multipartIdentifier partitionSpec?
         (OPTIONS options=propertyList)?                                #mergeFile
 
-    | CREATE VIEW multipartIdentifier fileMode=(FILES|PATTERN) path=STRING
+    | CREATE TEMPORARY? VIEW multipartIdentifier tableProvider
+        FILE path=STRING
         (OPTIONS options=propertyList)?
         createFileViewClauses                                          #createFileView
     | ctes? EXPORT TABLE multipartIdentifier partitionSpec?
@@ -303,8 +304,7 @@ dtPropertyValue
     ;
 
 createFileViewClauses
-    : ((FORMAT fileformatName = identifier) |
-      (COMPRESSION compressionName = identifier) |
+    : ((COMPRESSION compressionName = identifier) |
       (SIZE_LIMIT sizelimit = identifier))*
     ;
 
@@ -1333,7 +1333,7 @@ ansiNonReserved
     | EXTRACT
     | FIELDS
     | FILEFORMAT
-    | FILES
+    | FILE
     | FIRST
     | FOLLOWING
     | FORMAT
@@ -1627,7 +1627,7 @@ nonReserved
     | FILTER
     | FIELDS
     | FILEFORMAT
-    | FILES
+    | FILE
     | FIRST
     | FOLLOWING
     | FOR
@@ -1713,7 +1713,6 @@ nonReserved
     | PARTITION
     | PARTITIONED
     | PARTITIONS
-    | PATTERN
     | PERCENTILE_CONT
     | PERCENTILE_DISC
     | PERCENTLIT

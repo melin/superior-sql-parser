@@ -234,15 +234,15 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        var fileFormat = tableProvider?.multipartIdentifier()?.text
+        var tableProvider = tableProvider?.multipartIdentifier()?.text
         createTableClauses.createFileFormat()
         if (createTableClauses.createFileFormat().size == 1) {
-            fileFormat = createTableClauses.createFileFormat().get(0).fileFormat().text
+            tableProvider = createTableClauses.createFileFormat().get(0).fileFormat().text
         }
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
+            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, tableProvider, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
 
@@ -259,7 +259,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
+            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, tableProvider, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
             createTable.external = external
@@ -636,28 +636,19 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             databaseName = ctx.tableIdentifier().db.text
         }
 
-        var querySql = ""
-        ctx.children.filter { it is QueryContext }.forEach { it ->
-            val query = it as QueryContext
-            querySql = StringUtils.substring(command, query.start.startIndex)
-        }
-
-        currentOptType = StatementType.CREATE_VIEW
+        currentOptType = StatementType.CREATE_TEMP_VIEW_USING
 
         val tableId = TableId(null, databaseName, tableName)
-        val createView = CreateView(tableId, querySql)
+        val tableProvider = ctx.tableProvider().multipartIdentifier().text
+        val properties = parseOptions(ctx.propertyList())
+        val createView = CreateTempViewUsing(tableId, tableProvider, properties)
         if (ctx.REPLACE() != null) {
             createView.replace = true
         }
         if (ctx.GLOBAL() != null) {
             createView.global = true
         }
-        createView.temporary = true
-
-        val tableProvider = ctx.tableProvider().multipartIdentifier().text
-        createView.tableProvider = tableProvider
-        createView.properties = parseOptions(ctx.propertyList())
-        return StatementData(StatementType.CREATE_TEMPORARY_VIEW, createView)
+        return StatementData(StatementType.CREATE_TEMP_VIEW_USING, createView)
     }
 
     override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): StatementData {
@@ -739,22 +730,21 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateFileView(ctx: SparkSqlParser.CreateFileViewContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val pattern = if (ctx.PATTERN() != null) true else false
         val path = StringUtil.cleanQuote(ctx.path.text)
 
-        var fileFormat: String? = null
         var compression: String? = null
         var sizeLimit: String? = null
 
+        val tableProvider = ctx.tableProvider().multipartIdentifier().text
+
         val causes = ctx.createFileViewClauses()
         if (causes != null) {
-            if (causes.fileformatName != null) fileFormat = causes.fileformatName.text
             if (causes.compressionName != null) compression = causes.compressionName.text
             if (causes.sizelimit != null) sizeLimit = causes.sizelimit.text
         }
         val properties = parseOptions(ctx.propertyList())
 
-        val createFileView = CreateFileView(tableId, pattern, path, properties, fileFormat, compression, sizeLimit)
+        val createFileView = CreateFileView(tableId, path, properties, tableProvider, compression, sizeLimit)
         return StatementData(StatementType.CREATE_FILE_VIEW, createFileView)
     }
 

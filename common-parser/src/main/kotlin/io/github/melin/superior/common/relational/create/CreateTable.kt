@@ -13,7 +13,7 @@ data class CreateTable(
     var partitionColumnRels: List<ColumnRel>? = null,
     var columnRels: List<ColumnRel>? = null,
     var properties: Map<String, String>? = null,
-    var fileFormat: String? = null,
+    var tableProvider: String? = null,
     var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
     var external: Boolean = false,
     var temporary: Boolean = false,

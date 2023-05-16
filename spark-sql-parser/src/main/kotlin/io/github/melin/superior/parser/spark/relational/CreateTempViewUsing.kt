@@ -5,14 +5,14 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class CreateFileView(
+data class CreateTempViewUsing(
     override val tableId: TableId,
-    val path: String,
+    var tableProvider: String,
     var properties: Map<String, String>,
-    var tableProvider: String? = null,
-    val compression: String? = null,
-    val sizeLimit: String? = null
 ) : Statement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.OTHER
-    override val sqlType: SqlType = SqlType.DML
+    override val privilegeType: PrivilegeType = PrivilegeType.CREATE
+    override val sqlType: SqlType = SqlType.DDL
+
+    var replace: Boolean = false
+    var global: Boolean = false
 }

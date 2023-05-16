@@ -14,7 +14,7 @@ enum class StatementType: Serializable {
     CREATE_MATERIALIZED_VIEW,
     CREATE_VIEW,
     CREATE_FILE_VIEW, // spark
-    CREATE_TEMPORARY_VIEW,
+    CREATE_TEMP_VIEW_USING, //spark
     CREATE_FUNCTION,
     CREATE_PROCEDURE,
 

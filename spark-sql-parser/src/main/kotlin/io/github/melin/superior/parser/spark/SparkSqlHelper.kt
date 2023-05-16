@@ -41,7 +41,7 @@ object SparkSqlHelper {
 
             CREATE_FILE_VIEW,
             CREATE_VIEW,
-            CREATE_TEMPORARY_VIEW,
+            CREATE_TEMP_VIEW_USING,
             DROP_VIEW,
 
             SHOW,
