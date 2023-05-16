@@ -16,5 +16,5 @@ data class DeleteTable(
 
     constructor(inputTables: List<TableId>) : this(null, inputTables)
 
-    fun firstTableId() = outputTables.first()
+    fun firstTableId() = if (tableId != null) tableId else outputTables.first()
 }

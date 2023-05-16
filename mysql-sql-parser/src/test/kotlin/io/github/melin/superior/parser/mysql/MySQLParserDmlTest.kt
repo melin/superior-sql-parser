@@ -103,6 +103,22 @@ class MySQLParserDmlTest {
     }
 
     @Test
+    fun deleteTest3() {
+        val sql = """
+            DELETE FROM users
+        """.trimIndent()
+
+        val statementData = MySQLHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals("users", statement.firstTableId().tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun updateTest0() {
         val sql = """
             UPDATE employees SET sales_count = sales_count + 1 WHERE id =

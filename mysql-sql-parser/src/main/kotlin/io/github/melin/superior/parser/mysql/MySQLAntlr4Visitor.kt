@@ -316,7 +316,9 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             deleteTable.outputTables = outputTables
             deleteTable
         } else {
-            this.visit(ctx.singleDeleteStatement().expression())
+            if (ctx.singleDeleteStatement().expression() != null) {
+                this.visit(ctx.singleDeleteStatement().expression())
+            }
 
             val tableId = parseFullId(ctx.singleDeleteStatement().tableName().fullId())
             DeleteTable(tableId, inputTables)
