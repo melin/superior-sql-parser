@@ -52,6 +52,7 @@ object SparkSqlHelper {
 
             DATATUNNEL,
             CALL,
+            CALL_HELP,
             SYNC,
 
             DELETE,
