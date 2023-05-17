@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.TableId
 
 data class CreateTempViewUsing(
     override val tableId: TableId,
-    var tableProvider: String,
+    var fileFormat: String,
     var properties: Map<String, String>,
 ) : Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE

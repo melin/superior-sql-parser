@@ -234,15 +234,15 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        var tableProvider = tableProvider?.multipartIdentifier()?.text
+        var fileFormat = tableProvider?.multipartIdentifier()?.text
         createTableClauses.createFileFormat()
         if (createTableClauses.createFileFormat().size == 1) {
-            tableProvider = createTableClauses.createFileFormat().get(0).fileFormat().text
+            fileFormat = createTableClauses.createFileFormat().get(0).fileFormat().text
         }
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, tableProvider, ifNotExists)
+            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
 
@@ -259,7 +259,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, tableProvider, ifNotExists)
+            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.createTableType = createTableType;
             createTable.replace = replace
             createTable.external = external
@@ -661,9 +661,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         currentOptType = StatementType.CREATE_TEMP_VIEW_USING
 
         val tableId = TableId(null, databaseName, tableName)
-        val tableProvider = ctx.tableProvider().multipartIdentifier().text
+        val fileFormat = ctx.tableProvider().multipartIdentifier().text
         val properties = parseOptions(ctx.propertyList())
-        val createView = CreateTempViewUsing(tableId, tableProvider, properties)
+        val createView = CreateTempViewUsing(tableId, fileFormat, properties)
         if (ctx.REPLACE() != null) {
             createView.replace = true
         }
@@ -757,7 +757,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         var compression: String? = null
         var sizeLimit: String? = null
 
-        val tableProvider = ctx.tableProvider().multipartIdentifier().text
+        val fileFormat = ctx.tableProvider().multipartIdentifier().text
 
         val causes = ctx.createFileViewClauses()
         if (causes != null) {
@@ -766,7 +766,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
         val properties = parseOptions(ctx.propertyList())
 
-        val createFileView = CreateFileView(tableId, path, properties, tableProvider, compression, sizeLimit)
+        val createFileView = CreateFileView(tableId, path, properties, fileFormat, compression, sizeLimit)
         return StatementData(StatementType.CREATE_FILE_VIEW, createFileView)
     }
 
@@ -896,11 +896,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
             val path: String? = if (ctx.path != null) ctx.path.STRING().text else null;
             val properties = parseOptions(ctx.propertyList())
-            val tableProvider = ctx.tableProvider().multipartIdentifier().text
+            val fileFormat = ctx.tableProvider().multipartIdentifier().text
 
             val stmt = InsertTable(InsertMode.OVERWRITE_DIR, path)
             stmt.properties = properties
-            stmt.tableProvider = tableProvider
+            stmt.fileFormat = fileFormat
             stmt
         } else {
             throw SQLParserException("not support InsertMode.OVERWRITE_HIVE_DIR")

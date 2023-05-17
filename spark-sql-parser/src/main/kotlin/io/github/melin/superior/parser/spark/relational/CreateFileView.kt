@@ -9,7 +9,7 @@ data class CreateFileView(
     override val tableId: TableId,
     val path: String,
     var properties: Map<String, String>,
-    var tableProvider: String? = null,
+    var fileFormat: String? = null,
     val compression: String? = null,
     val sizeLimit: String? = null
 ) : Statement() {

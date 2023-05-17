@@ -88,7 +88,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("test", schemaName)
             Assert.assertNull(statement.location)
             Assert.assertFalse(statement.external)
-            Assert.assertEquals(statement.tableProvider, "ORC")
+            Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertFalse(statement.temporary)
             Assert.assertEquals(7, statement.lifeCycle)
 
@@ -198,7 +198,7 @@ class SparkSqlParserTest {
             val tableName = statement.tableId.tableName
             Assert.assertEquals("export_test_dt", tableName)
             Assert.assertEquals(100, statement.lifeCycle)
-            Assert.assertEquals("orc", statement.tableProvider)
+            Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals("spark", statement.createTableType)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
@@ -228,7 +228,7 @@ class SparkSqlParserTest {
             val tableName = statement.tableId.tableName
             Assert.assertEquals("export_test_dt", tableName)
             Assert.assertEquals(100, statement.lifeCycle)
-            Assert.assertEquals("orc", statement.tableProvider)
+            Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals("spark", statement.createTableType)
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("the_date", statement.partitionColumnNames?.get(0))
@@ -252,7 +252,7 @@ class SparkSqlParserTest {
             val tableName = statement.tableId.tableName
             Assert.assertEquals("test_demo_test", tableName)
             Assert.assertEquals(10, statement.lifeCycle)
-            Assert.assertEquals("orc", statement.tableProvider)
+            Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals("spark", statement.createTableType)
         } else {
             Assert.fail()
@@ -303,7 +303,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("MOR", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
-            Assert.assertEquals("hudi", statement.tableProvider)
+            Assert.assertEquals("hudi", statement.fileFormat)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
         } else {
@@ -335,7 +335,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("cow", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
-            Assert.assertEquals("hudi", statement.tableProvider)
+            Assert.assertEquals("hudi", statement.fileFormat)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
         } else {
@@ -360,7 +360,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("test_table_02", tableName)
 
             Assert.assertEquals(300, statement.lifeCycle)
-            Assert.assertEquals("iceberg", statement.tableProvider)
+            Assert.assertEquals("iceberg", statement.fileFormat)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("days(ts)", statement.partitionColumnNames?.get(0))
         } else {
@@ -393,7 +393,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("mor", statement.properties?.get("type"))
 
             Assert.assertEquals(300, statement.lifeCycle)
-            Assert.assertEquals("hudi", statement.tableProvider)
+            Assert.assertEquals("hudi", statement.fileFormat)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
         } else {
@@ -663,7 +663,7 @@ class SparkSqlParserTest {
         if (statement is CreateTempViewUsing) {
             Assert.assertEquals(StatementType.CREATE_TEMP_VIEW_USING, statementData.type)
             Assert.assertEquals("jdbcTable", statement.tableId.tableName)
-            Assert.assertEquals("org.apache.spark.sql.jdbc", statement.tableProvider)
+            Assert.assertEquals("org.apache.spark.sql.jdbc", statement.fileFormat)
         } else {
             Assert.fail()
         }
@@ -2078,7 +2078,7 @@ class SparkSqlParserTest {
         if (statement is CreateFileView) {
             Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
             Assert.assertEquals("/user/dataworks/users/qianxiao/demo.csv", statement.path)
-            Assert.assertEquals("csv", statement.tableProvider)
+            Assert.assertEquals("csv", statement.fileFormat)
             Assert.assertEquals("gz", statement.compression)
         }
     }

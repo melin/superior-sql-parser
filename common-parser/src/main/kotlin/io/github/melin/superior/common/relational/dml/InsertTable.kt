@@ -21,7 +21,7 @@ data class InsertTable(
     constructor(mode: InsertMode, path: String?): this(mode, null, path)
 
     var properties: Map<String, String>? = null
-    var tableProvider: String? = null
+    var fileFormat: String? = null
     var partitionVals: LinkedHashMap<String, String>? = null
     var querySql: String? = null
     var rows: ArrayList<List<String>>? = null

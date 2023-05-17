@@ -18,7 +18,7 @@ data class CreateView(
     var temporary: Boolean = false
     var global: Boolean = false
 
-    var tableProvider: String? = null
+    var fileFormat: String? = null
     var properties: Map<String, String> = mapOf()
 
     var inputTables: List<TableId> = listOf()
