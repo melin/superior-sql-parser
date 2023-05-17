@@ -1923,15 +1923,54 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun callTest() {
-        val sql = "CALL catalog_name.system.rollback_to_snapshot('db.sample', 1)"
+    fun callTest0() {
+        val sql = "CALL catalog_name.system.create_savepoint(table => 'test_hudi_table', instant_time => '20220109225319449')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is CallExpr) {
+        if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statementData.type)
             Assert.assertEquals("catalog_name", statement.schema.catalogName)
             Assert.assertEquals("system", statement.schema.schemaName)
-            Assert.assertEquals("rollback_to_snapshot", statement.procedureName)
+            Assert.assertEquals("create_savepoint", statement.procedureName)
+            Assert.assertEquals(2, statement.properties.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun callHelpTest1() {
+        val sql = "CALL help"
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CallHelp) {
+            Assert.assertEquals(StatementType.CALL_HELP, statementData.type)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun callHelpTest2() {
+        val sql = "CALL help(cmd => 'show_commits')"
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CallHelp) {
+            Assert.assertEquals(StatementType.CALL_HELP, statementData.type)
+            Assert.assertEquals("show_commits", statement.procedureName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun callHelpTest3() {
+        val sql = "CALL help show_commits"
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CallHelp) {
+            Assert.assertEquals(StatementType.CALL_HELP, statementData.type)
+            Assert.assertEquals("show_commits", statement.procedureName)
         } else {
             Assert.fail()
         }

@@ -57,7 +57,8 @@ enum class StatementType: Serializable {
     DATATUNNEL, // spark
     MERGE_FILE, // spark
     APP_JAR, // spark
-    CALL,
+    CALL, // hudi
+    CALL_HELP, // hudi
     SYNC,
 
     ARITHMETIC,

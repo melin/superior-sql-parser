@@ -245,8 +245,9 @@ statement
 
     | DATATUNNEL HELP type=(SOURCE | SINK | ALL)
         LEFT_PAREN value=stringLit RIGHT_PAREN                         #datatunnelHelp
+    | CALL HELP callHelpExpr?                                          #callHelp
     | CALL multipartIdentifier
-        LEFT_PAREN (callArgument (COMMA callArgument)*)? RIGHT_PAREN   #call
+        LEFT_PAREN callArgument (COMMA callArgument)* RIGHT_PAREN      #call
     | SYNC type=(SCHEMA|TABLE) target=multipartIdentifier FROM source=multipartIdentifier
       (SET OWNER principal=identifier)?                                #sync
 
@@ -267,8 +268,13 @@ configValue
     ;
 
 callArgument
-    : expression                    #positionalArgument
-    | identifier ARROW1 expression   #namedArgument
+    : expression
+    | identifier ARROW1 expression
+    ;
+
+callHelpExpr
+    : LEFT_PAREN callArgument RIGHT_PAREN
+    | identifier
     ;
 
 dtPropertyList

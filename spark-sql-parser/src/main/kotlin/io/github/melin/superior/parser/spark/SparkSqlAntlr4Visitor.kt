@@ -536,8 +536,30 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitCall(ctx: SparkSqlParser.CallContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val data = CallExpr(NamespaceId(tableId.catalogName, tableId.schemaName!!), tableId.tableName)
+        val properties = HashMap<String, String>()
+        ctx.callArgument().filter { it.ARROW1() != null }.forEach { item ->
+            val key = StringUtil.cleanQuote(item.identifier().text)
+            val value = StringUtil.cleanQuote(item.expression().text)
+            properties.put(key, value)
+        }
+
+        val data = CallProcedure(NamespaceId(tableId.catalogName, tableId.schemaName!!),
+            tableId.tableName, properties)
         return StatementData(StatementType.CALL, data)
+    }
+
+    override fun visitCallHelp(ctx: SparkSqlParser.CallHelpContext): StatementData {
+        var procedure: String? = null
+        if (ctx.callHelpExpr() != null) {
+            procedure = if (ctx.callHelpExpr().callArgument() != null) {
+                StringUtil.cleanQuote(ctx.callHelpExpr().callArgument().expression().text)
+            } else {
+                ctx.callHelpExpr().identifier().text
+            }
+        }
+
+        val data = CallHelp(procedure)
+        return StatementData(StatementType.CALL_HELP, data)
     }
 
     override fun visitSync(ctx: SparkSqlParser.SyncContext): StatementData {
