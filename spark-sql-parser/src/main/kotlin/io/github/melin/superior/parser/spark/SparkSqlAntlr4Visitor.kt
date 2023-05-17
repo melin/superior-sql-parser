@@ -540,7 +540,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         ctx.callArgument().filter { it.ARROW1() != null }.forEach { item ->
             val key = StringUtil.cleanQuote(item.identifier().text)
             val value = StringUtil.cleanQuote(item.expression().text)
-            properties.put(key, value)
+            properties.put(key.lowercase(), value)
         }
 
         val data = CallProcedure(NamespaceId(tableId.catalogName, tableId.schemaName!!),
