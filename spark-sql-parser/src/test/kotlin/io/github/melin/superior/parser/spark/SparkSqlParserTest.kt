@@ -1940,13 +1940,13 @@ class SparkSqlParserTest {
 
     @Test
     fun callTest1() {
-        val sql = "CALL create_savepoint(table => 'test_hudi_table', instant_time => '20220109225319449')"
+        val sql = "call stats_file_sizes(table => 'test_hudi_demo')"
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statementData.type)
-            Assert.assertEquals("create_savepoint", statement.procedureName)
-            Assert.assertEquals(2, statement.properties.size)
+            Assert.assertEquals("stats_file_sizes", statement.procedureName)
+            Assert.assertEquals(1, statement.properties.size)
         } else {
             Assert.fail()
         }
