@@ -543,8 +543,13 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             properties.put(key.lowercase(), value)
         }
 
-        val data = CallProcedure(NamespaceId(tableId.catalogName, tableId.schemaName!!),
-            tableId.tableName, properties)
+        val schemaName: String? = tableId.schemaName
+        val data = if (schemaName != null) {
+            CallProcedure(NamespaceId(tableId.catalogName, schemaName),
+                tableId.tableName, properties)
+        } else {
+            CallProcedure(tableId.tableName, properties)
+        }
         return StatementData(StatementType.CALL, data)
     }
 

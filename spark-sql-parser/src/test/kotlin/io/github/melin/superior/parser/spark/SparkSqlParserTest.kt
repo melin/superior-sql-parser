@@ -1929,8 +1929,22 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statementData.type)
-            Assert.assertEquals("catalog_name", statement.schema.catalogName)
-            Assert.assertEquals("system", statement.schema.schemaName)
+            Assert.assertEquals("catalog_name", statement.schema?.catalogName)
+            Assert.assertEquals("system", statement.schema?.schemaName)
+            Assert.assertEquals("create_savepoint", statement.procedureName)
+            Assert.assertEquals(2, statement.properties.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun callTest1() {
+        val sql = "CALL create_savepoint(table => 'test_hudi_table', instant_time => '20220109225319449')"
+        val statementData = SparkSqlHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is CallProcedure) {
+            Assert.assertEquals(StatementType.CALL, statementData.type)
             Assert.assertEquals("create_savepoint", statement.procedureName)
             Assert.assertEquals(2, statement.properties.size)
         } else {
