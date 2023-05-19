@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.melin.superior</groupId>
         <artifactId>sql-parser</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>postgre-sql-parser</artifactId>

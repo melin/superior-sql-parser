@@ -11,7 +11,7 @@
 <dependency>
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
