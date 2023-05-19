@@ -15,11 +15,9 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Indirection_elContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
-import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Pl_functionContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
-import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -226,8 +224,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         val insertTable = InsertTable(InsertMode.INTO, tableId)
         super.visitInsert_rest(ctx.insert_rest())
 
-        insertTable.inputTables = inputTables
-        insertTable.outputTables = outputTables
+        insertTable.inputTables.addAll(inputTables)
+        insertTable.outputTables.addAll(outputTables)
         return StatementData(StatementType.INSERT, insertTable)
     }
 
@@ -305,10 +303,9 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
                 alterTable.addActions(actions)
                 return StatementData(StatementType.ALTER_TABLE, alterTable)
             } else if (ctx.object_type_any_name().TABLE() != null) {
-                val dropTable = DropTable(ifExists = ifExists)
-                ctx.any_name_list().any_name().map { tableName ->
-                    dropTable.tableIds.add(parseTableName(tableName))
-                }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
+                val dropTable = DropTable(tableIds.first(), ifExists)
+                dropTable.tableIds.addAll(tableIds)
                 return StatementData(StatementType.DROP_TABLE, dropTable)
             } else if (ctx.object_type_any_name().VIEW() != null) {
                 val isMaterialized = if (ctx.object_type_any_name().MATERIALIZED() != null) {
@@ -316,16 +313,15 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
                 } else {
                     false
                 }
-                val dropTable = DropView(ifExists = ifExists, isMaterialized = isMaterialized)
-                ctx.any_name_list().any_name().map { tableName ->
-                    dropTable.tableIds.add(parseTableName(tableName))
-                }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
+                val dropTable = DropView(tableIds.first(), ifExists, isMaterialized)
+                dropTable.tableIds.addAll(tableIds)
                 return StatementData(StatementType.DROP_TABLE, dropTable)
             } else if (ctx.object_type_any_name().SEQUENCE() != null) {
-                val dropTable = io.github.melin.superior.common.relational.drop.DropSequence(ifExists = ifExists)
-                ctx.any_name_list().any_name().map { tableName ->
-                    dropTable.tableIds.add(parseTableName(tableName))
-                }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
+                val dropTable = io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)
+                dropTable.tableIds.addAll(tableIds)
+
                 return StatementData(StatementType.DROP_TABLE, dropTable)
             }
         }

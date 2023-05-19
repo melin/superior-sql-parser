@@ -4,7 +4,7 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.common.RefreshStatement
+import io.github.melin.superior.parser.spark.relational.RefreshStatement
 import io.github.melin.superior.common.relational.common.UseCatalog
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
@@ -875,7 +875,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             val querySql = StringUtils.substring(command, node.query().start.startIndex)
             singleInsertStmt.querySql = querySql
-            singleInsertStmt.inputTables = inputTables
+            singleInsertStmt.inputTables.addAll(inputTables)
             singleInsertStmt.functionNames = functionNames
             singleInsertStmt.rows = rows
 
@@ -884,9 +884,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             currentOptType = StatementType.MULTI_INSERT
             super.visitDmlStatement(ctx)
 
-            val insertTable = InsertTable(InsertMode.OVERWRITE)
-            insertTable.inputTables = inputTables
-            insertTable.outputTables = outputTables
+            val insertTable = InsertTable(InsertMode.OVERWRITE, outputTables.first())
+            insertTable.inputTables.addAll(inputTables)
+            insertTable.outputTables.addAll(outputTables)
             insertTable.functionNames = functionNames
             return StatementData(StatementType.MULTI_INSERT, insertTable)
         } else if (node is SparkSqlParser.UpdateTableContext ||
@@ -915,11 +915,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val tableId = parseTableName(ctx.multipartIdentifier())
             InsertTable(InsertMode.INTO_REPLACE, tableId)
         } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
-            val path: String? = if (ctx.path != null) ctx.path.STRING().text else null;
+            val path = if (ctx.path != null) ctx.path.STRING().text else "";
             val properties = parseOptions(ctx.propertyList())
             val fileFormat = ctx.tableProvider().multipartIdentifier().text
 
-            val stmt = InsertTable(InsertMode.OVERWRITE_DIR, path)
+            val stmt = InsertTable(InsertMode.OVERWRITE_DIR, TableId(path))
             stmt.properties = properties
             stmt.fileFormat = fileFormat
             stmt

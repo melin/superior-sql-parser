@@ -14,11 +14,3 @@ data class StatementData(
 ): Serializable {
     constructor(type: StatementType): this(type, null)
 }
-
-abstract class Statement: Serializable {
-    open val tableId: TableId? = null
-    abstract val privilegeType: PrivilegeType
-    abstract val sqlType: SqlType
-
-    var functionNames: HashSet<String> = hashSetOf()
-}

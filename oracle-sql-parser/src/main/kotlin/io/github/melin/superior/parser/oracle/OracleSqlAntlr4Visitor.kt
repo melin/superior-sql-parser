@@ -219,11 +219,11 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
                 super.visitSelect_statement(ctx.multi_table_insert().select_statement())
             }
 
-            InsertTable(InsertMode.INTO)
+            InsertTable(InsertMode.INTO, outputTables.first())
         }
 
-        insertTable.inputTables = inputTables
-        insertTable.outputTables = outputTables
+        insertTable.inputTables.addAll(inputTables)
+        insertTable.outputTables.addAll(outputTables)
         return StatementData(StatementType.INSERT, insertTable)
     }
 

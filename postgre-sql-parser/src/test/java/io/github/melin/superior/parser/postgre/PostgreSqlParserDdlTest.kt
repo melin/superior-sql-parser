@@ -110,7 +110,7 @@ class PostgreSqlParserDdlTest {
         val statement = statementData.statement
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals(TableId("test", "public", "authors"), statement.getFirstTableId())
+            Assert.assertEquals(TableId("test", "public", "authors"), statement.tableId)
         } else {
             Assert.fail()
         }
@@ -126,7 +126,7 @@ class PostgreSqlParserDdlTest {
         val statement = statementData.statement
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals(TableId("authors"), statement.getFirstTableId())
+            Assert.assertEquals(TableId("authors"), statement.tableId)
             Assert.assertEquals(2, statement.tableIds.size)
         } else {
             Assert.fail()

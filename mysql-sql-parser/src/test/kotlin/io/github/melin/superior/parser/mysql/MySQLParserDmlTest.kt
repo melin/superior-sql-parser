@@ -75,7 +75,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("t1", statement.firstTableId().tableName)
+            Assert.assertEquals("t1", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(3, statement.inputTables.size)
         } else {
@@ -94,7 +94,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("t1", statement.firstTableId().tableName)
+            Assert.assertEquals("t1", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(3, statement.inputTables.size)
         } else {
@@ -112,7 +112,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statementData.type)
-            Assert.assertEquals("users", statement.firstTableId().tableName)
+            Assert.assertEquals("users", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -147,7 +147,7 @@ class MySQLParserDmlTest {
         val statement = statementData.statement
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statementData.type)
-            Assert.assertEquals("product", statement.firstTableId().tableName)
+            Assert.assertEquals("product", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(0, statement.inputTables.size)
         } else {

@@ -12,7 +12,7 @@ data class AlterTable(
     override val tableId: TableId,
     private val action: AlterAction?,
     val tableType: TableType = TableType.TABLE
-): Statement() {
+): AbsTableStatement() {
     override val privilegeType: PrivilegeType = PrivilegeType.ALTER
     override val sqlType: SqlType = SqlType.DDL
     val actions: ArrayList<AlterAction> = ArrayList()

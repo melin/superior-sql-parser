@@ -283,7 +283,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         if (ctx.insertStatementValue().selectStatement() != null) {
             super.visit(ctx.insertStatementValue().selectStatement())
         }
-        insertTable.inputTables = inputTables
+        insertTable.inputTables.addAll(inputTables)
         return StatementData(StatementType.INSERT, insertTable)
     }
 
@@ -296,7 +296,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             super.visit(ctx.insertStatementValue().selectStatement())
             insertTable.mysqlReplace = true
         }
-        insertTable.inputTables = inputTables
+        insertTable.inputTables.addAll(inputTables)
         return StatementData(StatementType.INSERT, insertTable)
     }
 
@@ -307,9 +307,9 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             this.visit(ctx.multipleDeleteStatement().expression())
 
             val outputTables = ctx.multipleDeleteStatement().tableName().map { parseFullId(it.fullId()) }
-            val deleteTable = DeleteTable(inputTables)
+            val deleteTable = DeleteTable(outputTables.first(), inputTables)
             super.visitTableSources(ctx.multipleDeleteStatement().tableSources())
-            deleteTable.outputTables = outputTables
+            deleteTable.outputTables.addAll(outputTables)
             deleteTable
         } else {
             if (ctx.singleDeleteStatement().expression() != null) {
@@ -326,11 +326,13 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     override fun visitUpdateStatement(ctx: MySqlParser.UpdateStatementContext): StatementData {
         currentOptType = StatementType.UPDATE
         val updateTable = if (ctx.multipleUpdateStatement() != null) {
-            val updateTable = UpdateTable(inputTables.toMutableList())
+            val intputTableIds = inputTables.toMutableList()
             this.visit(ctx.multipleUpdateStatement().expression())
             inputTables.clear()
             super.visitTableSources(ctx.multipleUpdateStatement().tableSources())
-            updateTable.outputTables = inputTables
+            UpdateTable(inputTables.first(), inputTables.toMutableList())
+            val updateTable = UpdateTable(inputTables.first(), intputTableIds)
+            updateTable.outputTables.addAll(inputTables)
             updateTable
         } else {
             this.visit(ctx.singleUpdateStatement().expression())

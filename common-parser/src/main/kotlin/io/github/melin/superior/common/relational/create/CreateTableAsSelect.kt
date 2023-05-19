@@ -2,6 +2,7 @@ package io.github.melin.superior.common.relational.create
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
+import io.github.melin.superior.common.relational.AbsTableStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -18,7 +19,7 @@ data class CreateTableAsSelect(
     var locationPath: String? = null,
     var querySql: String? = null,
     var partitionColumnNames: List<String>? = null
-) : Statement() { //是否存在 if exists 关键字
+) : AbsTableStatement() { //是否存在 if exists 关键字
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
     override val sqlType: SqlType = SqlType.DDL
 

@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.spark.relational
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
-import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.common.relational.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
 data class ExportData(
@@ -16,7 +16,7 @@ data class ExportData(
     var overwrite: Boolean = false,
     var single: Boolean = false,
     var inputTables: ArrayList<TableId>
-) : Statement() {
+) : AbsTableStatement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DML
 
