@@ -100,7 +100,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         createView.replace = replace
 
         super.visitSelect_only_statement(ctx.select_only_statement())
-        createView.inputTables = inputTables
+        createView.inputTables.addAll(inputTables)
         return StatementData(currentOptType, createView)
     }
 

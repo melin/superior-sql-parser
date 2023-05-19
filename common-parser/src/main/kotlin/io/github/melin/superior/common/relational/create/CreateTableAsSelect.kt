@@ -18,7 +18,7 @@ data class CreateTableAsSelect(
     var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
     var locationPath: String? = null,
     var querySql: String? = null,
-    var partitionColumnNames: List<String>? = null
+    val partitionColumnNames: ArrayList<String> = arrayListOf()
 ) : AbsTableStatement() { //是否存在 if exists 关键字
     override val privilegeType: PrivilegeType = PrivilegeType.CREATE
     override val sqlType: SqlType = SqlType.DDL
@@ -27,7 +27,8 @@ data class CreateTableAsSelect(
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var createTableType: String = "hive"
 
-    var inputTables: List<TableId> = listOf()
+    val inputTables: ArrayList<TableId> = arrayListOf()
+    val functionNames: HashSet<String> = hashSetOf()
 
     constructor(tableId: TableId):
             this(tableId, null, null, null, null, null, null, false)

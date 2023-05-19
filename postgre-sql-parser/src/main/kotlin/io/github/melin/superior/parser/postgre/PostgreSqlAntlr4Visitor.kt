@@ -154,7 +154,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
 
         super.visitSelectstmt(ctx.selectstmt())
-        createView.inputTables = inputTables
+        createView.inputTables.addAll(inputTables)
         return StatementData(currentOptType, createView)
     }
 
@@ -184,7 +184,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         val createTable = CreateTableAsSelect(tableId)
         super.visitSelectstmt(ctx.selectstmt())
 
-        createTable.inputTables = inputTables
+        createTable.inputTables.addAll(inputTables)
         return StatementData(currentOptType, createTable)
     }
 

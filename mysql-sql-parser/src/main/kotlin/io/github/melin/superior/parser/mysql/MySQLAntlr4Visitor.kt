@@ -111,7 +111,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         val createTable = CreateTableAsSelect(tableId, comment, null, null, null, null, null, ifNotExists)
         super.visitSelectStatement(ctx.selectStatement())
-        createTable.inputTables = inputTables
+        createTable.inputTables.addAll(inputTables)
         return StatementData(currentOptType, createTable)
     }
 

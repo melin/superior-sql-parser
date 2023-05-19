@@ -21,5 +21,6 @@ data class CreateView(
     var fileFormat: String? = null
     var properties: Map<String, String> = mapOf()
 
-    var inputTables: List<TableId> = listOf()
+    val inputTables: ArrayList<TableId> = arrayListOf()
+    val functionNames: HashSet<String> = hashSetOf()
 }

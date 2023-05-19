@@ -15,5 +15,6 @@ data class DataTunnelExpr(
     override val privilegeType: PrivilegeType = PrivilegeType.OTHER
     override val sqlType: SqlType = SqlType.DML
 
-    lateinit var inputTables: List<TableId>
+    val inputTables: ArrayList<TableId> = arrayListOf()
+    val functionNames: HashSet<String> = hashSetOf()
 }

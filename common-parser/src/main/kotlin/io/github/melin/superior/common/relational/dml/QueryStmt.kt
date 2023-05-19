@@ -11,4 +11,6 @@ data class QueryStmt(
 ): Statement() {
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DQL
+
+    val functionNames: HashSet<String> = hashSetOf()
 }

@@ -7,6 +7,4 @@ import java.io.Serializable
 abstract class Statement: Serializable {
     abstract val privilegeType: PrivilegeType
     abstract val sqlType: SqlType
-
-    var functionNames: HashSet<String> = hashSetOf()
 }

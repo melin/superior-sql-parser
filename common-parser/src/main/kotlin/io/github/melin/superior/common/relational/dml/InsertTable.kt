@@ -14,6 +14,7 @@ data class InsertTable(
 
     val inputTables: ArrayList<TableId> = arrayListOf()
     val outputTables: ArrayList<TableId> = arrayListOf()
+    val functionNames: HashSet<String> = hashSetOf()
 
     var properties: Map<String, String>? = null
     var fileFormat: String? = null

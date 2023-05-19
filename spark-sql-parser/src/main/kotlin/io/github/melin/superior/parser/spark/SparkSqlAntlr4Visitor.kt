@@ -265,9 +265,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             createTable.querySql = querySql
             super.visitQuery(query)
-            createTable.inputTables = inputTables
-            createTable.functionNames = functionNames
-            createTable.partitionColumnNames = partitionColumnNames
+            createTable.inputTables.addAll(inputTables)
+            createTable.functionNames.addAll(functionNames)
+            createTable.partitionColumnNames.addAll(partitionColumnNames)
             return StatementData(currentOptType, createTable)
         } else {
             currentOptType = StatementType.CREATE_TABLE
@@ -499,8 +499,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val distOptions = parseDtOptions(ctx.writeOpts)
 
         val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions)
-        data.inputTables = inputTables
-        data.functionNames = functionNames
+        data.inputTables.addAll(inputTables)
+        data.functionNames.addAll(functionNames)
         return StatementData(StatementType.DATATUNNEL, data)
     }
 
@@ -648,8 +648,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         this.visitQuery(ctx.query())
 
         val createView = CreateView(tableId, querySql, comment, ifNotExists)
-        createView.functionNames = functionNames
-        createView.inputTables = inputTables
+        createView.inputTables.addAll(inputTables)
+        createView.functionNames.addAll(functionNames)
+
         if (ctx.REPLACE() != null) {
             createView.replace = true
         }
@@ -811,7 +812,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val exportData = ExportData(tableId, filePath, properties, partitionVals,
             fileFormat, compression, maxFileSize, overwrite, single, inputTables)
 
-        exportData.functionNames = functionNames
+        exportData.functionNames.addAll(functionNames)
         return StatementData(StatementType.EXPORT_TABLE, exportData)
     }
 
@@ -851,7 +852,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             super.visitStatementDefault(ctx)
 
             val queryStmt = QueryStmt(inputTables, limit)
-            queryStmt.functionNames = functionNames
+            queryStmt.functionNames.addAll(functionNames)
             return StatementData(StatementType.SELECT, queryStmt)
         }
 
@@ -876,7 +877,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val querySql = StringUtils.substring(command, node.query().start.startIndex)
             singleInsertStmt.querySql = querySql
             singleInsertStmt.inputTables.addAll(inputTables)
-            singleInsertStmt.functionNames = functionNames
+            singleInsertStmt.functionNames.addAll(functionNames)
             singleInsertStmt.rows = rows
 
             return StatementData(StatementType.INSERT, singleInsertStmt)
@@ -887,7 +888,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             val insertTable = InsertTable(InsertMode.OVERWRITE, outputTables.first())
             insertTable.inputTables.addAll(inputTables)
             insertTable.outputTables.addAll(outputTables)
-            insertTable.functionNames = functionNames
+            insertTable.functionNames.addAll(functionNames)
             return StatementData(StatementType.MULTI_INSERT, insertTable)
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||

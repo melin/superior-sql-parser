@@ -67,7 +67,7 @@ class PrestoSqlAntlr4Visitor : PrestoSqlBaseBaseVisitor<StatementData>() {
 
         createTable.lifeCycle = 7
         createTable.querySql = querySql
-        createTable.inputTables = inputTables
+        createTable.inputTables.addAll(inputTables)
 
         super.visitQuery(ctx.query())
 

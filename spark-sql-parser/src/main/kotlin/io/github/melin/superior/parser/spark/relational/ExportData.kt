@@ -20,6 +20,8 @@ data class ExportData(
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DML
 
+    val functionNames: HashSet<String> = hashSetOf()
+
     constructor(
         tableId: TableId,
         path: String,
