@@ -67,10 +67,10 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
 
         createTable.lifeCycle = 7
         createTable.querySql = querySql
-        createTable.inputTables.addAll(inputTables)
 
         super.visitQuery(ctx.query())
 
+        createTable.inputTables.addAll(inputTables)
         return StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
     }
 
