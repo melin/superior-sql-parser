@@ -35,13 +35,13 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
     //-----------------------------------database-------------------------------------------------
 
     override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): StatementData {
-        val databaseName = ctx.uid().text
+        val databaseName = StringUtil.cleanQuote(ctx.uid().text)
         val createNamespace = CreateNamespace(databaseName)
         return StatementData(StatementType.CREATE_NAMESPACE, createNamespace)
     }
 
     override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): StatementData {
-        val databaseName = ctx.uid().text
+        val databaseName = StringUtil.cleanQuote(ctx.uid().text)
         val dropNamespace = DropNamespace(databaseName)
         return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
     }
@@ -62,7 +62,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
         ctx.createDefinitions().children.forEach { column ->
             if(column is MySqlParser.ColumnDeclarationContext ) {
-                val name = StringUtil.cleanBackQuote(column.fullColumnName().text)
+                val name = StringUtil.cleanQuote(column.fullColumnName().text)
 
 
                 var dataType = column.columnDefinition().dataType().getChild(0).text.lowercase()
@@ -124,7 +124,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
         for (i in 1..(count-2)) {
             var column = ctx.indexColumnNames().getChild(i).text
-            column = StringUtil.cleanBackQuote(column)
+            column = StringUtil.cleanQuote(column)
             primaryKeys.add(column)
         }
 
@@ -172,8 +172,8 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val statement = ctx.getChild(3)
         val tableId = parseFullId(ctx.tableName().fullId())
         if (statement is MySqlParser.AlterByChangeColumnContext) {
-            val columnName = StringUtil.cleanBackQuote(statement.oldColumn.text)
-            val newColumnName = StringUtil.cleanBackQuote(statement.newColumn.text)
+            val columnName = StringUtil.cleanQuote(statement.oldColumn.text)
+            val newColumnName = StringUtil.cleanQuote(statement.newColumn.text)
             val dataType = statement.columnDefinition().dataType().text
             var comment:String? = null
 
@@ -189,7 +189,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
-            val columnName = StringUtil.cleanBackQuote(statement.uid().get(0).text)
+            val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
             var comment:String? = null
             statement.columnDefinition().children.forEach {
@@ -202,12 +202,12 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             val alterTable = AlterTable(AlterType.ADD_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
-            val columnName = StringUtil.cleanBackQuote(statement.uid().text)
+            val columnName = StringUtil.cleanQuote(statement.uid().text)
             val action = DropColumnAction(columnName)
             val alterTable = AlterTable(AlterType.DROP_COLUMN, tableId, action)
             return StatementData(StatementType.ALTER_TABLE, alterTable)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {
-            val columnName = StringUtil.cleanBackQuote(statement.uid().get(0).text)
+            val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
 
             val action = AlterColumnAction(columnName, dataType)
@@ -400,16 +400,16 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             databaseName = fullId.uid().get(0).text
             tableName = (fullId.getChild(1) as TerminalNodeImpl).text.substring(1)
         } else if(fullId.childCount == 3) {
-            databaseName = StringUtil.cleanBackQuote(fullId.uid().get(0).text)
-            tableName = StringUtil.cleanBackQuote((fullId.getChild(2) as MySqlParser.UidContext).text)
+            databaseName = StringUtil.cleanQuote(fullId.uid().get(0).text)
+            tableName = StringUtil.cleanQuote((fullId.getChild(2) as MySqlParser.UidContext).text)
         } else {
             tableName = fullId.uid().get(0).text
         }
 
         if (databaseName != null) {
-            databaseName = StringUtil.cleanBackQuote(databaseName)
+            databaseName = StringUtil.cleanQuote(databaseName)
         }
-        tableName = StringUtil.cleanBackQuote(tableName)
+        tableName = StringUtil.cleanQuote(tableName)
 
         return TableId(databaseName, tableName);
     }

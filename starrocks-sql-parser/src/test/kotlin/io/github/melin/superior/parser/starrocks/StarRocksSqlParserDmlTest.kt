@@ -1,34 +1,25 @@
 package io.github.melin.superior.parser.starrocks
 
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
 import org.junit.Test
 
 class StarRocksSqlParserDmlTest {
 
     @Test
-    fun createTableTest() {
+    fun selectTest0() {
         val sql = """
-            create table meta_role (
-                id           int          not null,
-                tenant_id    int          null comment '租户ID',
-                code         varchar(255) null comment '角色code, 字母数字和下划线',
-                name         varchar(255) null comment '角色名称，一般为中文',
-                type         varchar(32)  not null comment '角色类型：superadmin、workspaceadmin、dataadmin、custom',
-                order_index  int          null,
-                creater      varchar(45)  null,
-                modifier     varchar(45)  null,
-                gmt_created  datetime     null,
-                gmt_modified datetime     null
-            ) ENGINE = olap PRIMARY KEY(id)
-            DISTRIBUTED BY HASH (id) BUCKETS 10;
+            SELECT * FROM hive1.hive_db.hive_table limit 1 
         """.trimIndent()
 
         val statementData = StarRocksHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is CreateTable) {
-            val name = statement.tableId.tableName
-            Assert.assertEquals("meta_role", name)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),
+                statement.inputTables.get(0))
         } else {
             Assert.fail()
         }

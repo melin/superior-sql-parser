@@ -23,7 +23,9 @@ class MySQLParserDdlTest {
 
     @Test
     fun createDatabaseTest() {
-        val sql = "CREATE DATABASE IF NOT EXISTS bigdata"
+        val sql = """
+            CREATE DATABASE IF NOT EXISTS "bigdata"
+        """.trimIndent()
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement

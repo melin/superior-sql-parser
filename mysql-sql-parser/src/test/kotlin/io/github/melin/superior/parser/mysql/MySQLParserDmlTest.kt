@@ -157,8 +157,9 @@ class MySQLParserDmlTest {
 
     @Test
     fun insertValuesTest() {
-        //val sql = "insert into user values('name')"
-        val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
+        val sql = """
+            insert into bigdata."user" select * from users a left outer join address b on a.address_id = b.id
+        """.trimIndent()
 
         val statementData = MySQLHelper.getStatementData(sql)
         val statement = statementData.statement

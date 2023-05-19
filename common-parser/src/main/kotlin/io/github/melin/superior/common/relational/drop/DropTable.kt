@@ -13,6 +13,7 @@ data class DropTable(
     override val sqlType: SqlType = SqlType.DDL
 
     val tableIds: ArrayList<TableId> = arrayListOf()
+    var force: Boolean = false
 
     init {
         if (tableId != null) {

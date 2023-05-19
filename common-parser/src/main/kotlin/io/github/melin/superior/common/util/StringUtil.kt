@@ -16,18 +16,11 @@ object StringUtil {
         if (StringUtils.startsWith(result, "\"") && StringUtils.endsWith(result, "\"")) {
             result = StringUtils.substring(result, 1, -1)
         }
-        return result
-    }
-
-    fun cleanBackQuote(value: String?) : String {
-        if (value == null)
-            return ""
 
         if (StringUtils.startsWith(value, "`") && StringUtils.endsWith(value, "`")) {
             return StringUtils.substring(value, 1, -1)
-        } else {
-            return value
         }
+        return result
     }
 
     fun parseDataType(type: String): String {

@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.drop.DropTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -29,6 +30,23 @@ class StarRocksSqlParserDdlTest {
         if (statement is CreateTable) {
             val name = statement.tableId.tableName
             Assert.assertEquals("meta_role", name)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropTableTest() {
+        val sql = """
+           DROP TABLE IF EXISTS example_db.My_table force;
+        """.trimIndent()
+
+        val statementData = StarRocksHelper.getStatementData(sql)
+        val statement = statementData.statement
+        if (statement is DropTable) {
+            Assert.assertEquals("example_db", statement.tableId?.schemaName)
+            Assert.assertEquals("My_table", statement.tableId?.tableName)
+            Assert.assertTrue(statement.force)
         } else {
             Assert.fail()
         }
