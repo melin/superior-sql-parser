@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.starrocks;
 
+import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser;
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseListener;
-import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -25,8 +25,8 @@ public class PostProcessListener extends StarRocksParserBaseListener {
     }
 
     @Override
-    public void exitExpressionList(StarRocksParserParser.ExpressionListContext ctx) {
-        long childCount = ctx.children.stream().filter(child -> child instanceof StarRocksParserParser.ExpressionContext).count();
+    public void exitExpressionList(StarRocksParser.ExpressionListContext ctx) {
+        long childCount = ctx.children.stream().filter(child -> child instanceof StarRocksParser.ExpressionContext).count();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);
             String msg = String.format("The number of exprs are %s exceeded the maximum limit %s, please consider modify " +
@@ -36,7 +36,7 @@ public class PostProcessListener extends StarRocksParserBaseListener {
     }
 
     @Override
-    public void exitExpressionsWithDefault(StarRocksParserParser.ExpressionsWithDefaultContext ctx) {
+    public void exitExpressionsWithDefault(StarRocksParser.ExpressionsWithDefaultContext ctx) {
         long childCount = ctx.expressionOrDefault().size();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);
@@ -47,7 +47,7 @@ public class PostProcessListener extends StarRocksParserBaseListener {
     }
 
     @Override
-    public void exitInsertStatement(StarRocksParserParser.InsertStatementContext ctx) {
+    public void exitInsertStatement(StarRocksParser.InsertStatementContext ctx) {
         long childCount = ctx.expressionsWithDefault().size();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);

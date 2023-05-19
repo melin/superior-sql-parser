@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-grammar StarRocksParser;
+parser grammar StarRocksParser;
 options { tokenVocab = StarRocksLexer; }
 
 sqlStatements
@@ -341,7 +341,7 @@ showDataStmt
 
 createTableStatement
     : CREATE EXTERNAL? TABLE (IF NOT EXISTS)? qualifiedName
-          '(' columnDesc (COMMA columnDesc)* (COMMA indexDesc)* RIGHT_PAREN
+          LEFT_PAREN columnDesc (COMMA columnDesc)* (COMMA indexDesc)* RIGHT_PAREN
           engineDesc?
           charsetDesc?
           keyDesc?
@@ -365,7 +365,7 @@ charsetName
     ;
 
 defaultDesc
-    : DEFAULT (string | NULL | CURRENT_TIMESTAMP | '(' qualifiedName '(' RIGHT_PAREN RIGHT_PAREN)
+    : DEFAULT (string | NULL | CURRENT_TIMESTAMP | LEFT_PAREN qualifiedName LEFT_PAREN RIGHT_PAREN RIGHT_PAREN)
     ;
 
 materializedColumnDesc
@@ -736,7 +736,7 @@ modifyStorageVolumePropertiesClause
     ;
 
 modifyStorageVolumeCommentClause
-    : COMMENT '=' string
+    : COMMENT EQ string
     ;
 
 descStorageVolumeStatement
@@ -870,7 +870,7 @@ modifyTablePropertiesClause
     ;
 
 modifyCommentClause
-    : COMMENT '=' string
+    : COMMENT EQ string
     ;
 
 addColumnClause
@@ -1187,10 +1187,10 @@ dataDesc
 
 formatProps
     :  LEFT_PAREN
-            (SKIP_HEADER '=' INTEGER_VALUE)?
-            (TRIM_SPACE '=' booleanValue)?
-            (ENCLOSE '=' encloseCharacter=string)?
-            (ESCAPE '=' escapeCharacter=string)?
+            (SKIP_HEADER EQ INTEGER_VALUE)?
+            (TRIM_SPACE EQ booleanValue)?
+            (ENCLOSE EQ encloseCharacter=string)?
+            (ESCAPE EQ escapeCharacter=string)?
         RIGHT_PAREN
     ;
 
@@ -1511,7 +1511,7 @@ dropMaskingPolicyStatement
 
 alterMaskingPolicyStatement
     : ALTER MASKING POLICY (IF EXISTS)? policyName=qualifiedName SET BODY ARROW expression
-    | ALTER MASKING POLICY (IF EXISTS)? policyName=qualifiedName SET COMMENT '=' string
+    | ALTER MASKING POLICY (IF EXISTS)? policyName=qualifiedName SET COMMENT EQ string
     | ALTER MASKING POLICY (IF EXISTS)? policyName=qualifiedName RENAME TO newPolicyName=identifier
     ;
 
@@ -1534,7 +1534,7 @@ dropRowAccessPolicyStatement
 
 alterRowAccessPolicyStatement
     : ALTER ROW ACCESS POLICY (IF EXISTS)? policyName=qualifiedName SET BODY ARROW expression
-    | ALTER ROW ACCESS POLICY (IF EXISTS)? policyName=qualifiedName SET COMMENT '=' string
+    | ALTER ROW ACCESS POLICY (IF EXISTS)? policyName=qualifiedName SET COMMENT EQ string
     | ALTER ROW ACCESS POLICY (IF EXISTS)? policyName=qualifiedName RENAME TO newPolicyName=identifier
     ;
 
@@ -1664,11 +1664,11 @@ setVar
     : (CHAR SET | CHARSET | CHARACTER SET) (identifierOrString | DEFAULT)                       #setNames
     | NAMES (charset = identifierOrString | DEFAULT)
         (COLLATE (collate = identifierOrString | DEFAULT))?                                     #setNames
-    | PASSWORD '=' (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                           #setPassword
-    | PASSWORD FOR user '=' (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                  #setPassword
-    | userVariable '=' expression                                                               #setUserVar
-    | varType? identifier '=' setExprOrDefault                                                  #setSystemVar
-    | systemVariable '=' setExprOrDefault                                                       #setSystemVar
+    | PASSWORD EQ (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                           #setPassword
+    | PASSWORD FOR user EQ (string | PASSWORD LEFT_PAREN string RIGHT_PAREN)                                  #setPassword
+    | userVariable EQ expression                                                               #setUserVar
+    | varType? identifier EQ setExprOrDefault                                                  #setSystemVar
+    | systemVariable EQ setExprOrDefault                                                       #setSystemVar
     | varType? TRANSACTION transaction_characteristics                                          #setTransaction
     ;
 
@@ -1871,11 +1871,11 @@ bracketHint
     ;
 
 setVarHint
-    : '/*+' SET_VAR LEFT_PAREN hintMap (COMMA hintMap)* RIGHT_PAREN '*/'
+    : HENT_START SET_VAR LEFT_PAREN hintMap (COMMA hintMap)* RIGHT_PAREN HENT_ENDHENT_END
     ;
 
 hintMap
-    : k=identifierOrString '=' v=literalExpression
+    : k=identifierOrString EQ v=literalExpression
     ;
 
 joinCriteria
@@ -1936,7 +1936,7 @@ mapExpressionList
     ;
 
 mapExpression
-    : key=expression ':' value=expression
+    : key=expression COLON value=expression
     ;
 
 expressionSingleton
@@ -2000,7 +2000,7 @@ primaryExpression
     : userVariable                                                                        #userVariableExpression
     | systemVariable                                                                      #systemVariableExpression
     | functionCall                                                                        #functionCallExpression
-    | '{' FN functionCall '}'                                                             #odbcFunctionCallExpression
+    | LEFT_BRACE FN functionCall RIGHT_BRACE                                              #odbcFunctionCallExpression
     | primaryExpression COLLATE (identifier | string)                                     #collate
     | literalExpression                                                                   #literal
     | columnReference                                                                     #columnRef
@@ -2015,13 +2015,13 @@ primaryExpression
     | CONVERT LEFT_PAREN expression COMMA type RIGHT_PAREN                                                 #convert
     | CASE caseExpr=expression whenClause+ (ELSE elseExpression=expression)? END          #simpleCase
     | CASE whenClause+ (ELSE elseExpression=expression)? END                              #searchedCase
-    | arrayType? LEFT_BRACKET (expressionList)? RIGHT_BRACKET                                                #arrayConstructor
-    | mapType? '{' (mapExpressionList)? '}'                                               #mapConstructor
+    | arrayType? LEFT_BRACKET (expressionList)? RIGHT_BRACKET                             #arrayConstructor
+    | mapType? LEFT_BRACE (mapExpressionList)? RIGHT_BRACE                                               #mapConstructor
     | value=primaryExpression LEFT_BRACKET index=valueExpression RIGHT_BRACKET                               #collectionSubscript
-    | primaryExpression LEFT_BRACKET start=INTEGER_VALUE? ':' end=INTEGER_VALUE? RIGHT_BRACKET               #arraySlice
+    | primaryExpression LEFT_BRACKET start=INTEGER_VALUE? COLON end=INTEGER_VALUE? RIGHT_BRACKET               #arraySlice
     | primaryExpression ARROW string                                                      #arrowExpression
-    | (identifier | identifierList) '->' expression                                       #lambdaFunctionExpr
-    | identifierList '->' LEFT_PAREN(expressionList)?RIGHT_PAREN                                         #lambdaFunctionExpr
+    | (identifier | identifierList) ARROW expression                                       #lambdaFunctionExpr
+    | identifierList ARROW LEFT_PAREN (expressionList)? RIGHT_PAREN                       #lambdaFunctionExpr
     ;
 
 literalExpression
@@ -2224,7 +2224,7 @@ partitionValueList
     ;
 
 keyPartition
-    : partitionColName=identifier '=' partitionColValue=literalExpression
+    : partitionColName=identifier EQ partitionColValue=literalExpression
     ;
 
 partitionValue
@@ -2266,7 +2266,7 @@ userPropertyList
     ;
 
 property
-    : key=string '=' value=string
+    : key=string EQ value=string
     ;
 
 varType
@@ -2327,11 +2327,11 @@ type
     ;
 
 arrayType
-    : ARRAY '<' type '>'
+    : ARRAY LT type GT
     ;
 
 mapType
-    : MAP '<' type COMMA type '>'
+    : MAP LT type COMMA type GT
     ;
 
 subfieldDesc
@@ -2343,7 +2343,7 @@ subfieldDescs
     ;
 
 structType
-    : STRUCT '<' subfieldDescs '>'
+    : STRUCT LT subfieldDescs GT
     ;
 
 typeParameter
@@ -2416,8 +2416,8 @@ identifierOrStringOrStar
 
 user
     : identifierOrString                                     # userWithoutHost
-    | identifierOrString '@' identifierOrString              # userWithHost
-    | identifierOrString '@' LEFT_BRACKET identifierOrString RIGHT_BRACKET      # userWithHostAndBlanket
+    | identifierOrString AT identifierOrString              # userWithHost
+    | identifierOrString AT LEFT_BRACKET identifierOrString RIGHT_BRACKET      # userWithHostAndBlanket
     ;
 
 assignment

@@ -8,7 +8,7 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
-import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
+import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 
@@ -27,7 +27,7 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
         return if (currentResult == null) true else false
     }
 
-    override fun visitCreateTableStatement(ctx: StarRocksParserParser.CreateTableStatementContext): StatementData {
+    override fun visitCreateTableStatement(ctx: StarRocksParser.CreateTableStatementContext): StatementData {
         val tableId = parseTableName(ctx.qualifiedName())
         val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
         val columnRels: List<ColumnRel> = ctx.columnDesc().map { column ->
@@ -41,15 +41,15 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.CREATE_TABLE, createTable)
     }
 
-    override fun visitAlterTableStatement(ctx: StarRocksParserParser.AlterTableStatementContext?): StatementData {
+    override fun visitAlterTableStatement(ctx: StarRocksParser.AlterTableStatementContext?): StatementData {
         return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
     }
 
-    override fun visitAlterViewStatement(ctx: StarRocksParserParser.AlterViewStatementContext?): StatementData {
+    override fun visitAlterViewStatement(ctx: StarRocksParser.AlterViewStatementContext?): StatementData {
         return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
     }
 
-    fun parseTableName(ctx: StarRocksParserParser.QualifiedNameContext): TableId {
+    fun parseTableName(ctx: StarRocksParser.QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 2) {
             TableId(ctx.identifier().get(0).text, ctx.identifier().get(1).text)
         } else if (ctx.identifier().size == 1) {

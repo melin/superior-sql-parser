@@ -6,7 +6,7 @@ import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksLexer
-import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserParser
+import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.misc.ParseCancellationException
@@ -31,7 +31,7 @@ object StarRocksHelper {
         lexer.addErrorListener(ParseErrorListener())
 
         val tokenStream = CommonTokenStream(lexer)
-        val parser = StarRocksParserParser(tokenStream)
+        val parser = StarRocksParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))

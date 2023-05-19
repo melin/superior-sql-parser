@@ -4,7 +4,7 @@ import io.github.melin.superior.common.relational.create.CreateTable
 import org.junit.Assert
 import org.junit.Test
 
-class StarRocksSqlDmlParserTest {
+class StarRocksSqlParserDmlTest {
 
     @Test
     fun createTableTest() {

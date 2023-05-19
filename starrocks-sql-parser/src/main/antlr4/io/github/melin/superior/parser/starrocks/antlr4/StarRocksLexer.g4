@@ -534,6 +534,7 @@ BRACKETED_COMMENT
     ;
 
 SEMICOLON: ';';
+COLON: ':';
 
 LEFT_PAREN: '(';
 RIGHT_PAREN: ')';
@@ -541,6 +542,10 @@ COMMA: ',';
 DOT: '.';
 LEFT_BRACKET: '[';
 RIGHT_BRACKET: ']';
+LEFT_BRACE: '{';
+RIGHT_BRACE: '}';
+HENT_START: '/*+';
+HENT_END: '*/';
 
 DOTDOTDOT: '...';
 
