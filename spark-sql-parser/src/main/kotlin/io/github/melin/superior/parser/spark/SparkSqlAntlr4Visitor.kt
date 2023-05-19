@@ -4,10 +4,10 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.common.RefreshData
+import io.github.melin.superior.common.relational.common.RefreshStatement
+import io.github.melin.superior.common.relational.common.UseCatalog
+import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
-import io.github.melin.superior.common.relational.namespace.Namespace
-import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.*
@@ -81,11 +81,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         this.command = command
     }
 
-    fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): NamespaceId {
+    fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): Pair<String?, String> {
         return if (ctx.parts.size == 2) {
-            NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return Pair(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            NamespaceId(null, ctx.parts.get(0).text)
+            Pair(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -112,7 +112,6 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     //-----------------------------------database-------------------------------------------------
 
     override fun visitCreateNamespace(ctx: SparkSqlParser.CreateNamespaceContext): StatementData {
-        val schemaId = parseNamespace(ctx.multipartIdentifier())
         var location: String = ""
         if (ctx.locationSpec().size > 0) {
             location = ctx.locationSpec().get(0).stringLit().text
@@ -120,15 +119,28 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
         val type = ctx.namespace().text.uppercase()
 
-        val createNamespace = CreateNamespace(schemaId, Namespace.valueOf(type), location)
-        return StatementData(StatementType.CREATE_NAMESPACE, createNamespace)
+        if (StringUtils.equalsIgnoreCase("database", type) ||
+            StringUtils.equalsIgnoreCase("schema", type)) {
+
+            val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
+            val createDatabase = CreateDatabase(catalogName, databaseName, location)
+            return StatementData(StatementType.CREATE_DATABASE, createDatabase)
+        } else {
+            throw RuntimeException("not support: " + type)
+        }
     }
 
     override fun visitDropNamespace(ctx: SparkSqlParser.DropNamespaceContext): StatementData {
-        val schemaId = parseNamespace(ctx.multipartIdentifier())
         val type = ctx.namespace().text.uppercase()
-        val dropNamespace = DropNamespace(schemaId, Namespace.valueOf(type))
-        return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
+        if (StringUtils.equalsIgnoreCase("database", type) ||
+            StringUtils.equalsIgnoreCase("schema", type)) {
+
+            val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
+            val dropDatabase = DropDatabase(catalogName, databaseName)
+            return StatementData(StatementType.DROP_DATABASE, dropDatabase)
+        } else {
+            throw RuntimeException("not support: " + type)
+        }
     }
 
     //-----------------------------------table-------------------------------------------------
@@ -456,7 +468,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     override fun visitRefreshTable(ctx: SparkSqlParser.RefreshTableContext): StatementData {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val data = RefreshData(tableId)
+        val data = RefreshStatement(tableId)
 
         return StatementData(StatementType.REFRESH_TABLE, data)
     }
@@ -543,14 +555,8 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             properties.put(key.lowercase(), value)
         }
 
-        val schemaName: String? = tableId.schemaName
-        val data = if (schemaName != null) {
-            CallProcedure(NamespaceId(tableId.catalogName, schemaName),
-                tableId.tableName, properties)
-        } else {
-            CallProcedure(tableId.tableName, properties)
-        }
-        return StatementData(StatementType.CALL, data)
+        val callProcedure = CallProcedure(tableId.catalogName, tableId.schemaName, tableId.tableName, properties)
+        return StatementData(StatementType.CALL, callProcedure)
     }
 
     override fun visitCallHelp(ctx: SparkSqlParser.CallHelpContext): StatementData {
@@ -575,9 +581,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
 
         return if ("schema" == type) {
-            val targetNamespaceId = parseNamespace(ctx.target)
-            val sourceNamespaceId = parseNamespace(ctx.source)
-            val expr = SyncSchemaExpr(targetNamespaceId, sourceNamespaceId, owner);
+            val target = parseNamespace(ctx.target)
+            val source = parseNamespace(ctx.source)
+            val expr = SyncSchemaExpr(target.first, target.second, source.first, source.second, owner);
             StatementData(StatementType.SYNC, expr)
         } else {
             val targetTableId = parseTableName(ctx.target)
@@ -810,16 +816,26 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
     override fun visitUse(ctx: SparkSqlParser.UseContext): StatementData {
-        val schemaId = parseNamespace(ctx.multipartIdentifier())
-        val useNamespace = UseNamespace(schemaId)
-        return StatementData(StatementType.USE, useNamespace)
+        val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
+        val createDatabase = UseDatabase(catalogName, databaseName)
+        return StatementData(StatementType.USE, createDatabase)
     }
 
     override fun visitUseNamespace(ctx: SparkSqlParser.UseNamespaceContext): StatementData {
-        val schemaId = parseNamespace(ctx.multipartIdentifier())
         val type = ctx.namespace().text.uppercase()
-        val useNamespace = UseNamespace(schemaId, Namespace.valueOf(type))
-        return StatementData(StatementType.USE, useNamespace)
+
+        if (StringUtils.equalsIgnoreCase("database", type) ||
+            StringUtils.equalsIgnoreCase("schema", type)) {
+
+            val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
+            val useDatabase = UseDatabase(catalogName, databaseName)
+            return StatementData(StatementType.USE, useDatabase)
+        } else if (StringUtils.equalsIgnoreCase("namespace", type)) {
+            val useCatalog = UseCatalog(ctx.multipartIdentifier().text)
+            return StatementData(StatementType.USE, useCatalog)
+        } else {
+            throw RuntimeException("not support: " + type)
+        }
     }
 
     override fun visitSetConfiguration(ctx: SparkSqlParser.SetConfigurationContext?): StatementData {

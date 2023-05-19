@@ -2,7 +2,6 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.NamespaceId
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -88,9 +87,9 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
         val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
 
         val createDatabase = if (ctx.includeTable == null) {
-            FlinkCdcCreateDatabase(sinkDatabase, sourceDatabase, "__ALL__")
+            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
         } else {
-            FlinkCdcCreateDatabase(sinkDatabase, sourceDatabase, StringUtil.cleanQuote(ctx.includeTable.text))
+            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, StringUtil.cleanQuote(ctx.includeTable.text))
         }
 
         if (ctx.excludeTable != null) {
@@ -102,11 +101,11 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
         return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
     }
 
-    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): NamespaceId {
+    fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): Pair<String?, String> {
         if (ctx.parts.size == 2) {
-            return NamespaceId(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            return Pair(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
-            return NamespaceId(null, ctx.parts.get(0).text)
+            return Pair(null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }

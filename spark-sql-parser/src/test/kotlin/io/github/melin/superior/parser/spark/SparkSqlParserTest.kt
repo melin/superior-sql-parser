@@ -2,9 +2,8 @@ package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
-import io.github.melin.superior.common.relational.namespace.Namespace
-import io.github.melin.superior.common.relational.namespace.UseNamespace
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.*
@@ -25,9 +24,8 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is CreateNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
-            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
+        if (statement is CreateDatabase) {
+            Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
         }
@@ -39,11 +37,10 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is CreateNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
-            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
+        if (statement is CreateDatabase) {
+            Assert.assertEquals("bigdata", statement.databaseName)
             val location = statement.location;
-            Assert.assertEquals("s3a://hive/s3/",location)
+            Assert.assertEquals("s3a://hive/s3/", location)
         } else {
             Assert.fail()
         }
@@ -55,9 +52,8 @@ class SparkSqlParserTest {
 
         val statementData = SparkSqlHelper.getStatementData(sql)
         val statement = statementData.statement
-        if (statement is DropNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
-            Assert.assertEquals(Namespace.DATABASE, statement.namespace)
+        if (statement is DropDatabase) {
+            Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
         }
@@ -1393,8 +1389,8 @@ class SparkSqlParserTest {
         val statementData = SparkSqlHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.USE, statementData.type)
         val statement = statementData.statement
-        if (statement is UseNamespace) {
-            Assert.assertEquals("bigdata", statement.namespaceId.schemaName)
+        if (statement is UseDatabase) {
+            Assert.assertEquals("bigdata", statement.databaseName)
         } else {
             Assert.fail()
         }
@@ -1929,8 +1925,8 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statementData.type)
-            Assert.assertEquals("catalog_name", statement.schema?.catalogName)
-            Assert.assertEquals("system", statement.schema?.schemaName)
+            Assert.assertEquals("catalog_name", statement.catalogName)
+            Assert.assertEquals("system", statement.databaseName)
             Assert.assertEquals("create_savepoint", statement.procedureName)
             Assert.assertEquals(2, statement.properties.size)
         } else {
@@ -1997,10 +1993,10 @@ class SparkSqlParserTest {
         val statement = statementData.statement
         if (statement is SyncSchemaExpr) {
             Assert.assertEquals(StatementType.SYNC, statementData.type)
-            Assert.assertNull(statement.targetNamespaceId.catalogName)
-            Assert.assertEquals("my_db_uc", statement.targetNamespaceId.schemaName)
-            Assert.assertEquals("hive_metastore", statement.sourceNamespaceId.catalogName)
-            Assert.assertEquals("my_db", statement.sourceNamespaceId.schemaName)
+            Assert.assertNull(statement.targetCatalogName)
+            Assert.assertEquals("my_db_uc", statement.targetDatabaseName)
+            Assert.assertEquals("hive_metastore", statement.sourceCatalogName)
+            Assert.assertEquals("my_db", statement.sourceDatabaseName)
             Assert.assertEquals("wangwu", statement.owner)
         } else {
             Assert.fail()

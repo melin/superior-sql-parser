@@ -7,6 +7,8 @@ import java.io.Serializable
  */
 
 enum class StatementType: Serializable {
+    CREATE_DATABASE,
+    CREATE_SCHEMA,
     CREATE_NAMESPACE,
     CREATE_TABLE,
     CREATE_TABLE_AS_SELECT,
@@ -18,6 +20,8 @@ enum class StatementType: Serializable {
     CREATE_FUNCTION,
     CREATE_PROCEDURE,
 
+    DROP_DATABASE,
+    DROP_SCHEMA,
     DROP_NAMESPACE,
     DROP_TABLE,
     DROP_VIEW,

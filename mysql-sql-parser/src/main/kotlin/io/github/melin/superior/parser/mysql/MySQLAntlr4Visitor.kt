@@ -3,21 +3,17 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.create.CreateIndex
-import io.github.melin.superior.common.relational.create.CreateNamespace
-import io.github.melin.superior.common.relational.drop.DropNamespace
-import io.github.melin.superior.common.relational.namespace.UseNamespace
+import io.github.melin.superior.common.relational.common.UseDatabase
+import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
-import org.apache.commons.lang3.StringUtils
 
 /**
  *
@@ -36,14 +32,14 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): StatementData {
         val databaseName = StringUtil.cleanQuote(ctx.uid().text)
-        val createNamespace = CreateNamespace(databaseName)
-        return StatementData(StatementType.CREATE_NAMESPACE, createNamespace)
+        val createDatabase = CreateDatabase(databaseName)
+        return StatementData(StatementType.CREATE_NAMESPACE, createDatabase)
     }
 
     override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): StatementData {
         val databaseName = StringUtil.cleanQuote(ctx.uid().text)
-        val dropNamespace = DropNamespace(databaseName)
-        return StatementData(StatementType.DROP_NAMESPACE, dropNamespace)
+        val dropDatabase = DropDatabase(databaseName)
+        return StatementData(StatementType.DROP_NAMESPACE, dropDatabase)
     }
 
     //-----------------------------------table-------------------------------------------------
@@ -159,7 +155,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): StatementData {
         val databaseName = ctx.uid().text
-        val data = UseNamespace(databaseName)
+        val data = UseDatabase(databaseName)
         return StatementData(StatementType.USE, data)
     }
 

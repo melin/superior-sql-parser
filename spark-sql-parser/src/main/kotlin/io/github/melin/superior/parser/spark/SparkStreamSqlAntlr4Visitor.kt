@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.spark
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.common.SetData
+import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertTable
@@ -66,7 +66,7 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
         var value = StringUtil.cleanQuote(ctx.valueKeyExpr().text)
         value = StringUtil.cleanQuote(value)
 
-        val data = SetData(key, value)
+        val data = SetStatement(key, value)
         return StatementData(StatementType.SET, data)
     }
 

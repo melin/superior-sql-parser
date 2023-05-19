@@ -9,10 +9,3 @@ data class AnalyzeTable (
     override val privilegeType: PrivilegeType = PrivilegeType.READ
     override val sqlType: SqlType = SqlType.DML
 }
-
-data class AnalyzeSchema (
-    val namespaceId: NamespaceId
-) : Statement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.READ
-    override val sqlType: SqlType = SqlType.DML
-}

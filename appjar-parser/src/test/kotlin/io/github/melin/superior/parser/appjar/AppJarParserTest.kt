@@ -1,8 +1,8 @@
 package io.github.melin.superior.parser.appjar
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.common.SetData
-import io.github.melin.superior.common.relational.common.UnSetData
+import io.github.melin.superior.common.relational.common.SetStatement
+import io.github.melin.superior.common.relational.common.UnSetStatement
 import org.junit.Assert
 import org.junit.Test
 
@@ -45,7 +45,7 @@ class AppJarParserTest {
 
         var statementData = statementDatas.get(0)
         var statement = statementData.statement
-        if (statement is SetData) {
+        if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statementData.type)
             Assert.assertEquals("flink.test", statement.key)
             Assert.assertEquals("hello world", statement.value)
@@ -62,7 +62,7 @@ class AppJarParserTest {
 
         statementData = statementDatas.get(11)
         statement = statementData.statement
-        if (statement is UnSetData) {
+        if (statement is UnSetStatement) {
             Assert.assertEquals(StatementType.UNSET, statementData.type)
             Assert.assertEquals("flink.test", statement.key)
         } else {

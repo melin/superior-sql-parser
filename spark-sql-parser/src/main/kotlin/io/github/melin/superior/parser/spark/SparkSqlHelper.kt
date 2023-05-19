@@ -22,10 +22,11 @@ object SparkSqlHelper {
 
     @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
         return when (statementType) {
+            CREATE_DATABASE,
+            CREATE_SCHEMA,
             CREATE_TABLE,
             CREATE_TABLE_AS_SELECT,
             CREATE_TABLE_AS_LIKE,
-            DROP_TABLE,
             TRUNCATE_TABLE,
             MERGE,
             REFRESH_TABLE,
@@ -42,7 +43,10 @@ object SparkSqlHelper {
             CREATE_FILE_VIEW,
             CREATE_VIEW,
             CREATE_TEMP_VIEW_USING,
+            DROP_DATABASE,
+            DROP_SCHEMA,
             DROP_VIEW,
+            DROP_TABLE,
 
             SHOW,
 

@@ -3,8 +3,8 @@ package io.github.melin.superior.parser.appjar
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.common.SetData
-import io.github.melin.superior.common.relational.common.UnSetData
+import io.github.melin.superior.common.relational.common.SetStatement
+import io.github.melin.superior.common.relational.common.UnSetStatement
 import io.github.melin.superior.parser.job.antlr4.AppJarParser
 import io.github.melin.superior.parser.job.antlr4.AppJarParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -56,13 +56,13 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<StatementData>() {
         var value = StringUtils.substring(command, ctx.value.start.startIndex, ctx.value.stop.stopIndex + 1)
         value = StringUtil.cleanQuote(value)
 
-        val data = SetData(key, value)
+        val data = SetStatement(key, value)
         return StatementData(StatementType.SET, data)
     }
 
     override fun visitUnsetStatement(ctx: AppJarParser.UnsetStatementContext): StatementData {
         val key = ctx.keyExpr().text
-        val data = UnSetData(key)
+        val data = UnSetStatement(key)
         return StatementData(StatementType.UNSET, data)
     }
 

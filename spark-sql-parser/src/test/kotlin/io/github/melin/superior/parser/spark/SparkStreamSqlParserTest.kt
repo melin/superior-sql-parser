@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.common.SetData
+import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.InsertTable
 import org.junit.Assert
@@ -109,7 +109,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SetData) {
+        if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statementData.type)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("false", statement.value)
@@ -124,7 +124,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SetData) {
+        if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statementData.type)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("hello world", statement.value)
@@ -139,7 +139,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SetData) {
+        if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statementData.type)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("12", statement.value)
@@ -154,7 +154,7 @@ class SparkStreamSqlParserTest {
 
         val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
         val statement = statementData.statement
-        if (statement is SetData) {
+        if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statementData.type)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("demo", statement.value)

@@ -47,8 +47,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is FlinkCdcCreateDatabase) {
-            val database = statement.sinkNamespaceId
-            Assert.assertEquals("holo_tpcds", database.schemaName)
+            Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
             Assert.assertEquals("test", statement.excludeTable)
         } else {
             Assert.fail()
@@ -79,8 +78,7 @@ class FlinkSqlParserTest {
         val statementData = FlinkSQLHelper.getStatementData(sql)
         val statement = statementData.statement
         if (statement is FlinkCdcCreateDatabase) {
-            val database = statement.sourceNamespaceId
-            Assert.assertEquals("demo1, demo2, demo3, demo4", database.schemaName)
+            Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
             Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))
         } else {
             Assert.fail()
