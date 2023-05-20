@@ -30,7 +30,6 @@ val sql = "select bzdys, bzhyyh, bzdy, week, round((bzdy-bzdys)*100/bzdys, 2) " 
         "from (select count(distinct partner_code) bzhyyh, count(1) bzdy, week from tdl_dt2x_table)) limit 111"
 
 val statement = SparkSQLHelper.getStatementData(sql)
-
 if (statement is TableData) {
     Assert.assertEquals(StatementType.SELECT, statement.statementType)
     Assert.assertEquals(1, statement.inputTables.size)
@@ -53,7 +52,6 @@ val sql = """
 
 val statementDatas = JobTaskHelper.getStatementData(sql)
 Assert.assertEquals(8, statementDatas.size)
-
 var statementData = statementDatas.get(7)
 var statement = statementData.statement
 if (statement is JobData) {
@@ -71,7 +69,6 @@ if (statement is JobData) {
 // MySQL
 val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
 val statement = MySQLHelper.getStatementData(sql)
-
 if(statement is TableData) {
     Assert.assertEquals(StatementType.INSERT_SELECT, statement.statementType)
     Assert.assertEquals("bigdata", statement.outpuTables.get(0).databaseName)
@@ -87,7 +84,6 @@ val sql = """
 """.trimIndent()
 
 val statement = PostgreSQLHelper.getStatementData(sql)
-
 if (statement is TableData) {
     Assert.assertEquals(StatementType.SELECT, statement.statementType)
     Assert.assertEquals(2, statement.inputTables.size)
