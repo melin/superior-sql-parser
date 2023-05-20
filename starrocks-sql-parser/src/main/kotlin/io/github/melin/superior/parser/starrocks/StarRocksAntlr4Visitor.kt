@@ -6,20 +6,27 @@ import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateDatabase
+import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
+import io.github.melin.superior.common.relational.drop.DropView
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser.*
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
 class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
+
+    private var command: String? = null
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -27,6 +34,10 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
+
+    fun setCommand(command: String) {
+        this.command = command
+    }
 
     override fun visit(tree: ParseTree): Statement {
         return super.visit(tree)
@@ -57,12 +68,50 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         return CreateTable(tableId, comment, columnRels)
     }
 
+    override fun visitCreateViewStatement(ctx: CreateViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val comment: String? = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().string().text) else null
+        val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
+        val ifNotExists = ctx.NOT() != null
+        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+        val createView = CreateView(tableId, querySql, comment, ifNotExists, columns)
+
+        this.visitQueryStatement(ctx.queryStatement())
+        createView.inputTables.addAll(inputTables)
+        return createView;
+    }
+
+    override fun visitCreateMaterializedViewStatement(ctx: CreateMaterializedViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val comment: String? = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().string().text) else null
+        val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
+        val ifNotExists = ctx.NOT() != null
+        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+        val createView = CreateMaterializedView(tableId, querySql, comment, ifNotExists, columns)
+
+        this.visitQueryStatement(ctx.queryStatement())
+        createView.inputTables.addAll(inputTables)
+        return createView;
+    }
+
     override fun visitDropTableStatement(ctx: DropTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val ifExists = ctx.EXISTS() != null
         val dropTable = DropTable(tableId, ifExists)
         dropTable.force = ctx.FORCE() != null
         return dropTable
+    }
+
+    override fun visitDropViewStatement(ctx: DropViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val ifExists = ctx.EXISTS() != null
+        return DropView(tableId, ifExists)
+    }
+
+    override fun visitDropMaterializedViewStatement(ctx: DropMaterializedViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val ifExists = ctx.EXISTS() != null
+        return DropMaterializedView(tableId, ifExists)
     }
 
     override fun visitAlterTableStatement(ctx: AlterTableStatementContext?): Statement {
@@ -90,15 +139,13 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
             currentOptType == StatementType.DELETE ||
             currentOptType == StatementType.MERGE ||
             currentOptType == StatementType.INSERT ||
-            currentOptType == StatementType.CREATE_FUNCTION ||
-            currentOptType == StatementType.CREATE_PROCEDURE) {
+            currentOptType == StatementType.CREATE_FUNCTION) {
 
             val tableId = parseTableName(ctx)
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }
-
         return null
     }
 
@@ -132,5 +179,13 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         }
 
         return properties
+    }
+
+    private fun parseColumnNameWithComment(columns: List<ColumnNameWithCommentContext>): List<ColumnRel> {
+        return columns.map { col ->
+            val name = col.columnName.text
+            val comment = StringUtil.cleanQuote(col.comment().string().text)
+            ColumnRel(name, null, comment)
+        }
     }
 }

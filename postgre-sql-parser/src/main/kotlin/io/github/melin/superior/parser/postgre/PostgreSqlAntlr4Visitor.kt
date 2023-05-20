@@ -7,6 +7,7 @@ import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropIndex
+import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -309,9 +310,15 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
                     false
                 }
                 val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
-                val dropView = DropView(tableIds.first(), ifExists, isMaterialized)
-                dropView.tableIds.addAll(tableIds)
-                return dropView
+                if (isMaterialized) {
+                    val dropView = DropMaterializedView(tableIds.first(), ifExists)
+                    dropView.tableIds.addAll(tableIds)
+                    return dropView
+                } else {
+                    val dropView = DropView(tableIds.first(), ifExists)
+                    dropView.tableIds.addAll(tableIds)
+                    return dropView
+                }
             } else if (ctx.object_type_any_name().SEQUENCE() != null) {
                 val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropSequence = io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)

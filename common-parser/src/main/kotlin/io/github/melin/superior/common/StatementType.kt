@@ -25,6 +25,7 @@ enum class StatementType: Serializable {
     DROP_SCHEMA,
     DROP_TABLE,
     DROP_VIEW,
+    DROP_MATERIALIZED_VIEW,
     DROP_FUNCTION,
     DROP_SEQUENCE,
     DROP_PROCEDURE,

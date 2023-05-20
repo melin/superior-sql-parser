@@ -6,11 +6,11 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
-data class DropView(
+data class DropMaterializedView(
     override val tableId: TableId,
     var ifExists: Boolean = false
 ) : AbsTableStatement() {
-    override val statementType = StatementType.DROP_VIEW
+    override val statementType = StatementType.DROP_MATERIALIZED_VIEW
     override val privilegeType = PrivilegeType.DROP
     override val sqlType = SqlType.DDL
 

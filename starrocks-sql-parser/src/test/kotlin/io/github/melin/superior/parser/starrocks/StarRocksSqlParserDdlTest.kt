@@ -1,7 +1,13 @@
 package io.github.melin.superior.parser.starrocks
 
+import io.github.melin.superior.common.StatementType.*
+import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
+import io.github.melin.superior.common.relational.drop.DropView
 import org.junit.Assert
 import org.junit.Test
 
@@ -26,10 +32,9 @@ class StarRocksSqlParserDdlTest {
         """.trimIndent()
 
         val statement = StarRocksHelper.getStatementData(sql)
-        
         if (statement is CreateTable) {
-            val name = statement.tableId.tableName
-            Assert.assertEquals("meta_role", name)
+            Assert.assertEquals(CREATE_TABLE, statement.statementType)
+            Assert.assertEquals("meta_role", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -42,11 +47,93 @@ class StarRocksSqlParserDdlTest {
         """.trimIndent()
 
         val statement = StarRocksHelper.getStatementData(sql)
-        
         if (statement is DropTable) {
-            Assert.assertEquals("example_db", statement.tableId?.schemaName)
-            Assert.assertEquals("My_table", statement.tableId?.tableName)
+            Assert.assertEquals(DROP_TABLE, statement.statementType)
+            Assert.assertEquals(TableId("example_db", "My_table"), statement.tableId)
             Assert.assertTrue(statement.force)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createViewTest() {
+        val sql = """
+            CREATE VIEW example_db.example_view (
+                k1 COMMENT "first key",
+                k2 COMMENT "second key",
+                k3 COMMENT "third key",
+                v1 COMMENT "first value"
+            )
+            COMMENT "my first view"
+            AS SELECT c1 as k1, k2, k3, SUM(v1) FROM example_table
+            WHERE k1 = 20160112
+            GROUP BY k1,k2,k3;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is CreateView) {
+            Assert.assertEquals(CREATE_VIEW, statement.statementType)
+            Assert.assertEquals("my first view", statement.comment)
+            Assert.assertEquals(4, statement.columnRels?.size)
+            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropViewTest() {
+        val sql = """
+           DROP VIEW IF EXISTS example_db.example_view;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DropView) {
+            Assert.assertEquals(DROP_VIEW, statement.statementType)
+            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createMaterializedViewTest() {
+        val sql = """
+            CREATE MATERIALIZED VIEW example_db.lo_mv1
+            DISTRIBUTED BY HASH(`lo_orderkey`) BUCKETS 10
+            REFRESH ASYNC
+            AS
+            select
+                lo_orderkey, 
+                lo_custkey, 
+                sum(lo_quantity) as total_quantity, 
+                sum(lo_revenue) as total_revenue, 
+                count(lo_shipmode) as shipmode_count
+            from lineorder 
+            group by lo_orderkey, lo_custkey 
+            order by lo_orderkey;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is CreateMaterializedView) {
+            Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropMaterializedViewTest() {
+        val sql = """
+           DROP MATERIALIZED VIEW IF EXISTS k1_k2;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DropMaterializedView) {
+            Assert.assertEquals(DROP_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals(TableId("k1_k2"), statement.tableId)
         } else {
             Assert.fail()
         }
