@@ -38,7 +38,6 @@ object SparkSqlHelper {
 
             SELECT,
             INSERT,
-            MULTI_INSERT,
 
             CREATE_FILE_VIEW,
             CREATE_VIEW,

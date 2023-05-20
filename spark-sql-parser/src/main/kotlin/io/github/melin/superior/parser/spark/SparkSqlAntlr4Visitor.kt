@@ -848,7 +848,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
             return singleInsertStmt
         } else if (StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
-            currentOptType = StatementType.MULTI_INSERT
+            currentOptType = StatementType.INSERT
             super.visitDmlStatement(ctx)
 
             val insertTable = InsertTable(InsertMode.OVERWRITE, outputTables.first())
@@ -939,7 +939,6 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
             StatementType.CREATE_VIEW == currentOptType ||
             StatementType.INSERT == currentOptType ||
             StatementType.CREATE_TABLE_AS_SELECT == currentOptType ||
-            StatementType.MULTI_INSERT == currentOptType ||
             StatementType.MERGE == currentOptType ||
             StatementType.EXPORT_TABLE == currentOptType ||
             StatementType.DATATUNNEL == currentOptType) {
@@ -967,14 +966,9 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
             currentOptType == StatementType.DATATUNNEL ||
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
-
             currentAlterType == ALTER_VIEW) {
 
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
-                inputTables.add(tableId)
-            }
-        } else if (currentOptType == StatementType.MULTI_INSERT) {
-            if ("from" == multiInsertToken) {
                 inputTables.add(tableId)
             }
         }

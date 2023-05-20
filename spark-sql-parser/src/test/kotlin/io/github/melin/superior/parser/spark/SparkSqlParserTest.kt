@@ -1295,7 +1295,6 @@ class SparkSqlParserTest {
     fun insertOverwriteQueryTest2() {
         val sql = "insert INTO users PARTITION(ds='20170220') select * from account a join address b on a.addr_id=b.id"
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("users", statement.tableId?.tableName)
@@ -1315,7 +1314,6 @@ class SparkSqlParserTest {
     fun insertOverwriteQueryTest3() {
         val sql = "insert INTO users select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id"
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("users", statement.tableId?.tableName)
@@ -1338,7 +1336,6 @@ class SparkSqlParserTest {
         val sql = "insert OVERWRITE TABLE users PARTITION(ds='20170220') select * from account1 union all " +
                 "select * from account2"
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("users", statement.tableId?.tableName)
@@ -1365,11 +1362,10 @@ class SparkSqlParserTest {
                 "INSERT OVERWRITE TABLE toodey3 SELECT sample_07.total_emp,sample_07.salary WHERE sample_07.salary <= 50000"
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals("sample_07", statement.inputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
+            Assert.assertEquals("sample_07", statement.inputTables.get(0).tableName)
             Assert.assertEquals("toodey3", statement.outputTables.get(2).tableName)
         } else {
             Assert.fail()
@@ -1432,7 +1428,6 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.getStatementData(sql)
         Assert.assertEquals(StatementType.SELECT, statement.statementType)
-        
         if (statement is QueryStmt) {
             Assert.assertNull(statement.inputTables.get(0).schemaName)
         } else {
@@ -1448,7 +1443,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
@@ -1466,7 +1460,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId?.tableName)
@@ -1481,7 +1474,6 @@ class SparkSqlParserTest {
         val sql = "update user set name='xxx'"
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("user", statement.tableId?.tableName)
@@ -1501,7 +1493,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("logs", statement.targetTable.tableName)
@@ -1522,7 +1513,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("logs", statement.targetTable.tableName)
@@ -1554,7 +1544,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("customers", statement.targetTable.tableName)
@@ -1580,7 +1569,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("target", statement.targetTable.tableName)
@@ -1603,7 +1591,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("merge_test", statement.targetTable.tableName)
@@ -1622,7 +1609,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is QueryStmt) {
             Assert.assertEquals("test", statement.inputTables.get(0).tableName)
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -1645,7 +1631,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is InsertTable) {
             Assert.assertEquals(3, statement.inputTables.size)
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -1664,7 +1649,6 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is ExportData) {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(StatementType.EXPORT_TABLE, statement.statementType)
@@ -1684,7 +1668,6 @@ class SparkSqlParserTest {
             """
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is CreateTable) {
             val schemaName = statement.tableId.schemaName
             Assert.assertEquals(statement.location,"LOCATION's3a://hive/test/'");
@@ -1707,7 +1690,6 @@ class SparkSqlParserTest {
             """
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is CreateTable) {
             val prop = statement.properties
             Assert.assertEquals("ZSTD", prop?.get("compression"))
@@ -1721,8 +1703,6 @@ class SparkSqlParserTest {
         val sql = "select count(type='mac' or null) From test_table where a=2"
 
         val statement = SparkSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SELECT, statement.statementType)
-        
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
@@ -1735,7 +1715,6 @@ class SparkSqlParserTest {
     fun queryLakeTableMetaTest0() {
         val sql = "select * from dc.user.history limit 101"
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -1821,7 +1800,6 @@ class SparkSqlParserTest {
     fun dtunnelTest2() {
         val sql = "datatunnel source('sftp') options(host='x.x.x.x') sink('log')"
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
             Assert.assertEquals("sftp", statement.srcType)
@@ -1845,7 +1823,6 @@ class SparkSqlParserTest {
             SINK('log') OPTIONS(numRows = 10)
         """.trimIndent()
         val statement = SparkSqlHelper.getStatementData(sql)
-        
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
             Assert.assertEquals("hive", statement.srcType)

@@ -45,7 +45,6 @@ enum class StatementType: Serializable {
     UPDATE,
     MERGE,
     INSERT,
-    MULTI_INSERT,
 
     SHOW,
     DESC,
