@@ -24,4 +24,23 @@ class StarRocksSqlParserDmlTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun selectTest1() {
+        val sql = """
+            with t1 as (select * from bigdata.users),
+                t2 as (select 2)
+            select * from t1 union all select * from t2;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(TableId("bigdata", "users"),
+                statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
 }

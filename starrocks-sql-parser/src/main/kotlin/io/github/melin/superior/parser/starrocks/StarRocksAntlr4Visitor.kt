@@ -149,6 +149,13 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         return null
     }
 
+    override fun visitWithClause(ctx: WithClauseContext): Statement? {
+        ctx.commonTableExpression().forEach {
+            cteTempTables.add(TableId(it.name.text))
+        }
+        return super.visitWithClause(ctx)
+    }
+
     fun parseTableName(ctx: QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 3) {
             val catalotName = ctx.identifier().get(0).text
