@@ -6,7 +6,7 @@ import io.github.melin.superior.common.relational.SortType
 data class CreateIndex(
     val indexName: String,
     val indexColumnNames: ArrayList<IndexColumnName> = arrayListOf()
-)  : AlterAction() {
+): AlterAction() {
     val intimeAction: String = "ONLINE" //ONLINE & OFFLINE
     val indexCategory: String? = null
     val indexType: String? = null

@@ -20,10 +20,10 @@ class OracleSqlParserDdlTest {
             );
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(3, statement.columnRels?.size)
             Assert.assertTrue(statement.columnRels?.get(0)?.isPk!!)
@@ -46,10 +46,10 @@ class OracleSqlParserDdlTest {
             WHERE f.kind = 'Comedy'
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateView) {
-            Assert.assertEquals(StatementType.CREATE_VIEW, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
             Assert.assertEquals("comedies", statement.tableId.tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
@@ -73,10 +73,10 @@ class OracleSqlParserDdlTest {
                   invoice_date;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateMaterializedView) {
-            Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals("sales_summary", statement.tableId.tableName)
 
             Assert.assertEquals(1, statement.inputTables.size)
@@ -91,10 +91,10 @@ class OracleSqlParserDdlTest {
             COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CommentData) {
-            Assert.assertEquals(StatementType.COMMENT, statementData.type)
+            Assert.assertEquals(StatementType.COMMENT, statement.statementType)
             Assert.assertEquals("employees.job_id", statement.objValue)
             Assert.assertEquals("abbreviated job title", statement.comment)
             Assert.assertFalse(statement.isNull)

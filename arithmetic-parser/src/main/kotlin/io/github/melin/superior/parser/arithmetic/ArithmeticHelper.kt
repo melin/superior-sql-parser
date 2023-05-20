@@ -1,6 +1,6 @@
 package com.github.melin.superior.sql.parser.arithmetic
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.parser.antlr4.arithmetic.ArithmeticLexer
 import io.github.melin.superior.parser.antlr4.arithmetic.ArithmeticParser
@@ -16,11 +16,11 @@ import org.apache.commons.lang3.StringUtils
  */
 object ArithmeticHelper {
 
-    @JvmStatic fun getStatementData(command: String) : StatementData? {
+    @JvmStatic fun getStatementData(command: String) : Statement? {
         return ArithmeticHelper.getStatementData(command, true)
     }
 
-    @JvmStatic fun getStatementData(command: String, bracketEnbled: Boolean) : StatementData? {
+    @JvmStatic fun getStatementData(command: String, bracketEnbled: Boolean) : Statement? {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = CharStreams.fromString(trimCmd);

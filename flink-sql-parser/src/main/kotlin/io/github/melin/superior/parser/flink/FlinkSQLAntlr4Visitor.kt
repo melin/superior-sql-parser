@@ -2,7 +2,8 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.DefaultStatement
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
@@ -14,15 +15,15 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
+class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSingleStatement(ctx: FlinkCdcSqlParser.SingleStatementContext): StatementData {
+    override fun visitSingleStatement(ctx: FlinkCdcSqlParser.SingleStatementContext): Statement {
         val data = super.visitSingleStatement(ctx)
 
         if (data == null) {
@@ -32,16 +33,16 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
         return data
     }
 
-    override fun visitBeginStatement(ctx: FlinkCdcSqlParser.BeginStatementContext): StatementData {
-        return StatementData(StatementType.FLINK_CDC_BEGIN)
+    override fun visitBeginStatement(ctx: FlinkCdcSqlParser.BeginStatementContext): Statement {
+        return DefaultStatement(StatementType.FLINK_CDC_BEGIN)
     }
 
-    override fun visitEndStatement(ctx: FlinkCdcSqlParser.EndStatementContext): StatementData {
+    override fun visitEndStatement(ctx: FlinkCdcSqlParser.EndStatementContext): Statement {
         currentOptType = StatementType.FLINK_CDC_CTAS
-        return StatementData(StatementType.FLINK_CDC_END)
+        return DefaultStatement(StatementType.FLINK_CDC_END)
     }
 
-    override fun visitCreateTable(ctx: FlinkCdcSqlParser.CreateTableContext): StatementData {
+    override fun visitCreateTable(ctx: FlinkCdcSqlParser.CreateTableContext): Statement {
         val sinkTable = parseTable(ctx.sink)
         val sourceTable = parseTable(ctx.source)
 
@@ -76,10 +77,10 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
             createTable.computeCols = columns
         }
 
-        return StatementData(StatementType.FLINK_CDC_CTAS, createTable)
+        return createTable
     }
 
-    override fun visitCreateDatabase(ctx: FlinkCdcSqlParser.CreateDatabaseContext): StatementData {
+    override fun visitCreateDatabase(ctx: FlinkCdcSqlParser.CreateDatabaseContext): Statement {
         val sinkDatabase = parseDatabase(ctx.sink)
         val sourceDatabase = parseDatabase(ctx.source)
 
@@ -98,7 +99,7 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<StatementData>() {
 
         createDatabase.sinkOptions = sinkOptions
         createDatabase.sourceOptions = sourceOptions
-        return StatementData(StatementType.FLINK_CDC_CDAS, createDatabase)
+        return createDatabase
     }
 
     fun parseDatabase(ctx: FlinkCdcSqlParser.MultipartIdentifierContext): Pair<String?, String> {

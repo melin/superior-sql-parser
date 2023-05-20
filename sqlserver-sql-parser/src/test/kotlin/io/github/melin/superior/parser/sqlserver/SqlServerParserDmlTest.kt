@@ -16,10 +16,9 @@ class SqlServerParserDmlTest {
             SELECT * FROM DBName.do.TestTable TestTable
         """.trimIndent()
 
-        val statementData = SqlServerHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = SqlServerHelper.getStatementData(sql)
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()

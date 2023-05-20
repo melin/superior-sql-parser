@@ -39,7 +39,7 @@ import kotlin.collections.LinkedHashMap
  *
  * Created by libinsong on 2018/1/10.
  */
-class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
+class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterType: AlterType = UNKOWN
@@ -56,19 +56,19 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     private var insertSql: Boolean = false;
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): StatementData {
+    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): Statement {
         val data = super.visitSingleStatement(ctx)
 
         if (data == null) {
             val startToken = StringUtils.lowerCase(ctx.getStart().text)
             return if ("show".equals(startToken)) {
-                StatementData(StatementType.SHOW)
+                DefaultStatement(StatementType.SHOW)
             } else if ("desc".equals(startToken) || "describe".equals(startToken)) {
-                StatementData(StatementType.DESC)
+                DefaultStatement(StatementType.DESC)
             } else {
                 throw SQLParserException("不支持的SQL: " + command)
             }
@@ -111,7 +111,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     //-----------------------------------database-------------------------------------------------
 
-    override fun visitCreateNamespace(ctx: SparkSqlParser.CreateNamespaceContext): StatementData {
+    override fun visitCreateNamespace(ctx: SparkSqlParser.CreateNamespaceContext): Statement {
         var location: String = ""
         if (ctx.locationSpec().size > 0) {
             location = ctx.locationSpec().get(0).stringLit().text
@@ -123,28 +123,26 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             StringUtils.equalsIgnoreCase("schema", type)) {
 
             val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
-            val createDatabase = CreateDatabase(catalogName, databaseName, location)
-            return StatementData(StatementType.CREATE_DATABASE, createDatabase)
+            return CreateDatabase(catalogName, databaseName, location)
         } else {
             throw RuntimeException("not support: " + type)
         }
     }
 
-    override fun visitDropNamespace(ctx: SparkSqlParser.DropNamespaceContext): StatementData {
+    override fun visitDropNamespace(ctx: SparkSqlParser.DropNamespaceContext): Statement {
         val type = ctx.namespace().text.uppercase()
         if (StringUtils.equalsIgnoreCase("database", type) ||
             StringUtils.equalsIgnoreCase("schema", type)) {
 
             val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
-            val dropDatabase = DropDatabase(catalogName, databaseName)
-            return StatementData(StatementType.DROP_DATABASE, dropDatabase)
+            return DropDatabase(catalogName, databaseName)
         } else {
             throw RuntimeException("not support: " + type)
         }
     }
 
     //-----------------------------------table-------------------------------------------------
-    override fun visitCreateTable(ctx: SparkSqlParser.CreateTableContext): StatementData {
+    override fun visitCreateTable(ctx: SparkSqlParser.CreateTableContext): Statement {
         val tableId = parseTableName(ctx.createTableHeader().multipartIdentifier())
         return createTable(tableId,
             false,
@@ -158,7 +156,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
     }
 
 
-    override fun visitReplaceTable(ctx: SparkSqlParser.ReplaceTableContext): StatementData {
+    override fun visitReplaceTable(ctx: SparkSqlParser.ReplaceTableContext): Statement {
         val tableId = parseTableName(ctx.replaceTableHeader().multipartIdentifier())
         return createTable(tableId,
             true,
@@ -180,7 +178,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
         createTableClauses: CreateTableClausesContext,
         tableProvider: TableProviderContext?,
-        query: QueryContext?): StatementData {
+        query: QueryContext?): Statement {
 
         val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
@@ -268,7 +266,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             createTable.inputTables.addAll(inputTables)
             createTable.functionNames.addAll(functionNames)
             createTable.partitionColumnNames.addAll(partitionColumnNames)
-            return StatementData(currentOptType, createTable)
+            return createTable
         } else {
             currentOptType = StatementType.CREATE_TABLE
             val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
@@ -282,11 +280,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
 
             createTable.partitionColumnNames = partitionColumnNames
-            return StatementData(currentOptType, createTable)
+            return createTable
         }
     }
 
-    override fun visitCreateTableLike(ctx: SparkSqlParser.CreateTableLikeContext): StatementData {
+    override fun visitCreateTableLike(ctx: SparkSqlParser.CreateTableLikeContext): Statement {
         val newDatabaseName = ctx.target.db?.text
         val newTableName = ctx.target.table.text
 
@@ -297,66 +295,59 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             TableId(newDatabaseName, newTableName))
 
         createTableLike.ifNotExists = ctx.NOT() != null
-        return StatementData(StatementType.CREATE_TABLE_AS_LIKE, createTableLike)
+        return createTableLike
     }
 
-    override fun visitDropTable(ctx: SparkSqlParser.DropTableContext): StatementData {
+    override fun visitDropTable(ctx: SparkSqlParser.DropTableContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = ctx.EXISTS() != null
-        return StatementData(StatementType.DROP_TABLE, dropTable)
+        return dropTable
     }
 
-    override fun visitDropView(ctx: SparkSqlParser.DropViewContext): StatementData {
+    override fun visitDropView(ctx: SparkSqlParser.DropViewContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val dropView = DropView(tableId, ctx.EXISTS() != null)
-        return StatementData(StatementType.DROP_VIEW, dropView)
+        return DropView(tableId, ctx.EXISTS() != null)
     }
 
-    override fun visitTruncateTable(ctx: SparkSqlParser.TruncateTableContext): StatementData {
+    override fun visitTruncateTable(ctx: SparkSqlParser.TruncateTableContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val truncateTable = TruncateTable(tableId)
-        return StatementData(StatementType.TRUNCATE_TABLE, truncateTable)
+        return TruncateTable(tableId)
     }
 
-    override fun visitRepairTable(ctx: SparkSqlParser.RepairTableContext): StatementData {
+    override fun visitRepairTable(ctx: SparkSqlParser.RepairTableContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val repairTable = RepairTable(tableId)
-        return StatementData(StatementType.REPAIR_TABLE, repairTable)
+        return RepairTable(tableId)
     }
 
-    override fun visitRenameTable(ctx: SparkSqlParser.RenameTableContext): StatementData {
+    override fun visitRenameTable(ctx: SparkSqlParser.RenameTableContext): Statement {
         val tableId = parseTableName(ctx.from)
         val newTableId = parseTableName(ctx.to)
 
         return if (ctx.VIEW() != null) {
             val action = AlterTableAction(newTableId)
-            val alterTable = AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
-            StatementData(StatementType.ALTER_TABLE, alterTable)
+            AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
         } else {
             val action = AlterTableAction(newTableId)
-            val alterTable = AlterTable(RENAME_TABLE, tableId, action)
-            StatementData(StatementType.ALTER_TABLE, alterTable)
+            AlterTable(RENAME_TABLE, tableId, action)
         }
     }
 
-    override fun visitSetTableProperties(ctx: SparkSqlParser.SetTablePropertiesContext): StatementData {
+    override fun visitSetTableProperties(ctx: SparkSqlParser.SetTablePropertiesContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val properties = parseOptions(ctx.propertyList())
         val action = AlterTableAction()
         action.properties = properties
 
         return if (ctx.VIEW() == null) {
-            val alterTable = AlterTable(SET_TABLE_PROPERTIES, tableId, action, TableType.VIEW)
-            StatementData(StatementType.ALTER_TABLE, alterTable)
+            AlterTable(SET_TABLE_PROPERTIES, tableId, action, TableType.VIEW)
         } else {
-            val alterTable = AlterTable(SET_TABLE_PROPERTIES, tableId, action)
-            StatementData(StatementType.ALTER_TABLE, alterTable)
+            AlterTable(SET_TABLE_PROPERTIES, tableId, action)
         }
     }
 
-    override fun visitAddTableColumns(ctx: SparkSqlParser.AddTableColumnsContext): StatementData {
+    override fun visitAddTableColumns(ctx: SparkSqlParser.AddTableColumnsContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val columns = ctx.columns.children
@@ -382,10 +373,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val alterTable = AlterTable(ADD_COLUMN, tableId)
         alterTable.addActions(columns)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return alterTable
     }
 
-    override fun visitHiveChangeColumn(ctx: SparkSqlParser.HiveChangeColumnContext): StatementData {
+    override fun visitHiveChangeColumn(ctx: SparkSqlParser.HiveChangeColumnContext): Statement {
         val tableId = parseTableName(ctx.table)
 
         val columnName = ctx.colName.parts.get(0).text
@@ -405,11 +396,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        val alterTable = AlterTable(ALTER_COLUMN, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(ALTER_COLUMN, tableId, action)
     }
 
-    override fun visitRenameTableColumn(ctx: SparkSqlParser.RenameTableColumnContext): StatementData {
+    override fun visitRenameTableColumn(ctx: SparkSqlParser.RenameTableColumnContext): Statement {
         val tableId = parseTableName(ctx.table)
 
         val columnName = ctx.from.text
@@ -417,69 +407,61 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
         val action = AlterColumnAction(columnName)
         action.newColumName = newColumnName
-        val alterTable = AlterTable(RENAME_COLUMN, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(RENAME_COLUMN, tableId, action)
     }
 
-    override fun visitAlterTableAlterColumn(ctx: SparkSqlParser.AlterTableAlterColumnContext): StatementData {
+    override fun visitAlterTableAlterColumn(ctx: SparkSqlParser.AlterTableAlterColumnContext): Statement {
         val tableId = parseTableName(ctx.table)
 
         val action = parseAlterColumnAction(ctx.alterColumnAction())
         action.columName = ctx.column.text
-        val alterTable = AlterTable(ALTER_COLUMN, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(ALTER_COLUMN, tableId, action)
     }
 
-    override fun visitTouchTable(ctx: SparkSqlParser.TouchTableContext): StatementData {
+    override fun visitTouchTable(ctx: SparkSqlParser.TouchTableContext): Statement {
         val tableId = parseTableName(ctx.table)
         val action = AlterTableAction()
         val alterTable = AlterTable(TOUCH_TABLE, tableId, action)
         action.partitionVals = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return alterTable
     }
 
-    override fun visitDropTableColumns(ctx: SparkSqlParser.DropTableColumnsContext): StatementData {
+    override fun visitDropTableColumns(ctx: SparkSqlParser.DropTableColumnsContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val columns = ctx.columns.multipartIdentifier().map { id -> id.text }
         val action = DropColumnAction(columns.joinToString("."))
-        val alterTable = AlterTable(DROP_COLUMN, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(DROP_COLUMN, tableId, action)
     }
 
-    override fun visitSetTableLocation(ctx: SparkSqlParser.SetTableLocationContext): StatementData {
+    override fun visitSetTableLocation(ctx: SparkSqlParser.SetTableLocationContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val location = StringUtil.cleanQuote(ctx.locationSpec().stringLit().text)
 
         val action = AlterTableAction()
         action.location = location
-        val alterTable = AlterTable(SET_TABLE_LOCATION, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(SET_TABLE_LOCATION, tableId, action)
     }
 
-    override fun visitMergeFile(ctx: SparkSqlParser.MergeFileContext): StatementData {
+    override fun visitMergeFile(ctx: SparkSqlParser.MergeFileContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val partitionVals = parsePartitionSpec(ctx.partitionSpec())
         val properties = parseOptions(ctx.propertyList())
-        val data = MergeFileData(tableId, properties, partitionVals)
-        return StatementData(StatementType.MERGE_FILE, data)
+        return MergeFileData(tableId, properties, partitionVals)
     }
 
-    override fun visitRefreshTable(ctx: SparkSqlParser.RefreshTableContext): StatementData {
+    override fun visitRefreshTable(ctx: SparkSqlParser.RefreshTableContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val data = RefreshStatement(tableId)
-
-        return StatementData(StatementType.REFRESH_TABLE, data)
+        return RefreshStatement(tableId)
     }
 
-    override fun visitAnalyze(ctx: SparkSqlParser.AnalyzeContext): StatementData {
+    override fun visitAnalyze(ctx: SparkSqlParser.AnalyzeContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val analyzeTable = AnalyzeTable(listOf(tableId))
-        return StatementData(StatementType.ANALYZE_TABLE, analyzeTable)
+        return AnalyzeTable(listOf(tableId))
     }
 
-    override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): StatementData {
+    override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {
         val srcType = StringUtil.cleanQuote(ctx.sourceName.text)
         val distType = StringUtil.cleanQuote(ctx.sinkName.text)
 
@@ -501,13 +483,13 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions)
         data.inputTables.addAll(inputTables)
         data.functionNames.addAll(functionNames)
-        return StatementData(StatementType.DATATUNNEL, data)
+        return data
     }
 
-    override fun visitDatatunnelHelp(ctx: SparkSqlParser.DatatunnelHelpContext): StatementData {
+    override fun visitDatatunnelHelp(ctx: SparkSqlParser.DatatunnelHelpContext): Statement {
         val type = if (ctx.SOURCE() != null) "source" else "sink";
         val value = StringUtil.cleanQuote(ctx.value.text)
-        return StatementData(StatementType.DATATUNNEL, DataTunnelHelp(type, value))
+        return DataTunnelHelp(type, value)
     }
 
     private fun parseDtOptions(ctx: DtPropertyListContext?): HashMap<String, Any> {
@@ -546,7 +528,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return options
     }
 
-    override fun visitCall(ctx: SparkSqlParser.CallContext): StatementData {
+    override fun visitCall(ctx: SparkSqlParser.CallContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val properties = HashMap<String, String>()
         ctx.callArgument().filter { it.ARROW1() != null }.forEach { item ->
@@ -555,11 +537,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             properties.put(key.lowercase(), value)
         }
 
-        val callProcedure = CallProcedure(tableId.catalogName, tableId.schemaName, tableId.tableName, properties)
-        return StatementData(StatementType.CALL, callProcedure)
+        return CallProcedure(tableId.catalogName, tableId.schemaName, tableId.tableName, properties)
     }
 
-    override fun visitCallHelp(ctx: SparkSqlParser.CallHelpContext): StatementData {
+    override fun visitCallHelp(ctx: SparkSqlParser.CallHelpContext): Statement {
         var procedure: String? = null
         if (ctx.callHelpExpr() != null) {
             procedure = if (ctx.callHelpExpr().callArgument() != null) {
@@ -569,11 +550,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             }
         }
 
-        val data = CallHelp(procedure)
-        return StatementData(StatementType.CALL_HELP, data)
+        return CallHelp(procedure)
     }
 
-    override fun visitSync(ctx: SparkSqlParser.SyncContext): StatementData {
+    override fun visitSync(ctx: SparkSqlParser.SyncContext): Statement {
         val type = ctx.type.text.lowercase();
         var owner: String? = null
         if (ctx.principal != null) {
@@ -583,19 +563,17 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return if ("schema" == type) {
             val target = parseNamespace(ctx.target)
             val source = parseNamespace(ctx.source)
-            val expr = SyncSchemaExpr(target.first, target.second, source.first, source.second, owner);
-            StatementData(StatementType.SYNC, expr)
+            SyncSchemaExpr(target.first, target.second, source.first, source.second, owner);
         } else {
             val targetTableId = parseTableName(ctx.target)
             val sourceTableId = parseTableName(ctx.source)
-            val expr = SyncTableExpr(targetTableId, sourceTableId, owner)
-            StatementData(StatementType.SYNC, expr)
+            SyncTableExpr(targetTableId, sourceTableId, owner)
         }
     }
 
     //-----------------------------------partition-------------------------------------------------
 
-    override fun visitAddTablePartition(ctx: SparkSqlParser.AddTablePartitionContext): StatementData {
+    override fun visitAddTablePartition(ctx: SparkSqlParser.AddTablePartitionContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         val partitions = ctx.partitionSpecLocation().map { parsePartitionSpec(it.partitionSpec()) }
@@ -603,32 +581,29 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         val ifNotExists = ctx.NOT() != null
 
         val action = AddPartitionAction(ifNotExists, partitions)
-        val alterTable = AlterTable(ADD_PARTITION, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(ADD_PARTITION, tableId, action)
     }
 
-    override fun visitDropTablePartitions(ctx: SparkSqlParser.DropTablePartitionsContext): StatementData {
+    override fun visitDropTablePartitions(ctx: SparkSqlParser.DropTablePartitionsContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val partitions = ctx.partitionSpec().map { parsePartitionSpec(it) }
         val ifExists = ctx.EXISTS() != null
 
         val action = DropPartitionAction(ifExists, partitions)
-        val alterTable = AlterTable(DROP_PARTITION, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(DROP_PARTITION, tableId, action)
     }
 
-    override fun visitRenameTablePartition(ctx: SparkSqlParser.RenameTablePartitionContext): StatementData {
+    override fun visitRenameTablePartition(ctx: SparkSqlParser.RenameTablePartitionContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val fromPartition = parsePartitionSpec(ctx.from)
         val toPartition = parsePartitionSpec(ctx.to)
         val action = RenamePartitionAction(fromPartition, toPartition)
-        val alterTable = AlterTable(RENAME_PARTITION, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(RENAME_PARTITION, tableId, action)
     }
 
     //-----------------------------------view-------------------------------------------------
 
-    override fun visitCreateView(ctx: SparkSqlParser.CreateViewContext): StatementData {
+    override fun visitCreateView(ctx: SparkSqlParser.CreateViewContext): Statement {
         var comment: String? = null
         if (ctx.commentSpec().size > 0) {
             comment = ctx.commentSpec().get(0).stringLit().text
@@ -660,10 +635,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         if (ctx.GLOBAL() != null) {
             createView.global = true
         }
-        return StatementData(StatementType.CREATE_VIEW, createView)
+        return createView
     }
 
-    override fun visitCreateTempViewUsing(ctx: SparkSqlParser.CreateTempViewUsingContext): StatementData {
+    override fun visitCreateTempViewUsing(ctx: SparkSqlParser.CreateTempViewUsingContext): Statement {
         val tableName = ctx.tableIdentifier().table.text
         var databaseName: String? = null
         if (ctx.tableIdentifier().db != null) {
@@ -682,10 +657,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         if (ctx.GLOBAL() != null) {
             createView.global = true
         }
-        return StatementData(StatementType.CREATE_TEMP_VIEW_USING, createView)
+        return createView
     }
 
-    override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): StatementData {
+    override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
         var querySql = ""
@@ -698,29 +673,26 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         visitQuery(ctx.query())
 
         val action = AlterViewAction(querySql, inputTables, functionNames)
-        val alterView = AlterTable(ALTER_VIEW, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterView)
+        return AlterTable(ALTER_VIEW, tableId, action)
     }
 
-    override fun visitCreateIndex(ctx: SparkSqlParser.CreateIndexContext): StatementData {
+    override fun visitCreateIndex(ctx: SparkSqlParser.CreateIndexContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val indexName = parseIdentifier(ctx.identifier())
         val createIndex = CreateIndex(indexName)
-        val alterTable = AlterTable(ADD_INDEX, tableId, createIndex)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(ADD_INDEX, tableId, createIndex)
     }
 
-    override fun visitDropIndex(ctx: SparkSqlParser.DropIndexContext): StatementData {
+    override fun visitDropIndex(ctx: SparkSqlParser.DropIndexContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val indexName = ctx.identifier().text
         val dropIndex = DropIndex(indexName)
-        val alterTable = AlterTable(DROP_INDEX, tableId, dropIndex)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(DROP_INDEX, tableId, dropIndex)
     }
 
     //-----------------------------------function-------------------------------------------------
 
-    override fun visitCreateFunction(ctx: SparkSqlParser.CreateFunctionContext): StatementData {
+    override fun visitCreateFunction(ctx: SparkSqlParser.CreateFunctionContext): Statement {
         val functionId = parseTableName(ctx.multipartIdentifier())
         val classNmae = ctx.className.text
 
@@ -733,36 +705,34 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
 
         val replace = if (ctx.REPLACE() != null) true else false
-        val data = CreateFunction(FunctionId(functionId.schemaName, functionId.tableName), replace, temporary, classNmae, file)
-        return StatementData(StatementType.CREATE_FUNCTION, data)
+        return CreateFunction(FunctionId(functionId.schemaName, functionId.tableName), replace, temporary, classNmae, file)
     }
 
-    override fun visitDropFunction(ctx: SparkSqlParser.DropFunctionContext): StatementData {
+    override fun visitDropFunction(ctx: SparkSqlParser.DropFunctionContext): Statement {
         val functionId = parseTableName(ctx.multipartIdentifier())
-        val data = DropFunction(functionId.schemaName, functionId.tableName)
-        return StatementData(StatementType.DROP_FUNCTION, data)
+        return DropFunction(functionId.schemaName, functionId.tableName)
     }
     //-----------------------------------cache-------------------------------------------------
 
-    override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext?): StatementData {
-        return StatementData(StatementType.CACHE)
+    override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext?): Statement {
+        return DefaultStatement(StatementType.CACHE)
     }
 
-    override fun visitUncacheTable(ctx: SparkSqlParser.UncacheTableContext?): StatementData {
-        return StatementData(StatementType.UNCACHE)
+    override fun visitUncacheTable(ctx: SparkSqlParser.UncacheTableContext?): Statement {
+        return DefaultStatement(StatementType.UNCACHE)
     }
 
-    override fun visitClearCache(ctx: SparkSqlParser.ClearCacheContext?): StatementData {
-        return StatementData(StatementType.CLEAR_CACHE)
+    override fun visitClearCache(ctx: SparkSqlParser.ClearCacheContext?): Statement {
+        return DefaultStatement(StatementType.CLEAR_CACHE)
     }
 
     //-----------------------------------other-------------------------------------------------
 
-    override fun visitExplain(ctx: SparkSqlParser.ExplainContext?): StatementData {
-        return StatementData(StatementType.EXPLAIN)
+    override fun visitExplain(ctx: SparkSqlParser.ExplainContext?): Statement {
+        return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitCreateFileView(ctx: SparkSqlParser.CreateFileViewContext): StatementData {
+    override fun visitCreateFileView(ctx: SparkSqlParser.CreateFileViewContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val path = StringUtil.cleanQuote(ctx.path.text)
 
@@ -778,11 +748,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         }
         val properties = parseOptions(ctx.propertyList())
 
-        val createFileView = CreateFileView(tableId, path, properties, fileFormat, compression, sizeLimit)
-        return StatementData(StatementType.CREATE_FILE_VIEW, createFileView)
+        return CreateFileView(tableId, path, properties, fileFormat, compression, sizeLimit)
     }
 
-    override fun visitExportTable(ctx: SparkSqlParser.ExportTableContext): StatementData {
+    override fun visitExportTable(ctx: SparkSqlParser.ExportTableContext): Statement {
         if (ctx.ctes() != null) {
             visitCtes(ctx.ctes())
         }
@@ -813,39 +782,36 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             fileFormat, compression, maxFileSize, overwrite, single, inputTables)
 
         exportData.functionNames.addAll(functionNames)
-        return StatementData(StatementType.EXPORT_TABLE, exportData)
+        return exportData
     }
 
-    override fun visitUse(ctx: SparkSqlParser.UseContext): StatementData {
+    override fun visitUse(ctx: SparkSqlParser.UseContext): Statement {
         val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
-        val createDatabase = UseDatabase(catalogName, databaseName)
-        return StatementData(StatementType.USE, createDatabase)
+        return UseDatabase(catalogName, databaseName)
     }
 
-    override fun visitUseNamespace(ctx: SparkSqlParser.UseNamespaceContext): StatementData {
+    override fun visitUseNamespace(ctx: SparkSqlParser.UseNamespaceContext): Statement {
         val type = ctx.namespace().text.uppercase()
 
         if (StringUtils.equalsIgnoreCase("database", type) ||
             StringUtils.equalsIgnoreCase("schema", type)) {
 
             val (catalogName, databaseName) = parseNamespace(ctx.multipartIdentifier())
-            val useDatabase = UseDatabase(catalogName, databaseName)
-            return StatementData(StatementType.USE, useDatabase)
+            return UseDatabase(catalogName, databaseName)
         } else if (StringUtils.equalsIgnoreCase("namespace", type)) {
-            val useCatalog = UseCatalog(ctx.multipartIdentifier().text)
-            return StatementData(StatementType.USE, useCatalog)
+            return UseCatalog(ctx.multipartIdentifier().text)
         } else {
             throw RuntimeException("not support: " + type)
         }
     }
 
-    override fun visitSetConfiguration(ctx: SparkSqlParser.SetConfigurationContext?): StatementData {
-        return StatementData(StatementType.SET)
+    override fun visitSetConfiguration(ctx: SparkSqlParser.SetConfigurationContext?): Statement {
+        return DefaultStatement(StatementType.SET)
     }
 
     //-----------------------------------insert & query-------------------------------------------------
 
-    override fun visitStatementDefault(ctx: SparkSqlParser.StatementDefaultContext): StatementData? {
+    override fun visitStatementDefault(ctx: SparkSqlParser.StatementDefaultContext): Statement? {
         val node = ctx.getChild(0)
         if (node is QueryContext) {
             currentOptType = StatementType.SELECT
@@ -853,13 +819,13 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
             val queryStmt = QueryStmt(inputTables, limit)
             queryStmt.functionNames.addAll(functionNames)
-            return StatementData(StatementType.SELECT, queryStmt)
+            return queryStmt
         }
 
         return null
     }
 
-    override fun visitDmlStatement(ctx: SparkSqlParser.DmlStatementContext): StatementData? {
+    override fun visitDmlStatement(ctx: SparkSqlParser.DmlStatementContext): Statement? {
         currentOptType = StatementType.INSERT
         val node = if (ctx.ctes() != null) {
             this.visitCtes(ctx.ctes())
@@ -880,7 +846,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             singleInsertStmt.functionNames.addAll(functionNames)
             singleInsertStmt.rows = rows
 
-            return StatementData(StatementType.INSERT, singleInsertStmt)
+            return singleInsertStmt
         } else if (StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
             currentOptType = StatementType.MULTI_INSERT
             super.visitDmlStatement(ctx)
@@ -889,7 +855,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             insertTable.inputTables.addAll(inputTables)
             insertTable.outputTables.addAll(outputTables)
             insertTable.functionNames.addAll(functionNames)
-            return StatementData(StatementType.MULTI_INSERT, insertTable)
+            return insertTable
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||
                 node is SparkSqlParser.MergeIntoTableContext) {
@@ -931,27 +897,25 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
 
     //-----------------------------------delta sql-------------------------------------------------
 
-    override fun visitDeleteFromTable(ctx: SparkSqlParser.DeleteFromTableContext): StatementData {
+    override fun visitDeleteFromTable(ctx: SparkSqlParser.DeleteFromTableContext): Statement {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.multipartIdentifier())
         super.visitWhereClause(ctx.whereClause())
 
-        val update = DeleteTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitUpdateTable(ctx: SparkSqlParser.UpdateTableContext): StatementData {
+    override fun visitUpdateTable(ctx: SparkSqlParser.UpdateTableContext): Statement {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.multipartIdentifier())
         if (ctx.whereClause() != null) {
             super.visitWhereClause(ctx.whereClause())
         }
 
-        val update = UpdateTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return UpdateTable(tableId, inputTables)
     }
 
-    override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): StatementData {
+    override fun visitMergeIntoTable(ctx: SparkSqlParser.MergeIntoTableContext): Statement {
         currentOptType = StatementType.MERGE
 
         val targetTable = parseTableName(ctx.target)
@@ -965,12 +929,12 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
             super.visitQuery(query)
         }
         mergeTable.inputTables = inputTables
-        return StatementData(StatementType.MERGE, mergeTable)
+        return mergeTable
     }
 
     //-----------------------------------private method-------------------------------------------------
 
-    override fun visitFunctionName(ctx: SparkSqlParser.FunctionNameContext): StatementData? {
+    override fun visitFunctionName(ctx: SparkSqlParser.FunctionNameContext): Statement? {
         if (StatementType.SELECT == currentOptType ||
             StatementType.CREATE_VIEW == currentOptType ||
             StatementType.INSERT == currentOptType ||
@@ -985,14 +949,14 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitFunctionName(ctx)
     }
 
-    override fun visitCtes(ctx: SparkSqlParser.CtesContext): StatementData? {
+    override fun visitCtes(ctx: SparkSqlParser.CtesContext): Statement? {
         ctx.namedQuery().forEach {
             cteTempTables.add(TableId(it.name.text))
         }
         return super.visitCtes(ctx)
     }
 
-    override fun visitMultipartIdentifier(ctx: SparkSqlParser.MultipartIdentifierContext): StatementData? {
+    override fun visitMultipartIdentifier(ctx: SparkSqlParser.MultipartIdentifierContext): Statement? {
         val tableId = parseTableName(ctx)
         if (currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
             currentOptType == StatementType.SELECT ||
@@ -1017,7 +981,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return null
     }
 
-    /*override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): StatementData? {
+    /*override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): Statement? {
         val row = ctx.children.filter { it is SparkSqlParser.NamedExpressionContext }.map {
             var text = it.text
             text = StringUtil.cleanQuote(text)
@@ -1028,7 +992,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitRowConstructor(ctx)
     }*/
 
-    override fun visitInlineTable(ctx: SparkSqlParser.InlineTableContext): StatementData? {
+    override fun visitInlineTable(ctx: SparkSqlParser.InlineTableContext): Statement? {
         ctx.children.filter { it is SparkSqlParser.ExpressionContext }.forEach {
             var text = it.text
             text = StringUtils.substringBetween(text, "(", ")").trim()
@@ -1039,12 +1003,12 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitInlineTable(ctx)
     }
 
-    override fun visitFromClause(ctx: SparkSqlParser.FromClauseContext): StatementData? {
+    override fun visitFromClause(ctx: SparkSqlParser.FromClauseContext): Statement? {
         multiInsertToken = "from"
         return super.visitFromClause(ctx)
     }
 
-    override fun visitMultiInsertQueryBody(ctx: SparkSqlParser.MultiInsertQueryBodyContext): StatementData? {
+    override fun visitMultiInsertQueryBody(ctx: SparkSqlParser.MultiInsertQueryBodyContext): Statement? {
         multiInsertToken = "insert"
         val obj = ctx.insertInto()
         if (obj is SparkSqlParser.InsertOverwriteTableContext) {
@@ -1059,12 +1023,12 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<StatementData>() {
         return super.visitMultiInsertQueryBody(ctx)
     }
 
-    override fun visitQueryOrganization(ctx: SparkSqlParser.QueryOrganizationContext): StatementData? {
+    override fun visitQueryOrganization(ctx: SparkSqlParser.QueryOrganizationContext): Statement? {
         limit = ctx.limit?.text?.toInt()
         return super.visitQueryOrganization(ctx)
     }
 
-    override fun visitTypeConstructor(ctx: SparkSqlParser.TypeConstructorContext): StatementData? {
+    override fun visitTypeConstructor(ctx: SparkSqlParser.TypeConstructorContext): Statement? {
         val valueType = ctx.identifier().getText().uppercase()
         if (!("DATE".equals(valueType) || "TIME".equals(valueType)
                     || "TIMESTAMP".equals(valueType) || "INTERVAL".equals(valueType)

@@ -27,10 +27,10 @@ class SparkStreamSqlParserTest {
                 "  kafka.group.id = \"cn-north-1\"\n" +
                 ")"
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("student_scores", statement.tableId.tableName)
             Assert.assertEquals("cn-north-1", statement.properties?.get("kafka.group.id"))
         } else {
@@ -75,7 +75,7 @@ class SparkStreamSqlParserTest {
 
         val statementDatas = SparkStreamSqlHelper.getStatementData(sql)
         Assert.assertEquals(16, statementDatas.size)
-        val statement = statementDatas.get(0).statement
+        val statement = statementDatas.get(0)
         if (statement is CreateTable) {
             Assert.assertEquals("orders", statement.tableId.tableName)
         } else {
@@ -92,10 +92,10 @@ class SparkStreamSqlParserTest {
                 "    tableName = \"hudi_stream_json_dt\"" +
                 "    )"
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableId.tableName)
             Assert.assertEquals("hudi", statement.properties?.get("type"))
         } else {
@@ -107,10 +107,10 @@ class SparkStreamSqlParserTest {
     fun setConfigTest() {
         val sql = "set spark.test = false";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is SetStatement) {
-            Assert.assertEquals(StatementType.SET, statementData.type)
+            Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("false", statement.value)
         } else {
@@ -122,10 +122,10 @@ class SparkStreamSqlParserTest {
     fun setConfigTest1() {
         val sql = "set spark.test = 'hello world'";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is SetStatement) {
-            Assert.assertEquals(StatementType.SET, statementData.type)
+            Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("hello world", statement.value)
         } else {
@@ -137,10 +137,10 @@ class SparkStreamSqlParserTest {
     fun setConfigTest2() {
         val sql = "set spark.test = 12 ";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is SetStatement) {
-            Assert.assertEquals(StatementType.SET, statementData.type)
+            Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("12", statement.value)
         } else {
@@ -152,10 +152,10 @@ class SparkStreamSqlParserTest {
     fun setConfigTest3() {
         val sql = "set spark.test = 'demo' ";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is SetStatement) {
-            Assert.assertEquals(StatementType.SET, statementData.type)
+            Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
             Assert.assertEquals("demo", statement.value)
         } else {
@@ -167,10 +167,10 @@ class SparkStreamSqlParserTest {
     fun insertSqlTest() {
         val sql = "insert into bigdata.test_result1 select * from users";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test_result1", statement.tableId?.tableName)
             Assert.assertEquals("select * from users", statement.querySql)
         } else {
@@ -189,10 +189,10 @@ class SparkStreamSqlParserTest {
                 "FROM (select userid, money, proctime from orders LEFT JOIN LATERAL TABLE(demoFunc(a)) as T(newuserid) ON TRUE) a\n" +
                 "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;";
 
-        val statementData = SparkStreamSqlHelper.getStatementData(sql).get(0)
-        val statement = statementData.statement
+        val statement = SparkStreamSqlHelper.getStatementData(sql).get(0)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("stat_orders_kafka", statement.tableId?.tableName)
         } else {
             Assert.fail()

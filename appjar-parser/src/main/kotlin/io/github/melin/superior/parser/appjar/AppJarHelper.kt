@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.parser.job.antlr4.AppJarLexer
 import io.github.melin.superior.parser.job.antlr4.AppJarParser
 
@@ -18,7 +18,7 @@ import io.github.melin.superior.parser.job.antlr4.AppJarParser
  */
 object AppJarHelper {
 
-    @JvmStatic fun getStatementData(command: String) : ArrayList<StatementData> {
+    @JvmStatic fun getStatementData(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

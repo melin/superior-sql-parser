@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.oracle
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
@@ -25,7 +25,7 @@ object OracleSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : StatementData {
+    @JvmStatic fun getStatementData(command: String): Statement {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))

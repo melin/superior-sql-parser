@@ -19,10 +19,9 @@ class TrinoSqlParserTest {
             select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
         """.trimIndent()
 
-        val statementData = TrinoSqlHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = TrinoSqlHelper.getStatementData(sql)
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -36,10 +35,9 @@ class TrinoSqlParserTest {
             WHERE ds=date_format(CURRENT_DATE - interval '1' DAY, "%Y%m%d") ) tdbi_view
         """.trimIndent()
 
-        val statementData = TrinoSqlHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = TrinoSqlHelper.getStatementData(sql)
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -52,10 +50,9 @@ class TrinoSqlParserTest {
             select * from preso_table limit 10
         """.trimIndent()
 
-        val statementData = TrinoSqlHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = TrinoSqlHelper.getStatementData(sql)
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
         } else {
@@ -69,10 +66,9 @@ class TrinoSqlParserTest {
             create table dd_s_s as select * from bigdata.test_demo_test limit 1
         """.trimIndent()
 
-        val statementData = TrinoSqlHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = TrinoSqlHelper.getStatementData(sql)
         if (statement is CreateTableAsSelect) {
-            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("dd_s_s", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -86,12 +82,11 @@ class TrinoSqlParserTest {
             drop table if exists bigdata.tdl_small_files_2
         """.trimIndent()
 
-        val statementData = TrinoSqlHelper.getStatementData(sql)
-        val statement = statementData?.statement
+        val statement = TrinoSqlHelper.getStatementData(sql)
         if (statement is DropTable) {
-            Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
-            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
-            Assert.assertEquals("tdl_small_files_2", statement.tableId?.tableName)
+            Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
+            Assert.assertEquals("bigdata", statement.tableId.schemaName)
+            Assert.assertEquals("tdl_small_files_2", statement.tableId.tableName)
         } else {
             Assert.fail()
         }

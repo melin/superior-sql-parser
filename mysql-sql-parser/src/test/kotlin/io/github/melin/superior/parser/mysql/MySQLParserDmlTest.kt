@@ -20,10 +20,9 @@ class MySQLParserDmlTest {
     fun selectTest0() {
         val sql = "select * from users limit 1"
 
-        val tableData = MySQLHelper.getStatementData(sql)
-        val statement = tableData.statement
+        val statement = MySQLHelper.getStatementData(sql)
         if(statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, tableData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(1, statement.limit)
         } else {
@@ -35,10 +34,10 @@ class MySQLParserDmlTest {
     fun selectTest1() {
         val sql = "select * from users a left outer join address b on a.address_id = b.id limit 100, 10"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
         } else {
@@ -53,10 +52,10 @@ class MySQLParserDmlTest {
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -71,10 +70,10 @@ class MySQLParserDmlTest {
             WHERE t1.id=t2.id AND t2.id=t3.id;
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("t1", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(3, statement.inputTables.size)
@@ -90,10 +89,10 @@ class MySQLParserDmlTest {
             WHERE t1.id=t2.id AND t2.id=t3.id;
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("t1", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(3, statement.inputTables.size)
@@ -108,10 +107,10 @@ class MySQLParserDmlTest {
             DELETE FROM users
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("users", statement.tableId.tableName)
         } else {
             Assert.fail()
@@ -125,10 +124,10 @@ class MySQLParserDmlTest {
             (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is UpdateTable) {
-            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -143,10 +142,10 @@ class MySQLParserDmlTest {
             SET p.isdelete = 1 WHERE pp.productid IS NULL;
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is UpdateTable) {
-            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("product", statement.tableId.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
             Assert.assertEquals(0, statement.inputTables.size)
@@ -161,10 +160,10 @@ class MySQLParserDmlTest {
             insert into bigdata."user" select * from users a left outer join address b on a.address_id = b.id
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertEquals(2, statement.inputTables.size)
@@ -178,10 +177,10 @@ class MySQLParserDmlTest {
         //val sql = "insert into user values('name')"
         val sql = "REPLACE into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertTrue(statement.mysqlReplace)
@@ -195,9 +194,9 @@ class MySQLParserDmlTest {
     fun countCondTest() {
         val sql = "select count(type='mac' or null) From test_table where a=2"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SELECT, statementData.type)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SELECT, statement.statementType)
+        
         if (statement is QueryStmt) {
             Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
         } else {
@@ -215,9 +214,9 @@ class MySQLParserDmlTest {
             WHERE cte1.a = cte2.c;
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.SELECT, statementData.type)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.SELECT, statement.statementType)
+        
         if (statement is QueryStmt) {
             Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
 
@@ -231,10 +230,9 @@ class MySQLParserDmlTest {
     fun ctasTest0() {
         val sql = "create table demo1 as select * from demo"
 
-        val tableData = MySQLHelper.getStatementData(sql)
-        val statement = tableData.statement
+        val statement = MySQLHelper.getStatementData(sql)
         if (statement is CreateTableAsSelect) {
-            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, tableData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("demo1", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {

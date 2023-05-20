@@ -22,7 +22,7 @@ import org.antlr.v4.runtime.tree.RuleNode
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
-class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
+class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -37,21 +37,21 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visit(tree: ParseTree?): StatementData {
-        val statementData = super.visit(tree)
+    override fun visit(tree: ParseTree?): Statement {
+        val statement = super.visit(tree)
 
-        if (statementData == null) {
+        if (statement == null) {
             throw SQLParserException("不支持的SQL")
         }
 
-        return statementData;
+        return statement;
     }
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): StatementData {
+    override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): Statement {
         currentOptType = StatementType.CREATE_TABLE
 
         if (ctx.PARTITION() != null) {
@@ -59,8 +59,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             val action = AlterTableAction(partitionTableId)
 
             val tableId = parseTableName(ctx.qualified_name(1))
-            val alterTable = AlterTable(AlterType.ADD_PARTITION, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_PARTITION, tableId, action)
         }
 
         val tableId = parseTableName(ctx.qualified_name(0))
@@ -97,10 +96,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             createTable.partitionType = partitionType
         }
 
-        return StatementData(currentOptType, createTable)
+        return createTable
     }
 
-    override fun visitCreatefunctionstmt(ctx: PostgreSqlParser.CreatefunctionstmtContext): StatementData {
+    override fun visitCreatefunctionstmt(ctx: PostgreSqlParser.CreatefunctionstmtContext): Statement {
         currentOptType = if (ctx.FUNCTION() != null) StatementType.CREATE_FUNCTION else StatementType.CREATE_PROCEDURE
 
         val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
@@ -122,7 +121,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
             val createFunction = CreateFunction(functionId, replace)
             createFunction.inputTables = inputTables
-            return StatementData(StatementType.CREATE_FUNCTION, createFunction)
+            return createFunction
         } else {
             val procedureId = if (funcName.type_function_name() != null) {
                 ProcedureId(funcName.text)
@@ -133,16 +132,16 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             val createProcedure = CreateProcedure(procedureId, replace)
             createProcedure.inputTables = inputTables
             createProcedure.outputTables = outputTables
-            return StatementData(StatementType.CREATE_FUNCTION, createProcedure)
+            return createProcedure
         }
     }
 
-    override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): StatementData? {
+    override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): Statement? {
         super.visitProc_stmt(ctx)
         return null
     }
 
-    override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): StatementData {
+    override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): Statement {
         currentOptType = StatementType.CREATE_VIEW
         val tableId = parseTableName(ctx.qualified_name())
         val replace = if (ctx.REPLACE() != null) true else false
@@ -155,10 +154,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
         super.visitSelectstmt(ctx.selectstmt())
         createView.inputTables.addAll(inputTables)
-        return StatementData(currentOptType, createView)
+        return createView
     }
 
-    override fun visitCreatematviewstmt(ctx: PostgreSqlParser.CreatematviewstmtContext): StatementData {
+    override fun visitCreatematviewstmt(ctx: PostgreSqlParser.CreatematviewstmtContext): Statement {
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         val tableId = parseTableName(ctx.create_mv_target().qualified_name())
         val ifNotExists = if (ctx.IF_P() != null) true else false
@@ -167,28 +166,27 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
         super.visitSelectstmt(ctx.selectstmt())
         createView.inputTables = inputTables
-        return StatementData(currentOptType, createView)
+        return createView
     }
 
-    override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): StatementData {
+    override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): Statement {
         currentOptType = StatementType.SELECT
         super.visitSelectstmt(ctx)
 
-        val queryStmt = QueryStmt(inputTables, limit)
-        return StatementData(StatementType.SELECT, queryStmt)
+        return QueryStmt(inputTables, limit)
     }
 
-    override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): StatementData {
+    override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): Statement {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.create_as_target().qualified_name())
         val createTable = CreateTableAsSelect(tableId)
         super.visitSelectstmt(ctx.selectstmt())
 
         createTable.inputTables.addAll(inputTables)
-        return StatementData(currentOptType, createTable)
+        return createTable
     }
 
-    override fun visitUpdatestmt(ctx: PostgreSqlParser.UpdatestmtContext): StatementData {
+    override fun visitUpdatestmt(ctx: PostgreSqlParser.UpdatestmtContext): Statement {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         addOutputTableId(tableId)
@@ -196,11 +194,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitFrom_clause(ctx.from_clause())
 
-        val update = UpdateTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return UpdateTable(tableId, inputTables)
     }
 
-    override fun visitDeletestmt(ctx: PostgreSqlParser.DeletestmtContext): StatementData {
+    override fun visitDeletestmt(ctx: PostgreSqlParser.DeletestmtContext): Statement {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         addOutputTableId(tableId)
@@ -208,11 +205,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
         super.visitUsing_clause(ctx.using_clause())
 
-        val update = DeleteTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitInsertstmt(ctx: PostgreSqlParser.InsertstmtContext): StatementData {
+    override fun visitInsertstmt(ctx: PostgreSqlParser.InsertstmtContext): Statement {
         currentOptType = StatementType.INSERT
         if (ctx.opt_with_clause() != null) {
             this.visitOpt_with_clause(ctx.opt_with_clause())
@@ -226,10 +222,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
 
         insertTable.inputTables.addAll(inputTables)
         insertTable.outputTables.addAll(outputTables)
-        return StatementData(StatementType.INSERT, insertTable)
+        return insertTable
     }
 
-    override fun visitMergestmt(ctx: PostgreSqlParser.MergestmtContext): StatementData {
+    override fun visitMergestmt(ctx: PostgreSqlParser.MergestmtContext): Statement {
         currentOptType = StatementType.MERGE
 
         val mergeTableId = parseTableName(ctx.qualified_name(0))
@@ -242,17 +238,17 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             super.visitSelect_with_parens(ctx.select_with_parens())
         }
         mergeTable.inputTables = inputTables
-        return StatementData(StatementType.MERGE, mergeTable)
+        return mergeTable
     }
 
-    override fun visitCte_list(ctx: PostgreSqlParser.Cte_listContext): StatementData {
+    override fun visitCte_list(ctx: PostgreSqlParser.Cte_listContext): Statement {
         ctx.common_table_expr().forEach {
             cteTempTables.add(TableId(it.name().text))
         }
         return super.visitCte_list(ctx)
     }
 
-    override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): StatementData? {
+    override fun visitQualified_name(ctx: PostgreSqlParser.Qualified_nameContext): Statement? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
@@ -280,7 +276,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
     }
 
     // create index
-    override fun visitIndexstmt(ctx: PostgreSqlParser.IndexstmtContext): StatementData {
+    override fun visitIndexstmt(ctx: PostgreSqlParser.IndexstmtContext): Statement {
         val tableId = parseTableName(ctx.relation_expr())
         val indexName = if (ctx.opt_index_name() != null) {
             ctx.opt_index_name().text
@@ -288,11 +284,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
             ctx.name().text
         }
         val createIndex = CreateIndex(indexName)
-        val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
     }
 
-    override fun visitDropstmt(ctx: PostgreSqlParser.DropstmtContext): StatementData {
+    override fun visitDropstmt(ctx: PostgreSqlParser.DropstmtContext): Statement {
         if (ctx.object_type_any_name() != null) {
             val ifExists = ctx.IF_P() != null
             if (ctx.object_type_any_name().INDEX() != null) {
@@ -301,12 +296,12 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
                 val alterTable = AlterTable(AlterType.DROP_INDEX, tableId)
                 alterTable.ifExists = ifExists
                 alterTable.addActions(actions)
-                return StatementData(StatementType.ALTER_TABLE, alterTable)
+                return alterTable
             } else if (ctx.object_type_any_name().TABLE() != null) {
                 val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropTable = DropTable(tableIds.first(), ifExists)
                 dropTable.tableIds.addAll(tableIds)
-                return StatementData(StatementType.DROP_TABLE, dropTable)
+                return dropTable
             } else if (ctx.object_type_any_name().VIEW() != null) {
                 val isMaterialized = if (ctx.object_type_any_name().MATERIALIZED() != null) {
                     true
@@ -314,22 +309,21 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
                     false
                 }
                 val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
-                val dropTable = DropView(tableIds.first(), ifExists, isMaterialized)
-                dropTable.tableIds.addAll(tableIds)
-                return StatementData(StatementType.DROP_TABLE, dropTable)
+                val dropView = DropView(tableIds.first(), ifExists, isMaterialized)
+                dropView.tableIds.addAll(tableIds)
+                return dropView
             } else if (ctx.object_type_any_name().SEQUENCE() != null) {
                 val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
-                val dropTable = io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)
-                dropTable.tableIds.addAll(tableIds)
-
-                return StatementData(StatementType.DROP_TABLE, dropTable)
+                val dropSequence = io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)
+                dropSequence.tableIds.addAll(tableIds)
+                return dropSequence
             }
         }
 
         throw SQLParserException("not support")
     }
 
-    override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): StatementData {
+    override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): Statement {
         if (ctx.TABLE() != null) {
             if (ctx.relation_expr() != null) {
                 val tableId = parseTableName(ctx.relation_expr())
@@ -340,14 +334,14 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
                 }
 
                 alterTable.ifExists = ctx.IF_P() != null
-                return StatementData(StatementType.ALTER_TABLE, alterTable)
+                return alterTable
             }
         }
 
-        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+        return AlterTable(AlterType.UNKOWN)
     }
 
-    override fun visitCommentstmt(ctx: PostgreSqlParser.CommentstmtContext): StatementData {
+    override fun visitCommentstmt(ctx: PostgreSqlParser.CommentstmtContext): Statement {
         val objType: String? = if (ctx.object_type_any_name() != null) {
             ctx.object_type_any_name().children.map { it.text }.joinToString(" ")
         } else if (ctx.object_type_name() != null) {
@@ -365,9 +359,9 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<StatementData>() {
         val objValue = if (ctx.any_name() != null) ctx.any_name().text else null
 
         val isNull = if (ctx.comment_text().NULL_P() != null) true else false
-        val text: String? = if (ctx.comment_text().text != null) StringUtil.cleanQuote(ctx.comment_text().sconst().text) else null
-        val comment = CommentData(text, isNull, objType, objValue)
-        return StatementData(StatementType.COMMENT, comment)
+        val text: String? =
+            if (ctx.comment_text().text != null) StringUtil.cleanQuote(ctx.comment_text().sconst().text) else null
+        return CommentData(text, isNull, objType, objValue)
     }
 
     //----------------------------------------private methods------------------------------------

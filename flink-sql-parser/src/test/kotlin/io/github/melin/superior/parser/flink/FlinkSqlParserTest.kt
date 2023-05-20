@@ -21,8 +21,7 @@ class FlinkSqlParserTest {
               `c_id` AS `id` + 10 AFTER `id`)
         """.trimIndent()
 
-        val statementData = FlinkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = FlinkSQLHelper.getStatementData(sql)
         if (statement is FlinkCdcCreateTable) {
             val table = statement.sinkTableId
             Assert.assertEquals("user", table.tableName)
@@ -44,8 +43,7 @@ class FlinkSqlParserTest {
             OPTIONS('server-id'='8001-8004')
         """.trimIndent()
 
-        val statementData = FlinkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = FlinkSQLHelper.getStatementData(sql)
         if (statement is FlinkCdcCreateDatabase) {
             Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
             Assert.assertEquals("test", statement.excludeTable)
@@ -75,8 +73,7 @@ class FlinkSqlParserTest {
             )
         """.trimIndent()
 
-        val statementData = FlinkSQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = FlinkSQLHelper.getStatementData(sql)
         if (statement is FlinkCdcCreateDatabase) {
             Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
             Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))

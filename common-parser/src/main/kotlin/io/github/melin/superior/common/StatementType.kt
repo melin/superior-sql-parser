@@ -7,9 +7,9 @@ import java.io.Serializable
  */
 
 enum class StatementType: Serializable {
+    CREATE_CATALOG,
     CREATE_DATABASE,
     CREATE_SCHEMA,
-    CREATE_NAMESPACE,
     CREATE_TABLE,
     CREATE_TABLE_AS_SELECT,
     CREATE_TABLE_AS_LIKE,
@@ -20,12 +20,13 @@ enum class StatementType: Serializable {
     CREATE_FUNCTION,
     CREATE_PROCEDURE,
 
+    DROP_CATALOG,
     DROP_DATABASE,
     DROP_SCHEMA,
-    DROP_NAMESPACE,
     DROP_TABLE,
     DROP_VIEW,
     DROP_FUNCTION,
+    DROP_SEQUENCE,
     DROP_PROCEDURE,
 
     TRUNCATE_TABLE,
@@ -38,7 +39,6 @@ enum class StatementType: Serializable {
     COMMENT,
 
     //DML
-    QUERY,
     SELECT,
     DELETE,
     UPDATE,

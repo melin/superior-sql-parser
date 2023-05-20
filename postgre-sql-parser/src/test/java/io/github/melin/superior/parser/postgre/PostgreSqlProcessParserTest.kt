@@ -19,10 +19,10 @@ class PostgreSqlProcessParserTest {
             RETURNS NULL ON NULL INPUT;
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId("public", "myadd"), statement.functionId)
             Assert.assertEquals("myadd", statement.functionId.functionName)
         } else {
@@ -40,10 +40,10 @@ class PostgreSqlProcessParserTest {
             RETURNS NULL ON NULL INPUT;
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId("myadd"), statement.functionId)
             Assert.assertEquals("myadd", statement.functionId.functionName)
         } else {
@@ -67,10 +67,10 @@ class PostgreSqlProcessParserTest {
                 SECURITY DEFINER
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "check_password"), statement.functionId)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -101,10 +101,10 @@ class PostgreSqlProcessParserTest {
             END;${'$'}${'$'};
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateProcedure) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
             Assert.assertEquals(2, statement.outputTables.size)
         } else {
@@ -135,10 +135,10 @@ class PostgreSqlProcessParserTest {
             END;${'$'}${'$'};
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateProcedure) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
             Assert.assertEquals(1, statement.outputTables.size)
         } else {

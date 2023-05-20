@@ -24,10 +24,10 @@ class OracleProcessParserTest {
             END;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateProcedure) {
-            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -49,10 +49,10 @@ class OracleProcessParserTest {
              END;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId("test", "get_bal"), statement.functionId)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -75,10 +75,10 @@ class OracleProcessParserTest {
              END;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "get_bal"), statement.functionId)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -115,10 +115,10 @@ class OracleProcessParserTest {
             END;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is CreateProcedure) {
-            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId("UpdateCourse"), statement.procedureId)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("courses_tbl"), statement.inputTables.get(0))

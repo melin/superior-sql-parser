@@ -1,9 +1,6 @@
 package io.github.melin.superior.common.relational
 
-import io.github.melin.superior.common.AlterType
-import io.github.melin.superior.common.PrivilegeType
-import io.github.melin.superior.common.SqlType
-import io.github.melin.superior.common.TableType
+import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import kotlin.collections.ArrayList
 
@@ -13,8 +10,10 @@ data class AlterTable(
     private val action: AlterAction?,
     val tableType: TableType = TableType.TABLE
 ): AbsTableStatement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.ALTER
-    override val sqlType: SqlType = SqlType.DDL
+    override val statementType = StatementType.ALTER_TABLE
+    override val privilegeType = PrivilegeType.ALTER
+    override val sqlType = SqlType.DDL
+
     val actions: ArrayList<AlterAction> = ArrayList()
     var ifExists: Boolean = false
 

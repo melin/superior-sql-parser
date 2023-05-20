@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.postgre
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
@@ -35,7 +35,7 @@ object PostgreSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : StatementData {
+    @JvmStatic fun getStatementData(command: String): Statement {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

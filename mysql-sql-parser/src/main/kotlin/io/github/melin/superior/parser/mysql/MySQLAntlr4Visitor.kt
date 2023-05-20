@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
  *
  * Created by libinsong on 2018/2/8.
  */
-class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
+class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
@@ -30,21 +30,19 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
     //-----------------------------------database-------------------------------------------------
 
-    override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): StatementData {
+    override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): Statement {
         val databaseName = StringUtil.cleanQuote(ctx.uid().text)
-        val createDatabase = CreateDatabase(databaseName)
-        return StatementData(StatementType.CREATE_NAMESPACE, createDatabase)
+        return CreateDatabase(databaseName)
     }
 
-    override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): StatementData {
+    override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): Statement {
         val databaseName = StringUtil.cleanQuote(ctx.uid().text)
-        val dropDatabase = DropDatabase(databaseName)
-        return StatementData(StatementType.DROP_NAMESPACE, dropDatabase)
+        return DropDatabase(databaseName)
     }
 
     //-----------------------------------table-------------------------------------------------
 
-    override fun visitColumnCreateTable(ctx: MySqlParser.ColumnCreateTableContext): StatementData {
+    override fun visitColumnCreateTable(ctx: MySqlParser.ColumnCreateTableContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
         var comment: String? = null
         ctx.tableOption().forEach {
@@ -93,10 +91,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             createTable.partitionType = "PARTITION"
         }
 
-        return StatementData(StatementType.CREATE_TABLE, createTable)
+        return createTable
     }
 
-    override fun visitQueryCreateTable(ctx: MySqlParser.QueryCreateTableContext): StatementData {
+    override fun visitQueryCreateTable(ctx: MySqlParser.QueryCreateTableContext): Statement {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseFullId(ctx.tableName().fullId())
         var comment: String? = null
@@ -112,10 +110,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         val createTable = CreateTableAsSelect(tableId, comment, null, null, null, null, null, ifNotExists)
         super.visitSelectStatement(ctx.selectStatement())
         createTable.inputTables.addAll(inputTables)
-        return StatementData(currentOptType, createTable)
+        return createTable
     }
 
-    override fun visitPrimaryKeyTableConstraint(ctx: MySqlParser.PrimaryKeyTableConstraintContext): StatementData? {
+    override fun visitPrimaryKeyTableConstraint(ctx: MySqlParser.PrimaryKeyTableConstraintContext): Statement? {
         val count = ctx.indexColumnNames().childCount
 
         for (i in 1..(count-2)) {
@@ -127,7 +125,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         return null
     }
 
-    override fun visitDropTable(ctx: MySqlParser.DropTableContext): StatementData {
+    override fun visitDropTable(ctx: MySqlParser.DropTableContext): Statement {
         if(ctx.tables().tableName().size > 1) {
             throw SQLParserException("不支持drop多个表")
         }
@@ -135,33 +133,30 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = if (ctx.ifExists() != null) true else false
-        return StatementData(StatementType.DROP_TABLE, dropTable)
+        return dropTable
     }
 
-    override fun visitTruncateTable(ctx: MySqlParser.TruncateTableContext): StatementData {
+    override fun visitTruncateTable(ctx: MySqlParser.TruncateTableContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
-        val truncateTable = TruncateTable(tableId)
-        return StatementData(StatementType.TRUNCATE_TABLE, truncateTable)
+        return TruncateTable(tableId)
     }
 
-    override fun visitRenameTable(ctx: MySqlParser.RenameTableContext): StatementData {
+    override fun visitRenameTable(ctx: MySqlParser.RenameTableContext): Statement {
         val tableId = parseFullId(ctx.renameTableClause().get(0).tableName(0).fullId())
         val newTableId = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
         val action = AlterTableAction(newTableId)
-        val alterTable = AlterTable(AlterType.RENAME_TABLE, tableId, action)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(AlterType.RENAME_TABLE, tableId, action)
     }
 
-    override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): StatementData {
+    override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): Statement {
         val databaseName = ctx.uid().text
-        val data = UseDatabase(databaseName)
-        return StatementData(StatementType.USE, data)
+        return UseDatabase(databaseName)
     }
 
     //-----------------------------------Alter-----------------------------------------------
 
-    override fun visitAlterTable(ctx: MySqlParser.AlterTableContext): StatementData? {
+    override fun visitAlterTable(ctx: MySqlParser.AlterTableContext): Statement? {
         if(ctx.childCount > 4) {
             throw SQLParserException("不允许同时执行多个alter")
         }
@@ -182,8 +177,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             val action = AlterColumnAction(columnName, dataType, comment)
             action.newColumName = newColumnName
 
-            val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ALTER_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
             val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
@@ -195,67 +189,56 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             }
 
             val action = AlterColumnAction(columnName, dataType, comment)
-            val alterTable = AlterTable(AlterType.ADD_COLUMN, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
             val columnName = StringUtil.cleanQuote(statement.uid().text)
             val action = DropColumnAction(columnName)
-            val alterTable = AlterTable(AlterType.DROP_COLUMN, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.DROP_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {
             val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
 
             val action = AlterColumnAction(columnName, dataType)
-            val alterTable = AlterTable(AlterType.ALTER_COLUMN, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ALTER_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByAddIndexContext) {
             val createIndex = CreateIndex(statement.uid().text)
-            val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
         } else if(statement is MySqlParser.AlterByDropIndexContext) {
             val dropIndex = DropIndex(statement.uid().text)
-            val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
         } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.ADD_PRIMARY_KEY, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_PRIMARY_KEY, tableId, action)
         } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
         } else if(statement is MySqlParser.AlterByAddPartitionContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.ADD_PARTITION, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.ADD_PARTITION, tableId, action)
         } else if(statement is MySqlParser.AlterByDropPartitionContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.DROP_PARTITION, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.DROP_PARTITION, tableId, action)
         } else if(statement is MySqlParser.AlterByTruncatePartitionContext) {
             val action = AlterTableAction()
-            val alterTable = AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
-            return StatementData(StatementType.ALTER_TABLE, alterTable)
+            return AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
         }
 
         return super.visitAlterTable(ctx)
     }
 
-    override fun visitAnalyzeTable(ctx: MySqlParser.AnalyzeTableContext): StatementData {
+    override fun visitAnalyzeTable(ctx: MySqlParser.AnalyzeTableContext): Statement {
         val tables = ArrayList<TableId>()
         ctx.tables().tableName().forEach { context ->
             val tableId = parseFullId(context.fullId())
             tables.add(tableId)
         }
 
-        val analyze = AnalyzeTable(tables)
-        return StatementData(StatementType.ANALYZE_TABLE, analyze)
+        return AnalyzeTable(tables)
     }
 
     //-----------------------------------DML-------------------------------------------------
 
-    override fun visitDmlStatement(ctx: MySqlParser.DmlStatementContext): StatementData {
+    override fun visitDmlStatement(ctx: MySqlParser.DmlStatementContext): Statement {
         if (ctx.withStatement() != null) {
             super.visitWithStatement(ctx.withStatement())
             if (ctx.withStatement().selectStatement() != null) {
@@ -266,16 +249,15 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         return super.visitDmlStatement(ctx);
     }
 
-    override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): StatementData {
+    override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): Statement {
         if (currentOptType == StatementType.UNKOWN) {
             currentOptType = StatementType.SELECT
         }
         super.visitSelectStatement(ctx)
-        val queryStmt = QueryStmt(inputTables, limit)
-        return StatementData(StatementType.SELECT, queryStmt)
+        return QueryStmt(inputTables, limit)
     }
 
-    override fun visitInsertStatement(ctx: MySqlParser.InsertStatementContext): StatementData {
+    override fun visitInsertStatement(ctx: MySqlParser.InsertStatementContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
 
         currentOptType = StatementType.INSERT
@@ -284,10 +266,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             super.visit(ctx.insertStatementValue().selectStatement())
         }
         insertTable.inputTables.addAll(inputTables)
-        return StatementData(StatementType.INSERT, insertTable)
+        return insertTable
     }
 
-    override fun visitReplaceStatement(ctx: MySqlParser.ReplaceStatementContext): StatementData {
+    override fun visitReplaceStatement(ctx: MySqlParser.ReplaceStatementContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
 
         currentOptType = StatementType.INSERT
@@ -297,10 +279,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             insertTable.mysqlReplace = true
         }
         insertTable.inputTables.addAll(inputTables)
-        return StatementData(StatementType.INSERT, insertTable)
+        return insertTable
     }
 
-    override fun visitDeleteStatement(ctx: MySqlParser.DeleteStatementContext): StatementData {
+    override fun visitDeleteStatement(ctx: MySqlParser.DeleteStatementContext): Statement {
         currentOptType = StatementType.DELETE
 
         val deleteTable = if (ctx.multipleDeleteStatement() != null) {
@@ -320,10 +302,10 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             DeleteTable(tableId, inputTables)
         }
 
-        return StatementData(StatementType.DELETE, deleteTable)
+        return deleteTable
     }
 
-    override fun visitUpdateStatement(ctx: MySqlParser.UpdateStatementContext): StatementData {
+    override fun visitUpdateStatement(ctx: MySqlParser.UpdateStatementContext): Statement {
         currentOptType = StatementType.UPDATE
         val updateTable = if (ctx.multipleUpdateStatement() != null) {
             val intputTableIds = inputTables.toMutableList()
@@ -340,26 +322,24 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
             UpdateTable(tableId, inputTables)
         }
 
-        return StatementData(StatementType.UPDATE, updateTable)
+        return updateTable
     }
 
-    override fun visitCreateIndex(ctx: MySqlParser.CreateIndexContext): StatementData {
+    override fun visitCreateIndex(ctx: MySqlParser.CreateIndexContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
         val createIndex = CreateIndex(ctx.uid().text)
-        val alterTable = AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
     }
 
-    override fun visitDropIndex(ctx: MySqlParser.DropIndexContext): StatementData {
+    override fun visitDropIndex(ctx: MySqlParser.DropIndexContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
         val dropIndex = DropIndex(ctx.uid().text)
-        val alterTable = AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
-        return StatementData(StatementType.ALTER_TABLE, alterTable)
+        return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
     }
 
     //-----------------------------------private method-------------------------------------------------
 
-    override fun visitCommonTableExpressions(ctx: MySqlParser.CommonTableExpressionsContext): StatementData? {
+    override fun visitCommonTableExpressions(ctx: MySqlParser.CommonTableExpressionsContext): Statement? {
         val tableId = TableId(ctx.cteName().text)
         cteTempTables.add(tableId)
 
@@ -367,7 +347,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         return null
     }
 
-    override fun visitTableName(ctx: MySqlParser.TableNameContext): StatementData? {
+    override fun visitTableName(ctx: MySqlParser.TableNameContext): Statement? {
         if (StatementType.SELECT == currentOptType ||
             StatementType.INSERT == currentOptType ||
             StatementType.UPDATE == currentOptType ||
@@ -383,7 +363,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<StatementData>() {
         return null
     }
 
-    override fun visitLimitClause(ctx: MySqlParser.LimitClauseContext): StatementData? {
+    override fun visitLimitClause(ctx: MySqlParser.LimitClauseContext): Statement? {
         if (currentOptType == StatementType.SELECT ) {
             limit = ctx.limit.text.toInt()
         }

@@ -4,10 +4,7 @@ import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 
-data class AnalyzeTable (
-    val tableIds: List<TableId>
-) : Statement() {
-    override val statementType = StatementType.ANALYZE_TABLE
-    override val privilegeType = PrivilegeType.READ
+class DefaultStatement(override val statementType: StatementType): Statement() {
+    override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML
 }

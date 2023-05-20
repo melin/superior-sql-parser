@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.arithmetic
 
+import com.github.melin.superior.sql.parser.arithmetic.ArithmeticHelper
 import io.github.melin.superior.common.StatementType
 import org.junit.Assert
 import org.junit.Test
@@ -17,9 +18,8 @@ class ArithmetricParserTest {
                 - (log2(feature_12) + 特征3))
             """
 
-        val statementData = com.github.melin.superior.sql.parser.arithmetic.ArithmeticHelper.getStatementData(sql, false)
-        val statement = statementData?.statement
-        Assert.assertEquals(StatementType.ARITHMETIC, statementData?.type)
+        val statement = ArithmeticHelper.getStatementData(sql, false)
+        Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(4, statement.variables.toArray().size)
             Assert.assertEquals(1, statement.functions.size)
@@ -37,9 +37,8 @@ class ArithmetricParserTest {
                                 else 3 end
             """
 
-        val statementData = com.github.melin.superior.sql.parser.arithmetic.ArithmeticHelper.getStatementData(sql, false)
-        val statement = statementData?.statement
-        Assert.assertEquals(StatementType.ARITHMETIC, statementData?.type)
+        val statement = ArithmeticHelper.getStatementData(sql, false)
+        Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(1, statement.variables.toArray().size)
             Assert.assertEquals(0, statement.functions.size)
@@ -55,9 +54,8 @@ class ArithmetricParserTest {
                 - (log2([feature_12]) + [特征3]))
             """
 
-        val statementData = com.github.melin.superior.sql.parser.arithmetic.ArithmeticHelper.getStatementData(sql)
-        val statement = statementData?.statement
-        Assert.assertEquals(StatementType.ARITHMETIC, statementData?.type)
+        val statement = ArithmeticHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(4, statement.variables.toArray().size)
             Assert.assertEquals(1, statement.functions.size)

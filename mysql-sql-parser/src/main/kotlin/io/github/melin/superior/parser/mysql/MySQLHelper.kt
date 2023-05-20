@@ -1,6 +1,6 @@
 package com.github.melin.superior.sql.parser.mysql
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
@@ -12,6 +12,7 @@ import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.parser.mysql.MySQLAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
@@ -40,11 +41,11 @@ object MySQLHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : StatementData {
+    @JvmStatic fun getStatementData(command: String): Statement {
         val trimCmd = StringUtils.trim(command)
 
-        if(StringUtils.startsWithIgnoreCase(trimCmd,"show")) {
-            return StatementData(StatementType.SHOW, null)
+        if (StringUtils.startsWithIgnoreCase(trimCmd,"show")) {
+            return DefaultStatement(StatementType.SHOW)
         }
 
         val charStream =
@@ -64,7 +65,7 @@ object MySQLHelper {
                 // first, try parsing with potentially faster SLL mode
                 val data = sqlVisitor.visit(parser.sqlStatement())
                 if (data == null) {
-                    return StatementData(StatementType.UNKOWN)
+                    return DefaultStatement(StatementType.UNKOWN)
                 } else {
                     return data
                 }
@@ -76,8 +77,8 @@ object MySQLHelper {
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
                 val data = sqlVisitor.visit(parser.sqlStatement())
-                if(data == null) {
-                    return StatementData(StatementType.UNKOWN)
+                if (data == null) {
+                    return DefaultStatement(StatementType.UNKOWN)
                 } else {
                     return data
                 }

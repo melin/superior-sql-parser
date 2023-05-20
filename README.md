@@ -29,10 +29,10 @@ val sql = "select bzdys, bzhyyh, bzdy, week, round((bzdy-bzdys)*100/bzdys, 2) " 
         "from (select lag(bzdy) over (order by week) bzdys, bzhyyh, bzdy, week " +
         "from (select count(distinct partner_code) bzhyyh, count(1) bzdy, week from tdl_dt2x_table)) limit 111"
 
-val statementData = SparkSQLHelper.getStatementData(sql)
-val statement = statementData.statement
+val statement = SparkSQLHelper.getStatementData(sql)
+
 if (statement is TableData) {
-    Assert.assertEquals(StatementType.SELECT, statementData.type)
+    Assert.assertEquals(StatementType.SELECT, statement.statementType)
     Assert.assertEquals(1, statement.inputTables.size)
     Assert.assertEquals("tdl_dt2x_table", statement.inputTables.get(0).tableName)
     Assert.assertEquals(111, statement.limit)
@@ -57,7 +57,7 @@ Assert.assertEquals(8, statementDatas.size)
 var statementData = statementDatas.get(7)
 var statement = statementData.statement
 if (statement is JobData) {
-    Assert.assertEquals(StatementType.JOB, statementData.type)
+    Assert.assertEquals(StatementType.JOB, statement.statementType)
     Assert.assertEquals("createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
     Assert.assertEquals("imei_test.euSaveHBase", statement.className)
     Assert.assertEquals("/xiaoyong.fu/sh/mobile/loan", statement.params?.get(5))
@@ -70,10 +70,10 @@ if (statement is JobData) {
 
 // MySQL
 val sql = "insert into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
-val statementData = MySQLHelper.getStatementData(sql)
-val statement = statementData.statement
+val statement = MySQLHelper.getStatementData(sql)
+
 if(statement is TableData) {
-    Assert.assertEquals(StatementType.INSERT_SELECT, statementData.type)
+    Assert.assertEquals(StatementType.INSERT_SELECT, statement.statementType)
     Assert.assertEquals("bigdata", statement.outpuTables.get(0).databaseName)
     Assert.assertEquals("user", statement.outpuTables.get(0).tableName)
     Assert.assertEquals(2, statement.inputTables.size)
@@ -86,10 +86,10 @@ val sql = """
     select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
 """.trimIndent()
 
-val statementData = PostgreSQLHelper.getStatementData(sql)
-val statement = statementData.statement
+val statement = PostgreSQLHelper.getStatementData(sql)
+
 if (statement is TableData) {
-    Assert.assertEquals(StatementType.SELECT, statementData.type)
+    Assert.assertEquals(StatementType.SELECT, statement.statementType)
     Assert.assertEquals(2, statement.inputTables.size)
 } else {
     Assert.fail()

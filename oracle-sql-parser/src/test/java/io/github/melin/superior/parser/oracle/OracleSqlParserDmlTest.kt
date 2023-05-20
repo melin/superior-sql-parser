@@ -13,10 +13,10 @@ class OracleSqlParserDmlTest {
             SELECT CUSTOMER_NAME, PRICE FROM FLINKUSER.ORDERS;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("FLINKUSER", "ORDERS"), statement.inputTables.get(0))
         } else {
@@ -34,10 +34,10 @@ class OracleSqlParserDmlTest {
             WHERE cte1.a = cte2.c;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statementData.type)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals(TableId("table1"), statement.inputTables.get(0))
         } else {
@@ -52,10 +52,10 @@ class OracleSqlParserDmlTest {
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is DeleteTable) {
-            Assert.assertEquals(StatementType.DELETE, statementData.type)
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -70,10 +70,10 @@ class OracleSqlParserDmlTest {
             (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is UpdateTable) {
-            Assert.assertEquals(StatementType.UPDATE, statementData.type)
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {
@@ -94,10 +94,10 @@ class OracleSqlParserDmlTest {
             FROM   pivot_source;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("pivot_dest", statement.outputTables.get(0).tableName)
             Assert.assertEquals(1, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -117,10 +117,10 @@ class OracleSqlParserDmlTest {
             FROM   source_tab;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -143,10 +143,10 @@ class OracleSqlParserDmlTest {
             FROM   source_tab;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -169,10 +169,10 @@ class OracleSqlParserDmlTest {
             FROM   source_tab;
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -187,10 +187,10 @@ class OracleSqlParserDmlTest {
             INSERT INTO films SELECT * FROM tmp_films WHERE date_prod < '2004-05-07';
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is InsertTable) {
-            Assert.assertEquals(StatementType.INSERT, statementData.type)
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.outputTables.size)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -213,10 +213,10 @@ class OracleSqlParserDmlTest {
                 WHERE (S.salary <= 8000);
         """.trimIndent()
 
-        val statementData = OracleSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = OracleSqlHelper.getStatementData(sql)
+        
         if (statement is MergeTable) {
-            Assert.assertEquals(StatementType.MERGE, statementData.type)
+            Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("bonuses", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
         } else {

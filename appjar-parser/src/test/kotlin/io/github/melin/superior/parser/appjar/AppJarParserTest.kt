@@ -40,13 +40,12 @@ class AppJarParserTest {
              --jars /user/jars/flink.jar
             """;
 
-        val statementDatas = AppJarHelper.getStatementData(sql)
-        Assert.assertEquals(16, statementDatas.size)
+        val statements = AppJarHelper.getStatementData(sql)
+        Assert.assertEquals(16, statements.size)
 
-        var statementData = statementDatas.get(0)
-        var statement = statementData.statement
+        var statement = statements.get(0)
         if (statement is SetStatement) {
-            Assert.assertEquals(StatementType.SET, statementData.type)
+            Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("flink.test", statement.key)
             Assert.assertEquals("hello world", statement.value)
         } else {
@@ -54,25 +53,23 @@ class AppJarParserTest {
         }
 
         var setCount = 0;
-        statementDatas.filter { it.type == StatementType.SET }.forEach{
+        statements.filter { it.statementType == StatementType.SET }.forEach{
             setCount = setCount + 1;
         }
 
         Assert.assertEquals(14, setCount)
 
-        statementData = statementDatas.get(11)
-        statement = statementData.statement
+        statement = statements.get(11)
         if (statement is UnSetStatement) {
-            Assert.assertEquals(StatementType.UNSET, statementData.type)
+            Assert.assertEquals(StatementType.UNSET, statement.statementType)
             Assert.assertEquals("flink.test", statement.key)
         } else {
             Assert.fail()
         }
 
-        statementData = statementDatas.get(15)
-        statement = statementData.statement
+        statement = statements.get(15)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("tet_test-demo_1.23-sdfd.jar", statement.resourceName)
             Assert.assertEquals("com.example.Demo1", statement.className)
             Assert.assertEquals(8, statement.params?.size)
@@ -90,10 +87,9 @@ class AppJarParserTest {
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(1, statementDatas.size)
 
-        var statementData = statementDatas.get(0)
-        var statement = statementData.statement
+        val statement = statementDatas.get(0)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("demo.jar", statement.resourceName)
             Assert.assertEquals("com.example.Demo", statement.className)
             Assert.assertEquals(3, statement.params?.size)
@@ -127,10 +123,9 @@ class AppJarParserTest {
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(14, statementDatas.size)
 
-        var statementData = statementDatas.get(13)
-        var statement = statementData.statement
+        val statement = statementDatas.get(13)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.dw.psi.StartDCJob", statement.className)
             Assert.assertEquals("1,3,sd,qw", statement.params?.get(0))
@@ -163,10 +158,9 @@ new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar com.example.dw.inde
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(16, statementDatas.size)
 
-        var statementData = statementDatas.get(15)
-        var statement = statementData.statement
+        val statement = statementDatas.get(15)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.dw.index.StartDCJob", statement.className)
             Assert.assertEquals("2018-03-18", statement.params?.get(1))
@@ -190,10 +184,9 @@ createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar imei_test.euSaveHBase gaea_of
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(8, statementDatas.size)
 
-        var statementData = statementDatas.get(7)
-        var statement = statementData.statement
+        val statement = statementDatas.get(7)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("imei_test.euSaveHBase", statement.className)
             Assert.assertEquals("/xiaoyong.fu/sh/mobile/loan", statement.params?.get(5))
@@ -222,10 +215,9 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(10, statementDatas.size)
 
-        var statementData = statementDatas.get(9)
-        var statement = statementData.statement
+        val statement = statementDatas.get(9)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("province-1.0-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("com.example.screen_dc.ScreenJob", statement.className)
             Assert.assertEquals("/xiaoyong.fu/2017-22-03/sh/mobile/loan/", statement.params?.get(0))
@@ -245,10 +237,9 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(1, statementDatas.size)
 
-        var statementData = statementDatas.get(0)
-        var statement = statementData.statement
+        val statement = statementDatas.get(0)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("raph.edgesSNAPSHOT.eventType.jar", statement.resourceName)
             Assert.assertEquals("com.example.graph.PhoenixCSVWriterJob", statement.className)
             Assert.assertEquals("hdfs://192.168.40.37,hdfs://192.168.39.130", statement.params?.get(6))
@@ -266,10 +257,9 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statementDatas = AppJarHelper.getStatementData(sql)
         Assert.assertEquals(6, statementDatas.size)
 
-        var statementData = statementDatas.get(5)
-        var statement = statementData.statement
+        val statement = statementDatas.get(5)
         if (statement is AppJarInfo) {
-            Assert.assertEquals(StatementType.APP_JAR, statementData.type)
+            Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals("/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar", statement.resourceName)
             Assert.assertEquals("com.example.pontus.core.Engine", statement.className)
             Assert.assertEquals(4, statement.params?.size)

@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.spark
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -25,7 +25,7 @@ object SparkStreamSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : ArrayList<StatementData> {
+    @JvmStatic fun getStatementData(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

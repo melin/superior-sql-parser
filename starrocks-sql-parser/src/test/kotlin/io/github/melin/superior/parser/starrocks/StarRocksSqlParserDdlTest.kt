@@ -25,8 +25,8 @@ class StarRocksSqlParserDdlTest {
             DISTRIBUTED BY HASH (id) BUCKETS 10;
         """.trimIndent()
 
-        val statementData = StarRocksHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = StarRocksHelper.getStatementData(sql)
+        
         if (statement is CreateTable) {
             val name = statement.tableId.tableName
             Assert.assertEquals("meta_role", name)
@@ -41,8 +41,8 @@ class StarRocksSqlParserDdlTest {
            DROP TABLE IF EXISTS example_db.My_table force;
         """.trimIndent()
 
-        val statementData = StarRocksHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = StarRocksHelper.getStatementData(sql)
+        
         if (statement is DropTable) {
             Assert.assertEquals("example_db", statement.tableId?.schemaName)
             Assert.assertEquals("My_table", statement.tableId?.tableName)

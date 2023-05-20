@@ -171,9 +171,6 @@
                     <compilerPlugins>
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
-                    <pluginOptions>
-                        <option>no-arg:annotation=com.github.melin.superior.DefaultConstructor</option>
-                    </pluginOptions>
                 </configuration>
             </plugin>
             <plugin>

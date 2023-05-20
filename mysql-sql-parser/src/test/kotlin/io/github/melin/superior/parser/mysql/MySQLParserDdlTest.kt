@@ -27,11 +27,10 @@ class MySQLParserDdlTest {
             CREATE DATABASE IF NOT EXISTS "bigdata"
         """.trimIndent()
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
         if(statement is CreateDatabase) {
             val name = statement.databaseName
-            Assert.assertEquals(StatementType.CREATE_NAMESPACE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_DATABASE, statement.statementType)
             Assert.assertEquals("bigdata", name)
         } else {
             Assert.fail()
@@ -42,11 +41,10 @@ class MySQLParserDdlTest {
     fun dropDatabaseTest() {
         val sql = "DROP DATABASE IF EXISTS bigdata"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
-        if(statement is DropDatabase) {
+        val statement = MySQLHelper.getStatementData(sql)
+        if (statement is DropDatabase) {
             val name = statement.databaseName
-            Assert.assertEquals(StatementType.DROP_NAMESPACE, statementData.type)
+            Assert.assertEquals(StatementType.DROP_DATABASE, statement.statementType)
             Assert.assertEquals("bigdata", name)
         } else {
             Assert.fail()
@@ -71,10 +69,9 @@ class MySQLParserDdlTest {
                 "  UNIQUE KEY `appname_UNIQUE` (`appname`,`profile`)\n" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='系统参数配置';"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId.schemaName)
             Assert.assertEquals("dc_config", statement.tableId.tableName)
             Assert.assertEquals("系统参数配置", statement.comment)
@@ -107,10 +104,10 @@ class MySQLParserDdlTest {
                 "    UNIQUE KEY `token` (`token`)\n" +
                 "    ) ENGINE=InnoDB AUTO_INCREMENT=7564 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("box_partner", statement.tableId.tableName)
         } else {
             Assert.fail()
@@ -129,10 +126,10 @@ class MySQLParserDdlTest {
                 "  PRIMARY KEY (`id`)\n" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=4475 DEFAULT CHARSET=utf8 COMMENT='决策流与模型关系表'"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("decision_flow_model", statement.tableId.tableName)
         } else {
             Assert.fail()
@@ -172,10 +169,10 @@ class MySQLParserDdlTest {
                 " PARTITION part10 VALUES LESS THAN (11) COMMENT = '11月份' ENGINE = InnoDB,\n" +
                 " PARTITION part11 VALUES LESS THAN (12) COMMENT = '12月份' ENGINE = InnoDB)"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("app_channel_daily_report", statement.tableId.tableName)
             Assert.assertEquals("PARTITION", statement.partitionType)
         } else {
@@ -197,10 +194,10 @@ class MySQLParserDdlTest {
     ) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8
             """
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("decision_flow_model", statement.tableId.tableName)
         } else {
             Assert.fail()
@@ -225,10 +222,10 @@ class MySQLParserDdlTest {
 ) ENGINE=InnoDB AUTO_INCREMENT=75306 DEFAULT CHARSET=utf8
             """
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("dw_job_analysis_detail", statement.tableId.tableName)
         } else {
             Assert.fail()
@@ -239,10 +236,10 @@ class MySQLParserDdlTest {
     fun dropTableTest() {
         val sql = "DROP table IF EXISTS bigdata.users"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is DropTable) {
-            Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("users", statement.tableId?.tableName)
         } else {
@@ -253,10 +250,10 @@ class MySQLParserDdlTest {
     @Test
     fun renameTableTest() {
         val sql = "RENAME TABLE `datacompute`.`users_quan` TO  `datacompute`.`dc_users`\n"
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is AlterTable) {
-            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals(AlterType.RENAME_TABLE, statement.alterType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
@@ -271,12 +268,12 @@ class MySQLParserDdlTest {
     fun analyzeTableTest() {
         val sql = "analyze table bigdata.users"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if (statement is AnalyzeTable) {
             val table = statement.tableIds.get(0)
 
-            Assert.assertEquals(StatementType.ANALYZE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ANALYZE_TABLE, statement.statementType)
             Assert.assertEquals("bigdata", table.schemaName)
             Assert.assertEquals("users", table.tableName)
         } else {
@@ -288,10 +285,10 @@ class MySQLParserDdlTest {
     fun truncateTableTest() {
         val sql = "TRUNCATE TABLE test.user"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is TruncateTable) {
-            Assert.assertEquals(StatementType.TRUNCATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.TRUNCATE_TABLE, statement.statementType)
             Assert.assertEquals("test", statement.tableId.schemaName)
             Assert.assertEquals("user", statement.tableId.tableName)
         } else {
@@ -303,10 +300,10 @@ class MySQLParserDdlTest {
     fun changeColumnTest() {
         val sql = "ALTER TABLE `datacompute`.`log_collect_config` \n" +
                 "CHANGE COLUMN `partition_type` `partition_type1` VARCHAR(45) NULL DEFAULT 'day' COMMENT '分区类型：day, hour, minute' ;"
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is AlterTable) {
-            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("log_collect_config", statement.tableId.tableName)
 
@@ -322,10 +319,10 @@ class MySQLParserDdlTest {
     @Test
     fun modifyColumnTest() {
         val sql = "ALTER TABLE t1 MODIFY age BIGINT NOT NULL;"
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is AlterTable) {
-            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("t1", statement.tableId.tableName)
 
             val action = statement.firstAction() as AlterColumnAction
@@ -340,10 +337,10 @@ class MySQLParserDdlTest {
     @Test
     fun addColumnTest() {
         val sql = "ALTER TABLE `datacompute`.`users_quan` ADD COLUMN `age` VARCHAR(45) NULL DEFAULT 18 COMMENT '年龄' AFTER `username`"
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is AlterTable) {
-            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
 
@@ -359,10 +356,10 @@ class MySQLParserDdlTest {
     @Test
     fun dropColumnTest() {
         val sql = "ALTER TABLE `datacompute`.`users_quan` DROP COLUMN `age`;"
-        val statementData = MySQLHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        
         if(statement is AlterTable) {
-            Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
 
@@ -378,24 +375,24 @@ class MySQLParserDdlTest {
     fun addUNIQUETest() {
         val sql = "ALTER TABLE `datacompute`.`dc_project_member`\n" +
                 "    ADD UNIQUE INDEX `uk_prj_user` (`project_code` ASC, `user_id` ASC);"
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
     fun addUNIQUETest1() {
         val sql = "ALTER TABLE amount_all ADD UNIQUE uk_type_time(etype, time)"
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
     fun addIndexTest() {
         val sql = "ALTER TABLE sj_resource_charges add index index_test (name);"
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             val createIndex = statement.firstAction() as CreateIndex
             Assert.assertEquals("index_test", createIndex.indexName)
@@ -405,17 +402,17 @@ class MySQLParserDdlTest {
     @Test
     fun addIndexTest1() {
         val sql = "ALTER TABLE tablename ADD INDEX INDEX_NAME  (school_id, settlement_time)"
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
     fun dropIndexTest1() {
         val sql = "ALTER TABLE table_name DROP INDEX index_name"
         val sqls = MySQLHelper.splitAlterSql(sql);
-        val statementData = MySQLHelper.getStatementData(sqls.get(0))
+        val statement = MySQLHelper.getStatementData(sqls.get(0))
         Assert.assertEquals("ALTER TABLE table_name DROP INDEX index_name", sqls.get(0))
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
@@ -462,7 +459,7 @@ class MySQLParserDdlTest {
         Assert.assertEquals("ALTER TABLE `channel_status_log` ADD `config_content` TEXT  NULL  COMMENT '配置内容'  AFTER `district_name`", sqls.get(0))
 
         val statement = MySQLHelper.getStatementData(sqls.get(0))
-        Assert.assertEquals(StatementType.ALTER_TABLE, statement.type)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
@@ -474,7 +471,7 @@ class MySQLParserDdlTest {
         Assert.assertEquals("ALTER TABLE `channel_status_log` ADD `config_content` TEXT  NULL  COMMENT '配置内容'  AFTER `district_name`", sqls.get(0))
 
         val statement = MySQLHelper.getStatementData(sqls.get(0))
-        Assert.assertEquals(StatementType.ALTER_TABLE, statement.type)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
@@ -489,7 +486,7 @@ class MySQLParserDdlTest {
         Assert.assertEquals("ALTER TABLE `freya`.`sample_set` DROP COLUMN `create_id`", sqls.get(0))
 
         val statement = MySQLHelper.getStatementData(sqls.get(0))
-        Assert.assertEquals(StatementType.ALTER_TABLE, statement.type)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
@@ -504,16 +501,16 @@ class MySQLParserDdlTest {
         Assert.assertEquals("alter table event_field_total ADD COLUMN event_total int(11) DEFAULT '0' COMMENT '事件总数'", sqls.get(0))
 
         val statement = MySQLHelper.getStatementData(sqls.get(0))
-        Assert.assertEquals(StatementType.ALTER_TABLE, statement.type)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
     }
 
     @Test
     fun useTest() {
         var sql = "use bigdata"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.USE, statementData.type)
-        val statement = statementData.statement
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.USE, statement.statementType)
+        
         if (statement is UseDatabase) {
             Assert.assertEquals("bigdata", statement.databaseName)
         } else {
@@ -525,10 +522,10 @@ class MySQLParserDdlTest {
     fun createIndexTest() {
         val sql = "CREATE INDEX test_index ON demo.orders (column_name)"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
             val createIndex = statement.firstAction() as CreateIndex
@@ -540,10 +537,10 @@ class MySQLParserDdlTest {
     fun dropIndexTest() {
         val sql = "DROP INDEX test_index ON demo.orders"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(AlterType.DROP_INDEX, statement.alterType)
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
@@ -556,10 +553,10 @@ class MySQLParserDdlTest {
     fun truncatePartitionTest() {
         val sql = "ALTER TABLE demo.orders TRUNCATE PARTITION p1998\n"
 
-        val statementData = MySQLHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = MySQLHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(AlterType.TRUNCATE_PARTITION, statement.alterType)
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)

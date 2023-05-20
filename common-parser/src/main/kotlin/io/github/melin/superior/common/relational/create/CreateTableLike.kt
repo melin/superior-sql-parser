@@ -2,6 +2,7 @@ package io.github.melin.superior.common.relational.create
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
+import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
@@ -12,6 +13,7 @@ data class CreateTableLike(
     var external: Boolean = false,
     var temporary: Boolean = false
 ) : AbsTableStatement() {
-    override val privilegeType: PrivilegeType = PrivilegeType.CREATE
-    override val sqlType: SqlType = SqlType.DDL
+    override val statementType = StatementType.CREATE_TABLE_AS_LIKE
+    override val privilegeType = PrivilegeType.CREATE
+    override val sqlType = SqlType.DDL
 }

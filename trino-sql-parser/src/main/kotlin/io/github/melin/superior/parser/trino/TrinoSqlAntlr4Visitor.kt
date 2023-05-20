@@ -1,7 +1,8 @@
 package io.github.melin.superior.parser.trino
 
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.DefaultStatement
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
+class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
@@ -28,7 +29,7 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
         this.command = command
     }
 
-    override fun visit(tree: ParseTree?): StatementData? {
+    override fun visit(tree: ParseTree?): Statement? {
         val data = super.visit(tree)
 
         if (data == null) {
@@ -38,24 +39,23 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
         return data;
     }
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): StatementData? {
+    override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
 
             val limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
-            val queryStmt = QueryStmt(inputTables, limit)
-            return StatementData(StatementType.SELECT, queryStmt)
+            return QueryStmt(inputTables, limit)
         } else {
             return null
         }
     }
 
-    override fun visitCreateTableAsSelect(ctx: TrinoSqlBaseParser.CreateTableAsSelectContext): StatementData? {
+    override fun visitCreateTableAsSelect(ctx: TrinoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = createTableSource(ctx.qualifiedName())
         val createTable = CreateTableAsSelect(tableId)
@@ -71,22 +71,22 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<StatementData>() {
         super.visitQuery(ctx.query())
 
         createTable.inputTables.addAll(inputTables)
-        return StatementData(StatementType.CREATE_TABLE_AS_SELECT, createTable)
+        return createTable
     }
 
-    override fun visitDropTable(ctx: TrinoSqlBaseParser.DropTableContext): StatementData? {
+    override fun visitDropTable(ctx: TrinoSqlBaseParser.DropTableContext): Statement? {
         val tableId = createTableSource(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = ctx.EXISTS() != null
-        return StatementData(StatementType.DROP_TABLE, dropTable)
+        return dropTable
     }
 
-    override fun visitExplain(ctx: TrinoSqlBaseParser.ExplainContext): StatementData? {
-        return StatementData(StatementType.EXPLAIN)
+    override fun visitExplain(ctx: TrinoSqlBaseParser.ExplainContext): Statement? {
+        return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitQualifiedName(ctx: TrinoSqlBaseParser.QualifiedNameContext): StatementData? {
+    override fun visitQualifiedName(ctx: TrinoSqlBaseParser.QualifiedNameContext): Statement? {
         if (!(ctx.parent is TrinoSqlBaseParser.TableNameContext)) {
             return null
         }

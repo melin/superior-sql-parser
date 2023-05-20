@@ -12,20 +12,20 @@ import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
 
-class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementData>() {
+class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>() {
 
     private var command: String? = null
 
-    private val tableDatas = ArrayList<StatementData>()
+    private val tableDatas = ArrayList<Statement>()
 
-    override fun visitSqlStatement(ctx: SparkStreamSqlParser.SqlStatementContext?): StatementData {
+    override fun visitSqlStatement(ctx: SparkStreamSqlParser.SqlStatementContext?): Statement {
         val tableData = super.visitSqlStatement(ctx)
         tableDatas.add(tableData)
 
         return tableData;
     }
 
-    override fun visitCreateStreamTable(ctx: SparkStreamSqlParser.CreateStreamTableContext): StatementData {
+    override fun visitCreateStreamTable(ctx: SparkStreamSqlParser.CreateStreamTableContext): Statement {
         val tableName = ctx.tableName.table.ID().text
         val columns = if (ctx.columns != null) {
             ctx.columns.children
@@ -57,35 +57,33 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<StatementDat
             }
         }
 
-        val createTable = CreateTable(TableId(tableName), null, null, null, columns, properties)
-        return StatementData(StatementType.CREATE_TABLE, createTable)
+        return CreateTable(TableId(tableName), null, null, null, columns, properties)
     }
 
-    override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): StatementData {
+    override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): Statement {
         val key = ctx.setKeyExpr().text
         var value = StringUtil.cleanQuote(ctx.valueKeyExpr().text)
         value = StringUtil.cleanQuote(value)
 
-        val data = SetStatement(key, value)
-        return StatementData(StatementType.SET, data)
+        return SetStatement(key, value)
     }
 
-    override fun visitInsertStatement(ctx: SparkStreamSqlParser.InsertStatementContext): StatementData {
+    override fun visitInsertStatement(ctx: SparkStreamSqlParser.InsertStatementContext): Statement {
         val schemaName = if (ctx.tableName.db != null) ctx.tableName.db.ID().text else null;
         val tableName = ctx.tableName.table.ID().text
 
         val tableId = TableId(schemaName, tableName)
         val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
-        val table = InsertTable(InsertMode.INTO, tableId)
-        table.querySql = querySql
-        return StatementData(StatementType.INSERT, table)
+        val insertTable = InsertTable(InsertMode.INTO, tableId)
+        insertTable.querySql = querySql
+        return insertTable
     }
 
     fun setCommand(command: String) {
         this.command = command
     }
 
-    fun getTableDatas(): ArrayList<StatementData> {
+    fun getTableDatas(): ArrayList<Statement> {
         return tableDatas
     }
 }

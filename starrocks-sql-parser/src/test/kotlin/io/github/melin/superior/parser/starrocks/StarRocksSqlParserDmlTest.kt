@@ -14,8 +14,8 @@ class StarRocksSqlParserDmlTest {
             SELECT * FROM hive1.hive_db.hive_table limit 1 
         """.trimIndent()
 
-        val statementData = StarRocksHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = StarRocksHelper.getStatementData(sql)
+        
         if (statement is QueryStmt) {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),

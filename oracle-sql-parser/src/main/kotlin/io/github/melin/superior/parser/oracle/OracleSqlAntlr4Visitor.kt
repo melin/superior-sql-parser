@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.tree.RuleNode
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
-class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
+class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
@@ -33,21 +33,21 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visit(tree: ParseTree?): StatementData {
-        val statementData = super.visit(tree)
+    override fun visit(tree: ParseTree?): Statement {
+        val statement = super.visit(tree)
 
-        if (statementData == null) {
+        if (statement == null) {
             throw SQLParserException("不支持的SQL")
         }
 
-        return statementData;
+        return statement;
     }
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitCreate_table(ctx: OracleParser.Create_tableContext): StatementData {
+    override fun visitCreate_table(ctx: OracleParser.Create_tableContext): Statement {
         currentOptType = StatementType.CREATE_TABLE
         val schemaName = if (ctx.schema_name() != null) ctx.schema_name().text else null
         val tableName = ctx.table_name().text
@@ -85,11 +85,10 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
                 ColumnRel(columnName, dataType, defaultExpr = defaultExpr, nullable = nullable, isPk = isPk)
             }
 
-        val createTable = CreateTable(tableId, columnRels = columnRels)
-        return StatementData(currentOptType, createTable)
+        return CreateTable(tableId, columnRels = columnRels)
     }
 
-    override fun visitCreate_view(ctx: OracleParser.Create_viewContext): StatementData {
+    override fun visitCreate_view(ctx: OracleParser.Create_viewContext): Statement {
         currentOptType = StatementType.CREATE_VIEW
         val schemaName = if (ctx.schema_name() != null) ctx.schema_name().text else null
         val tableName = ctx.v.text
@@ -101,10 +100,10 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
         super.visitSelect_only_statement(ctx.select_only_statement())
         createView.inputTables.addAll(inputTables)
-        return StatementData(currentOptType, createView)
+        return createView
     }
 
-    override fun visitCreate_materialized_view(ctx: OracleParser.Create_materialized_viewContext): StatementData {
+    override fun visitCreate_materialized_view(ctx: OracleParser.Create_materialized_viewContext): Statement {
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         val tableId = parseTableViewName(ctx.tableview_name())
         //val ifNotExists = if (ctx.IF_P() != null) true else false
@@ -112,10 +111,10 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
         super.visitSelect_only_statement(ctx.select_only_statement())
         createView.inputTables = inputTables
-        return StatementData(currentOptType, createView)
+        return createView
     }
 
-    override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): StatementData {
+    override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): Statement {
         super.visitCreate_procedure_body(ctx)
         val procedureName = ctx.procedure_name()
         val procedureId = if (procedureName.id_expression() != null) {
@@ -126,10 +125,10 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         val procedure = CreateProcedure(procedureId)
         procedure.inputTables = inputTables
         procedure.outputTables = outputTables
-        return StatementData(StatementType.CREATE_PROCEDURE, procedure)
+        return procedure
     }
 
-    override fun visitCreate_function_body(ctx: OracleParser.Create_function_bodyContext): StatementData {
+    override fun visitCreate_function_body(ctx: OracleParser.Create_function_bodyContext): Statement {
         super.visitCreate_function_body(ctx)
         val funcName = ctx.function_name()
         val functionId = if (funcName.id_expression() != null) {
@@ -140,54 +139,52 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         val function = CreateFunction(functionId)
 
         function.inputTables = inputTables
-        return StatementData(StatementType.CREATE_FUNCTION, function)
+        return function
     }
 
-    override fun visitAnonymous_block(ctx: OracleParser.Anonymous_blockContext?): StatementData {
+    override fun visitAnonymous_block(ctx: OracleParser.Anonymous_blockContext?): Statement {
         super.visitAnonymous_block(ctx)
         val procedure = CreateProcedure()
         procedure.inputTables = inputTables
-        return StatementData(StatementType.CREATE_PROCEDURE, procedure)
+        return procedure
     }
 
-    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): StatementData {
-        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.UNKOWN))
+    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): Statement {
+        return AlterTable(AlterType.UNKOWN)
     }
 
-    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): StatementData {
-        return StatementData(StatementType.ALTER_TABLE, AlterTable(AlterType.ALTER_VIEW))
+    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): Statement {
+        return AlterTable(AlterType.ALTER_VIEW)
     }
 
-    override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): StatementData {
+    override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement {
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
         val queryStmt = QueryStmt(inputTables)
 
         queryStmts.add(queryStmt)
-        return StatementData(StatementType.SELECT, queryStmt)
+        return queryStmt
     }
 
-    override fun visitDelete_statement(ctx: OracleParser.Delete_statementContext): StatementData {
+    override fun visitDelete_statement(ctx: OracleParser.Delete_statementContext): Statement {
         currentOptType = StatementType.DELETE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
         addOutputTableId(tableId)
         super.visitWhere_clause(ctx.where_clause())
 
-        val update = DeleteTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitUpdate_statement(ctx: OracleParser.Update_statementContext): StatementData {
+    override fun visitUpdate_statement(ctx: OracleParser.Update_statementContext): Statement {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
         addOutputTableId(tableId)
         super.visitWhere_clause(ctx.where_clause())
 
-        val update = UpdateTable(tableId, inputTables)
-        return StatementData(currentOptType, update)
+        return UpdateTable(tableId, inputTables)
     }
 
-    override fun visitInsert_statement(ctx: OracleParser.Insert_statementContext): StatementData {
+    override fun visitInsert_statement(ctx: OracleParser.Insert_statementContext): Statement {
         currentOptType = StatementType.INSERT
 
         val insertTable = if (ctx.single_table_insert() != null) {
@@ -224,7 +221,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
 
         insertTable.inputTables.addAll(inputTables)
         insertTable.outputTables.addAll(outputTables)
-        return StatementData(StatementType.INSERT, insertTable)
+        return insertTable
     }
 
     private fun addOutputTableId(list: List<Multi_table_elementContext>) {
@@ -236,7 +233,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         }
     }
 
-    override fun visitMerge_statement(ctx: OracleParser.Merge_statementContext): StatementData {
+    override fun visitMerge_statement(ctx: OracleParser.Merge_statementContext): Statement {
         currentOptType = StatementType.MERGE
 
         val mergeTableId = parseTableViewName(ctx.tableview_name())
@@ -244,34 +241,31 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         super.visitSelected_tableview(ctx.selected_tableview())
 
         mergeTable.inputTables = inputTables
-        return StatementData(StatementType.MERGE, mergeTable)
+        return mergeTable
     }
 
-    override fun visitComment_on_column(ctx: OracleParser.Comment_on_columnContext): StatementData {
+    override fun visitComment_on_column(ctx: OracleParser.Comment_on_columnContext): Statement {
         val objValue = ctx.column_name().text
         val isNull = false
         val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
-        val comment = CommentData(text, isNull, "COLUMN", objValue)
-        return StatementData(StatementType.COMMENT, comment)
+        return CommentData(text, isNull, "COLUMN", objValue)
     }
 
-    override fun visitComment_on_table(ctx: OracleParser.Comment_on_tableContext): StatementData {
+    override fun visitComment_on_table(ctx: OracleParser.Comment_on_tableContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
         val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
-        val comment = CommentData(text, isNull, "TABLE", objValue)
-        return StatementData(StatementType.COMMENT, comment)
+        return CommentData(text, isNull, "TABLE", objValue)
     }
 
-    override fun visitComment_on_materialized(ctx: OracleParser.Comment_on_materializedContext): StatementData {
+    override fun visitComment_on_materialized(ctx: OracleParser.Comment_on_materializedContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
         val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
-        val comment = CommentData(text, isNull, "MATERIALIZED VIEW", objValue)
-        return StatementData(StatementType.COMMENT, comment)
+        return CommentData(text, isNull, "MATERIALIZED VIEW", objValue)
     }
 
-    override fun visitSubquery_factoring_clause(ctx: OracleParser.Subquery_factoring_clauseContext): StatementData? {
+    override fun visitSubquery_factoring_clause(ctx: OracleParser.Subquery_factoring_clauseContext): Statement? {
         ctx.factoring_element().forEach {
             cteTempTables.add(TableId(it.query_name().text))
         }
@@ -279,7 +273,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<StatementData>() {
         return super.visitSubquery_factoring_clause(ctx)
     }
 
-    override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): StatementData? {
+    override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): Statement? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
             currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||

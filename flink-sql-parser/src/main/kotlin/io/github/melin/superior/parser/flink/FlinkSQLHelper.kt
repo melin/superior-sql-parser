@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.flink
 
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -31,7 +31,7 @@ object FlinkSQLHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : StatementData {
+    @JvmStatic fun getStatementData(command: String): Statement {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

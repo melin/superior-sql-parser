@@ -31,10 +31,10 @@ class PostgreSqlParserDdlTest {
             ) PARTITION BY RANGE (age); 
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertTrue(statement.temporary)
             Assert.assertEquals(TableId("test", "public", "authors"), statement.tableId)
             Assert.assertEquals(4, statement.columnRels?.size)
@@ -61,10 +61,10 @@ class PostgreSqlParserDdlTest {
             WITH CASCADED CHECK OPTION;
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateView) {
-            Assert.assertEquals(StatementType.CREATE_VIEW, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
             Assert.assertEquals("comedies", statement.tableId.tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
@@ -88,10 +88,10 @@ class PostgreSqlParserDdlTest {
                   invoice_date;
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CreateMaterializedView) {
-            Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statementData.type)
+            Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals("sales_summary", statement.tableId.tableName)
 
             Assert.assertEquals(1, statement.inputTables.size)
@@ -106,10 +106,10 @@ class PostgreSqlParserDdlTest {
             drop TABLE test.public.authors
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is DropTable) {
-            Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
             Assert.assertEquals(TableId("test", "public", "authors"), statement.tableId)
         } else {
             Assert.fail()
@@ -122,10 +122,10 @@ class PostgreSqlParserDdlTest {
             drop TABLE authors, tests
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is DropTable) {
-            Assert.assertEquals(StatementType.DROP_TABLE, statementData.type)
+            Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
             Assert.assertEquals(TableId("authors"), statement.tableId)
             Assert.assertEquals(2, statement.tableIds.size)
         } else {
@@ -137,10 +137,10 @@ class PostgreSqlParserDdlTest {
     fun createIndexTest() {
         val sql = "CREATE UNIQUE INDEX title_idx ON films (title) INCLUDE (director, rating);\n"
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(AlterType.ADD_INDEX, statement.alterType)
             Assert.assertEquals(TableId("films"), statement.tableId)
@@ -153,10 +153,10 @@ class PostgreSqlParserDdlTest {
     fun dropIndexTest() {
         val sql = "DROP INDEX title_idx"
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(AlterType.DROP_INDEX, statement.alterType)
             val dropIndex = statement.firstAction() as DropIndex
@@ -168,10 +168,10 @@ class PostgreSqlParserDdlTest {
     fun addPartitonTest() {
         val sql = "create table pkslow_person_r1 partition of pkslow_person_r for values from (MINVALUE) to (10);  \n"
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statementData.type)
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        val statement = statementData.statement
+        
         if (statement is AlterTable) {
             Assert.assertEquals(AlterType.ADD_PARTITION, statement.alterType)
             Assert.assertEquals("pkslow_person_r", statement.tableId.tableName)
@@ -187,10 +187,10 @@ class PostgreSqlParserDdlTest {
             COMMENT ON TABLE my_schema.my_table IS 'Employee Information';
         """.trimIndent()
 
-        val statementData = PostgreSqlHelper.getStatementData(sql)
-        val statement = statementData.statement
+        val statement = PostgreSqlHelper.getStatementData(sql)
+        
         if (statement is CommentData) {
-            Assert.assertEquals(StatementType.COMMENT, statementData.type)
+            Assert.assertEquals(StatementType.COMMENT, statement.statementType)
             Assert.assertEquals("Employee Information", statement.comment)
             Assert.assertFalse(statement.isNull)
         }

@@ -1,8 +1,8 @@
 package io.github.melin.superior.parser.appjar
 
 import com.github.melin.superior.sql.parser.util.StringUtil
-import io.github.melin.superior.common.relational.StatementData
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.common.UnSetStatement
 import io.github.melin.superior.parser.job.antlr4.AppJarParser
@@ -13,20 +13,20 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by binsong.li on 2018/3/31 下午1:44
  */
-class AppJarAntlr4Visitor : AppJarParserBaseVisitor<StatementData>() {
+class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     private var command: String? = null
 
-    private val tableDatas = ArrayList<StatementData>()
+    private val tableDatas = ArrayList<Statement>()
 
-    override fun visitJobTask(ctx: AppJarParser.JobTaskContext): StatementData {
+    override fun visitJobTask(ctx: AppJarParser.JobTaskContext): Statement {
         val tableData = super.visitJobTask(ctx)
         tableDatas.add(tableData)
 
         return tableData;
     }
 
-    override fun visitJobStatement(ctx: AppJarParser.JobStatementContext): StatementData {
+    override fun visitJobStatement(ctx: AppJarParser.JobStatementContext): Statement {
         val resourceName = ctx.resourceNameExpr().text
         val className = ctx.classNameExpr().text
 
@@ -47,23 +47,20 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<StatementData>() {
             }
         }
 
-        val jobData = AppJarInfo(resourceName, className, params)
-        return StatementData(StatementType.APP_JAR, jobData)
+        return AppJarInfo(resourceName, className, params)
     }
 
-    override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): StatementData {
+    override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): Statement {
         val key = ctx.keyExpr().text
         var value = StringUtils.substring(command, ctx.value.start.startIndex, ctx.value.stop.stopIndex + 1)
         value = StringUtil.cleanQuote(value)
 
-        val data = SetStatement(key, value)
-        return StatementData(StatementType.SET, data)
+        return SetStatement(key, value)
     }
 
-    override fun visitUnsetStatement(ctx: AppJarParser.UnsetStatementContext): StatementData {
+    override fun visitUnsetStatement(ctx: AppJarParser.UnsetStatementContext): Statement {
         val key = ctx.keyExpr().text
-        val data = UnSetStatement(key)
-        return StatementData(StatementType.UNSET, data)
+        return UnSetStatement(key)
     }
 
     private fun replaceWhitespace(str: String?): String? {
@@ -86,7 +83,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<StatementData>() {
         return str
     }
 
-    fun getTableDatas(): ArrayList<StatementData> {
+    fun getTableDatas(): ArrayList<Statement> {
         return tableDatas
     }
 

@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.sqlserver
 
 import io.github.melin.superior.common.SQLParserException
-import io.github.melin.superior.common.relational.StatementData
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -14,14 +14,14 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<StatementData>() {
+class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
 
-    override fun visit(tree: ParseTree?): StatementData {
+    override fun visit(tree: ParseTree?): Statement {
         val data = super.visit(tree)
 
         if (data == null) {
@@ -31,24 +31,24 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<StatementData>() {
         return data;
     }
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: StatementData?): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSelect_statement(ctx: SqlServerParser.Select_statementContext): StatementData? {
+    override fun visitSelect_statement(ctx: SqlServerParser.Select_statementContext): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitSelect_statement(ctx)
 
             val queryStmt = QueryStmt(inputTables, limit)
             queryStmt.inputTables = inputTables
-            return StatementData(StatementType.SELECT, queryStmt)
+            return queryStmt
         } else {
             return null
         }
     }
 
-    override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): StatementData? {
+    override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): Statement? {
         if (currentOptType == StatementType.SELECT) {
             if (ctx.full_table_name() != null) {
                 val tableId = parseTableName(ctx.full_table_name())
