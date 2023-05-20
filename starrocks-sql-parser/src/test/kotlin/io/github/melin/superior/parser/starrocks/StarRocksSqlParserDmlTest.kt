@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.starrocks
 
+import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -15,8 +16,8 @@ class StarRocksSqlParserDmlTest {
         """.trimIndent()
 
         val statement = StarRocksHelper.getStatementData(sql)
-        
         if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),
                 statement.inputTables.get(0))
@@ -34,8 +35,8 @@ class StarRocksSqlParserDmlTest {
         """.trimIndent()
 
         val statement = StarRocksHelper.getStatementData(sql)
-
         if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("bigdata", "users"),
                 statement.inputTables.get(0))
