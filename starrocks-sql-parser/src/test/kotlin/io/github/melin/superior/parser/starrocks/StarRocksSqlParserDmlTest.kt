@@ -4,6 +4,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.UpdateTable
 import org.junit.Assert
@@ -142,6 +143,40 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest1() {
+        val sql = """
+            INSERT INTO test SELECT * FROM test2;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals("test", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("test2", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest2() {
+        val sql = """
+            INSERT INTO test PARTITION(p1, p2) WITH LABEL `label1` SELECT * FROM test2;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals("test", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("test2", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }

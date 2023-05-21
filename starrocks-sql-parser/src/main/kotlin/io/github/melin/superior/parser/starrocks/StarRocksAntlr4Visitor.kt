@@ -10,14 +10,11 @@ import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
-import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser.*
@@ -151,6 +148,19 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         visit(ctx.fromClause())
 
         return UpdateTable(tableId, inputTables)
+    }
+
+    override fun visitInsertStatement(ctx: InsertStatementContext): Statement {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableName(ctx.qualifiedName())
+        visitQueryStatement(ctx.queryStatement())
+
+        val insertTable =
+            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, tableId)
+            else InsertTable(InsertMode.OVERWRITE, tableId)
+
+        insertTable.inputTables.addAll(inputTables)
+        return insertTable
     }
 
     override fun visitQualifiedName(ctx: QualifiedNameContext): Statement? {
