@@ -3,7 +3,9 @@ package io.github.melin.superior.parser.starrocks
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.UpdateTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -40,6 +42,106 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("bigdata", "users"),
                 statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest0() {
+        val sql = """
+            DELETE FROM my_table PARTITION p1 WHERE k1 = 3;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
+            Assert.assertEquals("my_table", statement.tableId.tableName)
+            Assert.assertEquals(0, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest1() {
+        val sql = """
+            DELETE FROM score_board
+            WHERE name IN (select name from users where country = "China");
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
+            Assert.assertEquals("score_board", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("users", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest2() {
+        val sql = """
+            WITH foo_producers as (
+                SELECT * from producers
+                where producers.name = 'foo'
+            )
+            DELETE FROM films USING foo_producers
+            WHERE producer_id = foo_producers.id;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
+            Assert.assertEquals("films", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("producers", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest1() {
+        val sql = """
+            UPDATE employees
+            SET sales_count = sales_count + 1           
+            FROM accounts
+            WHERE accounts.name = 'Acme Corporation'
+               AND employees.id = accounts.sales_person;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest2() {
+        val sql = """
+            WITH acme_accounts as (
+                SELECT * from accounts
+                 WHERE accounts.name = 'Acme Corporation'
+            )
+            UPDATE employees SET sales_count = sales_count + 1
+            FROM acme_accounts
+            WHERE employees.id = acme_accounts.sales_person;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }

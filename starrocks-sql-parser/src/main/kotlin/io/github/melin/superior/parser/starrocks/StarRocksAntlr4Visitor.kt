@@ -10,7 +10,9 @@ import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.UpdateTable
 import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
@@ -37,10 +39,6 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
 
     fun setCommand(command: String) {
         this.command = command
-    }
-
-    override fun visit(tree: ParseTree): Statement {
-        return super.visit(tree)
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -129,6 +127,30 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
 
         queryStmts.add(queryStmt)
         return queryStmt
+    }
+
+    override fun visitDeleteStatement(ctx: DeleteStatementContext): Statement {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.withClause() != null) {
+            visitWithClause(ctx.withClause())
+        }
+        visit(ctx.where)
+        visit(ctx.relations())
+
+        return DeleteTable(tableId, inputTables)
+    }
+
+    override fun visitUpdateStatement(ctx: UpdateStatementContext): Statement {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.withClause() != null) {
+            visitWithClause(ctx.withClause())
+        }
+        visit(ctx.where)
+        visit(ctx.fromClause())
+
+        return UpdateTable(tableId, inputTables)
     }
 
     override fun visitQualifiedName(ctx: QualifiedNameContext): Statement? {
