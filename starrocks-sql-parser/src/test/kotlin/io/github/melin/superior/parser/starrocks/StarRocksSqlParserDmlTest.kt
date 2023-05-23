@@ -15,13 +15,15 @@ class StarRocksSqlParserDmlTest {
     @Test
     fun selectTest0() {
         val sql = """
-            SELECT * FROM hive1.hive_db.hive_table limit 1 
+            SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20
         """.trimIndent()
 
         val statement = StarRocksHelper.getStatementData(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(10, statement.limit)
+            Assert.assertEquals(20, statement.offset)
             Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),
                 statement.inputTables.get(0))
         } else {

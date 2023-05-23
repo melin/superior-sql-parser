@@ -1071,7 +1071,7 @@ class SparkSqlParserTest {
 
     @Test
     fun queryTest0() {
-        val sql = "select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101"
+        val sql = "select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10"
         val statement = SparkSqlHelper.getStatementData(sql)
         
         if (statement is QueryStmt) {
@@ -1081,6 +1081,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("demo_rp.bigdata.users", statement.inputTables.get(0).getFullTableName())
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
             Assert.assertEquals(101, statement.limit)
+            Assert.assertEquals(10, statement.offset)
         } else {
             Assert.fail()
         }

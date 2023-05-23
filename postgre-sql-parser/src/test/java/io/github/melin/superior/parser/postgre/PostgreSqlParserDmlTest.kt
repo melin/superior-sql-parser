@@ -16,6 +16,7 @@ class PostgreSqlParserDmlTest {
     fun queryTest0() {
         val sql = """
             select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
+            LIMIT 3, 2
         """.trimIndent()
 
         val statement = PostgreSqlHelper.getStatementData(sql)
@@ -23,6 +24,8 @@ class PostgreSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(3, statement.limit)
+            Assert.assertEquals(2, statement.offset)
         } else {
             Assert.fail()
         }
@@ -31,7 +34,7 @@ class PostgreSqlParserDmlTest {
     @Test
     fun queryTest1() {
         val sql = """
-            SELECT * FROM public.usertest
+            SELECT * FROM public.usertest LIMIT 3 OFFSET 2;
         """.trimIndent()
 
         val statement = PostgreSqlHelper.getStatementData(sql)
@@ -39,6 +42,47 @@ class PostgreSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(3, statement.limit)
+            Assert.assertEquals(2, statement.offset)
+            Assert.assertEquals(TableId("public", "usertest"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryTest2() {
+        val sql = """
+            SELECT * FROM public.usertest FETCH FIRST 5 ROWS ONLY;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.getStatementData(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(5, statement.limit)
+            Assert.assertEquals(TableId("public", "usertest"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryTest3() {
+        val sql = """
+            SELECT * FROM public.usertest 
+            OFFSET 10
+            FETCH FIRST 10 ROWS ONLY;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.getStatementData(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(10, statement.limit)
+            Assert.assertEquals(10, statement.offset)
             Assert.assertEquals(TableId("public", "usertest"), statement.inputTables.get(0))
         } else {
             Assert.fail()

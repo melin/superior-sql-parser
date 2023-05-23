@@ -10,7 +10,8 @@ class OracleSqlParserDmlTest {
     @Test
     fun querySqlTest0() {
         val sql = """
-            SELECT CUSTOMER_NAME, PRICE FROM FLINKUSER.ORDERS;
+            SELECT CUSTOMER_NAME, PRICE FROM FLINKUSER.ORDERS
+            OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;
         """.trimIndent()
 
         val statement = OracleSqlHelper.getStatementData(sql)
@@ -18,6 +19,8 @@ class OracleSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(10, statement.limit)
+            Assert.assertEquals(10, statement.offset)
             Assert.assertEquals(TableId("FLINKUSER", "ORDERS"), statement.inputTables.get(0))
         } else {
             Assert.fail()

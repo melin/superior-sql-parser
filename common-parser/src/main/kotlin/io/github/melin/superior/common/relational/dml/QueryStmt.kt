@@ -9,6 +9,7 @@ import io.github.melin.superior.common.relational.TableId
 data class QueryStmt(
     var inputTables: List<TableId>,
     var limit: Int? = null,
+    var offset: Int? = null
 ): Statement() {
     override val statementType = StatementType.SELECT
     override val privilegeType = PrivilegeType.READ

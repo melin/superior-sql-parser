@@ -23,6 +23,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
+    private var offset: Int? = null
     private val primaryKeys = ArrayList<String>()
 
     private val inputTables: ArrayList<TableId> = arrayListOf()
@@ -57,7 +58,6 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
         ctx.createDefinitions().children.forEach { column ->
             if(column is MySqlParser.ColumnDeclarationContext ) {
                 val name = StringUtil.cleanQuote(column.fullColumnName().text)
-
 
                 var dataType = column.columnDefinition().dataType().getChild(0).text.lowercase()
                 val count = column.columnDefinition().dataType().childCount
@@ -254,7 +254,7 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
             currentOptType = StatementType.SELECT
         }
         super.visitSelectStatement(ctx)
-        return QueryStmt(inputTables, limit)
+        return QueryStmt(inputTables, limit, offset)
     }
 
     override fun visitInsertStatement(ctx: MySqlParser.InsertStatementContext): Statement {
@@ -364,10 +364,13 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
     }
 
     override fun visitLimitClause(ctx: MySqlParser.LimitClauseContext): Statement? {
-        if (currentOptType == StatementType.SELECT ) {
+        if (ctx.limit.decimalLiteral() != null) {
             limit = ctx.limit.text.toInt()
         }
-        return null
+        if (ctx.offset.decimalLiteral() != null) {
+            offset = ctx.offset.text.toInt()
+        }
+        return super.visitLimitClause(ctx)
     }
 
     private fun parseFullId(fullId: MySqlParser.FullIdContext): TableId {

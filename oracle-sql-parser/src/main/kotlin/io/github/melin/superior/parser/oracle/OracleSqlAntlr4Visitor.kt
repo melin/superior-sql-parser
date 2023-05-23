@@ -21,6 +21,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
+    private var offset: Int? = null
 
     private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
     private var inputTables: ArrayList<TableId> = arrayListOf()
@@ -160,7 +161,7 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
     override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement {
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
-        val queryStmt = QueryStmt(inputTables)
+        val queryStmt = QueryStmt(inputTables, limit, offset)
 
         queryStmts.add(queryStmt)
         return queryStmt
@@ -271,6 +272,20 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
         }
 
         return super.visitSubquery_factoring_clause(ctx)
+    }
+
+    override fun visitOffset_clause(ctx: OracleParser.Offset_clauseContext): Statement? {
+        try {
+            offset = ctx.expression().text.toInt()
+        } catch (e: Exception) { }
+        return super.visitOffset_clause(ctx)
+    }
+
+    override fun visitFetch_clause(ctx: OracleParser.Fetch_clauseContext): Statement? {
+        try {
+            limit = ctx.expression().text.toInt()
+        } catch (e: Exception) { }
+        return super.visitFetch_clause(ctx)
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): Statement? {

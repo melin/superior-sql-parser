@@ -18,13 +18,14 @@ class MySQLParserDmlTest {
 
     @Test
     fun selectTest0() {
-        val sql = "select * from users limit 1"
+        val sql = "select * from users limit 5, 10"
 
         val statement = MySQLHelper.getStatementData(sql)
         if(statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(1, statement.limit)
+            Assert.assertEquals(5, statement.offset)
+            Assert.assertEquals(10, statement.limit)
         } else {
             Assert.fail()
         }
@@ -32,7 +33,7 @@ class MySQLParserDmlTest {
 
     @Test
     fun selectTest1() {
-        val sql = "select * from users a left outer join address b on a.address_id = b.id limit 100, 10"
+        val sql = "select * from users a left outer join address b on a.address_id = b.id limit 10 offset 100"
 
         val statement = MySQLHelper.getStatementData(sql)
         
@@ -40,6 +41,7 @@ class MySQLParserDmlTest {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
+            Assert.assertEquals(100, statement.offset)
         } else {
             Assert.fail()
         }

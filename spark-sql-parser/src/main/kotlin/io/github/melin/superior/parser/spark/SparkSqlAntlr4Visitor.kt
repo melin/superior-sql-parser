@@ -46,6 +46,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
     private var multiInsertToken: String? = null
 
     private var limit: Int? = null
+    private var offset: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
@@ -817,7 +818,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
             currentOptType = StatementType.SELECT
             super.visitStatementDefault(ctx)
 
-            val queryStmt = QueryStmt(inputTables, limit)
+            val queryStmt = QueryStmt(inputTables, limit, offset)
             queryStmt.functionNames.addAll(functionNames)
             return queryStmt
         }
@@ -1019,6 +1020,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     override fun visitQueryOrganization(ctx: SparkSqlParser.QueryOrganizationContext): Statement? {
         limit = ctx.limit?.text?.toInt()
+        offset = ctx.offset?.text?.toInt()
         return super.visitQueryOrganization(ctx)
     }
 

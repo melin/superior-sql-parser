@@ -28,6 +28,8 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     private var command: String? = null
 
     private var currentOptType: StatementType = StatementType.UNKOWN
+    private var limit: Int? = null
+    private var offset: Int? = null
 
     private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
     private var inputTables: ArrayList<TableId> = arrayListOf()
@@ -120,7 +122,7 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     override fun visitQueryStatement(ctx: QueryStatementContext): Statement {
         currentOptType = StatementType.SELECT
         super.visitQueryRelation(ctx.queryRelation())
-        val queryStmt = QueryStmt(inputTables)
+        val queryStmt = QueryStmt(inputTables, limit, offset)
 
         queryStmts.add(queryStmt)
         return queryStmt
@@ -186,6 +188,17 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
             cteTempTables.add(TableId(it.name.text))
         }
         return super.visitWithClause(ctx)
+    }
+
+    override fun visitLimitElement(ctx: LimitElementContext): Statement? {
+        if (ctx.limit != null) {
+            limit = ctx.limit.text.toInt()
+        }
+        if (ctx.offset != null) {
+            offset = ctx.offset.text.toInt()
+        }
+
+        return super.visitLimitElement(ctx)
     }
 
     fun parseTableName(ctx: QualifiedNameContext): TableId {

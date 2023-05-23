@@ -28,6 +28,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
+    private var offset: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
@@ -155,6 +156,8 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
         super.visitSelectstmt(ctx.selectstmt())
         createView.inputTables.addAll(inputTables)
+
+        ctx.selectstmt()
         return createView
     }
 
@@ -174,7 +177,7 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
         currentOptType = StatementType.SELECT
         super.visitSelectstmt(ctx)
 
-        return QueryStmt(inputTables, limit)
+        return QueryStmt(inputTables, limit, offset)
     }
 
     override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): Statement {
@@ -372,6 +375,41 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
     }
 
     //----------------------------------------private methods------------------------------------
+
+    override fun visitSelect_limit(ctx: PostgreSqlParser.Select_limitContext): Statement? {
+        val limitClause = ctx.limit_clause()
+        val offsetClause = ctx.offset_clause()
+        if (limitClause != null) {
+            if (limitClause.LIMIT() != null) {
+                if (limitClause.select_limit_value().a_expr() != null) {
+                    limit = limitClause.select_limit_value().a_expr().text.toInt()
+                }
+
+                if (limitClause.select_offset_value() != null) {
+                    offset = limitClause.select_offset_value().a_expr().text.toInt()
+                }
+            }
+
+            if (limitClause.FETCH() != null && limitClause.select_fetch_first_value() != null) {
+                if (limitClause.select_fetch_first_value().c_expr() != null) {
+                    limit = limitClause.select_fetch_first_value().c_expr().text.toInt()
+                }
+            }
+        }
+
+        if (offsetClause != null) {
+            if (offsetClause.select_offset_value() != null) {
+                offset = offsetClause.select_offset_value().text.toInt()
+            }
+
+            if (offsetClause.select_fetch_first_value() != null) {
+                if (offsetClause.select_fetch_first_value().c_expr() != null) {
+                    offset = offsetClause.select_fetch_first_value().c_expr().text.toInt()
+                }
+            }
+        }
+        return super.visitSelect_limit(ctx)
+    }
 
     fun parseTableName(ctx: PostgreSqlParser.Any_nameContext): TableId {
         val attrNames = ctx.attrs()?.attr_name()
