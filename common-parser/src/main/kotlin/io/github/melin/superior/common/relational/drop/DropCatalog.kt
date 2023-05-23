@@ -9,6 +9,6 @@ class DropCatalog(
     val catalogName: String
 ): Statement() {
     override val statementType = StatementType.DROP_CATALOG
-    override val privilegeType = PrivilegeType.DROP
+    override val privilegeType = PrivilegeType.ADMIN
     override val sqlType = SqlType.DDL
 }

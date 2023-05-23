@@ -2,16 +2,77 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateMaterializedView
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateView
-import io.github.melin.superior.common.relational.drop.DropMaterializedView
-import io.github.melin.superior.common.relational.drop.DropTable
-import io.github.melin.superior.common.relational.drop.DropView
+import io.github.melin.superior.common.relational.create.*
+import io.github.melin.superior.common.relational.drop.*
 import org.junit.Assert
 import org.junit.Test
 
 class StarRocksSqlParserDdlTest {
+
+    @Test
+    fun createCatalogTest() {
+        val sql = """
+            CREATE EXTERNAL CATALOG iceberg_metastore_catalog
+            PROPERTIES(
+                "type"="iceberg",
+                "iceberg.catalog.type"="hive",
+                "iceberg.catalog.hive.metastore.uris"="thrift://x.x.x.x:9083"
+            );
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is CreateCatalog) {
+            Assert.assertEquals(CREATE_CATALOG, statement.statementType)
+            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropCatalogTest() {
+        val sql = """
+            DROP CATALOG iceberg_metastore_catalog;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DropCatalog) {
+            Assert.assertEquals(DROP_CATALOG, statement.statementType)
+            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createDatabaseTest() {
+        val sql = """
+            CREATE DATABASE IF Not EXISTS db_test;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is CreateDatabase) {
+            Assert.assertEquals(CREATE_DATABASE, statement.statementType)
+            Assert.assertEquals("db_test", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropDatabaseTest() {
+        val sql = """
+            DROP DATABASE IF EXISTS db_test;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is DropDatabase) {
+            Assert.assertEquals(DROP_DATABASE, statement.statementType)
+            Assert.assertEquals("db_test", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+    }
 
     @Test
     fun createTableTest() {

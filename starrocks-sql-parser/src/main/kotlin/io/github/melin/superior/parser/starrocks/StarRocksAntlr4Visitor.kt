@@ -5,15 +5,10 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.AlterTable
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateDatabase
-import io.github.melin.superior.common.relational.create.CreateMaterializedView
+import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
-import io.github.melin.superior.common.relational.drop.DropMaterializedView
-import io.github.melin.superior.common.relational.drop.DropTable
-import io.github.melin.superior.common.relational.drop.DropView
+import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 
@@ -44,12 +39,31 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         return if (currentResult == null) true else false
     }
 
+    override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {
+        val catalogName: String = StringUtil.cleanQuote(ctx.catalogName.text)
+        val properties = parseOptions(ctx.properties())
+        return CreateCatalog(catalogName, properties)
+    }
+
+    override fun visitDropExternalCatalogStatement(ctx: DropExternalCatalogStatementContext): Statement {
+        val catalogName: String = StringUtil.cleanQuote(ctx.catalogName.text)
+        return DropCatalog(catalogName)
+    }
+
     override fun visitCreateDbStatement(ctx: CreateDbStatementContext): Statement {
         val catalogName: String? = if (ctx.catalog != null) StringUtil.cleanQuote(ctx.catalog.text) else null
         val databaseName: String = StringUtil.cleanQuote(ctx.database.text)
         val properties = parseOptions(ctx.properties())
+        val ifNotExists = ctx.NOT() != null
 
-        return CreateDatabase(catalogName, databaseName, properties)
+        return CreateDatabase(catalogName, databaseName, properties, ifNotExists)
+    }
+
+    override fun visitDropDbStatement(ctx: DropDbStatementContext): Statement {
+        val catalogName: String? = if (ctx.catalog != null) StringUtil.cleanQuote(ctx.catalog.text) else null
+        val databaseName: String = StringUtil.cleanQuote(ctx.database.text)
+        val ifExists = ctx.EXISTS() != null
+        return DropDatabase(catalogName, databaseName, ifExists)
     }
 
     override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {

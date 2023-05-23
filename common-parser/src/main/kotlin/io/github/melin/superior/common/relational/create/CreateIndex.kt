@@ -7,9 +7,10 @@ data class CreateIndex(
     val indexName: String,
     val indexColumnNames: ArrayList<IndexColumnName> = arrayListOf()
 ): AlterAction() {
-    val intimeAction: String = "ONLINE" //ONLINE & OFFLINE
+    val intimeAction: String = "ONLINE" //mysql ONLINE & OFFLINE
     val indexCategory: String? = null
     val indexType: String? = null
+    val comment: String? = null
 }
 
 data class IndexColumnName(
