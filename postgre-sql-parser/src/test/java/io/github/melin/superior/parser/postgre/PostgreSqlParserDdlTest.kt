@@ -2,15 +2,11 @@ package io.github.melin.superior.parser.postgre
 
 import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.AlterTableAction
-import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
-import io.github.melin.superior.common.relational.create.CreateIndex
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
-import io.github.melin.superior.common.relational.drop.DropIndex
 import io.github.melin.superior.common.relational.drop.DropTable
 import org.junit.Assert
 import org.junit.Test

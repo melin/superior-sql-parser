@@ -98,3 +98,23 @@ data class RenamePartitionAction(
     var fromPartitionVals: LinkedHashMap<String, String>,
     var toPartitionVals: LinkedHashMap<String, String>
 ): AlterAction()
+
+data class CreateIndex(
+    val indexName: String,
+    val indexColumnNames: ArrayList<IndexColumnName> = arrayListOf()
+): AlterAction() {
+    var intimeAction: String = "ONLINE" //mysql ONLINE & OFFLINE
+    var indexCategory: String? = null
+    var indexType: String? = null
+    var comment: String? = null
+}
+
+data class IndexColumnName(
+    val columnName: String,
+    val sortType: SortType = SortType.UNKOWN,
+)
+
+data class DropIndex(
+    val indexName: String,
+    var ifExists: Boolean = false
+): AlterAction()

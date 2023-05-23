@@ -1,6 +1,9 @@
 package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
+import io.github.melin.superior.common.relational.AlterTable
+import io.github.melin.superior.common.relational.CreateIndex
+import io.github.melin.superior.common.relational.DropIndex
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
@@ -195,6 +198,42 @@ class StarRocksSqlParserDdlTest {
         if (statement is DropMaterializedView) {
             Assert.assertEquals(DROP_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals(TableId("k1_k2"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createIndexTest() {
+        val sql = """
+            CREATE INDEX index3 ON sales_records (item_id) USING BITMAP COMMENT '';
+
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is AlterTable) {
+            Assert.assertEquals(ALTER_TABLE, statement.statementType)
+            val createIndex = statement.firstAction() as CreateIndex
+            Assert.assertEquals("index3", createIndex.indexName)
+            Assert.assertEquals("sales_records", statement.tableId.tableName)
+            Assert.assertEquals(1, createIndex.indexColumnNames.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropIndexTest() {
+        val sql = """
+            DROP INDEX index3 ON sales_records;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatementData(sql)
+        if (statement is AlterTable) {
+            Assert.assertEquals(ALTER_TABLE, statement.statementType)
+            val dropIndex = statement.firstAction() as DropIndex
+            Assert.assertEquals("index3", dropIndex.indexName)
+            Assert.assertEquals("sales_records", statement.tableId.tableName)
         } else {
             Assert.fail()
         }

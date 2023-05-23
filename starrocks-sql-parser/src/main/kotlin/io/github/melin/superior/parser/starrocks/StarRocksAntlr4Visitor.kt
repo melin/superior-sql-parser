@@ -2,9 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.dml.*
@@ -125,12 +123,36 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
         return DropMaterializedView(tableId, ifExists)
     }
 
-    override fun visitAlterTableStatement(ctx: AlterTableStatementContext?): Statement {
-        return AlterTable(AlterType.UNKOWN)
+    override fun visitCreateIndexStatement(ctx: CreateIndexStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val indexName = ctx.indexName.text
+        val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
+
+        val columns = ctx.identifierList().identifier().map { identifier ->
+            IndexColumnName(identifier.text)
+        }
+
+        val createIndex = CreateIndex(indexName)
+        createIndex.comment = comment
+        createIndex.indexColumnNames.addAll(columns)
+        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
     }
 
-    override fun visitAlterViewStatement(ctx: AlterViewStatementContext?): Statement {
-        return AlterTable(AlterType.ALTER_VIEW)
+    override fun visitDropIndexStatement(ctx: DropIndexStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val indexName = ctx.indexName.text
+        val dropIndex = DropIndex(indexName)
+        return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
+    }
+
+    override fun visitAlterTableStatement(ctx: AlterTableStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        return AlterTable(AlterType.UNKOWN, tableId)
+    }
+
+    override fun visitAlterViewStatement(ctx: AlterViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        return AlterTable(AlterType.ALTER_VIEW, tableId)
     }
 
     override fun visitQueryStatement(ctx: QueryStatementContext): Statement {
