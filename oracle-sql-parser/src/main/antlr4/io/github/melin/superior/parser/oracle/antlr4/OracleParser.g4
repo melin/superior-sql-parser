@@ -480,7 +480,14 @@ match_string
 create_function_body
     : CREATE (OR REPLACE)? FUNCTION function_name ('(' parameter (',' parameter)* ')')?
       RETURN type_spec (invoker_rights_clause | parallel_enable_clause | result_cache_clause | DETERMINISTIC)*
-      ((PIPELINED? (IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec)) | (PIPELINED | AGGREGATE) USING implementation_type_name) ';'
+      ((PIPELINED? (IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec))
+        | (PIPELINED | AGGREGATE) USING implementation_type_name
+        | sql_macro_body
+      ) ';'
+    ;
+
+sql_macro_body
+    : SQL_MACRO IS BEGIN RETURN quoted_string SEMICOLON END
     ;
 
 // Creation Function - Specific Clauses
@@ -6196,6 +6203,7 @@ atom
     | general_element
     | '(' subquery ')' subquery_operation_part*
     | '(' expressions ')'
+    | quoted_string
     ;
 
 quantified_expression
@@ -8761,6 +8769,7 @@ non_reserved_keywords_pre12c
     | SQLLDR
     | SQL
     | SQL_TRACE
+    | SQL_MACRO
     | SQRT
     | STALE
     | STANDALONE

@@ -171,7 +171,9 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
             visitWithClause(ctx.withClause())
         }
         visit(ctx.where)
-        visit(ctx.relations())
+        if (ctx.relations() != null) {
+            visit(ctx.relations())
+        }
 
         return DeleteTable(tableId, inputTables)
     }
