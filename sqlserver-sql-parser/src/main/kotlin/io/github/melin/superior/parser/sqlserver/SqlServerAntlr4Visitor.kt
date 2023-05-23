@@ -19,7 +19,10 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
+    private var offset: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     override fun visit(tree: ParseTree?): Statement {
         val data = super.visit(tree)
@@ -35,24 +38,43 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSelect_statement(ctx: SqlServerParser.Select_statementContext): Statement? {
-        if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
-            currentOptType = StatementType.SELECT
-            super.visitSelect_statement(ctx)
+    override fun visitSelect_statement_standalone(ctx: SqlServerParser.Select_statement_standaloneContext): Statement {
+        currentOptType = StatementType.SELECT
+        this.visitWith_expression(ctx.with_expression())
+        super.visitSelect_statement(ctx.select_statement())
 
-            val queryStmt = QueryStmt(inputTables, limit)
-            queryStmt.inputTables = inputTables
-            return queryStmt
-        } else {
-            return null
+        val queryStmt = QueryStmt(inputTables, limit, offset)
+        queryStmt.inputTables = inputTables
+        return queryStmt
+    }
+
+    override fun visitWith_expression(ctx: SqlServerParser.With_expressionContext): Statement? {
+        ctx.common_table_expression().forEach {
+            cteTempTables.add(TableId(it.id_().text))
         }
+        return super.visitWith_expression(ctx)
+    }
+
+    override fun visitSelect_order_by_clause(ctx: SqlServerParser.Select_order_by_clauseContext): Statement? {
+        if (ctx.OFFSET() != null) {
+            offset = ctx.offset_exp.text.toInt()
+        }
+
+        if (ctx.OFFSET() != null) {
+            limit = ctx.fetch_exp.text.toInt()
+        }
+
+        return super.visitSelect_order_by_clause(ctx)
     }
 
     override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): Statement? {
         if (currentOptType == StatementType.SELECT) {
             if (ctx.full_table_name() != null) {
                 val tableId = parseTableName(ctx.full_table_name())
-                inputTables.add(tableId)
+
+                if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                    inputTables.add(tableId)
+                }
             }
         }
         return null

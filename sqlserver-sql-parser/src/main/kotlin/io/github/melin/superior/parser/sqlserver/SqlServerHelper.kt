@@ -37,16 +37,13 @@ object SqlServerHelper {
         val parser = SqlServerParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.SLL
-
         val sqlVisitor = SqlServerAntlr4Visitor()
 
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
                 return sqlVisitor.visit(parser.batch())
-            }
-            catch (e: ParseCancellationException) {
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
