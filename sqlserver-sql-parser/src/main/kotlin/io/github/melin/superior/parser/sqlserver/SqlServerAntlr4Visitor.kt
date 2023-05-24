@@ -4,7 +4,7 @@ import io.github.melin.superior.common.SQLParserException
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParser
 import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParserBaseVisitor
 import org.antlr.v4.runtime.tree.ParseTree
@@ -48,6 +48,52 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
         return queryStmt
     }
 
+    override fun visitDelete_statement(ctx: SqlServerParser.Delete_statementContext): Statement {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableName(ctx.delete_statement_from().ddl_object().full_table_name())
+        if (ctx.with_expression() != null) {
+            this.visitWith_expression(ctx.with_expression())
+        }
+        if (ctx.search_condition() != null) {
+            super.visitSearch_condition(ctx.search_condition())
+        }
+
+        return DeleteTable(tableId, inputTables)
+    }
+
+    override fun visitInsert_statement(ctx: SqlServerParser.Insert_statementContext): Statement {
+        currentOptType = StatementType.INSERT
+        val tableId = parseTableName(ctx.ddl_object().full_table_name())
+        if (ctx.with_expression() != null) {
+            this.visitWith_expression(ctx.with_expression())
+        }
+
+        val insertTable =
+            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, tableId)
+            else InsertTable(InsertMode.OVERWRITE, tableId)
+
+        insertTable.inputTables.addAll(inputTables)
+        return insertTable
+    }
+
+    override fun visitUpdate_statement(ctx: SqlServerParser.Update_statementContext): Statement {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableName(ctx.ddl_object().full_table_name())
+        if (ctx.with_expression() != null) {
+            this.visitWith_expression(ctx.with_expression())
+        }
+
+        if (ctx.table_sources() != null) {
+            super.visitTable_sources(ctx.table_sources())
+        }
+
+        if (ctx.search_condition() != null) {
+            super.visitSearch_condition(ctx.search_condition())
+        }
+
+        return UpdateTable(tableId, inputTables)
+    }
+
     override fun visitWith_expression(ctx: SqlServerParser.With_expressionContext): Statement? {
         ctx.common_table_expression().forEach {
             cteTempTables.add(TableId(it.id_().text))
@@ -68,13 +114,23 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
     }
 
     override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): Statement? {
-        if (currentOptType == StatementType.SELECT) {
+        if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.CREATE_VIEW ||
+            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE ||
+            currentOptType == StatementType.MERGE ||
+            currentOptType == StatementType.INSERT ||
+            currentOptType == StatementType.CREATE_FUNCTION) {
+
             if (ctx.full_table_name() != null) {
                 val tableId = parseTableName(ctx.full_table_name())
 
                 if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                     inputTables.add(tableId)
                 }
+            } else {
+                super.visitTable_source_item(ctx)
             }
         }
         return null
@@ -83,7 +139,7 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
     fun parseTableName(ctx: SqlServerParser.Full_table_nameContext): TableId {
         if (ctx.database != null) {
             return TableId(ctx.database.text, ctx.schema.text, ctx.table.text)
-        } else if (ctx.database != null) {
+        } else if (ctx.schema != null) {
             return TableId(null, ctx.schema.text, ctx.table.text)
         } else {
             return TableId(null, null, ctx.table.text)

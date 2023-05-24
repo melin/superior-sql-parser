@@ -191,7 +191,7 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     }
 
     override fun visitInsertStatement(ctx: InsertStatementContext): Statement {
-        currentOptType = StatementType.UPDATE
+        currentOptType = StatementType.INSERT
         val tableId = parseTableName(ctx.qualifiedName())
         visitQueryStatement(ctx.queryStatement())
 
