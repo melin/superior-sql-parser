@@ -2,10 +2,7 @@ package io.github.melin.superior.parser.sqlserver
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.InsertTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import org.junit.Assert
 import org.junit.Test
 
@@ -176,6 +173,34 @@ class SqlServerParserDmlTest {
             Assert.assertEquals(TableId("HumanResources", "Employee"), statement.tableId)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(TableId("HumanResources", "Employee1"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun mergeTest0() {
+        val sql = """
+            MERGE TargetProducts AS Target
+            USING SourceProducts	AS Source
+            ON Source.ProductID = Target.ProductID
+            WHEN NOT MATCHED BY Target THEN
+                INSERT (ProductID,ProductName, Price) 
+                VALUES (Source.ProductID,Source.ProductName, Source.Price)
+            WHEN MATCHED THEN UPDATE SET
+                Target.ProductName	= Source.ProductName,
+                Target.Price		= Source.Price
+            WHEN NOT MATCHED BY Source THEN
+                DELETE;
+        """.trimIndent()
+
+        val statement = SqlServerHelper.getStatementData(sql)
+
+        if (statement is MergeTable) {
+            Assert.assertEquals(StatementType.MERGE, statement.statementType)
+            Assert.assertEquals("TargetProducts", statement.targetTable.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(TableId("SourceProducts"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }

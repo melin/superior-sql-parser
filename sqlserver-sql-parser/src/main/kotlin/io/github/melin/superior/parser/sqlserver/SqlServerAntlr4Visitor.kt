@@ -94,6 +94,23 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
         return UpdateTable(tableId, inputTables)
     }
 
+    override fun visitMerge_statement(ctx: SqlServerParser.Merge_statementContext): Statement {
+        currentOptType = StatementType.MERGE
+
+        val tableId = parseTableName(ctx.ddl_object().full_table_name())
+        val mergeTable = MergeTable(tableId)
+        if (ctx.with_expression() != null) {
+            this.visitWith_expression(ctx.with_expression())
+        }
+
+        if (ctx.table_sources() != null) {
+            super.visitTable_sources(ctx.table_sources())
+        }
+
+        mergeTable.inputTables = inputTables
+        return mergeTable
+    }
+
     override fun visitWith_expression(ctx: SqlServerParser.With_expressionContext): Statement? {
         ctx.common_table_expression().forEach {
             cteTempTables.add(TableId(it.id_().text))
