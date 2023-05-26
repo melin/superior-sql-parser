@@ -62,7 +62,7 @@ enum class StatementType: Serializable {
     MERGE_FILE, // spark
     APP_JAR, // spark
     CALL, // hudi
-    CALL_HELP, // hudi
+    HELP, // hudi
     SYNC,
 
     ARITHMETIC,

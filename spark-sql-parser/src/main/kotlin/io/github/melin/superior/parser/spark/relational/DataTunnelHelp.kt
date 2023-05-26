@@ -9,7 +9,7 @@ data class DataTunnelHelp(
     val type: String,
     val value: String
 ) : Statement() {
-    override val statementType = StatementType.DATATUNNEL
+    override val statementType = StatementType.HELP
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL
 }

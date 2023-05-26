@@ -8,7 +8,7 @@ import io.github.melin.superior.common.relational.Statement
 data class CallHelp(
     val procedureName: String?
 ) : Statement() {
-    override val statementType = StatementType.CALL_HELP
+    override val statementType = StatementType.HELP
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML
 }

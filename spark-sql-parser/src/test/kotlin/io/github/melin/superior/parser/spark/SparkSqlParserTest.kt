@@ -1881,7 +1881,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.getStatementData(sql)
         
         if (statement is DataTunnelHelp) {
-            Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
+            Assert.assertEquals(StatementType.HELP, statement.statementType)
 
             Assert.assertEquals("source", statement.type)
             Assert.assertEquals("sftp", statement.value)
@@ -1926,7 +1926,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.getStatementData(sql)
         
         if (statement is CallHelp) {
-            Assert.assertEquals(StatementType.CALL_HELP, statement.statementType)
+            Assert.assertEquals(StatementType.HELP, statement.statementType)
         } else {
             Assert.fail()
         }
@@ -1938,7 +1938,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.getStatementData(sql)
         
         if (statement is CallHelp) {
-            Assert.assertEquals(StatementType.CALL_HELP, statement.statementType)
+            Assert.assertEquals(StatementType.HELP, statement.statementType)
             Assert.assertEquals("show_commits", statement.procedureName)
         } else {
             Assert.fail()
@@ -1951,7 +1951,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.getStatementData(sql)
         
         if (statement is CallHelp) {
-            Assert.assertEquals(StatementType.CALL_HELP, statement.statementType)
+            Assert.assertEquals(StatementType.HELP, statement.statementType)
             Assert.assertEquals("show_commits", statement.procedureName)
         } else {
             Assert.fail()
