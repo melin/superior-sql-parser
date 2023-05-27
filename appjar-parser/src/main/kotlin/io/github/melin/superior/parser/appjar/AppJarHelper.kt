@@ -18,7 +18,7 @@ import io.github.melin.superior.parser.job.antlr4.AppJarParser
  */
 object AppJarHelper {
 
-    @JvmStatic fun getStatementData(command: String) : ArrayList<Statement> {
+    @JvmStatic fun getStatement(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

@@ -20,7 +20,7 @@ class OracleSqlParserDdlTest {
             );
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -46,7 +46,7 @@ class OracleSqlParserDdlTest {
             WHERE f.kind = 'Comedy'
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateView) {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
@@ -73,7 +73,7 @@ class OracleSqlParserDdlTest {
                   invoice_date;
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
@@ -91,7 +91,7 @@ class OracleSqlParserDdlTest {
             COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CommentData) {
             Assert.assertEquals(StatementType.COMMENT, statement.statementType)

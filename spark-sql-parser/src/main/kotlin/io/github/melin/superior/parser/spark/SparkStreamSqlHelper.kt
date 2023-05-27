@@ -25,7 +25,7 @@ object SparkStreamSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String) : ArrayList<Statement> {
+    @JvmStatic fun getStatement(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

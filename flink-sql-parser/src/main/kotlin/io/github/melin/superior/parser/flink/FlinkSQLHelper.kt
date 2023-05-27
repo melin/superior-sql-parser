@@ -31,7 +31,7 @@ object FlinkSQLHelper {
         }
     }
 
-    @JvmStatic fun getStatementData(command: String): Statement {
+    @JvmStatic fun getStatement(command: String): Statement {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

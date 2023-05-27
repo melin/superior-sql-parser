@@ -24,7 +24,7 @@ class OracleProcessParserTest {
             END;
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
@@ -49,7 +49,7 @@ class OracleProcessParserTest {
              END;
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
@@ -75,7 +75,7 @@ class OracleProcessParserTest {
              END;
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
@@ -115,7 +115,7 @@ class OracleProcessParserTest {
             END;
         """.trimIndent()
 
-        val statement = OracleSqlHelper.getStatementData(sql)
+        val statement = OracleSqlHelper.getStatement(sql)
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)

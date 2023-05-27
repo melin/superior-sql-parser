@@ -27,7 +27,7 @@ class PostgreSqlParserDdlTest {
             ) PARTITION BY RANGE (age); 
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -57,7 +57,7 @@ class PostgreSqlParserDdlTest {
             WITH CASCADED CHECK OPTION;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is CreateView) {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
@@ -84,7 +84,7 @@ class PostgreSqlParserDdlTest {
                   invoice_date;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
@@ -102,7 +102,7 @@ class PostgreSqlParserDdlTest {
             drop TABLE test.public.authors
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
@@ -118,7 +118,7 @@ class PostgreSqlParserDdlTest {
             drop TABLE authors, tests
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
@@ -133,7 +133,7 @@ class PostgreSqlParserDdlTest {
     fun createIndexTest() {
         val sql = "CREATE UNIQUE INDEX title_idx ON films (title) INCLUDE (director, rating);\n"
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
         
@@ -149,7 +149,7 @@ class PostgreSqlParserDdlTest {
     fun dropIndexTest() {
         val sql = "DROP INDEX title_idx"
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
         
@@ -164,7 +164,7 @@ class PostgreSqlParserDdlTest {
     fun addPartitonTest() {
         val sql = "create table pkslow_person_r1 partition of pkslow_person_r for values from (MINVALUE) to (10);  \n"
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
         
@@ -183,7 +183,7 @@ class PostgreSqlParserDdlTest {
             COMMENT ON TABLE my_schema.my_table IS 'Employee Information';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is CommentData) {
             Assert.assertEquals(StatementType.COMMENT, statement.statementType)

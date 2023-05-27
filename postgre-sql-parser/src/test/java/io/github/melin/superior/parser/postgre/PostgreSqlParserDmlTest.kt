@@ -19,7 +19,7 @@ class PostgreSqlParserDmlTest {
             LIMIT 3, 2
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -37,7 +37,7 @@ class PostgreSqlParserDmlTest {
             SELECT * FROM public.usertest LIMIT 3 OFFSET 2;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -56,7 +56,7 @@ class PostgreSqlParserDmlTest {
             SELECT * FROM public.usertest FETCH FIRST 5 ROWS ONLY;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
 
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -76,7 +76,7 @@ class PostgreSqlParserDmlTest {
             FETCH FIRST 10 ROWS ONLY;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
 
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -111,7 +111,7 @@ class PostgreSqlParserDmlTest {
             GROUP BY region, product;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
@@ -129,7 +129,7 @@ class PostgreSqlParserDmlTest {
             SELECT * FROM films WHERE date_prod >= '2002-01-01';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
@@ -148,7 +148,7 @@ class PostgreSqlParserDmlTest {
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
@@ -166,7 +166,7 @@ class PostgreSqlParserDmlTest {
             WHERE producer_id = producers.id AND producers.name = 'foo';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
@@ -186,7 +186,7 @@ class PostgreSqlParserDmlTest {
             (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
@@ -206,7 +206,7 @@ class PostgreSqlParserDmlTest {
             WHERE p.segment_id = s.id;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
@@ -227,7 +227,7 @@ class PostgreSqlParserDmlTest {
             ('HG120', 'The Dinner Game', 140, DEFAULT, 'Comedy');
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -249,7 +249,7 @@ class PostgreSqlParserDmlTest {
             INSERT INTO employees_log SELECT *, current_timestamp FROM upd;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -267,7 +267,7 @@ class PostgreSqlParserDmlTest {
             INSERT INTO films SELECT * FROM tmp_films WHERE date_prod < '2004-05-07';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -293,7 +293,7 @@ class PostgreSqlParserDmlTest {
               DELETE;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatementData(sql)
+        val statement = PostgreSqlHelper.getStatement(sql)
         
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)

@@ -18,7 +18,7 @@ class StarRocksSqlParserDmlTest {
             SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -39,7 +39,7 @@ class StarRocksSqlParserDmlTest {
             select * from t1 union all select * from t2;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -56,7 +56,7 @@ class StarRocksSqlParserDmlTest {
             DELETE FROM my_table PARTITION p1 WHERE k1 = 3;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("my_table", statement.tableId.tableName)
@@ -73,7 +73,7 @@ class StarRocksSqlParserDmlTest {
             WHERE name IN (select name from users where country = "China");
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("score_board", statement.tableId.tableName)
@@ -95,7 +95,7 @@ class StarRocksSqlParserDmlTest {
             WHERE producer_id = foo_producers.id;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId.tableName)
@@ -116,7 +116,7 @@ class StarRocksSqlParserDmlTest {
                AND employees.id = accounts.sales_person;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
@@ -139,7 +139,7 @@ class StarRocksSqlParserDmlTest {
             WHERE employees.id = acme_accounts.sales_person;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
@@ -156,7 +156,7 @@ class StarRocksSqlParserDmlTest {
             INSERT INTO test SELECT * FROM test2;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
@@ -173,7 +173,7 @@ class StarRocksSqlParserDmlTest {
             INSERT INTO test PARTITION(p1, p2) WITH LABEL `label1` SELECT * FROM test2;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)

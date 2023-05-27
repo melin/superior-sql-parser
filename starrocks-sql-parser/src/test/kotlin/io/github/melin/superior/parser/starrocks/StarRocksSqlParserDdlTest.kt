@@ -23,7 +23,7 @@ class StarRocksSqlParserDdlTest {
             );
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is CreateCatalog) {
             Assert.assertEquals(CREATE_CATALOG, statement.statementType)
             Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
@@ -38,7 +38,7 @@ class StarRocksSqlParserDdlTest {
             DROP CATALOG iceberg_metastore_catalog;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DropCatalog) {
             Assert.assertEquals(DROP_CATALOG, statement.statementType)
             Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
@@ -53,7 +53,7 @@ class StarRocksSqlParserDdlTest {
             CREATE DATABASE IF Not EXISTS db_test;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is CreateDatabase) {
             Assert.assertEquals(CREATE_DATABASE, statement.statementType)
             Assert.assertEquals("db_test", statement.databaseName)
@@ -68,7 +68,7 @@ class StarRocksSqlParserDdlTest {
             DROP DATABASE IF EXISTS db_test;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DropDatabase) {
             Assert.assertEquals(DROP_DATABASE, statement.statementType)
             Assert.assertEquals("db_test", statement.databaseName)
@@ -95,7 +95,7 @@ class StarRocksSqlParserDdlTest {
             DISTRIBUTED BY HASH (id) BUCKETS 10;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is CreateTable) {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("meta_role", statement.tableId.tableName)
@@ -110,7 +110,7 @@ class StarRocksSqlParserDdlTest {
            DROP TABLE IF EXISTS example_db.My_table force;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DropTable) {
             Assert.assertEquals(DROP_TABLE, statement.statementType)
             Assert.assertEquals(TableId("example_db", "My_table"), statement.tableId)
@@ -135,7 +135,7 @@ class StarRocksSqlParserDdlTest {
             GROUP BY k1,k2,k3;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is CreateView) {
             Assert.assertEquals(CREATE_VIEW, statement.statementType)
             Assert.assertEquals("my first view", statement.comment)
@@ -152,7 +152,7 @@ class StarRocksSqlParserDdlTest {
            DROP VIEW IF EXISTS example_db.example_view;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DropView) {
             Assert.assertEquals(DROP_VIEW, statement.statementType)
             Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
@@ -179,7 +179,7 @@ class StarRocksSqlParserDdlTest {
             order by lo_orderkey;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
@@ -194,7 +194,7 @@ class StarRocksSqlParserDdlTest {
            DROP MATERIALIZED VIEW IF EXISTS k1_k2;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is DropMaterializedView) {
             Assert.assertEquals(DROP_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals(TableId("k1_k2"), statement.tableId)
@@ -210,7 +210,7 @@ class StarRocksSqlParserDdlTest {
 
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is AlterTable) {
             Assert.assertEquals(ALTER_TABLE, statement.statementType)
             val createIndex = statement.firstAction() as CreateIndex
@@ -228,7 +228,7 @@ class StarRocksSqlParserDdlTest {
             DROP INDEX index3 ON sales_records;
         """.trimIndent()
 
-        val statement = StarRocksHelper.getStatementData(sql)
+        val statement = StarRocksHelper.getStatement(sql)
         if (statement is AlterTable) {
             Assert.assertEquals(ALTER_TABLE, statement.statementType)
             val dropIndex = statement.firstAction() as DropIndex
