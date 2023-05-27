@@ -40,7 +40,9 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
 
     override fun visitSelect_statement_standalone(ctx: SqlServerParser.Select_statement_standaloneContext): Statement {
         currentOptType = StatementType.SELECT
-        this.visitWith_expression(ctx.with_expression())
+        if (ctx.with_expression() != null) {
+            this.visitWith_expression(ctx.with_expression())
+        }
         super.visitSelect_statement(ctx.select_statement())
 
         val queryStmt = QueryStmt(inputTables, limit, offset)

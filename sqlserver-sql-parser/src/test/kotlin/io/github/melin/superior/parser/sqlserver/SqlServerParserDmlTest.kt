@@ -69,6 +69,24 @@ class SqlServerParserDmlTest {
         }
     }
 
+    //@Test
+    fun queryTest2() {
+        val sql = """
+            DECLARE @NAME VARCHAR(20)
+            SET @NAME='kkk'
+            SELECT * FROM demos.dbo.tab1 WHERsE name=@NAME
+            SELECT name FROM demos.dbo.tab1 WHERE name=@NAME
+        """.trimIndent()
+
+        val statement = SqlServerHelper.getStatementData(sql)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
     @Test
     fun deleteTest0() {
         val sql = """
