@@ -183,4 +183,20 @@ class StarRocksSqlParserDmlTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun insertTest3() {
+        val sql = """
+            INSERT INTO test.`table1` VALUES (1, "test", 23)
+        """.trimIndent()
+
+        val statement = StarRocksHelper.getStatement(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals("table1", statement.tableId.tableName)
+            Assert.assertEquals(0, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
 }
