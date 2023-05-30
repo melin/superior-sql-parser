@@ -241,16 +241,16 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
 
     fun parseTableName(ctx: QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 3) {
-            val catalotName = ctx.identifier().get(0).text
-            val schemaName = ctx.identifier().get(1).text
-            val tableName = ctx.identifier().get(2).text
+            val catalotName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
+            val schemaName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+            val tableName = StringUtil.cleanQuote(ctx.identifier().get(2).text)
             TableId(catalotName, schemaName, tableName)
         } else if (ctx.identifier().size == 2) {
-            val schemaName = ctx.identifier().get(0).text
-            val tableName = ctx.identifier().get(1).text
+            val schemaName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
+            val tableName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
             TableId(schemaName, tableName)
         } else if (ctx.identifier().size == 1) {
-            val tableName = ctx.identifier().get(0).text
+            val tableName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
             TableId(tableName)
         } else {
             throw SQLParserException("parse qualifiedName error: " + ctx.identifier().size)
