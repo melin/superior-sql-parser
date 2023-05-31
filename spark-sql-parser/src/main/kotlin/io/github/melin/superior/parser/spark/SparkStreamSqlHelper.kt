@@ -25,7 +25,7 @@ object SparkStreamSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatement(command: String) : ArrayList<Statement> {
+    @JvmStatic fun parseStatement(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -39,7 +39,7 @@ object SparkStreamSqlHelper {
         parser.addParseListener(SparkSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.SLL
+        parser.interpreter.predictionMode = PredictionMode.LL
 
         val sqlVisitor = SparkStreamSqlAntlr4Visitor()
         sqlVisitor.setCommand(trimCmd)

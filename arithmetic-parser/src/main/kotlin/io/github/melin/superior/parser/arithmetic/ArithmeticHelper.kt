@@ -16,11 +16,11 @@ import org.apache.commons.lang3.StringUtils
  */
 object ArithmeticHelper {
 
-    @JvmStatic fun getStatement(command: String) : Statement? {
-        return ArithmeticHelper.getStatement(command, true)
+    @JvmStatic fun parseStatement(command: String) : Statement? {
+        return ArithmeticHelper.parseStatement(command, true)
     }
 
-    @JvmStatic fun getStatement(command: String, bracketEnbled: Boolean) : Statement? {
+    @JvmStatic fun parseStatement(command: String, bracketEnbled: Boolean) : Statement? {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = CharStreams.fromString(trimCmd);

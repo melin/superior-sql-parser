@@ -27,7 +27,7 @@ class SparkStreamSqlParserTest {
                 "  kafka.group.id = \"cn-north-1\"\n" +
                 ")"
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -73,7 +73,7 @@ class SparkStreamSqlParserTest {
             set spark.test = dsd(id)%=2;
             """
 
-        val statementDatas = SparkStreamSqlHelper.getStatement(sql)
+        val statementDatas = SparkStreamSqlHelper.parseStatement(sql)
         Assert.assertEquals(16, statementDatas.size)
         val statement = statementDatas.get(0)
         if (statement is CreateTable) {
@@ -92,7 +92,7 @@ class SparkStreamSqlParserTest {
                 "    tableName = \"hudi_stream_json_dt\"" +
                 "    )"
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -107,7 +107,7 @@ class SparkStreamSqlParserTest {
     fun setConfigTest() {
         val sql = "set spark.test = false";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
@@ -122,7 +122,7 @@ class SparkStreamSqlParserTest {
     fun setConfigTest1() {
         val sql = "set spark.test = 'hello world'";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
@@ -137,7 +137,7 @@ class SparkStreamSqlParserTest {
     fun setConfigTest2() {
         val sql = "set spark.test = 12 ";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
@@ -152,7 +152,7 @@ class SparkStreamSqlParserTest {
     fun setConfigTest3() {
         val sql = "set spark.test = 'demo' ";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
@@ -167,7 +167,7 @@ class SparkStreamSqlParserTest {
     fun insertSqlTest() {
         val sql = "insert into bigdata.test_result1 select * from users";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -189,7 +189,7 @@ class SparkStreamSqlParserTest {
                 "FROM (select userid, money, proctime from orders LEFT JOIN LATERAL TABLE(demoFunc(a)) as T(newuserid) ON TRUE) a\n" +
                 "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;";
 
-        val statement = SparkStreamSqlHelper.getStatement(sql).get(0)
+        val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)

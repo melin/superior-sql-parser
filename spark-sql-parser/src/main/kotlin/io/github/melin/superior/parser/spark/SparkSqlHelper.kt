@@ -67,16 +67,16 @@ object SparkSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatement(command: String): Statement {
-        val statements = this.getMultiStatement(command)
-        if (statements.size != null) {
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
             throw IllegalStateException("only parser one sql, sql count: " + statements.size)
         } else {
             return statements.get(0)
         }
     }
 
-    @JvmStatic fun getMultiStatement(command: String): List<Statement> {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =

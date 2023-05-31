@@ -19,7 +19,7 @@ class PostgreSqlProcessParserTest {
             RETURNS NULL ON NULL INPUT;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatement(sql)
+        val statement = PostgreSqlHelper.parseStatement(sql)
         
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
@@ -40,7 +40,7 @@ class PostgreSqlProcessParserTest {
             RETURNS NULL ON NULL INPUT;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatement(sql)
+        val statement = PostgreSqlHelper.parseStatement(sql)
         
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
@@ -67,7 +67,7 @@ class PostgreSqlProcessParserTest {
                 SECURITY DEFINER
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatement(sql)
+        val statement = PostgreSqlHelper.parseStatement(sql)
         
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
@@ -101,7 +101,7 @@ class PostgreSqlProcessParserTest {
             END;${'$'}${'$'};
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatement(sql)
+        val statement = PostgreSqlHelper.parseStatement(sql)
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
@@ -135,7 +135,7 @@ class PostgreSqlProcessParserTest {
             END;${'$'}${'$'};
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.getStatement(sql)
+        val statement = PostgreSqlHelper.parseStatement(sql)
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)

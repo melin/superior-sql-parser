@@ -18,7 +18,7 @@ class ArithmetricParserTest {
                 - (log2(feature_12) + 特征3))
             """
 
-        val statement = ArithmeticHelper.getStatement(sql, false)
+        val statement = ArithmeticHelper.parseStatement(sql, false)
         Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(4, statement.variables.toArray().size)
@@ -37,7 +37,7 @@ class ArithmetricParserTest {
                                 else 3 end
             """
 
-        val statement = ArithmeticHelper.getStatement(sql, false)
+        val statement = ArithmeticHelper.parseStatement(sql, false)
         Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(1, statement.variables.toArray().size)
@@ -54,7 +54,7 @@ class ArithmetricParserTest {
                 - (log2([feature_12]) + [特征3]))
             """
 
-        val statement = ArithmeticHelper.getStatement(sql)
+        val statement = ArithmeticHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.ARITHMETIC, statement?.statementType)
         if (statement is ArithmeticData) {
             Assert.assertEquals(4, statement.variables.toArray().size)

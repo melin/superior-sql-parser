@@ -21,7 +21,7 @@ class SqlServerParserDmlTest {
             FETCH NEXT 10 ROWS ONLY;
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -60,7 +60,7 @@ class SqlServerParserDmlTest {
             ORDER BY SalesPersonID, SalesYear
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
@@ -78,7 +78,7 @@ class SqlServerParserDmlTest {
             SELECT name FROM demos.dbo.tab1 WHERE name=@NAME
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(2, statement.inputTables.size)
@@ -94,7 +94,7 @@ class SqlServerParserDmlTest {
             WHERE StandardCost BETWEEN 12.00 AND 14.00 AND EndDate IS NULL;  
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals(TableId("Production", "ProductCostHistory"), statement.tableId)
@@ -111,7 +111,7 @@ class SqlServerParserDmlTest {
             WHERE DueDate < '20020701';
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals(TableId("Purchasing", "PurchaseOrderDetail"), statement.tableId)
@@ -131,7 +131,7 @@ class SqlServerParserDmlTest {
                 WHERE T2.EnglishProductSubcategoryName = 'Road Bikes') 
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals(TableId("dbo", "FactInternetSales"), statement.tableId)
@@ -149,7 +149,7 @@ class SqlServerParserDmlTest {
                 , (N'Y3', N'Cubic Yards', '20080923');  
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(TableId("Production", "UnitMeasure"), statement.tableId)
@@ -166,7 +166,7 @@ class SqlServerParserDmlTest {
             WHERE Name = 'Anchorage';  
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals(TableId("Cities"), statement.tableId)
@@ -185,7 +185,7 @@ class SqlServerParserDmlTest {
             WHERE HumanResources.Employee.BusinessEntityID = th.BusinessEntityID;
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals(TableId("HumanResources", "Employee"), statement.tableId)
@@ -212,7 +212,7 @@ class SqlServerParserDmlTest {
                 DELETE;
         """.trimIndent()
 
-        val statement = SqlServerHelper.getStatement(sql)
+        val statement = SqlServerHelper.parseStatement(sql)
 
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)

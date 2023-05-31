@@ -29,7 +29,7 @@ object PrestoSqlHelper {
         }
     }
 
-    @JvmStatic fun getStatement(command: String) : Statement? {
+    @JvmStatic fun parseStatement(command: String) : Statement? {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = CaseInsensitiveStream(
