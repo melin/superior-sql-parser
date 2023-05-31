@@ -25,21 +25,21 @@ public class ParseException extends RuntimeException {
     public String getMessage() {
         StringBuilder builder = new StringBuilder();
         builder.append("\n").append(message);
-        if(start != null) {
+        if (start != null) {
             builder.append("(line " + start.getLine() + ", pos " + start.getStartPosition() + ")\n");
-            if(StringUtils.isNotBlank(command)) {
+            if (StringUtils.isNotBlank(command)) {
                 String[] lines = command.split("\n");
                 builder.append("\n== SQL ==\n");
-                for(int i=0; i<start.getLine(); i++) {
+                for (int i=0; i<start.getLine(); i++) {
                     builder.append(lines[i]).append("\n");
                 }
 
-                for(int i=0; i<start.getStartPosition(); i++) {
+                for (int i = 0; i < start.getStartPosition(); i++) {
                     builder.append("-");
                 }
                 builder.append("^^^\n");
 
-                for(int i=start.getLine(); i<lines.length; i++) {
+                for (int i = start.getLine(); i < lines.length; i++) {
                     builder.append(lines[i]).append("\n");
                 }
             }
