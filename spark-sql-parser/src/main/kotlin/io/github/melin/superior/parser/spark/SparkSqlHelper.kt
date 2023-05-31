@@ -68,6 +68,15 @@ object SparkSqlHelper {
     }
 
     @JvmStatic fun getStatement(command: String): Statement {
+        val statements = this.getMultiStatement(command)
+        if (statements.size != null) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
+        }
+    }
+
+    @JvmStatic fun getMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -89,7 +98,8 @@ object SparkSqlHelper {
         try {
             return try {
                 // first, try parsing with potentially faster SLL mode
-                sqlVisitor.visit(parser.singleStatement())
+                sqlVisitor.visitSqlStatements(parser.sqlStatements())
+                sqlVisitor.getSqlStatements()
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
@@ -97,6 +107,7 @@ object SparkSqlHelper {
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.statement())
+                sqlVisitor.getSqlStatements()
             }
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {

@@ -20,14 +20,20 @@ class SparkSqlParserTest {
 
     @Test
     fun createDatabaseTest() {
-        val sql = "CREATE DATABASE IF NOT EXISTS bigdata"
+        val sql = """
+            CREATE DATABASE IF NOT EXISTS bigdata1
+            drop DATABASE IF EXISTS bigdata2
+        """.trimIndent()
 
-        val statement = SparkSqlHelper.getStatement(sql)
-        
-        if (statement is CreateDatabase) {
-            Assert.assertEquals("bigdata", statement.databaseName)
-        } else {
-            Assert.fail()
+        val statements = SparkSqlHelper.getMultiStatement(sql)
+
+        val createDatabse = statements.get(0)
+        val dropDatabase = statements.get(1)
+        if (createDatabse is CreateDatabase) {
+            Assert.assertEquals("bigdata1", createDatabse.databaseName)
+        }
+        if (dropDatabase is CreateDatabase) {
+            Assert.assertEquals("bigdata2", dropDatabase.databaseName)
         }
     }
 
@@ -1071,19 +1077,32 @@ class SparkSqlParserTest {
 
     @Test
     fun queryTest0() {
-        val sql = "select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10"
-        val statement = SparkSqlHelper.getStatement(sql)
-        
-        if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statement.statementType)
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("users", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("demo_rp.bigdata.users", statement.inputTables.get(0).getFullTableName())
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
-            Assert.assertEquals(101, statement.limit)
-            Assert.assertEquals(10, statement.offset)
-        } else {
-            Assert.fail()
+        val sql = """
+            select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10
+            select * from `demo_rp`.bigdata.users1 a join address1 b on a.addr_id=b.id limit 102
+        """.trimIndent()
+
+        val statements = SparkSqlHelper.getMultiStatement(sql)
+
+        val query0 = statements.get(0)
+        val query1 = statements.get(1)
+        if (query0 is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, query0.statementType)
+            Assert.assertEquals(2, query0.inputTables.size)
+            Assert.assertEquals("users", query0.inputTables.get(0).tableName)
+            Assert.assertEquals("demo_rp.bigdata.users", query0.inputTables.get(0).getFullTableName())
+            Assert.assertEquals("address", query0.inputTables.get(1).tableName)
+            Assert.assertEquals(101, query0.limit)
+            Assert.assertEquals(10, query0.offset)
+        }
+        if (query1 is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, query1.statementType)
+            Assert.assertEquals(2, query1.inputTables.size)
+            Assert.assertEquals("users1", query1.inputTables.get(0).tableName)
+            Assert.assertEquals("demo_rp.bigdata.users1", query1.inputTables.get(0).getFullTableName())
+            Assert.assertEquals("address1", query1.inputTables.get(1).tableName)
+            Assert.assertEquals(102, query1.limit)
+            Assert.assertNull(query1.offset)
         }
     }
 

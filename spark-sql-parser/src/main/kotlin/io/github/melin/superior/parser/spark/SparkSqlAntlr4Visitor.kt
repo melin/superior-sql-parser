@@ -57,14 +57,46 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     private var insertSql: Boolean = false;
 
+    private var statements: ArrayList<Statement> = arrayListOf()
+
+    fun getSqlStatements(): List<Statement> {
+        return statements
+    }
+
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): Statement {
-        val data = super.visitSingleStatement(ctx)
+    override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
+        ctx.singleStatement().forEach {
+            statements.add(this.visitSingleStatement(it))
+            clean()
+        }
+        return null
+    }
 
-        if (data == null) {
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+        currentAlterType = UNKOWN
+        multiInsertToken = null
+
+        limit = null
+        offset = null
+        inputTables = arrayListOf()
+        outputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+        functionNames = hashSetOf()
+
+        command = null
+        rows = arrayListOf()
+
+        insertSql = false
+    }
+
+    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): Statement {
+        val statement = super.visitSingleStatement(ctx)
+
+        if (statement == null) {
             val startToken = StringUtils.lowerCase(ctx.getStart().text)
             return if ("show".equals(startToken)) {
                 DefaultStatement(StatementType.SHOW)
@@ -74,8 +106,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
                 throw SQLParserException("不支持的SQL: " + command)
             }
         }
-
-        return data
+        return statement
     }
 
     fun setCommand(command: String) {

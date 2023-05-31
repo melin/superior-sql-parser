@@ -42,8 +42,12 @@ options { tokenVocab = SparkSqlLexer; }
   public boolean double_quoted_identifiers = false;
 }
 
+sqlStatements
+    : singleStatement*
+    ;
+
 singleStatement
-    : statement SEMICOLON* EOF
+    : statement SEMICOLON?
     ;
 
 singleExpression
