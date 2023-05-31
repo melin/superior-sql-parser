@@ -271,7 +271,7 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
         } else {
             currentOptType = StatementType.CREATE_TABLE
             val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
-            createTable.createTableType = createTableType;
+            createTable.tableType = createTableType;
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary

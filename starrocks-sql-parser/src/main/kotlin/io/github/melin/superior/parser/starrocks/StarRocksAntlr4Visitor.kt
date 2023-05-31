@@ -74,7 +74,23 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
             ColumnRel(columnName, dataType, colComment)
         }
 
-        return CreateTable(tableId, comment, columnRels)
+        val keyDesc = ctx.keyDesc()
+        var tableType = ""
+        if (keyDesc != null) {
+            if (keyDesc.DUPLICATE() != null) {
+                tableType = "duplicate"
+            } else if (keyDesc.AGGREGATE() != null) {
+                tableType = "aggregate"
+            } else if (keyDesc.UNIQUE() != null) {
+                tableType = "unique"
+            } else if (keyDesc.PRIMARY() != null) {
+                tableType = "primary"
+            }
+        }
+
+        val table = CreateTable(tableId, comment, columnRels)
+        table.tableType = tableType
+        return table
     }
 
     override fun visitCreateViewStatement(ctx: CreateViewStatementContext): Statement {
