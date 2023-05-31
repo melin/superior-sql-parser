@@ -576,15 +576,15 @@ fromStatement
     ;
 
 fromStatementBody
-    : transformClause
-      whereClause?
-      queryOrganization
-    | selectClause
+    : selectClause
       lateralView*
       whereClause?
       aggregationClause?
       havingClause?
       windowClause?
+      queryOrganization
+    | transformClause
+      whereClause?
       queryOrganization
     ;
 
@@ -908,7 +908,12 @@ functionIdentifier
     ;
 
 namedExpression
-    : expression (AS? (name=errorCapturingIdentifier | identifierList))?
+    : expression (AS? (name=selectItem | identifierList))?
+    ;
+
+selectItem
+    : IDENTIFIER
+    | quotedIdentifier
     ;
 
 namedExpressionSeq
