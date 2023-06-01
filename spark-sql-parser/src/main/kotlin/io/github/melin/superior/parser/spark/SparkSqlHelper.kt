@@ -96,19 +96,18 @@ object SparkSqlHelper {
         sqlVisitor.setCommand(trimCmd)
 
         try {
-            return try {
+            try {
                 // first, try parsing with potentially faster SLL mode
                 sqlVisitor.visitSqlStatements(parser.sqlStatements())
-                sqlVisitor.getSqlStatements()
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                sqlVisitor.visit(parser.statement())
-                sqlVisitor.getSqlStatements()
+                sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

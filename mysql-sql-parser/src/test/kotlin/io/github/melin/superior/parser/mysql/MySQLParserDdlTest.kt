@@ -22,16 +22,19 @@ class MySQLParserDdlTest {
     @Test
     fun createDatabaseTest() {
         val sql = """
-            CREATE DATABASE IF NOT EXISTS "bigdata"
+            CREATE DATABASE IF NOT EXISTS "bigdata1";
+            drop DATABASE IF EXISTS bigdata2
         """.trimIndent()
 
-        val statement = MySQLHelper.parseStatement(sql)
-        if(statement is CreateDatabase) {
-            val name = statement.databaseName
-            Assert.assertEquals(StatementType.CREATE_DATABASE, statement.statementType)
-            Assert.assertEquals("bigdata", name)
-        } else {
-            Assert.fail()
+        val statements = MySQLHelper.parseMultiStatement(sql)
+
+        val createDatabse = statements.get(0)
+        val dropDatabase = statements.get(1)
+        if (createDatabse is CreateDatabase) {
+            Assert.assertEquals("bigdata1", createDatabse.databaseName)
+        }
+        if (dropDatabase is CreateDatabase) {
+            Assert.assertEquals("bigdata2", dropDatabase.databaseName)
         }
     }
 

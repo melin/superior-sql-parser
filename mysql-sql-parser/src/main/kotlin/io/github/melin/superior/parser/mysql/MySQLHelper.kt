@@ -1,5 +1,6 @@
 package com.github.melin.superior.sql.parser.mysql
 
+import com.google.common.collect.Lists
 import io.github.melin.superior.common.relational.Statement
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -23,29 +24,20 @@ import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
  */
 object MySQLHelper {
 
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType?): Boolean {
-        return when (statementType) {
-            StatementType.CREATE_TABLE,
-            StatementType.DROP_TABLE,
-            StatementType.TRUNCATE_TABLE,
-            StatementType.ALTER_TABLE,
-
-            StatementType.INSERT,
-            StatementType.SELECT,
-            StatementType.DELETE,
-            StatementType.UPDATE,
-            StatementType.ANALYZE_TABLE,
-            StatementType.SHOW
-            -> true
-            else -> false
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         if (StringUtils.startsWithIgnoreCase(trimCmd,"show")) {
-            return DefaultStatement(StatementType.SHOW)
+            return Lists.newArrayList(DefaultStatement(StatementType.SHOW))
         }
 
         val charStream =
@@ -63,26 +55,16 @@ object MySQLHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                val data = sqlVisitor.visit(parser.sqlStatement())
-                if (data == null) {
-                    return DefaultStatement(StatementType.UNKOWN)
-                } else {
-                    return data
-                }
-            }
-            catch (e: ParseCancellationException) {
+                sqlVisitor.visitSqlStatements(parser.sqlStatements())
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                val data = sqlVisitor.visit(parser.sqlStatement())
-                if (data == null) {
-                    return DefaultStatement(StatementType.UNKOWN)
-                } else {
-                    return data
-                }
+                sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

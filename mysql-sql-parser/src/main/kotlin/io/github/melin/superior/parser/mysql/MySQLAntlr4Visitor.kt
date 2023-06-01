@@ -25,8 +25,31 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
     private var offset: Int? = null
     private val primaryKeys = ArrayList<String>()
 
-    private val inputTables: ArrayList<TableId> = arrayListOf()
+    private var inputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
+
+    private var statements: ArrayList<Statement> = arrayListOf()
+
+    fun getSqlStatements(): List<Statement> {
+        return statements
+    }
+
+    override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
+        ctx.sqlStatement().forEach {
+            statements.add(this.visitSqlStatement(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+
+        limit = null
+        offset = null
+        inputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+    }
 
     //-----------------------------------database-------------------------------------------------
 

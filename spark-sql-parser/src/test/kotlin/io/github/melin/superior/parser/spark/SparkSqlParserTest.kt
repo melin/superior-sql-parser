@@ -21,7 +21,7 @@ class SparkSqlParserTest {
     @Test
     fun createDatabaseTest() {
         val sql = """
-            CREATE DATABASE IF NOT EXISTS bigdata1
+            CREATE DATABASE IF NOT EXISTS bigdata1;
             drop DATABASE IF EXISTS bigdata2
         """.trimIndent()
 
