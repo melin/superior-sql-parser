@@ -42,17 +42,18 @@ object PostgreSqlHelper {
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = PostgreSqlAntlr4Visitor()
+        sqlVisitor.setCommand(command)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                sqlVisitor.visit(parser.stmt())
+                sqlVisitor.visit(parser.root())
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                sqlVisitor.visit(parser.stmt())
+                sqlVisitor.visit(parser.root())
             }
             return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {

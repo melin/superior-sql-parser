@@ -9,4 +9,13 @@ abstract class Statement: Serializable {
     abstract val statementType: StatementType
     abstract val privilegeType: PrivilegeType
     abstract val sqlType: SqlType
+    private var sql: String = ""
+
+    fun setSql(sql: String) {
+        this.sql = sql
+    }
+
+    fun getSql(): String {
+        return this.sql
+    }
 }

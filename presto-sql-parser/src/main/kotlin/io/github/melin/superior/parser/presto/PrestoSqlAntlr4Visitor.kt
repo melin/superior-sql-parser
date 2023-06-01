@@ -38,7 +38,10 @@ class PrestoSqlAntlr4Visitor : PrestoSqlBaseBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            statements.add(this.visitSingleStatement(it))
+            val statement = this.visitSingleStatement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null
@@ -51,8 +54,6 @@ class PrestoSqlAntlr4Visitor : PrestoSqlBaseBaseVisitor<Statement>() {
         offset = null
         inputTables = arrayListOf()
         cteTempTables = arrayListOf()
-
-        command = null
     }
 
     fun setCommand(command: String) {

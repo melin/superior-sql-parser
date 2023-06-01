@@ -49,14 +49,14 @@ object FlinkSQLHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                sqlVisitor.visit(parser.singleStatement())
+                sqlVisitor.visit(parser.sqlStatements())
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                sqlVisitor.visit(parser.statement())
+                sqlVisitor.visit(parser.sqlStatements())
             }
 
             return sqlVisitor.getSqlStatements()

@@ -52,6 +52,7 @@ object MySQLHelper {
         parser.addErrorListener(ParseErrorListener())
 
         val sqlVisitor = MySQLAntlr4Visitor()
+        sqlVisitor.setCommand(command)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode

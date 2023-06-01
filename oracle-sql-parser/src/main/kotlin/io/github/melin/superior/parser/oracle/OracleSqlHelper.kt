@@ -41,6 +41,7 @@ object OracleSqlHelper {
         // parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = OracleSqlAntlr4Visitor()
+        sqlVisitor.setCommand(command)
 
         try {
             try {

@@ -11,14 +11,15 @@ import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
-import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
 class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
+    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
     private var offset: Int? = null
@@ -30,6 +31,10 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     private var statements: ArrayList<Statement> = arrayListOf()
 
+    fun setCommand(command: String) {
+        this.command = command
+    }
+
     fun getSqlStatements(): List<Statement> {
         return statements
     }
@@ -40,12 +45,18 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            statements.add(this.visitSql_plus_command(it))
+            val statement = this.visitSql_plus_command(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
 
         ctx.unit_statement().forEach {
-            statements.add(this.visitUnit_statement(it))
+            val statement = this.visitUnit_statement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null

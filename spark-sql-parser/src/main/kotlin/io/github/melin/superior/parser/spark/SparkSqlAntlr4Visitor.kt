@@ -69,7 +69,10 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            statements.add(this.visitSingleStatement(it))
+            val statement = this.visitSingleStatement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null
@@ -87,7 +90,6 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
         cteTempTables = arrayListOf()
         functionNames = hashSetOf()
 
-        command = null
         rows = arrayListOf()
 
         insertSql = false

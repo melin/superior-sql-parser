@@ -42,7 +42,10 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: TrinoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            statements.add(this.visitSingleStatement(it))
+            val statement = this.visitSingleStatement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null
@@ -55,8 +58,6 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
         offset = null
         inputTables = arrayListOf()
         cteTempTables = arrayListOf()
-
-        command = null
     }
 
     override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): Statement? {

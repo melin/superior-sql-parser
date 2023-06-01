@@ -31,9 +31,11 @@ class SparkSqlParserTest {
         val dropDatabase = statements.get(1)
         if (createDatabse is CreateDatabase) {
             Assert.assertEquals("bigdata1", createDatabse.databaseName)
+            Assert.assertEquals("CREATE DATABASE IF NOT EXISTS bigdata1;", createDatabse.getSql())
         }
         if (dropDatabase is CreateDatabase) {
             Assert.assertEquals("bigdata2", dropDatabase.databaseName)
+            Assert.assertEquals("drop DATABASE IF EXISTS bigdata2", dropDatabase.getSql())
         }
     }
 

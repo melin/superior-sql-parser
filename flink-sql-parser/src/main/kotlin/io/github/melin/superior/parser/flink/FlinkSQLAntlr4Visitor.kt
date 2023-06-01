@@ -21,6 +21,10 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
 
     private var statements: ArrayList<Statement> = arrayListOf()
 
+    fun setCommand(command: String) {
+        this.command = command
+    }
+
     fun getSqlStatements(): List<Statement> {
         return statements
     }
@@ -31,7 +35,10 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: FlinkCdcSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            statements.add(this.visitSingleStatement(it))
+            val statement = this.visitSingleStatement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null
@@ -39,7 +46,6 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
 
     private fun clean() {
         currentOptType = StatementType.UNKOWN
-        command = null
     }
 
     override fun visitSingleStatement(ctx: FlinkCdcSqlParser.SingleStatementContext): Statement {
@@ -157,9 +163,5 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
             properties.put(key, value)
         }
         return properties
-    }
-
-    fun setCommand(command: String) {
-        this.command = command;
     }
 }

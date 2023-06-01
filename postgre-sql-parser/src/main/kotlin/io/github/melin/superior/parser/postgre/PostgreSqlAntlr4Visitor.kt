@@ -16,14 +16,15 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Colconstr
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Indirection_elContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
-import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
 class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
+    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
@@ -33,6 +34,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
+
+    fun setCommand(command: String) {
+        this.command = command
+    }
 
     fun getSqlStatements(): List<Statement> {
         return statements
@@ -44,7 +49,10 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            statements.add(this.visitStmt(it))
+            val statement = this.visitStmt(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null

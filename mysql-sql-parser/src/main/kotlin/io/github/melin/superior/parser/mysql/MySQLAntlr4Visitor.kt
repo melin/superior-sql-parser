@@ -13,6 +13,7 @@ import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import org.apache.commons.lang3.StringUtils
 
 /**
  *
@@ -20,6 +21,7 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
  */
 class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
 
+    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
     private var offset: Int? = null
@@ -30,13 +32,20 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
 
     private var statements: ArrayList<Statement> = arrayListOf()
 
+    fun setCommand(command: String) {
+        this.command = command
+    }
+
     fun getSqlStatements(): List<Statement> {
         return statements
     }
 
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            statements.add(this.visitSqlStatement(it))
+            val statement = this.visitSqlStatement(it)
+            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            statement.setSql(sql)
+            statements.add(statement)
             clean()
         }
         return null
