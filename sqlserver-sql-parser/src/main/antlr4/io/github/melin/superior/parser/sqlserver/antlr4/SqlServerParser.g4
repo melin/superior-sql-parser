@@ -2364,7 +2364,7 @@ create_table_index_option
 
 // https://msdn.microsoft.com/en-us/library/ms187956.aspx
 create_view
-    : CREATE (OR ALTER)? VIEW simple_name ('(' column_name_list ')')?
+    : (CREATE (OR ALTER)? | ALTER) VIEW simple_name ('(' column_name_list ')')?
       (WITH view_attribute (',' view_attribute)*)?
       AS select_statement_standalone (WITH CHECK OPTION)? ';'?
     ;
@@ -2993,8 +2993,8 @@ security_statement
     | create_certificate
     ;
 
-principal_id:
-    | id_
+principal_id
+    : id_
     | PUBLIC
     ;
 
@@ -6054,6 +6054,7 @@ id_
     | DOUBLE_QUOTE_BLANK
     | SQUARE_BRACKET_ID
     | keyword
+    | RAW
     ;
 
 simple_id

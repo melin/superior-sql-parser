@@ -14,5 +14,9 @@ class DropDatabase(
     override val privilegeType = PrivilegeType.DROP
     override val sqlType = SqlType.DDL
 
+    val databaseNames: ArrayList<String> = arrayListOf()
+
     constructor(databaseName: String): this(null, databaseName)
+
+    constructor(databaseName: String, ifExists: Boolean): this(null, databaseName, ifExists)
 }

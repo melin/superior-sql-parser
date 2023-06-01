@@ -17,14 +17,16 @@ import org.apache.commons.lang3.StringUtils
  * Created by libinsong on 2020/6/30 10:01 上午
  */
 object SqlServerHelper {
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            StatementType.SELECT -> true
-            else -> false
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String) : Statement? {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -38,19 +40,21 @@ object SqlServerHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         val sqlVisitor = SqlServerAntlr4Visitor()
+        sqlVisitor.setCommand(command)
 
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.batch())
+                sqlVisitor.visit(parser.tsql_file())
             } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.batch())
+                sqlVisitor.visit(parser.tsql_file())
             }
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

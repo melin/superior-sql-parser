@@ -3,14 +3,17 @@ MySQL (Positive Technologies) grammar
 The MIT License (MIT).
 Copyright (c) 2015-2017, Ivan Kochurkin (kvanttt@gmail.com), Positive Technologies.
 Copyright (c) 2017, Ivan Khudyashev (IHudyashov@ptsecurity.com)
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -193,6 +196,7 @@ SEPARATOR:                           'SEPARATOR';
 SHOW:                                'SHOW';
 SIGNAL:                              'SIGNAL';
 SKIP_:                               'SKIP';
+SKIP_QUERY_REWRITE:                  'SKIP_QUERY_REWRITE';
 SPATIAL:                             'SPATIAL';
 SQL:                                 'SQL';
 SQLEXCEPTION:                        'SQLEXCEPTION';
@@ -763,7 +767,9 @@ MICROSECOND:                         'MICROSECOND';
 
 ADMIN:                               'ADMIN';
 APPLICATION_PASSWORD_ADMIN:          'APPLICATION_PASSWORD_ADMIN';
+AUDIT_ABORT_EXEMPT:                  'AUDIT_ABORT_EXEMPT';
 AUDIT_ADMIN:                         'AUDIT_ADMIN';
+AUTHENTICATION_POLICY_ADMIN:         'AUTHENTICATION_POLICY_ADMIN';
 BACKUP_ADMIN:                        'BACKUP_ADMIN';
 BINLOG_ADMIN:                        'BINLOG_ADMIN';
 BINLOG_ENCRYPTION_ADMIN:             'BINLOG_ENCRYPTION_ADMIN';
@@ -773,6 +779,7 @@ ENCRYPTION_KEY_ADMIN:                'ENCRYPTION_KEY_ADMIN';
 EXECUTE:                             'EXECUTE';
 FILE:                                'FILE';
 FIREWALL_ADMIN:                      'FIREWALL_ADMIN';
+FIREWALL_EXEMPT:                     'FIREWALL_EXEMPT';
 FIREWALL_USER:                       'FIREWALL_USER';
 FLUSH_OPTIMIZER_COSTS:               'FLUSH_OPTIMIZER_COSTS';
 FLUSH_STATUS:                        'FLUSH_STATUS';
@@ -1168,6 +1175,7 @@ TOUCHES:                             'TOUCHES';
 TO_BASE64:                           'TO_BASE64';
 TO_DAYS:                             'TO_DAYS';
 TO_SECONDS:                          'TO_SECONDS';
+TP_CONNECTION_ADMIN:                 'TP_CONNECTION_ADMIN';
 UCASE:                               'UCASE';
 UNCOMPRESS:                          'UNCOMPRESS';
 UNCOMPRESSED_LENGTH:                 'UNCOMPRESSED_LENGTH';
