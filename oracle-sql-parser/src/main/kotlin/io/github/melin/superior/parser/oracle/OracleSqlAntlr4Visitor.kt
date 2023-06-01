@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
@@ -45,16 +46,22 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            val statement = this.visitSql_plus_command(it)
+            var statement = this.visitSql_plus_command(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()
         }
 
         ctx.unit_statement().forEach {
-            val statement = this.visitUnit_statement(it)
+            var statement = this.visitUnit_statement(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()
@@ -77,6 +84,11 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
         if (!outputTables.contains(tableId)) {
             outputTables.add(tableId)
         }
+    }
+
+    override fun visitCreate_database(ctx: OracleParser.Create_databaseContext): Statement {
+        val databaseName = StringUtil.cleanQuote(ctx.database_name().text)
+        return CreateDatabase(databaseName)
     }
 
     override fun visitCreate_table(ctx: OracleParser.Create_tableContext): Statement {

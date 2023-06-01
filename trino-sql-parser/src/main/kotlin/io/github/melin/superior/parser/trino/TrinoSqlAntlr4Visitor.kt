@@ -42,8 +42,11 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: TrinoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val statement = this.visitSingleStatement(it)
+            var statement = this.visitSingleStatement(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()

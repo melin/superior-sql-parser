@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.drop.DropView
@@ -49,8 +50,11 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            val statement = this.visitStmt(it)
+            var statement = this.visitStmt(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()
@@ -73,6 +77,27 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
             outputTables.add(tableId)
         }
     }
+
+    //-----------------------------------database-------------------------------------------------
+
+    override fun visitCreatedbstmt(ctx: PostgreSqlParser.CreatedbstmtContext): Statement {
+        val databaseName = StringUtil.cleanQuote(ctx.name().text)
+        return CreateDatabase(databaseName)
+    }
+
+    override fun visitDropdbstmt(ctx: PostgreSqlParser.DropdbstmtContext): Statement {
+        val databaseName = StringUtil.cleanQuote(ctx.name().text)
+        return DropDatabase(databaseName)
+    }
+
+    //-----------------------------------schema-------------------------------------------------
+
+    override fun visitCreateschemastmt(ctx: PostgreSqlParser.CreateschemastmtContext): Statement {
+        val schemaName = StringUtil.cleanQuote(ctx.colid().text)
+        return CreateSchema(schemaName)
+    }
+
+    //-----------------------------------table-------------------------------------------------
 
     override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): Statement {
         currentOptType = StatementType.CREATE_TABLE

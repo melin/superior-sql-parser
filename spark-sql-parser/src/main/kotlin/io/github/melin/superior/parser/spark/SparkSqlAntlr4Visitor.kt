@@ -69,8 +69,11 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val statement = this.visitSingleStatement(it)
+            var statement = this.visitSingleStatement(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()

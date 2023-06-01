@@ -42,8 +42,11 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            val statement = this.visitSqlStatement(it)
+            var statement = this.visitSqlStatement(it)
             val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            if (statement == null) {
+                statement = DefaultStatement(StatementType.UNKOWN)
+            }
             statement.setSql(sql)
             statements.add(statement)
             clean()

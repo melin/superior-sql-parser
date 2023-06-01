@@ -1,7 +1,9 @@
 package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.create.CreateDatabase
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
@@ -9,6 +11,30 @@ import org.junit.Assert
 import org.junit.Test
 
 class OracleSqlParserDdlTest {
+    @Test
+    fun createDatabaseTest() {
+        val sql = """
+            CREATE DATABASE bigdata1 USER SYSTEM IDENTIFIED BY 123213
+            drop DATABASE bigdata2
+        """.trimIndent()
+
+        val statements = OracleSqlHelper.parseMultiStatement(sql)
+
+        val createDatabse = statements.get(0)
+        val dropDatabase = statements.get(1)
+        if (createDatabse is CreateDatabase) {
+            Assert.assertEquals("bigdata1", createDatabse.databaseName)
+        } else {
+            Assert.fail()
+        }
+
+        if (dropDatabase is DefaultStatement) {
+            Assert.assertTrue(true)
+        } else {
+            Assert.fail()
+        }
+    }
+
     @Test
     fun createTableTest0() {
         val sql = """

@@ -4,9 +4,8 @@ import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentData
-import io.github.melin.superior.common.relational.create.CreateMaterializedView
-import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.create.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropTable
 import org.junit.Assert
 import org.junit.Test
@@ -15,6 +14,52 @@ import org.junit.Test
  * Created by libinsong on 2020/6/30 11:04 上午
  */
 class PostgreSqlParserDdlTest {
+
+    @Test
+    fun createDatabaseTest() {
+        val sql = """
+            CREATE DATABASE bigdata1;
+            drop DATABASE bigdata2
+        """.trimIndent()
+
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+
+        val createDatabse = statements.get(0)
+        val dropDatabase = statements.get(1)
+        if (createDatabse is CreateDatabase) {
+            Assert.assertEquals("bigdata1", createDatabse.databaseName)
+        } else {
+            Assert.fail()
+        }
+        if (dropDatabase is DropDatabase) {
+            Assert.assertEquals("bigdata2", dropDatabase.databaseName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createSchemaTest() {
+        val sql = """
+            CREATE schema bigdata1;
+            CREATE schema bigdata2;
+        """.trimIndent()
+
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+
+        val createSchema1 = statements.get(0)
+        val createSchema2 = statements.get(1)
+        if (createSchema1 is CreateSchema) {
+            Assert.assertEquals("bigdata1", createSchema1.schemaName)
+        } else {
+            Assert.fail()
+        }
+        if (createSchema2 is CreateSchema) {
+            Assert.assertEquals("bigdata2", createSchema2.schemaName)
+        } else {
+            Assert.fail()
+        }
+    }
 
     @Test
     fun createTable0() {
