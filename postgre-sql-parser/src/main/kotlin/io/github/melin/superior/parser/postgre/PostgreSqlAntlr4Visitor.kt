@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
-class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
+class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBaseVisitor<Statement>() {
 
     private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -35,13 +35,18 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
-
-    fun setCommand(command: String) {
-        this.command = command
-    }
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -50,14 +55,19 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            var statement = this.visitStmt(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitStmt(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

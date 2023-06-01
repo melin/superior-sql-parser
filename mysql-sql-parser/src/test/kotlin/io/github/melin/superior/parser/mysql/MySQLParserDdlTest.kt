@@ -20,6 +20,19 @@ import org.junit.Test
 class MySQLParserDdlTest {
 
     @Test
+    fun splitSqlTest() {
+        val sql = """
+            CREATE DATABASE IF NOT EXISTS bigdata1;    
+            drop DATABASE IF EXISTS bigdata2
+        """.trimIndent()
+
+        val statements = MySQLHelper.splitSql(sql)
+
+        Assert.assertEquals(2, statements.size)
+        Assert.assertEquals("CREATE DATABASE IF NOT EXISTS bigdata1", statements.get(0))
+    }
+
+    @Test
     fun createDatabaseTest() {
         val sql = """
             CREATE DATABASE IF NOT EXISTS "bigdata1";
@@ -417,7 +430,7 @@ class MySQLParserDdlTest {
     }
 
     @Test
-    fun splitSqlTest() {
+    fun splitAlterSqlTest() {
         val sql = "ALTER TABLE \n`datacompute`.`users_quan` \n" +
                 "DROP COLUMN \n`address`,\n" +
                 "CHANGE COLUMN `name` `username` VARCHAR(255) NULL DEFAULT NULL \nCOMMENT 'username' ,\n" +

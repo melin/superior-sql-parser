@@ -28,6 +28,16 @@ object FlinkSQLHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): FlinkSQLAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -43,7 +53,7 @@ object FlinkSQLHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = FlinkSQLAntlr4Visitor()
+        val sqlVisitor = FlinkSQLAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(trimCmd)
 
         try {
@@ -59,7 +69,7 @@ object FlinkSQLHelper {
                 sqlVisitor.visit(parser.sqlStatements())
             }
 
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

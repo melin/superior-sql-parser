@@ -27,6 +27,16 @@ object SqlServerHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): SqlServerAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -39,7 +49,7 @@ object SqlServerHelper {
         val parser = SqlServerParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        val sqlVisitor = SqlServerAntlr4Visitor()
+        val sqlVisitor = SqlServerAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(command)
 
         try {
@@ -54,7 +64,7 @@ object SqlServerHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.tsql_file())
             }
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

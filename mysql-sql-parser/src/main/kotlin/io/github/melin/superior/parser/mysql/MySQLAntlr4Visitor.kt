@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/2/8.
  */
-class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
+class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor<Statement>() {
 
     private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -31,25 +31,35 @@ class MySQLAntlr4Visitor : MySqlParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
-
-    fun setCommand(command: String) {
-        this.command = command
-    }
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
     }
 
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
+    }
+
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            var statement = this.visitSqlStatement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSqlStatement(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

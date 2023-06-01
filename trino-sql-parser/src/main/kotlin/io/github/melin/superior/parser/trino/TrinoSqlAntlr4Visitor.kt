@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.trino
 
+import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
+class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false): TrinoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
@@ -26,14 +27,19 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
-    fun setCommand(command: String) {
-        this.command = command
-    }
-
     private var statements: ArrayList<Statement> = arrayListOf()
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -42,14 +48,19 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: TrinoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var statement = this.visitSingleStatement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSingleStatement(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

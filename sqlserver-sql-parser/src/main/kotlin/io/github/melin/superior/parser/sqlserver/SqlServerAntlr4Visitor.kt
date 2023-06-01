@@ -9,7 +9,6 @@ import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.CreateDatabase
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
-import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParser
 import io.github.melin.superior.parser.sqlserver.antlr4.SqlServerParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
@@ -18,7 +17,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
+class SqlServerAntlr4Visitor(val splitSql: Boolean = false): SqlServerParserBaseVisitor<Statement>() {
 
     private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -30,13 +29,18 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
-
-    fun setCommand(command: String) {
-        this.command = command
-    }
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -50,14 +54,19 @@ class SqlServerAntlr4Visitor: SqlServerParserBaseVisitor<Statement>() {
 
     override fun visitBatch(ctx: SqlServerParser.BatchContext): Statement? {
         ctx.sql_clauses().forEach {
-            var statement = this.visitSql_clauses(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSql_clauses(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

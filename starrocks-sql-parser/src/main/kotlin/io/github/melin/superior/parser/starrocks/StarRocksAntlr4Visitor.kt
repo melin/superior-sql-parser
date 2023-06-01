@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBaseVisitor<Statement>() {
 
     private var command: String? = null
 
@@ -30,9 +30,14 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -41,14 +46,19 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var statement = this.visitSingleStatement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSingleStatement(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

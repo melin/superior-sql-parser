@@ -15,18 +15,23 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
+class FlinkSQLAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
 
     private var statements: ArrayList<Statement> = arrayListOf()
-
-    fun setCommand(command: String) {
-        this.command = command
-    }
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -35,14 +40,19 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: FlinkCdcSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var statement = this.visitSingleStatement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSingleStatement(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
-class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
+class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVisitor<Statement>() {
 
     private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -31,13 +31,18 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
-
-    fun setCommand(command: String) {
-        this.command = command
-    }
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -46,14 +51,19 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            var statement = this.visitSql_plus_command(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = StringUtil.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSql_plus_command(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
 
         ctx.unit_statement().forEach {

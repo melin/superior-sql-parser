@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.trino
 
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -18,18 +17,26 @@ import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
  */
 object TrinoSqlHelper {
 
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            StatementType.SHOW -> true
-            StatementType.DROP_TABLE -> true
-            StatementType.EXPLAIN -> true
-            StatementType.SELECT -> true
-            StatementType.CREATE_TABLE_AS_SELECT -> true
-            else -> false
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String) : Statement? {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): TrinoSqlAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = CaseInsensitiveStream(
@@ -51,16 +58,17 @@ object TrinoSqlHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.singleStatement())
-            }
-            catch (e: ParseCancellationException) {
+                sqlVisitor.visit(parser.singleStatement())
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.singleStatement())
+                sqlVisitor.visit(parser.singleStatement())
             }
+
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

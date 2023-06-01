@@ -27,6 +27,16 @@ object PostgreSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): PostgreSqlAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -41,7 +51,7 @@ object PostgreSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = PostgreSqlAntlr4Visitor()
+        val sqlVisitor = PostgreSqlAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(command)
         try {
             try {
@@ -55,7 +65,7 @@ object PostgreSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.root())
             }
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

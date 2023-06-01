@@ -26,6 +26,16 @@ object StarRocksHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): StarRocksAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
         val lexer = StarRocksLexer(charStream)
@@ -38,7 +48,7 @@ object StarRocksHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
 
-        val sqlVisitor = StarRocksAntlr4Visitor()
+        val sqlVisitor = StarRocksAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(trimCmd)
 
         try {
@@ -53,7 +63,7 @@ object StarRocksHelper {
                 sqlVisitor.visit(parser.sqlStatements())
             }
 
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

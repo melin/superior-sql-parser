@@ -27,6 +27,16 @@ object OracleSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): OracleSqlAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
@@ -40,7 +50,7 @@ object OracleSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         // parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = OracleSqlAntlr4Visitor()
+        val sqlVisitor = OracleSqlAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(command)
 
         try {
@@ -56,7 +66,7 @@ object OracleSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.sql_script())
             }
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
                 throw e;

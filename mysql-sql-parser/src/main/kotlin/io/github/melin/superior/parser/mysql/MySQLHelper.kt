@@ -34,11 +34,17 @@ object MySQLHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = innerParseStatement(command)
+        return sqlVisitor.getSqlStatements()
+    }
 
-        if (StringUtils.startsWithIgnoreCase(trimCmd,"show")) {
-            return Lists.newArrayList(DefaultStatement(StatementType.SHOW))
-        }
+    @JvmStatic fun splitSql(command: String): List<String> {
+        val sqlVisitor = innerParseStatement(command, true)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): MySQLAntlr4Visitor {
+        val trimCmd = StringUtils.trim(command)
 
         val charStream =
             UpperCaseCharStream(CharStreams.fromString(trimCmd))
@@ -51,7 +57,7 @@ object MySQLHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
-        val sqlVisitor = MySQLAntlr4Visitor()
+        val sqlVisitor = MySQLAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(command)
         try {
             try {
@@ -65,7 +71,7 @@ object MySQLHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
-            return sqlVisitor.getSqlStatements()
+            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;
