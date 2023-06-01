@@ -2,8 +2,12 @@ parser grammar FlinkCdcSqlParser;
 
 options { tokenVocab = FlinkCdcSqlLexer; }
 
+sqlStatements
+    : singleStatement* EOF
+    ;
+
 singleStatement
-    : statement SEMICOLON* EOF
+    : statement SEMICOLON?
     ;
 
 statement

@@ -19,8 +19,27 @@ class FlinkSQLAntlr4Visitor : FlinkCdcSqlParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
 
+    private var statements: ArrayList<Statement> = arrayListOf()
+
+    fun getSqlStatements(): List<Statement> {
+        return statements
+    }
+
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitSqlStatements(ctx: FlinkCdcSqlParser.SqlStatementsContext): Statement? {
+        ctx.singleStatement().forEach {
+            statements.add(this.visitSingleStatement(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+        command = null
     }
 
     override fun visitSingleStatement(ctx: FlinkCdcSqlParser.SingleStatementContext): Statement {

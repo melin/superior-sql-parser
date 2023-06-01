@@ -1,13 +1,11 @@
 package io.github.melin.superior.parser.flink
 
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
-import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
@@ -20,18 +18,16 @@ import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
  */
 object FlinkSQLHelper {
 
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            FLINK_CDC_BEGIN,
-            FLINK_CDC_END,
-            FLINK_CDC_CTAS,
-            FLINK_CDC_CDAS,
-            -> true
-            else -> false
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -53,16 +49,17 @@ object FlinkSQLHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.singleStatement())
-            }
-            catch (e: ParseCancellationException) {
+                sqlVisitor.visit(parser.singleStatement())
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.statement())
+                sqlVisitor.visit(parser.statement())
             }
+
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;
