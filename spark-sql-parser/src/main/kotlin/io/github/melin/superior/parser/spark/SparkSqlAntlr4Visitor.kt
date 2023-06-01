@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.StringUtil.cleanLastSemi
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
@@ -39,7 +40,8 @@ import kotlin.collections.LinkedHashMap
  *
  * Created by libinsong on 2018/1/10.
  */
-class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
+class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
+    SparkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterType: AlterType = UNKOWN
@@ -58,9 +60,14 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
     private var insertSql: Boolean = false;
 
     private var statements: ArrayList<Statement> = arrayListOf()
+    private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
         return statements
+    }
+
+    fun getSplitSqls(): List<String> {
+        return sqls
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
@@ -69,14 +76,19 @@ class SparkSqlAntlr4Visitor : SparkSqlParserBaseVisitor<Statement>() {
 
     override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var statement = this.visitSingleStatement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                var statement = this.visitSingleStatement(it)
+                if (statement == null) {
+                    statement = DefaultStatement(StatementType.UNKOWN)
+                }
+                statement.setSql(sql)
+                statements.add(statement)
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }

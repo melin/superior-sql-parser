@@ -19,6 +19,19 @@ import org.junit.Test
 class SparkSqlParserTest {
 
     @Test
+    fun splitSqlTest() {
+        val sql = """
+            CREATE DATABASE IF NOT EXISTS bigdata1;    
+            drop DATABASE IF EXISTS bigdata2
+        """.trimIndent()
+
+        val statements = SparkSqlHelper.splitSql(sql)
+
+        Assert.assertEquals(2, statements.size)
+        Assert.assertEquals("CREATE DATABASE IF NOT EXISTS bigdata1", statements.get(0))
+    }
+
+    @Test
     fun createDatabaseTest() {
         val sql = """
             CREATE DATABASE IF NOT EXISTS bigdata1;
@@ -31,7 +44,7 @@ class SparkSqlParserTest {
         val dropDatabase = statements.get(1)
         if (createDatabse is CreateDatabase) {
             Assert.assertEquals("bigdata1", createDatabse.databaseName)
-            Assert.assertEquals("CREATE DATABASE IF NOT EXISTS bigdata1;", createDatabse.getSql())
+            Assert.assertEquals("CREATE DATABASE IF NOT EXISTS bigdata1", createDatabse.getSql())
         }
         if (dropDatabase is CreateDatabase) {
             Assert.assertEquals("bigdata2", dropDatabase.databaseName)

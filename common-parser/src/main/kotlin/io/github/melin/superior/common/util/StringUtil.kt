@@ -7,6 +7,14 @@ import org.apache.commons.lang3.StringUtils
  */
 object StringUtil {
 
+    fun cleanLastSemi(text: String) : String {
+        if (StringUtils.endsWith(text, ";")) {
+            return StringUtils.substring(text, 0, text.length - 1)
+        }
+
+        return text
+    }
+
     fun cleanQuote(value: String) : String {
         if (StringUtils.isBlank(value)) {
             return value;
