@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
@@ -16,14 +15,17 @@ import org.apache.commons.lang3.StringUtils
  * Created by libinsong on 2020/6/30 10:01 上午
  */
 object StarRocksHelper {
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            StatementType.SELECT -> true
-            else -> false
+
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
         val lexer = StarRocksLexer(charStream)
@@ -42,15 +44,16 @@ object StarRocksHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.singleStatement())
-            }
-            catch (e: ParseCancellationException) {
+                sqlVisitor.visit(parser.sqlStatements())
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
                 // Try Again.
-                return sqlVisitor.visit(parser.singleStatement())
+                sqlVisitor.visit(parser.sqlStatements())
             }
+
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;

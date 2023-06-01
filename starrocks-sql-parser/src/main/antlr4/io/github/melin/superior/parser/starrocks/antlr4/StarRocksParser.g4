@@ -16,14 +16,11 @@ parser grammar StarRocksParser;
 options { tokenVocab = StarRocksLexer; }
 
 sqlStatements
-    : singleStatement+ EOF
+    : singleStatement* EOF
     ;
 
 singleStatement
-    : (statement (SEMICOLON | EOF)) | emptyStatement
-    ;
-emptyStatement
-    : SEMICOLON
+    : statement SEMICOLON?
     ;
 
 statement

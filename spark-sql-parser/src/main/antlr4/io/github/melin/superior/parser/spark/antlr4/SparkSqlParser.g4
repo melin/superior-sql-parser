@@ -43,7 +43,7 @@ options { tokenVocab = SparkSqlLexer; }
 }
 
 sqlStatements
-    : singleStatement*
+    : singleStatement* EOF
     ;
 
 singleStatement

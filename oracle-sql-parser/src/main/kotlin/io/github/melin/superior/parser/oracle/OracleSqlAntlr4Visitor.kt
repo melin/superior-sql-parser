@@ -28,24 +28,44 @@ class OracleSqlAntlr4Visitor: OracleParserBaseVisitor<Statement>() {
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
-    private fun addOutputTableId(tableId: TableId) {
-        if (!outputTables.contains(tableId)) {
-            outputTables.add(tableId)
-        }
-    }
+    private var statements: ArrayList<Statement> = arrayListOf()
 
-    override fun visit(tree: ParseTree?): Statement {
-        val statement = super.visit(tree)
-
-        if (statement == null) {
-            throw SQLParserException("不支持的SQL")
-        }
-
-        return statement;
+    fun getSqlStatements(): List<Statement> {
+        return statements
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
+        ctx.sql_plus_command().forEach {
+            statements.add(this.visitSql_plus_command(it))
+            clean()
+        }
+
+        ctx.unit_statement().forEach {
+            statements.add(this.visitUnit_statement(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+
+        limit = null
+        offset = null
+        queryStmts = arrayListOf()
+        inputTables = arrayListOf()
+        outputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+    }
+
+    private fun addOutputTableId(tableId: TableId) {
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
     }
 
     override fun visitCreate_table(ctx: OracleParser.Create_tableContext): Statement {

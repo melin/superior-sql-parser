@@ -29,12 +29,38 @@ class StarRocksAntlr4Visitor: StarRocksParserBaseVisitor<Statement>() {
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
-    fun setCommand(command: String) {
-        this.command = command
+    private var statements: ArrayList<Statement> = arrayListOf()
+
+    fun getSqlStatements(): List<Statement> {
+        return statements
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitSqlStatements(ctx: SqlStatementsContext): Statement? {
+        ctx.singleStatement().forEach {
+            statements.add(this.visitSingleStatement(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+
+        limit = null
+        offset = null
+        inputTables = arrayListOf()
+        outputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+
+        command = null
+    }
+
+    fun setCommand(command: String) {
+        this.command = command
     }
 
     override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {

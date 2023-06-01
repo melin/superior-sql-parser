@@ -18,8 +18,12 @@ tokens {
     DELIMITER
 }
 
+sqlStatements
+    : singleStatement* EOF
+    ;
+
 singleStatement
-    : statement EOF
+    : statement ';'?
     ;
 
 standaloneExpression

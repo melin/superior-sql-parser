@@ -32,24 +32,38 @@ class PostgreSqlAntlr4Visitor: PostgreSqlParserBaseVisitor<Statement>() {
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
-    private fun addOutputTableId(tableId: TableId) {
-        if (!outputTables.contains(tableId)) {
-            outputTables.add(tableId)
-        }
-    }
+    private var statements: ArrayList<Statement> = arrayListOf()
 
-    override fun visit(tree: ParseTree?): Statement {
-        val statement = super.visit(tree)
-
-        if (statement == null) {
-            throw SQLParserException("不支持的SQL")
-        }
-
-        return statement;
+    fun getSqlStatements(): List<Statement> {
+        return statements
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
+        ctx.stmt().forEach {
+            statements.add(this.visitStmt(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+
+        limit = null
+        offset = null
+        inputTables = arrayListOf()
+        outputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+    }
+
+    private fun addOutputTableId(tableId: TableId) {
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
     }
 
     override fun visitCreatestmt(ctx: PostgreSqlParser.CreatestmtContext): Statement {

@@ -9,7 +9,6 @@ import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
-import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
@@ -23,24 +22,41 @@ class TrinoSqlAntlr4Visitor : TrinoSqlBaseBaseVisitor<Statement>() {
     private var command: String? = null
 
     private var limit:Int? = null
+    private var offset:Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     fun setCommand(command: String) {
         this.command = command
     }
 
-    override fun visit(tree: ParseTree?): Statement? {
-        val data = super.visit(tree)
+    private var statements: ArrayList<Statement> = arrayListOf()
 
-        if (data == null) {
-            throw SQLParserException("不支持的SQL")
-        }
-
-        return data;
+    fun getSqlStatements(): List<Statement> {
+        return statements
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitSqlStatements(ctx: TrinoSqlBaseParser.SqlStatementsContext): Statement? {
+        ctx.singleStatement().forEach {
+            statements.add(this.visitSingleStatement(it))
+            clean()
+        }
+        return null
+    }
+
+    private fun clean() {
+        currentOptType = StatementType.UNKOWN
+
+        limit = null
+        offset = null
+        inputTables = arrayListOf()
+        cteTempTables = arrayListOf()
+
+        command = null
     }
 
     override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): Statement? {

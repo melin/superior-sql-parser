@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
@@ -18,14 +17,16 @@ import org.apache.commons.lang3.StringUtils
  */
 object OracleSqlHelper {
 
-    @JvmStatic fun checkSupportedSQL(statementType: StatementType): Boolean {
-        return when (statementType) {
-            StatementType.SELECT -> true
-            else -> false
+    @JvmStatic fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
 
         val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
@@ -44,7 +45,7 @@ object OracleSqlHelper {
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
-                return sqlVisitor.visit(parser.sql_script())
+                sqlVisitor.visit(parser.sql_script())
             }
             catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
@@ -52,10 +53,11 @@ object OracleSqlHelper {
 
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
-                return sqlVisitor.visit(parser.sql_script())
+                sqlVisitor.visit(parser.sql_script())
             }
+            return sqlVisitor.getSqlStatements()
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
+            if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
                 throw e.withCommand(trimCmd)

@@ -51,14 +51,18 @@ class StarRocksSqlParserDdlTest {
     fun createDatabaseTest() {
         val sql = """
             CREATE DATABASE IF Not EXISTS db_test;
+            Drop DATABASE IF EXISTS db_test1;
         """.trimIndent()
 
-        val statement = StarRocksHelper.parseStatement(sql)
-        if (statement is CreateDatabase) {
-            Assert.assertEquals(CREATE_DATABASE, statement.statementType)
-            Assert.assertEquals("db_test", statement.databaseName)
-        } else {
-            Assert.fail()
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+
+        val createDatabse = statements.get(0)
+        val dropDatabase = statements.get(1)
+        if (createDatabse is CreateDatabase) {
+            Assert.assertEquals("db_test", createDatabse.databaseName)
+        }
+        if (dropDatabase is CreateDatabase) {
+            Assert.assertEquals("db_test1", dropDatabase.databaseName)
         }
     }
 

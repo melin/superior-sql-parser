@@ -88,16 +88,26 @@ class OracleSqlParserDdlTest {
     @Test
     fun commentTest0() {
         val sql = """
-            COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
+            COMMENT ON COLUMN employees.job_id IS 'abbreviated job title'
+            COMMENT ON COLUMN employees1.job_id IS 'abbreviated job title';
         """.trimIndent()
 
-        val statement = OracleSqlHelper.parseStatement(sql)
+        val statement = OracleSqlHelper.parseMultiStatement(sql)
+        val st1 = statement.get(0)
+        val st2 = statement.get(1)
         
-        if (statement is CommentData) {
-            Assert.assertEquals(StatementType.COMMENT, statement.statementType)
-            Assert.assertEquals("employees.job_id", statement.objValue)
-            Assert.assertEquals("abbreviated job title", statement.comment)
-            Assert.assertFalse(statement.isNull)
+        if (st1 is CommentData) {
+            Assert.assertEquals(StatementType.COMMENT, st1.statementType)
+            Assert.assertEquals("employees.job_id", st1.objValue)
+            Assert.assertEquals("abbreviated job title", st1.comment)
+            Assert.assertFalse(st1.isNull)
+        }
+
+        if (st2 is CommentData) {
+            Assert.assertEquals(StatementType.COMMENT, st2.statementType)
+            Assert.assertEquals("employees1.job_id", st2.objValue)
+            Assert.assertEquals("abbreviated job title", st2.comment)
+            Assert.assertFalse(st2.isNull)
         }
     }
 }
