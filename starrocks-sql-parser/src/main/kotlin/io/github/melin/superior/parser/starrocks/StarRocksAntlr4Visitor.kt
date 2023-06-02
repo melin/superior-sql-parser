@@ -109,9 +109,16 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         val databaseName: String = StringUtil.cleanQuote(ctx.identifier().get(0).text)
         val quota = StringUtil.cleanQuote(ctx.identifier().get(1).text)
 
-        val action = AlterDatabasePropsAction()
+        val action = AlterDbPropsAction()
         action.properties.put("quota", quota)
         return AlterDatabase(AlterType.SET_DATABASE_PROPS, databaseName, action)
+    }
+
+    override fun visitAlterDatabaseRenameStatement(ctx: AlterDatabaseRenameStatementContext): Statement {
+        val databaseName: String = StringUtil.cleanQuote(ctx.identifier().get(0).text)
+        val newDatabaseName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+        val action = RenameDbAction(newDatabaseName)
+        return AlterDatabase(AlterType.RENAME_DATABASE, databaseName, action)
     }
 
     override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {

@@ -2,10 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.alter.AlterDatabase
-import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.CreateIndex
-import io.github.melin.superior.common.relational.alter.DropIndex
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
 import org.junit.Assert
@@ -87,11 +84,26 @@ class StarRocksSqlParserDdlTest {
         val sql = """
             ALTER DATABASE example_db SET DATA QUOTA 100G;
         """.trimIndent()
-
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterDatabase) {
             Assert.assertEquals(ALTER_DATABASE, statement.statementType)
             Assert.assertEquals("example_db", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun renameDatabaseTest() {
+        val sql = """
+            ALTER DATABASE example_db RENAME example_db2;
+        """.trimIndent()
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is AlterDatabase) {
+            Assert.assertEquals(ALTER_DATABASE, statement.statementType)
+            Assert.assertEquals("example_db", statement.databaseName)
+            val action = statement.firstAction() as RenameDbAction
+            Assert.assertEquals("example_db2", action.newDatabaseName)
         } else {
             Assert.fail()
         }

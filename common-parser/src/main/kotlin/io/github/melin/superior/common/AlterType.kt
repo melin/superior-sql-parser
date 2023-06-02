@@ -23,6 +23,7 @@ enum class AlterType : Serializable {
 
     RENAME_COLUMN,
     RENAME_PARTITION,
+    RENAME_DATABASE,
     RENAME_TABLE,
 
     DETACH_PARTITION,
