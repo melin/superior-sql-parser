@@ -470,9 +470,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitTouchTable(ctx: SparkSqlParser.TouchTableContext): Statement {
         val tableId = parseTableName(ctx.table)
-        val action = AlterTableAction()
+        val partitionVals = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
+        val action = AlterTouchPartitionAction(tableId, partitionVals)
         val alterTable = AlterTable(TOUCH_TABLE, tableId, action)
-        action.partitionVals = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
         return alterTable
     }
 

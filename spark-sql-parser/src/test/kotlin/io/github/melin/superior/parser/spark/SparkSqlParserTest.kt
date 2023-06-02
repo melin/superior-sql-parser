@@ -744,7 +744,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals("table_name", statement.tableId.tableName)
             Assert.assertEquals(AlterType.TOUCH_TABLE, statement.alterType)
-            val action = statement.firstAction() as AlterTableAction
+            val action = statement.firstAction() as AlterTouchPartitionAction
             Assert.assertEquals(2, action.partitionVals?.size)
         } else {
             Assert.fail()

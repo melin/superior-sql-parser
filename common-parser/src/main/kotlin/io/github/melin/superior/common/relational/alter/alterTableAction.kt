@@ -9,8 +9,12 @@ data class AlterTableAction(
 ): AlterAction() {
     var location: String? = null
     var properties: Map<String, String>? = null
-    var partitionVals: LinkedHashMap<String, String>? = null //spark touch
 }
+
+data class AlterTouchPartitionAction(
+    var newTableId: TableId, // 修改表，新列名称
+    var partitionVals: LinkedHashMap<String, String>?
+): AlterAction()
 
 data class AlterViewAction(
     var querySql: String, // 修改表，新列名称
