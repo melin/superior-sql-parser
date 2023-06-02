@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.starrocks
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.dml.*
@@ -102,6 +103,15 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         val databaseName: String = StringUtil.cleanQuote(ctx.database.text)
         val ifExists = ctx.EXISTS() != null
         return DropDatabase(catalogName, databaseName, ifExists)
+    }
+
+    override fun visitAlterDbQuotaStatement(ctx: AlterDbQuotaStatementContext): Statement {
+        val databaseName: String = StringUtil.cleanQuote(ctx.identifier().get(0).text)
+        val quota = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+
+        val action = AlterDatabasePropsAction()
+        action.properties.put("quota", quota)
+        return AlterDatabase(AlterType.SET_DATABASE_PROPS, databaseName, action)
     }
 
     override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {

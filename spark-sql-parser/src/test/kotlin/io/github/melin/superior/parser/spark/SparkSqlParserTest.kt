@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.spark
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView

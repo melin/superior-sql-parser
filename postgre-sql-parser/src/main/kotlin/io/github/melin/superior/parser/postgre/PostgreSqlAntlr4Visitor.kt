@@ -3,6 +3,10 @@ package io.github.melin.superior.parser.postgre
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.AlterTable
+import io.github.melin.superior.common.relational.alter.AlterTableAction
+import io.github.melin.superior.common.relational.alter.CreateIndex
+import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
@@ -351,7 +355,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
         if (ctx.object_type_any_name() != null) {
             val ifExists = ctx.IF_P() != null
             if (ctx.object_type_any_name().INDEX() != null) {
-                val actions = ctx.any_name_list().any_name().map { indexName ->  DropIndex(indexName.text, ifExists)}
+                val actions = ctx.any_name_list().any_name().map { indexName ->  DropIndex(indexName.text, ifExists) }
                 val tableId = TableId("")
                 val alterTable = AlterTable(AlterType.DROP_INDEX, tableId)
                 alterTable.ifExists = ifExists

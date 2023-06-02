@@ -4,7 +4,8 @@ import java.io.Serializable
 
 enum class AlterType : Serializable {
     SET_TABLE_LOCATION,
-    SET_TABLE_PROPERTIES,
+    SET_TABLE_PROPS,
+    SET_DATABASE_PROPS,
     TOUCH_TABLE,
 
     ALTER_COLUMN,

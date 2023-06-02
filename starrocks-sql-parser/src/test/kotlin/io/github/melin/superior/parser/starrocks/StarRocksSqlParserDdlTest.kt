@@ -1,10 +1,11 @@
 package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
-import io.github.melin.superior.common.relational.AlterTable
-import io.github.melin.superior.common.relational.CreateIndex
-import io.github.melin.superior.common.relational.DropIndex
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.alter.AlterDatabase
+import io.github.melin.superior.common.relational.alter.AlterTable
+import io.github.melin.superior.common.relational.alter.CreateIndex
+import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
 import org.junit.Assert
@@ -76,6 +77,21 @@ class StarRocksSqlParserDdlTest {
         if (statement is DropDatabase) {
             Assert.assertEquals(DROP_DATABASE, statement.statementType)
             Assert.assertEquals("db_test", statement.databaseName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun alterDatabaseTest() {
+        val sql = """
+            ALTER DATABASE example_db SET DATA QUOTA 100G;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is AlterDatabase) {
+            Assert.assertEquals(ALTER_DATABASE, statement.statementType)
+            Assert.assertEquals("example_db", statement.databaseName)
         } else {
             Assert.fail()
         }

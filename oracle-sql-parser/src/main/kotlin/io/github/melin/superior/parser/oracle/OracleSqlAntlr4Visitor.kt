@@ -3,10 +3,10 @@ package io.github.melin.superior.parser.oracle
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
-import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext

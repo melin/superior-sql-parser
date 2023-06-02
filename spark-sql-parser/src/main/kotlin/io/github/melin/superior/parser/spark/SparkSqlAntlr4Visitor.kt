@@ -5,6 +5,7 @@ import com.github.melin.superior.sql.parser.util.StringUtil.cleanLastSemi
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.parser.spark.relational.RefreshStatement
 import io.github.melin.superior.common.relational.common.UseCatalog
 import io.github.melin.superior.common.relational.common.UseDatabase
@@ -390,9 +391,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         action.properties = properties
 
         return if (ctx.VIEW() == null) {
-            AlterTable(SET_TABLE_PROPERTIES, tableId, action, TableType.VIEW)
+            AlterTable(SET_TABLE_PROPS, tableId, action, TableType.VIEW)
         } else {
-            AlterTable(SET_TABLE_PROPERTIES, tableId, action)
+            AlterTable(SET_TABLE_PROPS, tableId, action)
         }
     }
 

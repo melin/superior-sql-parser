@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel

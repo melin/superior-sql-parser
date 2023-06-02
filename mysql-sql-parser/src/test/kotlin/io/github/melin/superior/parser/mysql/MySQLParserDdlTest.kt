@@ -4,6 +4,7 @@ import com.github.melin.superior.sql.parser.mysql.MySQLHelper
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.CreateDatabase
 import io.github.melin.superior.common.relational.create.CreateTable
