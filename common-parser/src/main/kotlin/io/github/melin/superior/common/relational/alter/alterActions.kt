@@ -13,10 +13,12 @@ data class AlterTableAction(
     var properties: Map<String, String>? = null
 }
 
-data class AlterTablePropsAction(
+data class AlterPropsAction(
     var location: String? = null,
     var properties: HashMap<String, String> = Maps.newHashMap()
-): AlterAction()
+): AlterAction() {
+    constructor(properties: HashMap<String, String>): this(null, properties)
+}
 
 data class RenameTableAction(
     var newTableId: TableId
@@ -32,6 +34,10 @@ data class AlterViewAction(
     var inputTables: List<TableId>,
     var functionNames: HashSet<String>
 ): AlterAction()
+
+data class RefreshMvAction(
+    var async: Boolean = false
+) : AlterAction()
 
 data class AlterColumnAction(
     var columName: String? = null, // 修改列名

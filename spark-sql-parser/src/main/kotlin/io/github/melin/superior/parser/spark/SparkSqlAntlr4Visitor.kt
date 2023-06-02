@@ -377,7 +377,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
         return if (ctx.VIEW() != null) {
             val action = RenameTableAction(newTableId)
-            AlterTable(RENAME_TABLE, tableId, action, TableType.VIEW)
+            AlterView(RENAME_TABLE, tableId, action)
         } else {
             val action = RenameTableAction(newTableId)
             AlterTable(RENAME_TABLE, tableId, action)
@@ -387,13 +387,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     override fun visitSetTableProperties(ctx: SparkSqlParser.SetTablePropertiesContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val properties = parseOptions(ctx.propertyList())
-        val action = AlterTablePropsAction()
+        val action = AlterPropsAction()
         action.properties.putAll(properties)
 
         return if (ctx.VIEW() == null) {
-            AlterTable(SET_TABLE_PROPS, tableId, action, TableType.VIEW)
-        } else {
             AlterTable(SET_TABLE_PROPS, tableId, action)
+        } else {
+            AlterView(SET_TABLE_PROPS, tableId, action)
         }
     }
 
@@ -488,7 +488,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         val tableId = parseTableName(ctx.multipartIdentifier())
         val location = StringUtil.cleanQuote(ctx.locationSpec().stringLit().text)
 
-        val action = AlterTablePropsAction(location)
+        val action = AlterPropsAction(location)
         return AlterTable(SET_TABLE_LOCATION, tableId, action)
     }
 

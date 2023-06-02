@@ -121,6 +121,22 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         return AlterDatabase(AlterType.RENAME_DATABASE, databaseName, action)
     }
 
+    override fun visitAlterMaterializedViewStatement(ctx: AlterMaterializedViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.refreshSchemeDesc() != null) {
+            val async = ctx.refreshSchemeDesc().ASYNC() != null
+            return AlterMaterializedView(AlterType.REFRESH_MV, tableId, RefreshMvAction(async))
+        } else if (ctx.tableRenameClause() != null) {
+            val newName = ctx.tableRenameClause().identifier().text
+            return AlterMaterializedView(AlterType.RENAME_TABLE, tableId, RenameTableAction(TableId(newName)))
+        } else {
+            val properties = parseOptions(ctx.modifyTablePropertiesClause().propertyList())
+            val action = AlterPropsAction()
+            action.properties.putAll(properties)
+            return AlterMaterializedView(AlterType.SET_TABLE_PROPS, tableId, action)
+        }
+    }
+
     override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
@@ -352,5 +368,19 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
             val comment = StringUtil.cleanQuote(col.comment().string().text)
             ColumnRel(name, null, comment)
         }
+    }
+
+    private fun parseOptions(ctx: PropertyListContext?): Map<String, String> {
+        val properties = HashMap<String, String>()
+        if (ctx != null) {
+            ctx.property().forEach { item ->
+                val property = item as PropertyContext
+                val key = StringUtil.cleanQuote(property.key.text)
+                val value = StringUtil.cleanQuote(property.value.text)
+                properties.put(key, value)
+            }
+        }
+
+        return properties
     }
 }

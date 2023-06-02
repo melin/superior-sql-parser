@@ -36,6 +36,8 @@ enum class StatementType: Serializable {
     ANALYZE_TABLE,
 
     ALTER_DATABASE,
+    ALTER_VIEW,
+    ALTER_MATERIALIZED_VIEW,
     ALTER_TABLE,
     REPAIR_TABLE,
     COMMENT,

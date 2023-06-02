@@ -760,7 +760,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("sale_detail", statement.tableId.tableName)
-            val action = statement.firstAction() as AlterTablePropsAction
+            val action = statement.firstAction() as AlterPropsAction
             Assert.assertEquals(2, action.properties.size)
         } else {
             Assert.fail()
@@ -923,7 +923,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("demo", statement.tableId.tableName)
-            val action = statement.firstAction() as AlterTablePropsAction
+            val action = statement.firstAction() as AlterPropsAction
             Assert.assertEquals("/user/hive", action.location)
         } else {
             Assert.fail()

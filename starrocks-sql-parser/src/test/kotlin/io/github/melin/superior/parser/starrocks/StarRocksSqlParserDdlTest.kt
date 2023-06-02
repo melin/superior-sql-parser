@@ -237,6 +237,18 @@ class StarRocksSqlParserDdlTest {
     }
 
     @Test
+    fun alterMaterializedViewTest() {
+        val sql = """
+           ALTER MATERIALIZED VIEW lo_mv1 RENAME lo_mv1_new_name;
+           ALTER MATERIALIZED VIEW lo_mv2 REFRESH ASYNC EVERY(INTERVAL 1 DAY);
+           ALTER MATERIALIZED VIEW mv1 SET ("session.query_timeout" = "40000");
+        """.trimIndent()
+
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+        Assert.assertEquals(3, statements.size)
+    }
+
+    @Test
     fun createIndexTest() {
         val sql = """
             CREATE INDEX index3 ON sales_records (item_id) USING BITMAP COMMENT '';
