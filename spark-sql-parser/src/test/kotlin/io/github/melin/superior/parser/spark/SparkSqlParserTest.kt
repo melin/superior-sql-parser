@@ -711,9 +711,9 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is AlterTable) {
-            val action = statement.firstAction() as AlterTableAction
+            val action = statement.firstAction() as RenameTableAction
             Assert.assertEquals(AlterType.RENAME_TABLE, statement.alterType)
-            Assert.assertEquals("new_table_name", action.newTableId?.tableName)
+            Assert.assertEquals("new_table_name", action.newTableId.tableName)
         } else {
             Assert.fail()
         }
@@ -760,8 +760,8 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("sale_detail", statement.tableId.tableName)
-            val action = statement.firstAction() as AlterTableAction
-            Assert.assertEquals(2, action.properties?.size)
+            val action = statement.firstAction() as AlterTablePropsAction
+            Assert.assertEquals(2, action.properties.size)
         } else {
             Assert.fail()
         }
@@ -923,7 +923,7 @@ class SparkSqlParserTest {
         if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("demo", statement.tableId.tableName)
-            val action = statement.firstAction() as AlterTableAction
+            val action = statement.firstAction() as AlterTablePropsAction
             Assert.assertEquals("/user/hive", action.location)
         } else {
             Assert.fail()

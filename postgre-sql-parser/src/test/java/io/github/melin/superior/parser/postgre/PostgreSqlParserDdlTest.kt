@@ -4,13 +4,13 @@ import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.AlterTableAction
 import io.github.melin.superior.common.relational.alter.CreateIndex
 import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropTable
+import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -210,19 +210,14 @@ class PostgreSqlParserDdlTest {
     }
 
     @Test
-    fun addPartitonTest() {
+    fun createPartitonTableTest() {
         val sql = "create table pkslow_person_r1 partition of pkslow_person_r for values from (MINVALUE) to (10);  \n"
-
         val statement = PostgreSqlHelper.parseStatement(sql)
-        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
+        Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
 
-        
-        if (statement is AlterTable) {
-            Assert.assertEquals(AlterType.ADD_PARTITION, statement.alterType)
+        if (statement is CreatePartitionTable) {
             Assert.assertEquals("pkslow_person_r", statement.tableId.tableName)
-
-            val action = statement.firstAction() as AlterTableAction
-            Assert.assertEquals("pkslow_person_r1", action.newTableId?.tableName)
+            Assert.assertEquals("pkslow_person_r1", statement.partitionTableId.tableName)
         }
     }
 

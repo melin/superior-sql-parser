@@ -267,13 +267,13 @@ class MySQLParserDdlTest {
         val sql = "RENAME TABLE `datacompute`.`users_quan` TO  `datacompute`.`dc_users`\n"
         val statement = MySQLHelper.parseStatement(sql)
         
-        if(statement is AlterTable) {
+        if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals(AlterType.RENAME_TABLE, statement.alterType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
-            val action = statement.firstAction() as AlterTableAction
-            Assert.assertEquals("dc_users", action.newTableId?.tableName)
+            val action = statement.firstAction() as RenameTableAction
+            Assert.assertEquals("dc_users", action.newTableId.tableName)
         } else {
             Assert.fail()
         }

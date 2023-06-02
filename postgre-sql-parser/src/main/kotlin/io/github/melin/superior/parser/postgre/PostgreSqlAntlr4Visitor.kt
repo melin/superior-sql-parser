@@ -4,7 +4,6 @@ import com.github.melin.superior.sql.parser.util.StringUtil
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.AlterTableAction
 import io.github.melin.superior.common.relational.alter.CreateIndex
 import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.common.CommentData
@@ -21,6 +20,7 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Colconstr
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Indirection_elContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
+import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
@@ -118,10 +118,8 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
 
         if (ctx.PARTITION() != null) {
             val partitionTableId = parseTableName(ctx.qualified_name(0))
-            val action = AlterTableAction(partitionTableId)
-
             val tableId = parseTableName(ctx.qualified_name(1))
-            return AlterTable(AlterType.ADD_PARTITION, tableId, action)
+            return CreatePartitionTable(tableId, partitionTableId)
         }
 
         val tableId = parseTableName(ctx.qualified_name(0))
