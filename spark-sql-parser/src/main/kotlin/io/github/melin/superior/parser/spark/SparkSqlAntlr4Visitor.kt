@@ -141,7 +141,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): Pair<String?, String> {
         return if (ctx.parts.size == 2) {
-            return Pair(ctx.parts.get(0).text, ctx.parts.get(1).text)
+            Pair(ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
             Pair(null, ctx.parts.get(0).text)
         } else {
