@@ -1,10 +1,11 @@
 package io.github.melin.superior.parser.presto
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.drop.DropTable
@@ -45,16 +46,26 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false): PrestoSqlBaseBaseVi
     override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitSingleStatement(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitSingleStatement(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }

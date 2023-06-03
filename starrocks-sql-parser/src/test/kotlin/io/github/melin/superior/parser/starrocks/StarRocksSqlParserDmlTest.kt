@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -198,5 +198,22 @@ class StarRocksSqlParserDmlTest {
         } else {
             Assert.fail()
         }
+    }
+
+    @Test
+    fun showTest() {
+        val sql = """
+            SHOW CREATE MATERIALIZED VIEW lo_mv1
+            SHOW CREATE TABLE example_db.example_table
+            SHOW DELETE FROM bigdata
+        """.trimIndent()
+
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+        Assert.assertEquals(3, statements.size)
+
+        val statement = statements.get(2) as ShowStatement
+        Assert.assertTrue(statement.checkSql("SHOW DELETE FROM"))
+
+        Assert.assertFalse(statement.checkSql("SHOW DELETE"))
     }
 }

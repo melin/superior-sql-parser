@@ -1,9 +1,10 @@
 package io.github.melin.superior.parser.mysql
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -49,16 +50,26 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitSqlStatement(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitSqlStatement(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }
@@ -77,12 +88,12 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
     //-----------------------------------database-------------------------------------------------
 
     override fun visitCreateDatabase(ctx: MySqlParser.CreateDatabaseContext): Statement {
-        val databaseName = StringUtil.cleanQuote(ctx.uid().text)
+        val databaseName = CommonUtils.cleanQuote(ctx.uid().text)
         return CreateDatabase(databaseName)
     }
 
     override fun visitDropDatabase(ctx: MySqlParser.DropDatabaseContext): Statement {
-        val databaseName = StringUtil.cleanQuote(ctx.uid().text)
+        val databaseName = CommonUtils.cleanQuote(ctx.uid().text)
         return DropDatabase(databaseName)
     }
 
@@ -94,7 +105,7 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         ctx.tableOption().forEach {
             when(it) {
                 is MySqlParser.TableOptionCommentContext -> {
-                    comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
                 }
             }
         }
@@ -102,7 +113,7 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
 
         ctx.createDefinitions().children.forEach { column ->
             if(column is MySqlParser.ColumnDeclarationContext ) {
-                val name = StringUtil.cleanQuote(column.fullColumnName().text)
+                val name = CommonUtils.cleanQuote(column.fullColumnName().text)
 
                 var dataType = column.columnDefinition().dataType().getChild(0).text.lowercase()
                 val count = column.columnDefinition().dataType().childCount
@@ -118,7 +129,7 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
                 var colComment:String? = null
                 column.columnDefinition().columnConstraint().forEach {
                     if(it is MySqlParser.CommentColumnConstraintContext) {
-                        colComment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                        colComment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
                     }
                 }
                 columnRels.add(ColumnRel(name, dataType, colComment))
@@ -146,7 +157,7 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         ctx.tableOption().forEach {
             when(it) {
                 is MySqlParser.TableOptionCommentContext -> {
-                    comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
                 }
             }
         }
@@ -163,7 +174,7 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
 
         for (i in 1..(count-2)) {
             var column = ctx.indexColumnNames().getChild(i).text
-            column = StringUtil.cleanQuote(column)
+            column = CommonUtils.cleanQuote(column)
             primaryKeys.add(column)
         }
 
@@ -208,14 +219,14 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         val statement = ctx.getChild(3)
         val tableId = parseFullId(ctx.tableName().fullId())
         if (statement is MySqlParser.AlterByChangeColumnContext) {
-            val columnName = StringUtil.cleanQuote(statement.oldColumn.text)
-            val newColumnName = StringUtil.cleanQuote(statement.newColumn.text)
+            val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
+            val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
             val dataType = statement.columnDefinition().dataType().text
             var comment:String? = null
 
             statement.columnDefinition().children.forEach {
                 if(it is MySqlParser.CommentColumnConstraintContext) {
-                    comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
                 }
             }
 
@@ -224,23 +235,23 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
 
             return AlterTable(AlterType.ALTER_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
-            val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
+            val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
             var comment:String? = null
             statement.columnDefinition().children.forEach {
                 if(it is MySqlParser.CommentColumnConstraintContext) {
-                    comment = StringUtil.cleanQuote(it.STRING_LITERAL().text)
+                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
                 }
             }
 
             val action = AlterColumnAction(columnName, dataType, comment)
             return AlterTable(AlterType.ADD_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
-            val columnName = StringUtil.cleanQuote(statement.uid().text)
+            val columnName = CommonUtils.cleanQuote(statement.uid().text)
             val action = DropColumnAction(columnName)
             return AlterTable(AlterType.DROP_COLUMN, tableId, action)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {
-            val columnName = StringUtil.cleanQuote(statement.uid().get(0).text)
+            val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
 
             val action = AlterColumnAction(columnName, dataType)
@@ -426,16 +437,16 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
             databaseName = fullId.uid().get(0).text
             tableName = (fullId.getChild(1) as TerminalNodeImpl).text.substring(1)
         } else if(fullId.childCount == 3) {
-            databaseName = StringUtil.cleanQuote(fullId.uid().get(0).text)
-            tableName = StringUtil.cleanQuote((fullId.getChild(2) as MySqlParser.UidContext).text)
+            databaseName = CommonUtils.cleanQuote(fullId.uid().get(0).text)
+            tableName = CommonUtils.cleanQuote((fullId.getChild(2) as MySqlParser.UidContext).text)
         } else {
             tableName = fullId.uid().get(0).text
         }
 
         if (databaseName != null) {
-            databaseName = StringUtil.cleanQuote(databaseName)
+            databaseName = CommonUtils.cleanQuote(databaseName)
         }
-        tableName = StringUtil.cleanQuote(tableName)
+        tableName = CommonUtils.cleanQuote(tableName)
 
         return TableId(databaseName, tableName);
     }

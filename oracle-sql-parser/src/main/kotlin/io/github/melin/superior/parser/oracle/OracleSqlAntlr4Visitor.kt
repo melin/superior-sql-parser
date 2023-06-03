@@ -1,10 +1,11 @@
 package io.github.melin.superior.parser.oracle
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -52,29 +53,54 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitSql_plus_command(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitSql_plus_command(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }
 
         ctx.unit_statement().forEach {
-            var statement = this.visitUnit_statement(it)
-            val sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            if (statement == null) {
-                statement = DefaultStatement(StatementType.UNKOWN)
+            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            sql = CommonUtils.cleanLastSemi(sql)
+            if (splitSql) {
+                sqls.add(sql)
+            } else {
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitUnit_statement(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
+                }
+
+                statement.setSql(sql)
+                statements.add(statement)
+
+                clean()
             }
-            statement.setSql(sql)
-            statements.add(statement)
-            clean()
         }
         return null
     }
@@ -97,7 +123,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
     }
 
     override fun visitCreate_database(ctx: OracleParser.Create_databaseContext): Statement {
-        val databaseName = StringUtil.cleanQuote(ctx.database_name().text)
+        val databaseName = CommonUtils.cleanQuote(ctx.database_name().text)
         return CreateDatabase(databaseName)
     }
 
@@ -301,21 +327,21 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
     override fun visitComment_on_column(ctx: OracleParser.Comment_on_columnContext): Statement {
         val objValue = ctx.column_name().text
         val isNull = false
-        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
         return CommentData(text, isNull, "COLUMN", objValue)
     }
 
     override fun visitComment_on_table(ctx: OracleParser.Comment_on_tableContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
-        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
         return CommentData(text, isNull, "TABLE", objValue)
     }
 
     override fun visitComment_on_materialized(ctx: OracleParser.Comment_on_materializedContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
-        val text: String = StringUtil.cleanQuote(ctx.quoted_string().text)
+        val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
         return CommentData(text, isNull, "MATERIALIZED VIEW", objValue)
     }
 

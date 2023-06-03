@@ -1,9 +1,10 @@
 package io.github.melin.superior.parser.starrocks
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.dml.*
@@ -48,16 +49,26 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     override fun visitSqlStatements(ctx: SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitSingleStatement(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitSingleStatement(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }
@@ -79,19 +90,19 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     }
 
     override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {
-        val catalogName: String = StringUtil.cleanQuote(ctx.catalogName.text)
+        val catalogName: String = CommonUtils.cleanQuote(ctx.catalogName.text)
         val properties = parseOptions(ctx.properties())
         return CreateCatalog(catalogName, properties)
     }
 
     override fun visitDropExternalCatalogStatement(ctx: DropExternalCatalogStatementContext): Statement {
-        val catalogName: String = StringUtil.cleanQuote(ctx.catalogName.text)
+        val catalogName: String = CommonUtils.cleanQuote(ctx.catalogName.text)
         return DropCatalog(catalogName)
     }
 
     override fun visitCreateDbStatement(ctx: CreateDbStatementContext): Statement {
-        val catalogName: String? = if (ctx.catalog != null) StringUtil.cleanQuote(ctx.catalog.text) else null
-        val databaseName: String = StringUtil.cleanQuote(ctx.database.text)
+        val catalogName: String? = if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text) else null
+        val databaseName: String = CommonUtils.cleanQuote(ctx.database.text)
         val properties = parseOptions(ctx.properties())
         val ifNotExists = ctx.NOT() != null
 
@@ -99,15 +110,15 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     }
 
     override fun visitDropDbStatement(ctx: DropDbStatementContext): Statement {
-        val catalogName: String? = if (ctx.catalog != null) StringUtil.cleanQuote(ctx.catalog.text) else null
-        val databaseName: String = StringUtil.cleanQuote(ctx.database.text)
+        val catalogName: String? = if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text) else null
+        val databaseName: String = CommonUtils.cleanQuote(ctx.database.text)
         val ifExists = ctx.EXISTS() != null
         return DropDatabase(catalogName, databaseName, ifExists)
     }
 
     override fun visitAlterDbQuotaStatement(ctx: AlterDbQuotaStatementContext): Statement {
-        val databaseName: String = StringUtil.cleanQuote(ctx.identifier().get(0).text)
-        val quota = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+        val databaseName: String = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+        val quota = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
 
         val action = AlterDbPropsAction()
         action.properties.put("quota", quota)
@@ -115,8 +126,8 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     }
 
     override fun visitAlterDatabaseRenameStatement(ctx: AlterDatabaseRenameStatementContext): Statement {
-        val databaseName: String = StringUtil.cleanQuote(ctx.identifier().get(0).text)
-        val newDatabaseName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+        val databaseName: String = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+        val newDatabaseName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
         val action = RenameDbAction(newDatabaseName)
         return AlterDatabase(AlterType.RENAME_DATABASE, databaseName, action)
     }
@@ -139,11 +150,11 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
 
     override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
         val columnRels: List<ColumnRel> = ctx.columnDesc().map { column ->
             val columnName = column.identifier().text
             val dataType = column.type().text
-            val colComment = if (column.comment() != null) StringUtil.cleanQuote(column.comment().string().text) else null
+            val colComment = if (column.comment() != null) CommonUtils.cleanQuote(column.comment().string().text) else null
             ColumnRel(columnName, dataType, colComment)
         }
 
@@ -168,7 +179,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
 
     override fun visitCreateViewStatement(ctx: CreateViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment: String? = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().string().text) else null
+        val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
         val ifNotExists = ctx.NOT() != null
         val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
@@ -181,7 +192,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
 
     override fun visitCreateMaterializedViewStatement(ctx: CreateMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment: String? = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().string().text) else null
+        val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
         val ifNotExists = ctx.NOT() != null
         val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
@@ -215,7 +226,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     override fun visitCreateIndexStatement(ctx: CreateIndexStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val indexName = ctx.indexName.text
-        val comment = if (ctx.comment() != null) StringUtil.cleanQuote(ctx.comment().text) else null
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
 
         val columns = ctx.identifierList().identifier().map { identifier ->
             IndexColumnName(identifier.text)
@@ -332,16 +343,16 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
 
     fun parseTableName(ctx: QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 3) {
-            val catalotName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
-            val schemaName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
-            val tableName = StringUtil.cleanQuote(ctx.identifier().get(2).text)
+            val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+            val tableName = CommonUtils.cleanQuote(ctx.identifier().get(2).text)
             TableId(catalotName, schemaName, tableName)
         } else if (ctx.identifier().size == 2) {
-            val schemaName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
-            val tableName = StringUtil.cleanQuote(ctx.identifier().get(1).text)
+            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+            val tableName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
             TableId(schemaName, tableName)
         } else if (ctx.identifier().size == 1) {
-            val tableName = StringUtil.cleanQuote(ctx.identifier().get(0).text)
+            val tableName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
             TableId(tableName)
         } else {
             throw SQLParserException("parse qualifiedName error: " + ctx.identifier().size)
@@ -353,8 +364,8 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         if (ctx != null) {
             ctx.property().forEach { item ->
                 val property = item as PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }
@@ -365,7 +376,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
     private fun parseColumnNameWithComment(columns: List<ColumnNameWithCommentContext>): List<ColumnRel> {
         return columns.map { col ->
             val name = col.columnName.text
-            val comment = StringUtil.cleanQuote(col.comment().string().text)
+            val comment = CommonUtils.cleanQuote(col.comment().string().text)
             ColumnRel(name, null, comment)
         }
     }
@@ -375,8 +386,8 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         if (ctx != null) {
             ctx.property().forEach { item ->
                 val property = item as PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }

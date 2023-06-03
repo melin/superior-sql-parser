@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.flink
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
@@ -41,7 +41,7 @@ class FlinkSQLAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBas
     override fun visitSqlStatements(ctx: FlinkCdcSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -128,11 +128,11 @@ class FlinkSQLAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBas
         val createDatabase = if (ctx.includeTable == null) {
             FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
         } else {
-            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, StringUtil.cleanQuote(ctx.includeTable.text))
+            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
         }
 
         if (ctx.excludeTable != null) {
-            createDatabase.excludeTable = StringUtil.cleanQuote(ctx.excludeTable.text)
+            createDatabase.excludeTable = CommonUtils.cleanQuote(ctx.excludeTable.text)
         }
 
         createDatabase.sinkOptions = sinkOptions
@@ -171,8 +171,8 @@ class FlinkSQLAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBas
         val properties = HashMap<String, String>()
         options.children.filter { it is FlinkCdcSqlParser.PropertyContext }.map { item ->
             val property = item as FlinkCdcSqlParser.PropertyContext
-            val key = StringUtil.cleanQuote(property.key.text)
-            val value = StringUtil.cleanQuote(property.value.text)
+            val key = CommonUtils.cleanQuote(property.key.text)
+            val value = CommonUtils.cleanQuote(property.value.text)
             properties.put(key, value)
         }
         return properties

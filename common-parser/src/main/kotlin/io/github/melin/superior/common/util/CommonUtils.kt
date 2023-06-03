@@ -1,11 +1,29 @@
 package com.github.melin.superior.sql.parser.util
 
+import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
 /**
  * Created by libinsong on 2017/4/10.
  */
-object StringUtil {
+object CommonUtils {
+
+    fun findNodes(keyWords: ArrayList<String>, node: ParseTree) {
+        if (node is TerminalNodeImpl) {
+            val count = node.parent.childCount
+            for (i in 0 until count) {
+                val child = node.parent.getChild(i)
+                if (child is TerminalNodeImpl) {
+                    keyWords.add(child.text.uppercase())
+                } else {
+                    break
+                }
+            }
+        } else {
+            findNodes(keyWords, node.getChild(0))
+        }
+    }
 
     fun cleanLastSemi(text: String) : String {
         if (StringUtils.endsWith(text, ";")) {

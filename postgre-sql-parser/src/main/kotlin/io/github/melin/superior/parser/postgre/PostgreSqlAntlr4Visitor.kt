@@ -1,12 +1,13 @@
 package io.github.melin.superior.parser.postgre
 
-import com.github.melin.superior.sql.parser.util.StringUtil
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.alter.CreateIndex
 import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
@@ -60,16 +61,26 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = StringUtil.cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitStmt(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitStmt(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }
@@ -95,19 +106,19 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
     //-----------------------------------database-------------------------------------------------
 
     override fun visitCreatedbstmt(ctx: PostgreSqlParser.CreatedbstmtContext): Statement {
-        val databaseName = StringUtil.cleanQuote(ctx.name().text)
+        val databaseName = CommonUtils.cleanQuote(ctx.name().text)
         return CreateDatabase(databaseName)
     }
 
     override fun visitDropdbstmt(ctx: PostgreSqlParser.DropdbstmtContext): Statement {
-        val databaseName = StringUtil.cleanQuote(ctx.name().text)
+        val databaseName = CommonUtils.cleanQuote(ctx.name().text)
         return DropDatabase(databaseName)
     }
 
     //-----------------------------------schema-------------------------------------------------
 
     override fun visitCreateschemastmt(ctx: PostgreSqlParser.CreateschemastmtContext): Statement {
-        val schemaName = StringUtil.cleanQuote(ctx.colid().text)
+        val schemaName = CommonUtils.cleanQuote(ctx.colid().text)
         return CreateSchema(schemaName)
     }
 
@@ -428,7 +439,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
 
         val isNull = if (ctx.comment_text().NULL_P() != null) true else false
         val text: String? =
-            if (ctx.comment_text().text != null) StringUtil.cleanQuote(ctx.comment_text().sconst().text) else null
+            if (ctx.comment_text().text != null) CommonUtils.cleanQuote(ctx.comment_text().sconst().text) else null
         return CommentData(text, isNull, objType, objValue)
     }
 

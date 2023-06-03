@@ -1,11 +1,11 @@
 package io.github.melin.superior.parser.spark
 
-import com.github.melin.superior.sql.parser.util.StringUtil
-import com.github.melin.superior.sql.parser.util.StringUtil.cleanLastSemi
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.parser.spark.relational.RefreshStatement
 import io.github.melin.superior.common.relational.common.UseCatalog
 import io.github.melin.superior.common.relational.common.UseDatabase
@@ -78,16 +78,26 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
-            sql = cleanLastSemi(sql)
+            sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
             } else {
-                var statement = this.visitSingleStatement(it)
-                if (statement == null) {
-                    statement = DefaultStatement(StatementType.UNKOWN)
+                val startNode = it.start.text
+                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findNodes(keyWords, it)
+                    ShowStatement(*keyWords.toTypedArray())
+                } else {
+                    var statement = this.visitSingleStatement(it)
+                    if (statement == null) {
+                        statement = DefaultStatement(StatementType.UNKOWN)
+                    }
+                    statement
                 }
+
                 statement.setSql(sql)
                 statements.add(statement)
+
                 clean()
             }
         }
@@ -116,10 +126,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
         if (statement == null) {
             val startToken = StringUtils.lowerCase(ctx.getStart().text)
-            return if ("show".equals(startToken)) {
-                DefaultStatement(StatementType.SHOW)
-            } else if ("desc".equals(startToken) || "describe".equals(startToken)) {
-                DefaultStatement(StatementType.DESC)
+            if ("desc".equals(startToken) || "describe".equals(startToken)) {
+                return DefaultStatement(StatementType.DESC)
             } else {
                 throw SQLParserException("不支持的SQL: " + command)
             }
@@ -165,7 +173,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         var location: String = ""
         if (ctx.locationSpec().size > 0) {
             location = ctx.locationSpec().get(0).stringLit().text
-            location = StringUtil.cleanQuote(location)
+            location = CommonUtils.cleanQuote(location)
         }
         val type = ctx.namespace().text.uppercase()
 
@@ -230,7 +238,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         tableProvider: TableProviderContext?,
         query: QueryContext?): Statement {
 
-        val comment = if (createTableClauses.commentSpec().size > 0) StringUtil.cleanQuote(createTableClauses.commentSpec(0).text) else null
+        val comment = if (createTableClauses.commentSpec().size > 0) CommonUtils.cleanQuote(createTableClauses.commentSpec(0).text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
         var partitionColumnRels: List<ColumnRel>? = null
@@ -269,7 +277,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
-                            val colComment = if (column.colType().commentSpec() != null) StringUtil.cleanQuote(column.colType().commentSpec().text) else null
+                            val colComment = if (column.colType().commentSpec() != null) CommonUtils.cleanQuote(column.colType().commentSpec().text) else null
                             ColumnRel(colName, dataType, colComment)
                         }
                 }
@@ -288,8 +296,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         if (createTableClauses.tableProps != null) {
             createTableClauses.tableProps.children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
                 val property = item as SparkSqlParser.PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }
@@ -405,7 +413,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                 val column = item as SparkSqlParser.QualifiedColTypeWithPositionContext
                 val columnName = column.multipartIdentifier().text
                 val dataType = column.dataType().text
-                val comment = if (column.commentSpec() != null) StringUtil.cleanQuote(column.commentSpec().text) else null
+                val comment = if (column.commentSpec() != null) CommonUtils.cleanQuote(column.commentSpec().text) else null
 
                 var position: String? = null
                 var afterCol: String? = null
@@ -433,7 +441,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         val newColumnName = ctx.colType().colName.text
         val dataType = ctx.colType().dataType().text
         val commentNode = ctx.colType().commentSpec()?.stringLit()
-        val comment = if (commentNode != null) StringUtil.cleanQuote(commentNode.text) else null
+        val comment = if (commentNode != null) CommonUtils.cleanQuote(commentNode.text) else null
 
         val action = AlterColumnAction(columnName, dataType, comment)
         action.newColumName = newColumnName
@@ -486,7 +494,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitSetTableLocation(ctx: SparkSqlParser.SetTableLocationContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val location = StringUtil.cleanQuote(ctx.locationSpec().stringLit().text)
+        val location = CommonUtils.cleanQuote(ctx.locationSpec().stringLit().text)
 
         val action = AlterPropsAction(location)
         return AlterTable(SET_TABLE_LOCATION, tableId, action)
@@ -511,8 +519,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {
-        val srcType = StringUtil.cleanQuote(ctx.sourceName.text)
-        val distType = StringUtil.cleanQuote(ctx.sinkName.text)
+        val srcType = CommonUtils.cleanQuote(ctx.sourceName.text)
+        val distType = CommonUtils.cleanQuote(ctx.sinkName.text)
 
         currentOptType = StatementType.DATATUNNEL
 
@@ -524,7 +532,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
         var transformSql: String? = null
         if (ctx.transfromSql != null) {
-            transformSql = StringUtil.cleanQuote(ctx.transfromSql.text)
+            transformSql = CommonUtils.cleanQuote(ctx.transfromSql.text)
         }
 
         val distOptions = parseDtOptions(ctx.writeOpts)
@@ -537,7 +545,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitDatatunnelHelp(ctx: SparkSqlParser.DatatunnelHelpContext): Statement {
         val type = if (ctx.SOURCE() != null) "source" else "sink";
-        val value = StringUtil.cleanQuote(ctx.value.text)
+        val value = CommonUtils.cleanQuote(ctx.value.text)
         return DataTunnelHelp(type, value)
     }
 
@@ -546,15 +554,15 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         if (ctx != null) {
             ctx.dtProperty().map { item ->
                 val property = item as DtPropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
                 if (property.value.columnDef().size > 0) {
                     val list = arrayListOf<Any>()
                     property.value.columnDef().map { col ->
                         val map = HashMap<String, String>()
                         col.dtColProperty().map { pt ->
                             val colProperty = pt as DtColPropertyContext
-                            val colKey = StringUtil.cleanQuote(colProperty.key.text)
-                            val colValue = StringUtil.cleanQuote(colProperty.value.text)
+                            val colKey = CommonUtils.cleanQuote(colProperty.key.text)
+                            val colValue = CommonUtils.cleanQuote(colProperty.value.text)
                             map.put(colKey, colValue)
                         }
                         list.add(map)
@@ -563,12 +571,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                 } else if (property.value.dtPropertyValue().size > 0) {
                     val list = arrayListOf<Any>()
                     property.value.dtPropertyValue().map { col ->
-                        val value = StringUtil.cleanQuote(col.text)
+                        val value = CommonUtils.cleanQuote(col.text)
                         list.add(value)
                     }
                     options.put(key, list)
                 } else {
-                    val value = StringUtil.cleanQuote(property.value.text)
+                    val value = CommonUtils.cleanQuote(property.value.text)
                     options.put(key, value)
                 }
             }
@@ -581,8 +589,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         val tableId = parseTableName(ctx.multipartIdentifier())
         val properties = HashMap<String, String>()
         ctx.callArgument().filter { it.ARROW1() != null }.forEach { item ->
-            val key = StringUtil.cleanQuote(item.identifier().text)
-            val value = StringUtil.cleanQuote(item.expression().text)
+            val key = CommonUtils.cleanQuote(item.identifier().text)
+            val value = CommonUtils.cleanQuote(item.expression().text)
             properties.put(key.lowercase(), value)
         }
 
@@ -593,7 +601,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         var procedure: String? = null
         if (ctx.callHelpExpr() != null) {
             procedure = if (ctx.callHelpExpr().callArgument() != null) {
-                StringUtil.cleanQuote(ctx.callHelpExpr().callArgument().expression().text)
+                CommonUtils.cleanQuote(ctx.callHelpExpr().callArgument().expression().text)
             } else {
                 ctx.callHelpExpr().identifier().text
             }
@@ -656,7 +664,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         var comment: String? = null
         if (ctx.commentSpec().size > 0) {
             comment = ctx.commentSpec().get(0).stringLit().text
-            comment = StringUtil.cleanQuote(comment)
+            comment = CommonUtils.cleanQuote(comment)
         }
 
         val tableId = parseTableName(ctx.multipartIdentifier())
@@ -783,7 +791,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitCreateFileView(ctx: SparkSqlParser.CreateFileViewContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val path = StringUtil.cleanQuote(ctx.path.text)
+        val path = CommonUtils.cleanQuote(ctx.path.text)
 
         var compression: String? = null
         var sizeLimit: String? = null
@@ -808,7 +816,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         super.visitExportTable(ctx)
 
         val tableId = parseTableName(ctx.multipartIdentifier())
-        val filePath = StringUtil.cleanQuote(ctx.filePath.text)
+        val filePath = CommonUtils.cleanQuote(ctx.filePath.text)
         val properties = parseOptions(ctx.propertyList())
         val partitionVals = parsePartitionSpec(ctx.partitionSpec())
 
@@ -1039,7 +1047,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         ctx.children.filter { it is SparkSqlParser.ExpressionContext }.forEach {
             var text = it.text
             text = StringUtils.substringBetween(text, "(", ")").trim()
-            text = StringUtil.cleanQuote(text)
+            text = CommonUtils.cleanQuote(text)
             val list = listOf(text)
             rows.add(list)
         }
@@ -1095,7 +1103,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                 }
 
                 if (col.commentSpec() != null) {
-                    comment = StringUtil.cleanQuote(col.commentSpec().stringLit().text);
+                    comment = CommonUtils.cleanQuote(col.commentSpec().stringLit().text);
                 }
 
                 if (col.defaultExpression() != null) {
@@ -1104,7 +1112,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                         col.defaultExpression().stop.stopIndex + 1)
 
                     if (defaultExpr != null) {
-                        defaultExpr = StringUtil.cleanQuote(defaultExpr!!)
+                        defaultExpr = CommonUtils.cleanQuote(defaultExpr!!)
                     }
                 }
             }
@@ -1121,7 +1129,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         }
 
         if (context.commentSpec() != null) {
-            action.comment = StringUtil.cleanQuote(context.commentSpec().stringLit().text)
+            action.comment = CommonUtils.cleanQuote(context.commentSpec().stringLit().text)
         }
 
         if (context.colPosition() != null) {
@@ -1187,8 +1195,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         if (ctx != null) {
             ctx.property().forEach { item ->
                 val property = item as SparkSqlParser.PropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }
@@ -1205,7 +1213,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
                     partitions.put(it.identifier().text, "__dynamic__")
                 } else {
                     var value = it.getChild(2).text
-                    value = StringUtil.cleanQuote(value)
+                    value = CommonUtils.cleanQuote(value)
                     partitions.put(it.identifier().text, value)
                 }
             }

@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.spark
 
-import com.github.melin.superior.sql.parser.util.StringUtil
-import io.github.melin.superior.common.*
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -35,8 +34,8 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>()
                     val column = item as SparkStreamSqlParser.ColTypeContext
                     val colName = column.ID().text
                     val dataType = column.dataType().text
-                    val colComment = if (column.comment != null) StringUtil.cleanQuote(column.comment.text) else null
-                    val jsonPath = if (column.jsonPath != null) StringUtil.cleanQuote(column.jsonPath.text) else null
+                    val colComment = if (column.comment != null) CommonUtils.cleanQuote(column.comment.text) else null
+                    val jsonPath = if (column.jsonPath != null) CommonUtils.cleanQuote(column.jsonPath.text) else null
                     //val pattern = if (column.pattern != null) StringUtil.cleanQuote(column.pattern.text) else null
 
                     val columnRel = ColumnRel(colName, dataType, colComment, true)
@@ -51,8 +50,8 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>()
         if (ctx.tableProps != null) {
             ctx.tableProps.children.filter { it is SparkStreamSqlParser.TablePropertyContext }.map { item ->
                 val property = item as SparkStreamSqlParser.TablePropertyContext
-                val key = StringUtil.cleanQuote(property.key.text)
-                val value = StringUtil.cleanQuote(property.value.text)
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
         }
@@ -62,8 +61,8 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>()
 
     override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): Statement {
         val key = ctx.setKeyExpr().text
-        var value = StringUtil.cleanQuote(ctx.valueKeyExpr().text)
-        value = StringUtil.cleanQuote(value)
+        var value = CommonUtils.cleanQuote(ctx.valueKeyExpr().text)
+        value = CommonUtils.cleanQuote(value)
 
         return SetStatement(key, value)
     }

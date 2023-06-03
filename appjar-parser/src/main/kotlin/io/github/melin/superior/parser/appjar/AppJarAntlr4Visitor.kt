@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.appjar
 
-import com.github.melin.superior.sql.parser.util.StringUtil
-import io.github.melin.superior.common.StatementType
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.common.UnSetStatement
@@ -41,7 +40,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
                     params.addAll(StringUtils.split(value, " "));
                 } else {
-                    value = StringUtil.cleanQuote(value)
+                    value = CommonUtils.cleanQuote(value)
                     params.add(value)
                 }
             }
@@ -53,7 +52,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
     override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): Statement {
         val key = ctx.keyExpr().text
         var value = StringUtils.substring(command, ctx.value.start.startIndex, ctx.value.stop.stopIndex + 1)
-        value = StringUtil.cleanQuote(value)
+        value = CommonUtils.cleanQuote(value)
 
         return SetStatement(key, value)
     }
