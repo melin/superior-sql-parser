@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.spark.relational
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
@@ -22,7 +23,7 @@ data class ExportData(
     override val privilegeType = PrivilegeType.READ
     override val sqlType = SqlType.DML
 
-    val functionNames: HashSet<String> = hashSetOf()
+    val functionNames: HashSet<FunctionId> = hashSetOf()
 
     constructor(
         tableId: TableId,

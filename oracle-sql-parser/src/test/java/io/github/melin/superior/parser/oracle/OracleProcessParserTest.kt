@@ -4,8 +4,12 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.ProcedureId
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.create.CreateFunction
 import io.github.melin.superior.common.relational.create.CreateProcedure
+import io.github.melin.superior.common.relational.drop.DropFunction
+import io.github.melin.superior.common.relational.drop.DropProcedure
+import jdk.nashorn.internal.codegen.CompilerConstants.Call
 import org.junit.Assert
 import org.junit.Test
 
@@ -124,6 +128,59 @@ class OracleProcessParserTest {
             Assert.assertEquals(TableId("courses_tbl"), statement.inputTables.get(0))
             //Assert.assertEquals(1, statement.outputTables.size)
             //Assert.assertEquals(TableId("student_courses"), statement.outputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropTest() {
+        val sql = """
+            DROP FUNCTION get_bal;
+            DROP PROCEDURE demos.UpdateCourse;
+        """.trimIndent()
+
+        val statements = OracleSqlHelper.parseMultiStatement(sql)
+
+        val dropFunction = statements.get(0)
+        val dropProcess = statements.get(1)
+
+        if (dropFunction is DropFunction) {
+            Assert.assertEquals("get_bal", dropFunction.functionId.functionName)
+        } else {
+            Assert.fail()
+        }
+
+        if (dropProcess is DropProcedure) {
+            Assert.assertEquals("demos", dropProcess.procedureId.schemaName)
+            Assert.assertEquals("UpdateCourse", dropProcess.procedureId.procedureName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun callProcessTest() {
+        val sql = """
+            Call UpdateCourse('tes')
+            begin
+                UpdateCourse('tes');
+            end;
+        """.trimIndent()
+
+        val statements = OracleSqlHelper.parseMultiStatement(sql)
+
+        val procedure1 = statements.get(0)
+        val procedure2 = statements.get(1)
+
+        if (procedure1 is CallProcedure) {
+            Assert.assertEquals("UpdateCourse", procedure1.procedureId.procedureName)
+        } else {
+            Assert.fail()
+        }
+
+        if (procedure2 is CreateProcedure) {
+            Assert.assertEquals(1, procedure2.procedureNames.size)
         } else {
             Assert.fail()
         }

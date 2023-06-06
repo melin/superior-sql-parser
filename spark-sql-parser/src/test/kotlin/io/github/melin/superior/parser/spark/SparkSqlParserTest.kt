@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.spark
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView
@@ -457,7 +458,7 @@ class SparkSqlParserTest {
 
             Assert.assertTrue(statement.ifNotExists)
 
-            Assert.assertEquals("bigdata.test", statement.functionNames.first())
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
         } else {
             Assert.fail()
         }
@@ -654,7 +655,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("view_users", statement.tableId.tableName)
             Assert.assertEquals("view test", statement.comment)
             Assert.assertEquals(1, statement.functionNames.size)
-            Assert.assertEquals("bigdata.test", statement.functionNames.first())
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
 
             Assert.assertEquals("select *, bigdata.test(name) from account", statement.querySql)
             Assert.assertEquals("account", statement.inputTables.get(0).tableName)
@@ -1085,7 +1086,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is DropFunction) {
-            Assert.assertEquals("train_perceptron", statement.funcName)
+            Assert.assertEquals("train_perceptron", statement.functionId.functionName)
         } else {
             Assert.fail()
         }
@@ -1367,7 +1368,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("account", statement.inputTables.get(0).tableName)
             Assert.assertEquals("address", statement.inputTables.get(1).tableName)
 
-            Assert.assertEquals("bigdata.test", statement.functionNames.first())
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
         } else {
             Assert.fail()
         }
@@ -1938,9 +1939,9 @@ class SparkSqlParserTest {
         
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statement.statementType)
-            Assert.assertEquals("catalog_name", statement.catalogName)
-            Assert.assertEquals("system", statement.databaseName)
-            Assert.assertEquals("create_savepoint", statement.procedureName)
+            Assert.assertEquals("catalog_name", statement.procedureId.catalogName)
+            Assert.assertEquals("system", statement.procedureId.schemaName)
+            Assert.assertEquals("create_savepoint", statement.procedureId.procedureName)
             Assert.assertEquals(2, statement.properties.size)
         } else {
             Assert.fail()
@@ -1954,7 +1955,7 @@ class SparkSqlParserTest {
         
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statement.statementType)
-            Assert.assertEquals("stats_file_sizes", statement.procedureName)
+            Assert.assertEquals("stats_file_sizes", statement.procedureId.procedureName)
             Assert.assertEquals(1, statement.properties.size)
         } else {
             Assert.fail()

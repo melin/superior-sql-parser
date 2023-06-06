@@ -5,6 +5,7 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.parser.spark.relational.RefreshStatement
 import io.github.melin.superior.common.relational.common.UseCatalog
@@ -53,7 +54,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
-    private var functionNames: HashSet<String> = hashSetOf()
+    private var functionNames: HashSet<FunctionId> = hashSetOf()
 
     private var command: String? = null
     private var rows: ArrayList<List<String>> = ArrayList()
@@ -594,7 +595,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
             properties.put(key.lowercase(), value)
         }
 
-        return CallProcedure(tableId.catalogName, tableId.schemaName, tableId.tableName, properties)
+        return CallProcedure(ProcedureId(tableId.catalogName, tableId.schemaName, tableId.tableName), properties)
     }
 
     override fun visitCallHelp(ctx: SparkSqlParser.CallHelpContext): Statement {
@@ -767,7 +768,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitDropFunction(ctx: SparkSqlParser.DropFunctionContext): Statement {
         val functionId = parseTableName(ctx.multipartIdentifier())
-        return DropFunction(functionId.schemaName, functionId.tableName)
+        return DropFunction(FunctionId(functionId.schemaName, functionId.tableName))
     }
     //-----------------------------------cache-------------------------------------------------
 
@@ -1000,7 +1001,20 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
             StatementType.EXPORT_TABLE == currentOptType ||
             StatementType.DATATUNNEL == currentOptType) {
 
-            functionNames.add(StringUtils.lowerCase(ctx.qualifiedName().text))
+            val names = ctx.qualifiedName().identifier()
+            if (names.size == 3) {
+                val catalog = StringUtils.lowerCase(names.get(0).text)
+                val schema = StringUtils.lowerCase(names.get(1).text)
+                val funcName = StringUtils.lowerCase(names.get(2).text)
+                functionNames.add(FunctionId(catalog, schema, funcName))
+            } else if (names.size == 2) {
+                val schema = StringUtils.lowerCase(names.get(0).text)
+                val funcName = StringUtils.lowerCase(names.get(1).text)
+                functionNames.add(FunctionId(schema, funcName))
+            } else if (names.size == 1) {
+                val funcName = StringUtils.lowerCase(names.get(0).text)
+                functionNames.add(FunctionId(funcName))
+            }
         }
         return super.visitFunctionName(ctx)
     }

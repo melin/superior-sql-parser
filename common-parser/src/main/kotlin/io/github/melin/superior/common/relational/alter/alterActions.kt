@@ -1,6 +1,7 @@
 package io.github.melin.superior.common.relational.alter
 
 import com.google.common.collect.Maps
+import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.SortType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -32,7 +33,7 @@ data class AlterTouchPartitionAction(
 data class AlterViewAction(
     var querySql: String, // 修改表，新列名称
     var inputTables: List<TableId>,
-    var functionNames: HashSet<String>
+    var functionNames: HashSet<FunctionId>
 ): AlterAction()
 
 data class RefreshMvAction(

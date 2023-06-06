@@ -4,13 +4,18 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
+import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropFunction
+import io.github.melin.superior.common.relational.drop.DropProcedure
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Function_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Procedure_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
@@ -30,6 +35,8 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
+    private var functionNames: HashSet<FunctionId> = hashSetOf()
+    private var procedureNames: HashSet<ProcedureId> = hashSetOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
@@ -114,6 +121,8 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
         inputTables = arrayListOf()
         outputTables = arrayListOf()
         cteTempTables = arrayListOf()
+        functionNames = hashSetOf()
+        procedureNames = hashSetOf()
     }
 
     private fun addOutputTableId(tableId: TableId) {
@@ -190,43 +199,63 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
         val createView = CreateMaterializedView(tableId)
 
         super.visitSelect_only_statement(ctx.select_only_statement())
-        createView.inputTables = inputTables
+        createView.inputTables.addAll(inputTables)
         return createView
     }
 
     override fun visitCreate_procedure_body(ctx: OracleParser.Create_procedure_bodyContext): Statement {
         super.visitCreate_procedure_body(ctx)
         val procedureName = ctx.procedure_name()
-        val procedureId = if (procedureName.id_expression() != null) {
-            ProcedureId(procedureName.identifier().text, procedureName.id_expression().text)
-        } else {
-            ProcedureId(procedureName.identifier().text)
-        }
+        val procedureId = parseProcedureName(procedureName)
         val procedure = CreateProcedure(procedureId)
-        procedure.inputTables = inputTables
-        procedure.outputTables = outputTables
+        procedure.inputTables.addAll(inputTables)
+        procedure.outputTables.addAll(outputTables)
+        procedure.functionNames.addAll(functionNames)
+        procedure.procedureNames.addAll(procedureNames)
         return procedure
     }
 
     override fun visitCreate_function_body(ctx: OracleParser.Create_function_bodyContext): Statement {
         super.visitCreate_function_body(ctx)
         val funcName = ctx.function_name()
-        val functionId = if (funcName.id_expression() != null) {
-            FunctionId(funcName.identifier().text, funcName.id_expression().text)
-        } else {
-            FunctionId(funcName.identifier().text)
-        }
+        val functionId = parseFunctionName(funcName)
         val function = CreateFunction(functionId)
 
         function.inputTables = inputTables
         return function
     }
 
+    override fun visitDrop_function(ctx: OracleParser.Drop_functionContext): Statement {
+        val funcName = ctx.function_name()
+        val functionId = parseFunctionName(funcName)
+        return DropFunction(functionId)
+    }
+
+    override fun visitDrop_procedure(ctx: OracleParser.Drop_procedureContext): Statement {
+        val procedureName = ctx.procedure_name()
+        val procedureId = parseProcedureName(procedureName)
+        return DropProcedure(procedureId)
+    }
+
     override fun visitAnonymous_block(ctx: OracleParser.Anonymous_blockContext?): Statement {
         super.visitAnonymous_block(ctx)
         val procedure = CreateProcedure()
-        procedure.inputTables = inputTables
+        procedure.inputTables.addAll(inputTables)
+        procedure.outputTables.addAll(outputTables)
+        procedure.functionNames.addAll(functionNames)
+        procedure.procedureNames.addAll(procedureNames)
         return procedure
+    }
+
+    override fun visitCall_statement(ctx: OracleParser.Call_statementContext): Statement {
+        val procedureId = if (ctx.routine_name().id_expression().size > 0) {
+            ProcedureId(ctx.routine_name().identifier().text, ctx.routine_name().id_expression().get(0).text)
+        } else {
+            ProcedureId(ctx.routine_name().identifier().text)
+        }
+
+        procedureNames.add(procedureId)
+        return CallProcedure(procedureId)
     }
 
     override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): Statement {
@@ -302,6 +331,22 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
         insertTable.inputTables.addAll(inputTables)
         insertTable.outputTables.addAll(outputTables)
         return insertTable
+    }
+
+    private fun parseFunctionName(funcName: Function_nameContext): FunctionId {
+        return if (funcName.id_expression() != null) {
+            FunctionId(funcName.identifier().text, funcName.id_expression().text)
+        } else {
+            FunctionId(funcName.identifier().text)
+        }
+    }
+
+    private fun parseProcedureName(procedureName: Procedure_nameContext): ProcedureId {
+        return if (procedureName.id_expression() != null) {
+            ProcedureId(procedureName.identifier().text, procedureName.id_expression().text)
+        } else {
+            ProcedureId(procedureName.identifier().text)
+        }
     }
 
     private fun addOutputTableId(list: List<Multi_table_elementContext>) {

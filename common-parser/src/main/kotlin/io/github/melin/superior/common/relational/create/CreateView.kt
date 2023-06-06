@@ -3,6 +3,7 @@ package io.github.melin.superior.common.relational.create
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -26,5 +27,5 @@ data class CreateView(
     var properties: Map<String, String> = mapOf()
 
     val inputTables: ArrayList<TableId> = arrayListOf()
-    val functionNames: HashSet<String> = hashSetOf()
+    val functionNames: HashSet<FunctionId> = hashSetOf()
 }
