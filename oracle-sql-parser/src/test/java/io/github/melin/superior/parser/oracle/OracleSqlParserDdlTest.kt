@@ -46,6 +46,8 @@ class OracleSqlParserDdlTest {
             )
         """.trimIndent()
 
+        OracleSqlHelper.splitSql(sql)
+
         val statement = OracleSqlHelper.parseStatement(sql)
         
         if (statement is CreateTable) {

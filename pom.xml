@@ -251,31 +251,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <inherited>true</inherited>
-                <executions>
-                    <execution>
-                        <id>bundle-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <maxmemory>1024</maxmemory>
-                    <encoding>UTF-8</encoding>
-                    <show>protected</show>
-                    <notree>true</notree>
-
-                    <!-- Avoid running into Java 8's very restrictive doclint issues -->
-                    <failOnError>false</failOnError>
-                    <doclint>none</doclint>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -284,6 +259,32 @@
             <id>release</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <inherited>true</inherited>
+                        <executions>
+                            <execution>
+                                <id>bundle-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <maxmemory>1024</maxmemory>
+                            <encoding>UTF-8</encoding>
+                            <show>protected</show>
+                            <notree>true</notree>
+
+                            <!-- Avoid running into Java 8's very restrictive doclint issues -->
+                            <failOnError>false</failOnError>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>

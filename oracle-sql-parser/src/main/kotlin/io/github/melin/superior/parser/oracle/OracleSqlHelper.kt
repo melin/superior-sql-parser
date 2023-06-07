@@ -36,7 +36,11 @@ object OracleSqlHelper {
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        var sql = StringUtils.trim(command);
+        if (!StringUtils.endsWith(sql, ";")) {
+            sql += ";"
+        }
+        val sqlVisitor = innerParseStatement(sql, true)
         return sqlVisitor.getSplitSqls()
     }
 
