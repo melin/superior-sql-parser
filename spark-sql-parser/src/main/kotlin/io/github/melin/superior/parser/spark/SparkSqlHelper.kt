@@ -120,7 +120,7 @@ object SparkSqlHelper {
 
             return sqlVisitor
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
+            if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
                 throw e.withCommand(trimCmd)

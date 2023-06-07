@@ -9,6 +9,7 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.table.ColumnDefType
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
@@ -18,6 +19,7 @@ import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.PhysicalColum
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.SourceTableContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.TablePropertyContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.TablePropertyListContext
+import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.UidContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -114,9 +116,10 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
     }
 
     override fun visitSimpleCreateTable(ctx: FlinkSqlParser.SimpleCreateTableContext): Statement {
-        val tableId = parseSourceTable(ctx.sourceTable())
+        val tableId = parseSourceTable(ctx.sourceTable().uid())
         val comment: String? = if (ctx.commentSpec() != null) ctx.commentSpec().STRING_LITERAL().text else null;
         val properties = parseTableOptions(ctx.withOption().tablePropertyList())
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
 
         val columnRels = ctx.columnOptionDefinition().map {
             val column = it.getChild(0)
@@ -137,11 +140,67 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
             }
         }
 
-        return CreateTable(tableId, comment, columnRels, properties)
+        return CreateTable(tableId, comment, columnRels, ifNotExists, properties)
     }
 
-    private fun parseSourceTable(source: SourceTableContext): TableId {
-        val nodes = source.uid().identifier()
+    override fun visitCreateTableAsSelect(ctx: FlinkSqlParser.CreateTableAsSelectContext): Statement {
+        currentOptType = StatementType.CREATE_TABLE_AS_SELECT
+        val tableId = parseSourceTable(ctx.sourceTable().uid())
+        val properties = parseTableOptions(ctx.withOption().tablePropertyList())
+
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
+        val createTable = CreateTableAsSelect(tableId, null, ifNotExists, properties)
+
+        super.visitQueryStatement(ctx.queryStatement())
+        createTable.inputTables.addAll(inputTables)
+        return createTable
+    }
+
+    override fun visitCreateView(ctx: FlinkSqlParser.CreateViewContext): Statement {
+        currentOptType = StatementType.CREATE_VIEW
+        val tableId = parseSourceTable(ctx.uid())
+        val comment: String? = if (ctx.commentSpec() != null) ctx.commentSpec().STRING_LITERAL().text else null;
+        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
+        var columnNameList: List<ColumnRel>? = null
+        if (ctx.columnNameList() != null) {
+            columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
+        }
+
+        val createTable = CreateView(tableId, querySql, comment, ifNotExists, columnNameList)
+
+        super.visitQueryStatement(ctx.queryStatement())
+        createTable.inputTables.addAll(inputTables)
+        return createTable
+    }
+
+    override fun visitTablePath(ctx: FlinkSqlParser.TablePathContext): Statement? {
+        if (StatementType.SELECT == currentOptType ||
+            StatementType.INSERT == currentOptType ||
+            StatementType.UPDATE == currentOptType ||
+            StatementType.DELETE == currentOptType ||
+            StatementType.CREATE_VIEW == currentOptType ||
+            StatementType.CREATE_TABLE_AS_SELECT == currentOptType) {
+
+            val tableId = parseSourceTable(ctx.uid())
+
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                inputTables.add(tableId)
+            }
+        }
+        return null
+    }
+
+    override fun visitLimitClause(ctx: FlinkSqlParser.LimitClauseContext): Statement? {
+        if (ctx.limit != null) {
+            limit = ctx.limit.text.toInt()
+        }
+        return super.visitLimitClause(ctx)
+    }
+
+    private fun parseSourceTable(uid: UidContext): TableId {
+        val nodes = uid.identifier()
         if (nodes.size == 3) {
             val catalog = CommonUtils.cleanQuote(nodes.get(0).text)
             val schema = CommonUtils.cleanQuote(nodes.get(1).text)

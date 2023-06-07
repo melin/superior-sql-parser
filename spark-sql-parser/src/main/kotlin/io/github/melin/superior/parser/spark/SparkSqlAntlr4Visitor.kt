@@ -680,7 +680,17 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
-        val createView = CreateView(tableId, querySql, comment, ifNotExists)
+        var columnNameList: List<ColumnRel>? = null
+        if (ctx.identifierCommentList() != null) {
+            columnNameList = ctx.identifierCommentList().identifierComment().map {
+                val name = CommonUtils.cleanQuote(it.identifier().text)
+                val commentText: String? = if (it.commentSpec() != null)
+                    CommonUtils.cleanQuote(it.commentSpec().stringLit().text) else null;
+                ColumnRel(name, comment = commentText)
+            }
+        }
+
+        val createView = CreateView(tableId, querySql, comment, ifNotExists, columnNameList)
         createView.inputTables.addAll(inputTables)
         createView.functionNames.addAll(functionNames)
 

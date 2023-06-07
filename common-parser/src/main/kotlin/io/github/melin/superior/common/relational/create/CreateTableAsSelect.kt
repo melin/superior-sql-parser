@@ -34,4 +34,11 @@ data class CreateTableAsSelect(
 
     constructor(tableId: TableId):
             this(tableId, null, null, null, null, null, null, false)
+
+    constructor(
+        tableId: TableId,
+        comment: String? = null,
+        ifNotExists: Boolean,
+        properties: Map<String, String>? = null):
+            this(tableId, comment, null, null, null, properties, null, ifNotExists)
 }

@@ -41,6 +41,7 @@ data class CreateTable(
         tableId: TableId,
         comment: String? = null,
         columnRels: List<ColumnRel>? = null,
+        ifNotExists: Boolean,
         properties: Map<String, String>? = null):
-            this(tableId, comment, null, null, columnRels, properties, null, false)
+            this(tableId, comment, null, null, columnRels, properties, null, ifNotExists)
 }
