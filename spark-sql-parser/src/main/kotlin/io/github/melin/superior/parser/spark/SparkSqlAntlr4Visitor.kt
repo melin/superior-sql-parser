@@ -122,7 +122,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         insertSql = false
     }
 
-    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): Statement {
+    override fun visitSingleStatement(ctx: SparkSqlParser.SingleStatementContext): Statement? {
         val statement = super.visitSingleStatement(ctx)
 
         if (statement == null) {

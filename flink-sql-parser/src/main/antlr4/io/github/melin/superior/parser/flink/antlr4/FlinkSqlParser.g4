@@ -229,13 +229,13 @@ partitionDefinition
     ;
 
 transformList
-    : '(' transform (',' transform)* ')'
+    : LR_BRACKET transform (COMMA transform)* RR_BRACKET
     ;
 
 transform
     : qualifiedName                                                           #identityTransform
     | transformName=identifier
-      '(' transformArgument (',' transformArgument)* ')'  #applyTransform
+      LR_BRACKET transformArgument (COMMA transformArgument)* RR_BRACKET      #applyTransform
     ;
 
 transformArgument
