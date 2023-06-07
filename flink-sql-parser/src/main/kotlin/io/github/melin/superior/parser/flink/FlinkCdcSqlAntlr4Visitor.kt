@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkSQLAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBaseVisitor<Statement>() {
+class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBaseVisitor<Statement>() {
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var command: String? = null
 

@@ -16,7 +16,7 @@ import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
  *
  * Created by libinsong on 2018/1/10.
  */
-object FlinkSQLHelper {
+object FlinkCdcSqlHelper {
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
@@ -37,7 +37,7 @@ object FlinkSQLHelper {
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): FlinkSQLAntlr4Visitor {
+    private fun innerParseStatement(command: String, splitSql: Boolean = false): FlinkCdcSqlAntlr4Visitor {
         val trimCmd = StringUtils.trim(command)
 
         val charStream =
@@ -53,7 +53,7 @@ object FlinkSQLHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = FlinkSQLAntlr4Visitor(splitSql)
+        val sqlVisitor = FlinkCdcSqlAntlr4Visitor(splitSql)
         sqlVisitor.setCommand(trimCmd)
 
         try {
