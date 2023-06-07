@@ -5,12 +5,6 @@
 <dependency>
     <groupId>io.github.melin</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>3.3.1</version>
-</dependency>
-
-<dependency>
-    <groupId>io.github.melin</groupId>
-    <artifactId>superior-sql-parser</artifactId>
     <version>4.0.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -97,11 +91,12 @@ if (statement is TableData) {
 2. [PrestoSQL](https://github.com/prestosql/presto/tree/master/presto-parser/src/main/antlr4/io/prestosql/sql/parser)
 3. [PostgreSQL](https://github.com/pgcodekeeper/pgcodekeeper/tree/master/apgdiff/antlr-src)
 4. [Spark 3.x](https://github.com/apache/spark/tree/master/sql/catalyst/src/main/antlr4/org/apache/spark/sql/catalyst/parser)
-5. [Sql Server](https://github.com/antlr/grammars-v4/tree/master/sql/tsql) 开发中...
-6. [StarRocks](https://github.com/StarRocks/starrocks/tree/main/fe/fe-core/src/main/java/com/starrocks/sql/parser) 开发中...
+5. [Sql Server](https://github.com/antlr/grammars-v4/tree/master/sql/tsql) 
+6. [StarRocks](https://github.com/StarRocks/starrocks/tree/main/fe/fe-core/src/main/java/com/starrocks/sql/parser)
 7. [Doris](https://github.com/apache/doris/tree/master/fe/fe-core/src/main/antlr4/org/apache/doris) 未开发
 8. [ClickHouse](https://github.com/ClickHouse/ClickHouse/tree/master/utils/antlr) 未开发
-9. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql) 开发中...
+9. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql)
+10. [Flink SQL / Flink CDC SQL](https://github.com/DTStack/dt-sql-parser/tree/main/src/grammar/flinksql) 开发中...
 
 ## 相关项目
 1. https://gitee.com/melin/bee
