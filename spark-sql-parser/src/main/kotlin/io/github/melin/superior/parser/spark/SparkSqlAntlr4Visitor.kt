@@ -680,16 +680,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
-        var columnNameList: List<ColumnRel>? = null
-        if (ctx.identifierCommentList() != null) {
-            columnNameList = ctx.identifierCommentList().identifierComment().map {
-                val name = CommonUtils.cleanQuote(it.identifier().text)
-                val commentText: String? = if (it.commentSpec() != null)
-                    CommonUtils.cleanQuote(it.commentSpec().stringLit().text) else null;
-                ColumnRel(name, comment = commentText)
-            }
-        }
-
+        val columnNameList = parseColumRefs(ctx.identifierCommentList())
         val createView = CreateView(tableId, querySql, comment, ifNotExists, columnNameList)
         createView.inputTables.addAll(inputTables)
         createView.functionNames.addAll(functionNames)
@@ -937,13 +928,21 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
         return if (ctx is SparkSqlParser.InsertIntoTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = InsertTable(InsertMode.INTO, tableId)
+            var columnNameList: List<ColumnRel>? = null
+            if (ctx.identifierList() != null) {
+                columnNameList = ctx.identifierList().identifierSeq().ident.map { ColumnRel(CommonUtils.cleanQuote(it.text)) }
+            }
+            val stmt = InsertTable(InsertMode.INTO, tableId, columnNameList)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
             val tableId = parseTableName(ctx.multipartIdentifier())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
-            val stmt = InsertTable(InsertMode.OVERWRITE, tableId)
+            var columnNameList: List<ColumnRel>? = null
+            if (ctx.identifierList() != null) {
+                columnNameList = ctx.identifierList().identifierSeq().ident.map { ColumnRel(CommonUtils.cleanQuote(it.text)) }
+            }
+            val stmt = InsertTable(InsertMode.OVERWRITE, tableId, columnNameList)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
@@ -1243,5 +1242,19 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
             }
         }
         return partitions
+    }
+
+    private fun parseColumRefs(columns: SparkSqlParser.IdentifierCommentListContext?): List<ColumnRel>? {
+        var columnNameList: List<ColumnRel>? = null
+        if (columns != null) {
+            columnNameList = columns.identifierComment().map {
+                val name = CommonUtils.cleanQuote(it.identifier().text)
+                val commentText: String? = if (it.commentSpec() != null)
+                    CommonUtils.cleanQuote(it.commentSpec().stringLit().text) else null;
+                ColumnRel(name, comment = commentText)
+            }
+        }
+
+        return columnNameList
     }
 }

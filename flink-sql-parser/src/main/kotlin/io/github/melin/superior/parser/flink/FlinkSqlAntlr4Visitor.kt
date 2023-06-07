@@ -10,6 +10,8 @@ import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.table.ColumnDefType
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
@@ -173,6 +175,24 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
         super.visitQueryStatement(ctx.queryStatement())
         createTable.inputTables.addAll(inputTables)
         return createTable
+    }
+
+    override fun visitInsertSimpleStatement(ctx: FlinkSqlParser.InsertSimpleStatementContext): Statement {
+        currentOptType = StatementType.INSERT
+        val tableId = parseSourceTable(ctx.uid())
+        val insertMode = if (ctx.KW_INTO() != null) InsertMode.INTO else InsertMode.OVERWRITE
+        var columnNameList: List<ColumnRel>? = null
+        if (ctx.columnNameList() != null) {
+            columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
+        }
+
+        val insertTable = InsertTable(insertMode, tableId, columnNameList)
+        super.visitQueryStatement(ctx.queryStatement())
+
+        insertTable.inputTables.addAll(inputTables)
+        insertTable.outputTables.add(tableId)
+        insertTable.functionNames.addAll(functionNames)
+        return insertTable
     }
 
     override fun visitTablePath(ctx: FlinkSqlParser.TablePathContext): Statement? {

@@ -6,10 +6,12 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.table.ColumnRel
 
 data class InsertTable(
     val mode: InsertMode,
-    override val tableId: TableId
+    override val tableId: TableId,
+    var columnRels: List<ColumnRel>? = null
 ): AbsTableStatement() {
     override val statementType = StatementType.INSERT
     override val privilegeType = PrivilegeType.WRITE

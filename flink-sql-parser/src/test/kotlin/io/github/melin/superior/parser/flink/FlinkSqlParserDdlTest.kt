@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.flink
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.dml.InsertTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -39,21 +40,7 @@ class FlinkSqlParserDdlTest {
                 'value.changelog-json.timestamp-format.standard'='ISO-8601',
                 'value.changelog-json.ignore-parse-errors' = 'true'
             );
-        """.trimIndent()
-
-        val createTable = FlinkSqlHelper.parseStatement(sql)
-        if (createTable is CreateTable) {
-            Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
-            Assert.assertEquals(9, createTable.columnRels?.size)
-            Assert.assertEquals(12, createTable.properties?.size)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun createTableAsQueryTest() {
-        val sql = """
+            
             CREATE VIEW IF NOT EXISTS `MDM_VIEW_PRODUCT_ENRICHMENT` AS 
             (SELECT 'WTCTH' BU_CODE, 'WTCTH' FORMULA_COUNTRY_ID,
                 uif.ITEM PRODUCT_ID,
@@ -73,13 +60,35 @@ class FlinkSqlParserDdlTest {
             JOIN MDM_DIM_PRODUCT_ATTRIB_TYPE_LOOKUPMAP_MYSQL FOR SYSTEM_TIME AS OF uif.KAFKA_PROCESS_TIME AS pat
                 ON CAST(CAST(uif.UDA_ID AS DECIMAL(5, 0)) AS STRING) = pat.ATTRIB_ID
                 AND pat.ATTRIB_TYPE = 'PRODUCT_ENRICHMENT'
-            )
+            );
+            
+            INSERT INTO PROCESSED_MDM_PRODUCT_ENRICHMENT(PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED) 
+            select PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED from MDM_VIEW_PRODUCT_ENRICHMENT_TRANSLATE;
         """.trimIndent()
 
-        val createTable = FlinkSqlHelper.parseStatement(sql)
-        if (createTable is CreateView) {
-            Assert.assertEquals("MDM_VIEW_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
-            Assert.assertEquals(3, createTable.inputTables.size)
+        val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        val createTable = statements.get(0)
+        if (createTable is CreateTable) {
+            Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
+            Assert.assertEquals(9, createTable.columnRels?.size)
+            Assert.assertEquals(12, createTable.properties?.size)
+        } else {
+            Assert.fail()
+        }
+
+        val createView = statements.get(1)
+        if (createView is CreateView) {
+            Assert.assertEquals("MDM_VIEW_PRODUCT_ENRICHMENT", createView.tableId.tableName)
+            Assert.assertEquals(3, createView.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+
+        val insertTable = statements.get(2)
+        if (insertTable is InsertTable) {
+            Assert.assertEquals("PROCESSED_MDM_PRODUCT_ENRICHMENT", insertTable.outputTables.get(0).tableName)
+            Assert.assertEquals(1, insertTable.inputTables.size)
+            Assert.assertEquals(5, insertTable.columnRels?.size)
         } else {
             Assert.fail()
         }
