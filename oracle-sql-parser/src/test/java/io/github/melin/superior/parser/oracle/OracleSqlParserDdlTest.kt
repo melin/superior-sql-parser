@@ -43,7 +43,7 @@ class OracleSqlParserDdlTest {
                 employee_name varchar2(50) NOT NULL,
                 city varchar2(50),
                 CONSTRAINT employees_pk PRIMARY KEY (employee_id)
-            );
+            )
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)

@@ -11,7 +11,7 @@ class OracleSqlParserDmlTest {
     fun querySqlTest0() {
         val sql = """
             SELECT CUSTOMER_NAME, PRICE FROM FLINKUSER.ORDERS
-            OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;
+            OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)
@@ -34,7 +34,7 @@ class OracleSqlParserDmlTest {
               cte1 AS (SELECT a, b FROM table1),
               cte2 AS (SELECT c, d FROM table2)
             SELECT b, d FROM cte1 JOIN cte2
-            WHERE cte1.a = cte2.c;
+            WHERE cte1.a = cte2.c
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)

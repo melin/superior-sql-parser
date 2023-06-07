@@ -18,7 +18,11 @@ import org.apache.commons.lang3.StringUtils
 object OracleSqlHelper {
 
     @JvmStatic fun parseStatement(command: String): Statement {
-        val statements = this.parseMultiStatement(command)
+        var sql = StringUtils.trim(command);
+        if (!StringUtils.endsWith(sql, ";")) {
+            sql += ";"
+        }
+        val statements = this.parseMultiStatement(sql)
         if (statements.size != 1) {
             throw IllegalStateException("only parser one sql, sql count: " + statements.size)
         } else {
