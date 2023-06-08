@@ -58,6 +58,26 @@ class FlinkSqlParserDmlTest {
                 ROW_NUMBER() OVER (PARTITION BY category ORDER BY sales DESC) AS row_num
               FROM ShopSales)
             WHERE row_num <= 5;
+            
+            SELECT *
+            FROM Ticker
+                MATCH_RECOGNIZE (
+                    PARTITION BY symbol
+                    ORDER BY rowtime
+                    MEASURES
+                        START_ROW.rowtime AS start_tstamp,
+                        LAST(PRICE_DOWN.rowtime) AS bottom_tstamp,
+                        LAST(PRICE_UP.rowtime) AS end_tstamp
+                    ONE ROW PER MATCH
+                    AFTER MATCH SKIP TO LAST PRICE_UP
+                    PATTERN (START_ROW PRICE_DOWN+ PRICE_UP)
+                    DEFINE
+                        PRICE_DOWN AS
+                            (LAST(PRICE_DOWN.price, 1) IS NULL AND PRICE_DOWN.price < START_ROW.price) OR
+                                PRICE_DOWN.price < LAST(PRICE_DOWN.price, 1),
+                        PRICE_UP AS
+                            PRICE_UP.price > LAST(PRICE_DOWN.price, 1)
+                ) MR;
         """.trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -78,6 +98,7 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(2)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Bid", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
@@ -85,6 +106,7 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(3)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Bid", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
@@ -92,6 +114,7 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(4)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Bid", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
@@ -99,6 +122,7 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(5)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Bid", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
@@ -106,6 +130,7 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(6)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Bid", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
@@ -113,7 +138,16 @@ class FlinkSqlParserDmlTest {
 
         queryStmt= statements.get(7)
         if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("ShopSales", queryStmt.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+
+        queryStmt= statements.get(8)
+        if (queryStmt is QueryStmt) {
+            Assert.assertEquals(1, queryStmt.inputTables.size)
+            Assert.assertEquals("Ticker", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
