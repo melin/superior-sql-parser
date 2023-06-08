@@ -18,10 +18,9 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false): TrinoSqlBaseBaseVisitor<Statement>() {
+class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?): TrinoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private var command: String? = null
 
     private var limit:Int? = null
     private var offset:Int? = null
@@ -37,10 +36,6 @@ class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false): TrinoSqlBaseBaseVisi
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {

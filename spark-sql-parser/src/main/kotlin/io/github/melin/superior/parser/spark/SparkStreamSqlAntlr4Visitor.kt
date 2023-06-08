@@ -11,9 +11,8 @@ import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
 
-class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>() {
-
-    private var command: String? = null
+class SparkStreamSqlAntlr4Visitor(val command: String?):
+    SparkStreamSqlParserBaseVisitor<Statement>() {
 
     private val tableDatas = ArrayList<Statement>()
 
@@ -76,10 +75,6 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>()
         val insertTable = InsertTable(InsertMode.INTO, tableId)
         insertTable.querySql = querySql
         return insertTable
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     fun getTableDatas(): ArrayList<Statement> {

@@ -22,9 +22,9 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/2/8.
  */
-class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor<Statement>() {
+class MySQLAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    MySqlParserBaseVisitor<Statement>() {
 
-    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
     private var offset: Int? = null
@@ -42,10 +42,6 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {

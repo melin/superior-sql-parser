@@ -102,8 +102,7 @@ object SparkSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = SparkSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = SparkSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

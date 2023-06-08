@@ -51,8 +51,7 @@ object PostgreSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = PostgreSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(command)
+        val sqlVisitor = PostgreSqlAntlr4Visitor(splitSql, trimCmd)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode

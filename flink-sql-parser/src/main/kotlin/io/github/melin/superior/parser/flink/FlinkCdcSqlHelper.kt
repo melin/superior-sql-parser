@@ -53,8 +53,7 @@ object FlinkCdcSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = FlinkCdcSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = FlinkCdcSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

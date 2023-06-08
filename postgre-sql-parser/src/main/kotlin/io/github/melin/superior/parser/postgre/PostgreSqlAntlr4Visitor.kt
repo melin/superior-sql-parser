@@ -28,9 +28,9 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
  */
-class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBaseVisitor<Statement>() {
+class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    PostgreSqlParserBaseVisitor<Statement>() {
 
-    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
@@ -48,10 +48,6 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {

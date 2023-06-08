@@ -30,7 +30,9 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVisitor<Statement>() {
+class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    FlinkSqlParserBaseVisitor<Statement>() {
+
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterType: AlterType = AlterType.UNKOWN
     private var multiInsertToken: String? = null
@@ -42,8 +44,6 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
     private var functionNames: HashSet<FunctionId> = hashSetOf()
 
-    private var command: String? = null
-
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
@@ -53,10 +53,6 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {

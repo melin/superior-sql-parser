@@ -48,8 +48,7 @@ object StarRocksHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
 
-        val sqlVisitor = StarRocksAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = StarRocksAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

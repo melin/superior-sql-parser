@@ -42,7 +42,7 @@ import kotlin.collections.LinkedHashMap
  *
  * Created by libinsong on 2018/1/10.
  */
-class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
+class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     SparkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -56,7 +56,6 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
     private var functionNames: HashSet<FunctionId> = hashSetOf()
 
-    private var command: String? = null
     private var rows: ArrayList<List<String>> = ArrayList()
 
     private var insertSql: Boolean = false;
@@ -134,10 +133,6 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
             }
         }
         return statement
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     fun parseNamespace(ctx: SparkSqlParser.MultipartIdentifierContext): Pair<String?, String> {

@@ -54,8 +54,7 @@ object FlinkSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = FlinkSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = FlinkSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

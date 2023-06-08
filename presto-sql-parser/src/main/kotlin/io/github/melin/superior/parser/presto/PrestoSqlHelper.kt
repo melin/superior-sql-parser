@@ -52,8 +52,7 @@ object PrestoSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = PrestoSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = PrestoSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

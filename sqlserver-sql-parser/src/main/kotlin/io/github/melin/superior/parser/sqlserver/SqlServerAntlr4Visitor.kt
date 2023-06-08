@@ -18,9 +18,9 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class SqlServerAntlr4Visitor(val splitSql: Boolean = false): SqlServerParserBaseVisitor<Statement>() {
+class SqlServerAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    SqlServerParserBaseVisitor<Statement>() {
 
-    private var command: String? = null
     private var currentOptType: StatementType = StatementType.UNKOWN
 
     private var limit: Int? = null
@@ -38,10 +38,6 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false): SqlServerParserBase
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {

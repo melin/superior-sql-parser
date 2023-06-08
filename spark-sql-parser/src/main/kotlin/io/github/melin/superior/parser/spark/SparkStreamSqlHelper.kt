@@ -41,8 +41,7 @@ object SparkStreamSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.LL
 
-        val sqlVisitor = SparkStreamSqlAntlr4Visitor()
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = SparkStreamSqlAntlr4Visitor(trimCmd)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode

@@ -18,9 +18,7 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBaseVisitor<Statement>() {
-
-    private var command: String? = null
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?): StarRocksParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
@@ -83,10 +81,6 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false): StarRocksParserBase
         inputTables = arrayListOf()
         outputTables = arrayListOf()
         cteTempTables = arrayListOf()
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {

@@ -52,8 +52,7 @@ object TrinoSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = TrinoSqlAntlr4Visitor()
-        sqlVisitor.setCommand(trimCmd)
+        val sqlVisitor = TrinoSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

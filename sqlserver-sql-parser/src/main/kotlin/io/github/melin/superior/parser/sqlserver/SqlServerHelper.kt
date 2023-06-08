@@ -49,8 +49,7 @@ object SqlServerHelper {
         val parser = SqlServerParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        val sqlVisitor = SqlServerAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(command)
+        val sqlVisitor = SqlServerAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

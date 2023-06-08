@@ -9,15 +9,15 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
-import org.apache.commons.lang3.StringUtils
 
 /**
  *
  * Created by libinsong on 2018/1/10.
  */
-class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParserBaseVisitor<Statement>() {
+class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    FlinkCdcSqlParserBaseVisitor<Statement>() {
+
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private var command: String? = null
 
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
@@ -28,10 +28,6 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParser
 
     fun getSplitSqls(): List<String> {
         return sqls
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {

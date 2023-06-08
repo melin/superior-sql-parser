@@ -58,8 +58,7 @@ object OracleSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         // parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = OracleSqlAntlr4Visitor(splitSql)
-        sqlVisitor.setCommand(command)
+        val sqlVisitor = OracleSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {

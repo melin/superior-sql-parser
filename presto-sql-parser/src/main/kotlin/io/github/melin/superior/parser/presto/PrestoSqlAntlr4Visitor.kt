@@ -18,10 +18,10 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/1/10.
  */
-class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false): PrestoSqlBaseBaseVisitor<Statement>() {
+class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    PrestoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private var command: String? = null
 
     private var limit:Int? = null
     private var offset:Int? = null
@@ -79,10 +79,6 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false): PrestoSqlBaseBaseVi
         offset = null
         inputTables = arrayListOf()
         cteTempTables = arrayListOf()
-    }
-
-    fun setCommand(command: String) {
-        this.command = command
     }
 
     override fun visitStatementDefault(ctx: PrestoSqlBaseParser.StatementDefaultContext): Statement? {
