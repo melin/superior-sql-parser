@@ -9,15 +9,16 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
-import io.github.melin.superior.parser.mysql.MySQLAntlr4Visitor
+import io.github.melin.superior.parser.mysql.MySqlAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 
 /**
  *
  * Created by libinsong on 2018/1/10.
  */
-object MySQLHelper {
+object MySqlHelper {
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
@@ -29,20 +30,29 @@ object MySQLHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = MySqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = MySqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): MySQLAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = MySqlParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
 
-        val charStream =
-            UpperCaseCharStream(CharStreams.fromString(trimCmd))
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: MySqlParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = MySqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -52,7 +62,6 @@ object MySQLHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
-        val sqlVisitor = MySQLAntlr4Visitor(splitSql, trimCmd)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -65,12 +74,11 @@ object MySQLHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
-            return sqlVisitor
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

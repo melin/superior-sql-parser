@@ -4,9 +4,7 @@ import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlLexer
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParserBaseListener
+import io.github.melin.superior.parser.flink.antlr4.*
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -29,20 +27,29 @@ object FlinkSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = FlinkSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = FlinkSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): FlinkSqlAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = FlinkSqlParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
 
-        val charStream =
-            UpperCaseCharStream(CharStreams.fromString(trimCmd))
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: FlinkSqlParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = FlinkSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -53,8 +60,6 @@ object FlinkSqlHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         //parser.interpreter.predictionMode = PredictionMode.SLL
-
-        val sqlVisitor = FlinkSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {
@@ -68,13 +73,11 @@ object FlinkSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.sqlStatements())
             }
-
-            return sqlVisitor
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

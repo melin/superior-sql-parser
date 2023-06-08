@@ -9,7 +9,6 @@ import io.github.melin.superior.common.relational.create.CreateFunction
 import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
-import jdk.nashorn.internal.codegen.CompilerConstants.Call
 import org.junit.Assert
 import org.junit.Test
 

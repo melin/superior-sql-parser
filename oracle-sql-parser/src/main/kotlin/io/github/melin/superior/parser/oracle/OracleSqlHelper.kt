@@ -6,6 +6,7 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.oracle.antlr4.OracleLexer
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -31,23 +32,38 @@ object OracleSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = OracleSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        var sql = StringUtils.trim(command);
-        if (!StringUtils.endsWith(sql, ";")) {
-            sql += ";"
+        var trimCmd = StringUtils.trim(command);
+        if (!StringUtils.endsWith(trimCmd, ";")) {
+            trimCmd += ";"
         }
-        val sqlVisitor = innerParseStatement(sql, true)
+
+        val sqlVisitor = OracleSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): OracleSqlAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        var trimCmd = StringUtils.trim(command);
+        if (!StringUtils.endsWith(trimCmd, ";")) {
+            trimCmd += ";"
+        }
 
-        val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
+        val sqlVisitor = OracleParserBaseVisitor<Statement>()
+        innerParseStatement(trimCmd, sqlVisitor)
+    }
+
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: OracleParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = OracleLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -57,8 +73,6 @@ object OracleSqlHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         // parser.interpreter.predictionMode = PredictionMode.SLL
-
-        val sqlVisitor = OracleSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {
@@ -73,12 +87,11 @@ object OracleSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.sql_script())
             }
-            return sqlVisitor
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

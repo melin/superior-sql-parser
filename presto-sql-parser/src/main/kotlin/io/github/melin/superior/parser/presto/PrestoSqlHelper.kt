@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
+import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseLexer
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 
@@ -27,21 +28,29 @@ object PrestoSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = PrestoSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = PrestoSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): PrestoSqlAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = PrestoSqlBaseBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
 
-        val charStream = CaseInsensitiveStream(
-            CharStreams.fromString(trimCmd)
-        )
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: PrestoSqlBaseBaseVisitor<Statement>
+    ) {
+        val charStream = CaseInsensitiveStream(CharStreams.fromString(command))
         val lexer = PrestoSqlBaseLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -51,8 +60,6 @@ object PrestoSqlHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
-
-        val sqlVisitor = PrestoSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {
@@ -67,13 +74,11 @@ object PrestoSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.sqlStatements())
             }
-
-            return sqlVisitor
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
+            if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

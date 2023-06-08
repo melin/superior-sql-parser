@@ -6,6 +6,7 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlLexer
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -27,20 +28,29 @@ object PostgreSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = PostgreSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = PostgreSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): PostgreSqlAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = PostgreSqlParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
 
-        val charStream =
-            UpperCaseCharStream(CharStreams.fromString(trimCmd))
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: PostgreSqlParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = PostgreSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -51,7 +61,6 @@ object PostgreSqlHelper {
         parser.addErrorListener(ParseErrorListener())
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
-        val sqlVisitor = PostgreSqlAntlr4Visitor(splitSql, trimCmd)
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -64,12 +73,11 @@ object PostgreSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visit(parser.root())
             }
-            return sqlVisitor
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
+            if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

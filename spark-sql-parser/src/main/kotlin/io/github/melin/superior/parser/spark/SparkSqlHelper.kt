@@ -13,6 +13,7 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlLexer
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 
 /**
  *
@@ -77,20 +78,29 @@ object SparkSqlHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = SparkSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = SparkSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): SparkSqlAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = SparkSqlParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
 
-        val charStream =
-            UpperCaseCharStream(CharStreams.fromString(trimCmd))
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: SparkSqlParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = SparkSqlLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -101,8 +111,6 @@ object SparkSqlHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
-
-        val sqlVisitor = SparkSqlAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {
@@ -116,13 +124,11 @@ object SparkSqlHelper {
                 parser.interpreter.predictionMode = PredictionMode.LL
                 sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
-
-            return sqlVisitor
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

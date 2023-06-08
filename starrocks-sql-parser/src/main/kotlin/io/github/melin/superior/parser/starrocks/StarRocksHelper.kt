@@ -6,6 +6,7 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksLexer
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser
+import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.misc.ParseCancellationException
@@ -26,18 +27,29 @@ object StarRocksHelper {
     }
 
     @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
-        val sqlVisitor = innerParseStatement(command)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = StarRocksAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
     @JvmStatic fun splitSql(command: String): List<String> {
-        val sqlVisitor = innerParseStatement(command, true)
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = StarRocksAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    private fun innerParseStatement(command: String, splitSql: Boolean = false): StarRocksAntlr4Visitor {
-        val trimCmd = StringUtils.trim(command)
-        val charStream = UpperCaseCharStream(CharStreams.fromString(trimCmd))
+    @JvmStatic fun checkSqlSyntax(command: String) {
+        val sqlVisitor = StarRocksParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
+
+    private fun innerParseStatement(
+        command: String,
+        sqlVisitor: StarRocksParserBaseVisitor<Statement>
+    ) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = StarRocksLexer(charStream)
         lexer.removeErrorListeners()
         lexer.addErrorListener(ParseErrorListener())
@@ -47,8 +59,6 @@ object StarRocksHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
-
-        val sqlVisitor = StarRocksAntlr4Visitor(splitSql, trimCmd)
 
         try {
             try {
@@ -61,13 +71,11 @@ object StarRocksHelper {
                 // Try Again.
                 sqlVisitor.visit(parser.sqlStatements())
             }
-
-            return sqlVisitor
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
+            if (StringUtils.isNotBlank(e.command)) {
                 throw e;
             } else {
-                throw e.withCommand(trimCmd)
+                throw e.withCommand(command)
             }
         }
     }

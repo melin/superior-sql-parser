@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils
  *
  * Created by libinsong on 2018/2/8.
  */
-class MySQLAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     MySqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN

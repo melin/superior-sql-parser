@@ -18,7 +18,8 @@ import org.apache.commons.lang3.StringUtils
 /**
  * Created by libinsong on 2020/6/30 9:59 上午
  */
-class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?): StarRocksParserBaseVisitor<Statement>() {
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
+    StarRocksParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
