@@ -53,7 +53,7 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false): PrestoSqlBaseBaseVi
                 val startNode = it.start.text
                 val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
                     val keyWords: ArrayList<String> = arrayListOf()
-                    CommonUtils.findNodes(keyWords, it)
+                    CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
                 } else {
                     var statement = this.visitSingleStatement(it)

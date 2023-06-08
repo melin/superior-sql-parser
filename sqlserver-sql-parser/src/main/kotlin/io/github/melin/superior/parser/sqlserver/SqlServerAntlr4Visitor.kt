@@ -63,7 +63,7 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false): SqlServerParserBase
                 val startNode = it.start.text
                 val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
                     val keyWords: ArrayList<String> = arrayListOf()
-                    CommonUtils.findNodes(keyWords, it)
+                    CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
                 } else {
                     var statement = this.visitSql_clauses(it)

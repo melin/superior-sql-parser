@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils
  */
 object CommonUtils {
 
-    fun findNodes(keyWords: ArrayList<String>, node: ParseTree) {
+    fun findShowStatementKeyWord(keyWords: ArrayList<String>, node: ParseTree) {
         if (node is TerminalNodeImpl) {
             val count = node.parent.childCount
             for (i in 0 until count) {
@@ -21,7 +21,7 @@ object CommonUtils {
                 }
             }
         } else {
-            findNodes(keyWords, node.getChild(0))
+            findShowStatementKeyWord(keyWords, node.getChild(0))
         }
     }
 

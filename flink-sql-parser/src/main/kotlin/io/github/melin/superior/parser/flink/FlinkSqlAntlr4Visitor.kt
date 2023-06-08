@@ -18,7 +18,6 @@ import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.ComputedColumnDefinitionContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.MetadataColumnDefinitionContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.PhysicalColumnDefinitionContext
-import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.SourceTableContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.TablePropertyContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.TablePropertyListContext
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser.UidContext
@@ -73,7 +72,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
                 val startNode = it.start.text
                 val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
                     val keyWords: ArrayList<String> = arrayListOf()
-                    CommonUtils.findNodes(keyWords, it)
+                    CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
                 } else {
                     var statement = this.visitSqlStatement(it)
