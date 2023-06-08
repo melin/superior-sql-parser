@@ -1673,6 +1673,7 @@ modify_index_partition
         | COALESCE
         | UPDATE BLOCK REFERENCES
         | UNUSABLE
+        | shrink_clause
         )
     ;
 
@@ -3954,11 +3955,11 @@ upgrade_table_clause
     ;
 
 truncate_table
-    : TRUNCATE TABLE tableview_name PURGE? SEMICOLON
+    : TRUNCATE TABLE tableview_name ((PRESERVE | PURGE) MATERIALIZED VIEW LOG)? ((DROP ALL?|REUSE) STORAGE)? CASCADE? SEMICOLON
     ;
 
 drop_table
-    : DROP TABLE tableview_name PURGE? SEMICOLON
+    : DROP TABLE tableview_name (AS tableview_name)? (CASCADE CONSTRAINTS)? PURGE? (AS quoted_string)? FORCE? SEMICOLON
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLESPACE.html
@@ -4693,7 +4694,9 @@ merge_table_partition
     ;
 
 modify_table_partition
-    : MODIFY PARTITION partition_name ((ADD | DROP) list_values_clause)? (ADD range_subpartition_desc)? (REBUILD? UNUSABLE LOCAL INDEXES)?
+    : MODIFY PARTITION partition_name (
+        ((ADD | DROP) list_values_clause)? (ADD range_subpartition_desc)? (REBUILD? UNUSABLE LOCAL INDEXES)?
+       | shrink_clause )
     ;
 
 split_table_partition
@@ -4810,7 +4813,7 @@ enable_disable_clause
     ;
 
 using_index_clause
-    : USING INDEX (index_name | '(' create_index ')' | index_attributes )?
+    : USING INDEX (index_name | '(' create_index ')' | index_properties )?
     ;
 
 index_attributes
@@ -5019,7 +5022,7 @@ encryption_spec
         CHAR_STRING? (NO? SALT)?
     ;
 tablespace
-    : id_expression
+    : regular_id
     ;
 
 varray_item
