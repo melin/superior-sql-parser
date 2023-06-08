@@ -25,7 +25,8 @@ class FlinkSqlParserDdlTest {
               `LAST_UPDATE_ID`       STRING,
               `CREATE_DATETIME`      TIMESTAMP(3),
               `LAST_UPDATE_DATETIME` TIMESTAMP(3),
-              `KAFKA_PROCESS_TIME` AS PROCTIME()
+              `KAFKA_PROCESS_TIME` AS PROCTIME(),
+              `record_time` TIMESTAMP_LTZ(3) METADATA FROM 'timestamp'
             ) WITH (
                 'connector' = 'kafka',
             'properties.acks' = '-1',
@@ -70,7 +71,10 @@ class FlinkSqlParserDdlTest {
         val createTable = statements.get(0)
         if (createTable is CreateTable) {
             Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
-            Assert.assertEquals(9, createTable.columnRels?.size)
+            Assert.assertEquals(10, createTable.columnRels?.size)
+            Assert.assertEquals("PROCTIME()", createTable.columnRels?.get(8)?.computedExpr)
+            Assert.assertEquals("timestamp", createTable.columnRels?.get(9)?.metadataKey)
+
             Assert.assertEquals(12, createTable.properties?.size)
         } else {
             Assert.fail()

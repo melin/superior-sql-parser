@@ -12,7 +12,10 @@ data class ColumnRel(
     var expression: String? = null // 计算表达式
     var position: String? = null
     var afterCol: String? = null
-    var jsonPath: String? = null
+    var jsonPath: String? = null // spark streaming sql json path
+
+    var computedExpr: String? = null // 计算列
+    var metadataKey: String? = null // 元数据列
 
     constructor(name: String, type: String?, comment: String?):
             this(name, type, comment, true, null)

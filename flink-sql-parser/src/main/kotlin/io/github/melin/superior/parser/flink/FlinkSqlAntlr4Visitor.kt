@@ -132,12 +132,21 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
             } else if (column is MetadataColumnDefinitionContext) {
                 val colName = column.columnName().text
                 val dataType = column.columnType().text
-                ColumnRel(colName, dataType, null, ColumnDefType.METADATA)
+                var metadataKey: String? = null
+                if (column.metadataKey() != null) {
+                    metadataKey = CommonUtils.cleanQuote(column.metadataKey().text)
+                }
+                val columnRel = ColumnRel(colName, dataType, null, ColumnDefType.METADATA)
+                columnRel.metadataKey = metadataKey
+                columnRel
             } else {
                 val computedColumn = column as ComputedColumnDefinitionContext
                 val colName = computedColumn.columnName().text
                 val colComment: String? = if (computedColumn.commentSpec() != null) computedColumn.commentSpec().STRING_LITERAL().text else null
-                ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
+                var computedExpr = CommonUtils.subsql(command, computedColumn.computedColumnExpression().expression())
+                val columnRel = ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
+                columnRel.computedExpr = computedExpr
+                columnRel
             }
         }
 
