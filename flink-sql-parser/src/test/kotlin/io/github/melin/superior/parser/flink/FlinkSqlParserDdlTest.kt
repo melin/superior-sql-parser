@@ -14,7 +14,7 @@ import org.junit.Test
 class FlinkSqlParserDdlTest {
 
     @Test
-    fun createTableTest() {
+    fun parseMultiSqlTest() {
         val sql = """
             CREATE TABLE IF NOT EXISTS `RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT`(
               `ITEM`                 STRING,
@@ -26,7 +26,8 @@ class FlinkSqlParserDdlTest {
               `CREATE_DATETIME`      TIMESTAMP(3),
               `LAST_UPDATE_DATETIME` TIMESTAMP(3),
               `KAFKA_PROCESS_TIME` AS PROCTIME(),
-              `record_time` TIMESTAMP_LTZ(3) METADATA FROM 'timestamp'
+              `record_time` TIMESTAMP_LTZ(3) METADATA FROM 'timestamp',
+              `cost` AS price * quantity
             ) WITH (
                 'connector' = 'kafka',
             'properties.acks' = '-1',
@@ -71,9 +72,10 @@ class FlinkSqlParserDdlTest {
         val createTable = statements.get(0)
         if (createTable is CreateTable) {
             Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
-            Assert.assertEquals(10, createTable.columnRels?.size)
+            Assert.assertEquals(11, createTable.columnRels?.size)
             Assert.assertEquals("PROCTIME()", createTable.columnRels?.get(8)?.computedExpr)
             Assert.assertEquals("timestamp", createTable.columnRels?.get(9)?.metadataKey)
+            Assert.assertEquals("price * quantity", createTable.columnRels?.get(10)?.computedExpr)
 
             Assert.assertEquals(12, createTable.properties?.size)
         } else {
@@ -93,6 +95,30 @@ class FlinkSqlParserDdlTest {
             Assert.assertEquals("PROCESSED_MDM_PRODUCT_ENRICHMENT", insertTable.outputTables.get(0).tableName)
             Assert.assertEquals(1, insertTable.inputTables.size)
             Assert.assertEquals(5, insertTable.columnRels?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTablesTest() {
+        val sql = """
+            CREATE TABLE Orders (
+                `user` BIGINT,
+                product STRING,
+                order_time TIMESTAMP(3),
+                WATERMARK FOR order_time AS order_time - INTERVAL '5' SECOND
+            ) WITH (
+                'connector' = 'kafka'
+            )
+        """.trimIndent()
+
+        val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        val createTable = statements.get(0)
+        if (createTable is CreateTable) {
+            Assert.assertEquals("Orders", createTable.tableId.tableName)
+            Assert.assertEquals(3, createTable.columnRels?.size)
+            Assert.assertEquals(1, createTable.properties?.size)
         } else {
             Assert.fail()
         }

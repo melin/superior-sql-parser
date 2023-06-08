@@ -12,6 +12,7 @@ import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertTable
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnDefType
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
@@ -203,6 +204,22 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
         return insertTable
     }
 
+    override fun visitQueryStatement(ctx: FlinkSqlParser.QueryStatementContext): Statement {
+        if (currentOptType == StatementType.UNKOWN) {
+            currentOptType = StatementType.SELECT
+        }
+        super.visitQueryStatement(ctx)
+        return QueryStmt(inputTables, limit, offset)
+    }
+
+    override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {
+        if (ctx.timeAttrColumn() != null) {
+            val tableId = parseSourceTable(ctx.timeAttrColumn().uid())
+            inputTables.add(tableId)
+        }
+        return null
+    }
+
     override fun visitTablePath(ctx: FlinkSqlParser.TablePathContext): Statement? {
         if (StatementType.SELECT == currentOptType ||
             StatementType.INSERT == currentOptType ||
@@ -217,6 +234,13 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
                 inputTables.add(tableId)
             }
         }
+        return null
+    }
+
+    override fun visitWithItem(ctx: FlinkSqlParser.WithItemContext): Statement? {
+        val tableId = TableId(ctx.withItemName().text)
+        cteTempTables.add(tableId)
+        super.visitWithItem(ctx)
         return null
     }
 
