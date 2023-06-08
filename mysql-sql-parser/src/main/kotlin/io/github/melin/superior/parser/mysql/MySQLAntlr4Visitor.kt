@@ -13,6 +13,7 @@ import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.AlterByTruncatePartitionContext
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
@@ -268,15 +269,18 @@ class MySQLAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
             val action = AlterTableAction()
             return AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
-        } else if(statement is MySqlParser.AlterByAddPartitionContext) {
-            val action = AlterTableAction()
-            return AlterTable(AlterType.ADD_PARTITION, tableId, action)
-        } else if(statement is MySqlParser.AlterByDropPartitionContext) {
-            val action = AlterTableAction()
-            return AlterTable(AlterType.DROP_PARTITION, tableId, action)
-        } else if(statement is MySqlParser.AlterByTruncatePartitionContext) {
-            val action = AlterTableAction()
-            return AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
+        } else if(statement is MySqlParser.AlterPartitionContext) {
+            val alterPartition = statement.alterPartitionSpecification()
+            if (alterPartition is AlterByTruncatePartitionContext) {
+                val action = AlterTableAction()
+                return AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
+            } else if(alterPartition is MySqlParser.AlterByDropPartitionContext) {
+                val action = AlterTableAction()
+                return AlterTable(AlterType.DROP_PARTITION, tableId, action)
+            } else if(alterPartition is MySqlParser.AlterByAddPartitionContext) {
+                val action = AlterTableAction()
+                return AlterTable(AlterType.ADD_PARTITION, tableId, action)
+            }
         }
 
         return super.visitAlterTable(ctx)

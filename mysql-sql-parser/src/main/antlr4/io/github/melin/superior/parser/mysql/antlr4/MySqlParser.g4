@@ -69,6 +69,7 @@ dmlStatement
     | deleteStatement | replaceStatement | callStatement
     | loadDataStatement | loadXmlStatement | doStatement
     | handlerStatement | valuesStatement | withStatement
+    | tableStatement
     ;
 
 transactionStatement
@@ -694,19 +695,21 @@ alterSpecification
     | IMPORT TABLESPACE                                             #alterByImportTablespace
     | FORCE                                                         #alterByForce
     | validationFormat=(WITHOUT | WITH) VALIDATION                  #alterByValidate
-    | ADD PARTITION
-        '('
-          partitionDefinition (',' partitionDefinition)*
-        ')'                                                         #alterByAddPartition
+    | ADD COLUMN?
+        '(' createDefinition (',' createDefinition)* ')'            #alterByAddDefinitions
+    | alterPartitionSpecification                                   #alterPartition
+    ;
+
+alterPartitionSpecification
+    : ADD PARTITION
+       '(' partitionDefinition (',' partitionDefinition)* ')'       #alterByAddPartition
     | DROP PARTITION uidList                                        #alterByDropPartition
     | DISCARD PARTITION (uidList | ALL) TABLESPACE                  #alterByDiscardPartition
     | IMPORT PARTITION (uidList | ALL) TABLESPACE                   #alterByImportPartition
     | TRUNCATE PARTITION (uidList | ALL)                            #alterByTruncatePartition
     | COALESCE PARTITION decimalLiteral                             #alterByCoalescePartition
     | REORGANIZE PARTITION uidList
-        INTO '('
-          partitionDefinition (',' partitionDefinition)*
-        ')'                                                         #alterByReorganizePartition
+        INTO '(' partitionDefinition (',' partitionDefinition)* ')' #alterByReorganizePartition
     | EXCHANGE PARTITION uid WITH TABLE tableName
       (validationFormat=(WITH | WITHOUT) VALIDATION)?               #alterByExchangePartition
     | ANALYZE PARTITION (uidList | ALL)                             #alterByAnalyzePartition
@@ -716,8 +719,6 @@ alterSpecification
     | REPAIR PARTITION (uidList | ALL)                              #alterByRepairPartition
     | REMOVE PARTITIONING                                           #alterByRemovePartitioning
     | UPGRADE PARTITIONING                                          #alterByUpgradePartitioning
-    | ADD COLUMN?
-        '(' createDefinition (',' createDefinition)* ')'            #alterByAddDefinitions
     ;
 
 
@@ -2037,6 +2038,10 @@ withStatement
     selectStatement
   ;
 
+tableStatement
+  : TABLE tableName orderByClause? limitClause?
+  ;
+
 diagnosticsStatement
     : GET ( CURRENT | STACKED )? DIAGNOSTICS (
           ( variableClause '=' ( NUMBER | ROW_COUNT ) ( ',' variableClause '=' ( NUMBER | ROW_COUNT ) )* )
@@ -2115,12 +2120,14 @@ collationName
     : uid | STRING_LITERAL;
 
 engineName
-    : ARCHIVE | BLACKHOLE | CSV | FEDERATED | INNODB | MEMORY
-    | MRG_MYISAM | MYISAM | NDB | NDBCLUSTER | PERFORMANCE_SCHEMA
-    | TOKUDB
+    : engineNameBase
     | ID
-    | STRING_LITERAL | REVERSE_QUOTE_ID
-    | CONNECT
+    | STRING_LITERAL
+    ;
+
+engineNameBase
+    : ARCHIVE | BLACKHOLE | CONNECT | CSV | FEDERATED | INNODB | MEMORY
+    | MRG_MYISAM | MYISAM | NDB | NDBCLUSTER | PERFORMANCE_SCHEMA | TOKUDB
     ;
 
 uuidSet
@@ -2150,15 +2157,16 @@ authPlugin
 uid
     : simpleId
     //| DOUBLE_QUOTE_ID
-    | REVERSE_QUOTE_ID
+    //| REVERSE_QUOTE_ID
     | CHARSET_REVERSE_QOUTE_STRING
+    | STRING_LITERAL
     ;
 
 simpleId
     : ID
     | charsetNameBase
     | transactionLevelBase
-    | engineName
+    | engineNameBase
     | privilegesBase
     | intervalTypeBase
     | dataTypeBase
