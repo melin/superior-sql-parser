@@ -29,13 +29,13 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         val resourceName = ctx.resourceNameExpr().text
         val className = ctx.classNameExpr().text
 
-        var params: ArrayList<String> = arrayListOf()
+        val params: ArrayList<String> = arrayListOf()
 
-        if(ctx.paramsExpr() != null) {
+        if (ctx.paramsExpr() != null) {
             ctx.paramsExpr().children.forEach{ item ->
                 val param = item as AppJarParser.ParamExprContext
-                var value = StringUtils.substring(command, param.start.startIndex, param.stop.stopIndex + 1)
-                if(StringUtils.startsWith(value, "/")) { //解决连续多个文件路径，不能正确解析
+                var value = CommonUtils.subsql(command, param)
+                if (StringUtils.startsWith(value, "/")) { //解决连续多个文件路径，不能正确解析
                     value = replaceWhitespace(value)
 
                     params.addAll(StringUtils.split(value, " "));
@@ -51,7 +51,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): Statement {
         val key = ctx.keyExpr().text
-        var value = StringUtils.substring(command, ctx.value.start.startIndex, ctx.value.stop.stopIndex + 1)
+        var value = CommonUtils.subsql(command, ctx.value)
         value = CommonUtils.cleanQuote(value)
 
         return SetStatement(key, value)
@@ -62,22 +62,20 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return UnSetStatement(key)
     }
 
-    private fun replaceWhitespace(str: String?): String? {
-        if (str != null) {
-            val len = str.length
-            if (len > 0) {
-                val dest = CharArray(len)
-                var destPos = 0
-                for (i in 0 until len) {
-                    val c = str[i]
-                    if (!Character.isWhitespace(c)) {
-                        dest[destPos++] = c
-                    } else {
-                        dest[destPos++] = ' '
-                    }
+    private fun replaceWhitespace(str: String): String {
+        val len = str.length
+        if (len > 0) {
+            val dest = CharArray(len)
+            var destPos = 0
+            for (i in 0 until len) {
+                val c = str[i]
+                if (!Character.isWhitespace(c)) {
+                    dest[destPos++] = c
+                } else {
+                    dest[destPos++] = ' '
                 }
-                return String(dest, 0, destPos)
             }
+            return String(dest, 0, destPos)
         }
         return str
     }

@@ -40,7 +40,7 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParser
 
     override fun visitSqlStatements(ctx: FlinkCdcSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
@@ -97,8 +97,8 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkCdcSqlParser
                 val colName = colDef.colName.text
                 val columnRel = ColumnRel(colName)
 
-                val expression = colDef.expression();
-                val expr = StringUtils.substring(command, expression.start.startIndex, expression.stop.stopIndex + 1)
+                val expression = colDef.expression()
+                val expr =CommonUtils.subsql(command, expression)
                 columnRel.expression = expr
 
                 if (colDef.FIRST() != null) {

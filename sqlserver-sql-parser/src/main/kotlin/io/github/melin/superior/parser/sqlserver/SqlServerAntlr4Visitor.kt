@@ -55,7 +55,7 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false): SqlServerParserBase
 
     override fun visitBatch(ctx: SqlServerParser.BatchContext): Statement? {
         ctx.sql_clauses().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)

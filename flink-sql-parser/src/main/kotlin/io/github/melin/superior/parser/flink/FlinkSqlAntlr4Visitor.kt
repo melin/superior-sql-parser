@@ -64,7 +64,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false): FlinkSqlParserBaseVi
 
     override fun visitSqlStatements(ctx: FlinkSqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)

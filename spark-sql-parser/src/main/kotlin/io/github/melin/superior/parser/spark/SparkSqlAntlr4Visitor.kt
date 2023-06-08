@@ -78,7 +78,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
     override fun visitSqlStatements(ctx: SparkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
@@ -1147,8 +1147,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
     private fun parseAlterColumnAction(context: AlterColumnActionContext): AlterColumnAction {
         val action = AlterColumnAction();
         if (context.dataType() != null) {
-            action.dataType = StringUtils.substring(command, context.dataType().start.startIndex,
-                context.dataType().stop.stopIndex + 1)
+            action.dataType = CommonUtils.subsql(command, context.dataType())
         }
 
         if (context.commentSpec() != null) {
@@ -1178,8 +1177,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false):
 
         if (context.defaultExpression() != null) {
             val expr = context.defaultExpression().expression()
-            action.defaultExpression = StringUtils.substring(command, expr.start.startIndex,
-                expr.stop.stopIndex + 1)
+            action.defaultExpression = CommonUtils.subsql(command, expr)
         }
 
         if (context.dropDefault != null) {

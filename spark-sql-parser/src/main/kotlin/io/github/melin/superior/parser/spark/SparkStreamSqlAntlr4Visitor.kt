@@ -72,7 +72,7 @@ class SparkStreamSqlAntlr4Visitor : SparkStreamSqlParserBaseVisitor<Statement>()
         val tableName = ctx.tableName.table.ID().text
 
         val tableId = TableId(schemaName, tableName)
-        val querySql = StringUtils.substring(command, ctx.select.start.startIndex, ctx.select.stop.stopIndex + 1)
+        val querySql = CommonUtils.subsql(command, ctx.select)
         val insertTable = InsertTable(InsertMode.INTO, tableId)
         insertTable.querySql = querySql
         return insertTable

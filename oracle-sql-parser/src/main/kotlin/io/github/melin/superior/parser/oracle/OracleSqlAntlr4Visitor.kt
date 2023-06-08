@@ -59,7 +59,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)
@@ -85,7 +85,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false): OracleParserBaseVis
         }
 
         ctx.unit_statement().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)

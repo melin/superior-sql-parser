@@ -60,7 +60,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false): PostgreSqlParserBa
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            var sql = StringUtils.substring(command, it.start.startIndex, it.stop.stopIndex + 1)
+            var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
                 sqls.add(sql)

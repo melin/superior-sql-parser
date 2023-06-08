@@ -1,5 +1,6 @@
 package com.github.melin.superior.sql.parser.util
 
+import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
@@ -23,6 +24,10 @@ object CommonUtils {
         } else {
             findShowStatementKeyWord(keyWords, node.getChild(0))
         }
+    }
+
+    fun subsql(sql: String?, context: ParserRuleContext): String {
+        return StringUtils.substring(sql, context.start.startIndex, context.stop.stopIndex + 1)
     }
 
     fun cleanLastSemi(text: String) : String {
