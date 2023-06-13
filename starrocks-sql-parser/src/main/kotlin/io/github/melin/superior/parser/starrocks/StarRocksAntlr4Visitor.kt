@@ -230,24 +230,26 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val createIndex = CreateIndex(indexName)
         createIndex.comment = comment
         createIndex.indexColumnNames.addAll(columns)
-        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
+        return AlterTable(tableId, createIndex)
     }
 
     override fun visitDropIndexStatement(ctx: DropIndexStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val indexName = ctx.indexName.text
         val dropIndex = DropIndex(indexName)
-        return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
+        return AlterTable(tableId, dropIndex)
     }
 
     override fun visitAlterTableStatement(ctx: AlterTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        return AlterTable(AlterType.UNKOWN, tableId)
+        return AlterTable(tableId)
     }
 
     override fun visitAlterViewStatement(ctx: AlterViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        return AlterTable(AlterType.ALTER_VIEW, tableId)
+        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+        val action = AlterViewAction(querySql, inputTables)
+        return AlterTable(tableId, action)
     }
 
     override fun visitQueryStatement(ctx: QueryStatementContext): Statement {

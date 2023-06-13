@@ -381,10 +381,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         return if (ctx.VIEW() != null) {
             val action = RenameTableAction(newTableId)
-            AlterView(RENAME_TABLE, tableId, action)
+            AlterView(tableId, action)
         } else {
             val action = RenameTableAction(newTableId)
-            AlterTable(RENAME_TABLE, tableId, action)
+            AlterTable(tableId, action)
         }
     }
 
@@ -395,16 +395,16 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         action.properties.putAll(properties)
 
         return if (ctx.VIEW() == null) {
-            AlterTable(SET_TABLE_PROPS, tableId, action)
+            AlterTable(tableId, action)
         } else {
-            AlterView(SET_TABLE_PROPS, tableId, action)
+            AlterView(tableId, action)
         }
     }
 
     override fun visitAddTableColumns(ctx: SparkSqlParser.AddTableColumnsContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
 
-        val columns = ctx.columns.children
+        val actions = ctx.columns.children
             .filter { it is SparkSqlParser.QualifiedColTypeWithPositionContext }.map { item ->
                 val column = item as SparkSqlParser.QualifiedColTypeWithPositionContext
                 val columnName = column.multipartIdentifier().text
@@ -422,11 +422,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     }
                 }
 
-                AlterColumnAction(columnName, dataType, comment, position, afterCol)
+                AlterColumnAction(ADD_COLUMN, columnName, dataType, comment, position, afterCol)
             }
 
-        val alterTable = AlterTable(ADD_COLUMN, tableId)
-        alterTable.addActions(columns)
+        val alterTable = AlterTable(tableId)
+        alterTable.addActions(actions)
         return alterTable
     }
 
@@ -439,7 +439,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val commentNode = ctx.colType().commentSpec()?.stringLit()
         val comment = if (commentNode != null) CommonUtils.cleanQuote(commentNode.text) else null
 
-        val action = AlterColumnAction(columnName, dataType, comment)
+        val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType, comment)
         action.newColumName = newColumnName
         if (ctx.colPosition() != null) {
             if (ctx.colPosition().FIRST() != null) {
@@ -450,7 +450,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
         }
 
-        return AlterTable(ALTER_COLUMN, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitRenameTableColumn(ctx: SparkSqlParser.RenameTableColumnContext): Statement {
@@ -459,9 +459,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val columnName = ctx.from.text
         val newColumnName = ctx.to.text
 
-        val action = AlterColumnAction(columnName)
+        val action = AlterColumnAction(RENAME_COLUMN, columnName)
         action.newColumName = newColumnName
-        return AlterTable(RENAME_COLUMN, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitAlterTableAlterColumn(ctx: SparkSqlParser.AlterTableAlterColumnContext): Statement {
@@ -469,14 +469,14 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val action = parseAlterColumnAction(ctx.alterColumnAction())
         action.columName = ctx.column.text
-        return AlterTable(ALTER_COLUMN, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitTouchTable(ctx: SparkSqlParser.TouchTableContext): Statement {
         val tableId = parseTableName(ctx.table)
         val partitionVals = if (ctx.partitionSpec() != null) parsePartitionSpec(ctx.partitionSpec()) else null
         val action = AlterTouchPartitionAction(tableId, partitionVals)
-        val alterTable = AlterTable(TOUCH_TABLE, tableId, action)
+        val alterTable = AlterTable(tableId, action)
         return alterTable
     }
 
@@ -485,7 +485,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val columns = ctx.columns.multipartIdentifier().map { id -> id.text }
         val action = DropColumnAction(columns.joinToString("."))
-        return AlterTable(DROP_COLUMN, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitSetTableLocation(ctx: SparkSqlParser.SetTableLocationContext): Statement {
@@ -493,7 +493,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val location = CommonUtils.cleanQuote(ctx.locationSpec().stringLit().text)
 
         val action = AlterPropsAction(location)
-        return AlterTable(SET_TABLE_LOCATION, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitMergeFile(ctx: SparkSqlParser.MergeFileContext): Statement {
@@ -634,7 +634,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val ifNotExists = ctx.NOT() != null
 
         val action = AddPartitionAction(ifNotExists, partitions)
-        return AlterTable(ADD_PARTITION, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitDropTablePartitions(ctx: SparkSqlParser.DropTablePartitionsContext): Statement {
@@ -643,7 +643,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val ifExists = ctx.EXISTS() != null
 
         val action = DropPartitionAction(ifExists, partitions)
-        return AlterTable(DROP_PARTITION, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitRenameTablePartition(ctx: SparkSqlParser.RenameTablePartitionContext): Statement {
@@ -651,7 +651,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val fromPartition = parsePartitionSpec(ctx.from)
         val toPartition = parsePartitionSpec(ctx.to)
         val action = RenamePartitionAction(fromPartition, toPartition)
-        return AlterTable(RENAME_PARTITION, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     //-----------------------------------view-------------------------------------------------
@@ -727,21 +727,21 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         visitQuery(ctx.query())
 
         val action = AlterViewAction(querySql, inputTables, functionNames)
-        return AlterTable(ALTER_VIEW, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitCreateIndex(ctx: SparkSqlParser.CreateIndexContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val indexName = parseIdentifier(ctx.identifier())
         val createIndex = CreateIndex(indexName)
-        return AlterTable(ADD_INDEX, tableId, createIndex)
+        return AlterTable(tableId, createIndex)
     }
 
     override fun visitDropIndex(ctx: SparkSqlParser.DropIndexContext): Statement {
         val tableId = parseTableName(ctx.multipartIdentifier())
         val indexName = ctx.identifier().text
         val dropIndex = DropIndex(indexName)
-        return AlterTable(DROP_INDEX, tableId, dropIndex)
+        return AlterTable(tableId, dropIndex)
     }
 
     //-----------------------------------function-------------------------------------------------
@@ -1140,7 +1140,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     private fun parseAlterColumnAction(context: AlterColumnActionContext): AlterColumnAction {
-        val action = AlterColumnAction();
+        val action = AlterColumnAction(ALTER_COLUMN);
         if (context.dataType() != null) {
             action.dataType = CommonUtils.subsql(command, context.dataType())
         }
@@ -1172,7 +1172,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         if (context.defaultExpression() != null) {
             val expr = context.defaultExpression().expression()
-            action.defaultExpression = CommonUtils.subsql(command, expr)
+            action.defaultExpression = CommonUtils.cleanQuote(CommonUtils.subsql(command, expr))
         }
 
         if (context.dropDefault != null) {

@@ -4,6 +4,8 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
+import io.github.melin.superior.common.relational.alter.AlterViewAction
+import io.github.melin.superior.common.relational.alter.DefaultAction
 import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.common.ShowStatement
@@ -254,12 +256,15 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return CallProcedure(procedureId)
     }
 
-    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext?): Statement {
-        return AlterTable(AlterType.UNKOWN)
+    override fun visitAlter_table(ctx: OracleParser.Alter_tableContext): Statement {
+        val tableId = parseTableViewName(ctx.tableview_name())
+        return AlterTable(tableId)
     }
 
-    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext?): Statement {
-        return AlterTable(AlterType.ALTER_VIEW)
+    override fun visitAlter_view(ctx: OracleParser.Alter_viewContext): Statement {
+        val tableId = parseTableViewName(ctx.tableview_name())
+        val action = DefaultAction(AlterType.ALTER_VIEW)
+        return AlterTable(tableId, action)
     }
 
     override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement {

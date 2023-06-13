@@ -6,7 +6,6 @@ import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import kotlin.collections.ArrayList
 
 data class AlterTable(
-    val alterType: AlterType,
     override val tableId: TableId,
     private val action: AlterAction?,
 ): AbsTableStatement() {
@@ -23,15 +22,14 @@ data class AlterTable(
         }
     }
 
-    constructor(alterType: AlterType, tableId: TableId): this(alterType, tableId, null)
+    constructor(tableId: TableId): this(tableId, null)
 
-    constructor(alterType: AlterType): this(alterType, TableId("__UNKOWN__"), null)
 
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)
     }
 
     fun firstAction(): AlterAction {
-        return actions.first()
+        return if (action != null) action else actions.first()
     }
 }

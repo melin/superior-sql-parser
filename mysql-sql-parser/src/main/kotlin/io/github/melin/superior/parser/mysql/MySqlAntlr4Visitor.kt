@@ -18,6 +18,9 @@ import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
+import io.github.melin.superior.common.AlterType.*
+import io.github.melin.superior.common.relational.alter.*
+
 /**
  *
  * Created by libinsong on 2018/2/8.
@@ -199,7 +202,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         val newTableId = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
         val action = RenameTableAction(newTableId)
-        return AlterTable(AlterType.RENAME_TABLE, tableId, action)
+        return AlterTable(tableId, action)
     }
 
     override fun visitUseStatement(ctx: MySqlParser.UseStatementContext): Statement {
@@ -218,7 +221,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         if (statement is MySqlParser.AlterByChangeColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
             val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
-            val dataType = statement.columnDefinition().dataType().text
+            val dataType = CommonUtils.subsql(command, statement.columnDefinition().dataType())
             var comment:String? = null
 
             statement.columnDefinition().children.forEach {
@@ -227,10 +230,10 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
                 }
             }
 
-            val action = AlterColumnAction(columnName, dataType, comment)
+            val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType, comment)
             action.newColumName = newColumnName
 
-            return AlterTable(AlterType.ALTER_COLUMN, tableId, action)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
@@ -241,41 +244,41 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
                 }
             }
 
-            val action = AlterColumnAction(columnName, dataType, comment)
-            return AlterTable(AlterType.ADD_COLUMN, tableId, action)
+            val action = AlterColumnAction(ADD_COLUMN, columnName, dataType, comment)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.uid().text)
             val action = DropColumnAction(columnName)
-            return AlterTable(AlterType.DROP_COLUMN, tableId, action)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByModifyColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
 
-            val action = AlterColumnAction(columnName, dataType)
-            return AlterTable(AlterType.ALTER_COLUMN, tableId, action)
+            val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByAddIndexContext) {
             val createIndex = CreateIndex(statement.uid().text)
-            return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
+            return AlterTable(tableId, createIndex)
         } else if(statement is MySqlParser.AlterByDropIndexContext) {
             val dropIndex = DropIndex(statement.uid().text)
-            return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
+            return AlterTable(tableId, dropIndex)
         } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
-            val action = AlterTableAction()
-            return AlterTable(AlterType.ADD_PRIMARY_KEY, tableId, action)
+            val action = AlterTableAction(ADD_PRIMARY_KEY)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
-            val action = AlterTableAction()
-            return AlterTable(AlterType.ADD_UNIQUE_KEY, tableId, action)
+            val action = AlterTableAction(ADD_UNIQUE_KEY)
+            return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterPartitionContext) {
             val alterPartition = statement.alterPartitionSpecification()
             if (alterPartition is AlterByTruncatePartitionContext) {
-                val action = AlterTableAction()
-                return AlterTable(AlterType.TRUNCATE_PARTITION, tableId, action)
+                val action = AlterTableAction(TRUNCATE_PARTITION)
+                return AlterTable(tableId, action)
             } else if(alterPartition is MySqlParser.AlterByDropPartitionContext) {
-                val action = AlterTableAction()
-                return AlterTable(AlterType.DROP_PARTITION, tableId, action)
+                val action = AlterTableAction(DROP_PARTITION)
+                return AlterTable(tableId, action)
             } else if(alterPartition is MySqlParser.AlterByAddPartitionContext) {
-                val action = AlterTableAction()
-                return AlterTable(AlterType.ADD_PARTITION, tableId, action)
+                val action = AlterTableAction(ADD_PARTITION)
+                return AlterTable(tableId, action)
             }
         }
 
@@ -384,13 +387,13 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     override fun visitCreateIndex(ctx: MySqlParser.CreateIndexContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
         val createIndex = CreateIndex(ctx.uid().text)
-        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
+        return AlterTable(tableId, createIndex)
     }
 
     override fun visitDropIndex(ctx: MySqlParser.DropIndexContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
         val dropIndex = DropIndex(ctx.uid().text)
-        return AlterTable(AlterType.DROP_INDEX, tableId, dropIndex)
+        return AlterTable(tableId, dropIndex)
     }
 
     //-----------------------------------private method-------------------------------------------------

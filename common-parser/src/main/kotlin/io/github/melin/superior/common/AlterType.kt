@@ -12,11 +12,14 @@ enum class AlterType : Serializable {
     ALTER_VIEW,
 
     ADD_COLUMN,
-    ADD_INDEX,
     ADD_UNIQUE_KEY,
     ADD_PRIMARY_KEY,
+    SET_COLUMN_DEFAULT,
 
     DROP_COLUMN,
+    DROP_COLUMN_DRFAULT,
+
+    ADD_INDEX,
     DROP_INDEX,
 
     RENAME_COLUMN,

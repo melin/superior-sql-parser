@@ -3,9 +3,6 @@ package io.github.melin.superior.parser.postgre
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.CreateIndex
-import io.github.melin.superior.common.relational.alter.DropIndex
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
@@ -24,6 +21,9 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Plsqlroot
 import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
+
+import io.github.melin.superior.common.AlterType.*
+import io.github.melin.superior.common.relational.alter.*
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -353,7 +353,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             ctx.name().text
         }
         val createIndex = CreateIndex(indexName)
-        return AlterTable(AlterType.ADD_INDEX, tableId, createIndex)
+        return AlterTable(tableId, createIndex)
     }
 
     override fun visitDropstmt(ctx: PostgreSqlParser.DropstmtContext): Statement {
@@ -362,7 +362,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             if (ctx.object_type_any_name().INDEX() != null) {
                 val actions = ctx.any_name_list().any_name().map { indexName ->  DropIndex(indexName.text, ifExists) }
                 val tableId = TableId("")
-                val alterTable = AlterTable(AlterType.DROP_INDEX, tableId)
+                val alterTable = AlterTable(tableId)
                 alterTable.ifExists = ifExists
                 alterTable.addActions(actions)
                 return alterTable
@@ -398,22 +398,60 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         throw SQLParserException("not support")
     }
 
-    override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): Statement {
+    override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): Statement? {
         if (ctx.TABLE() != null) {
             if (ctx.relation_expr() != null) {
                 val tableId = parseTableName(ctx.relation_expr())
-                val alterTable = if (ctx.partition_cmd().ATTACH() != null) {
-                    AlterTable(AlterType.ATTACH_PARTITION, tableId)
+
+                if (ctx.alter_table_cmds() != null) {
+                    val alterTable = AlterTable(tableId)
+                    val cmds = ctx.alter_table_cmds().alter_table_cmd()
+                    for (cmdContext in cmds) {
+                        if (cmdContext.ADD_P() != null && cmdContext.columnDef() != null) {
+                            val columnDef = cmdContext.columnDef()
+                            val columnName = columnDef.colid().text
+                            val dataType = CommonUtils.subsql(command, columnDef.typename())
+                            val action = AlterColumnAction(ADD_COLUMN, columnName, dataType)
+                            action.ifNotExists = cmdContext.EXISTS() != null
+
+                            alterTable.actions.add(action)
+                        } else if (cmdContext.alter_column_default() != null) {
+                            val columnDefaultDef = cmdContext.alter_column_default()
+                            val columnName = cmdContext.colid().get(0).text
+
+                            if (columnDefaultDef.DROP() != null) {
+                                val action = AlterColumnAction(DROP_COLUMN_DRFAULT, columnName)
+                                alterTable.actions.add(action)
+                            } else {
+                                val value = CommonUtils.subsql(command, columnDefaultDef.a_expr())
+                                val action = AlterColumnAction(SET_COLUMN_DEFAULT, columnName)
+                                action.defaultExpression = CommonUtils.cleanQuote(value)
+                                alterTable.actions.add(action)
+                            }
+                        }
+                    }
+
+                    statements.add(alterTable)
                 } else {
-                    AlterTable(AlterType.DETACH_PARTITION, tableId)
+                    var alterTable: AlterTable? = null;
+                    val partitionCmd = ctx.partition_cmd()
+                    if (partitionCmd.ATTACH() != null) {
+                        alterTable = AlterTable(tableId, DefaultAction(ATTACH_PARTITION))
+                    } else {
+                        alterTable = AlterTable(tableId, DefaultAction(DETACH_PARTITION))
+                    }
+
+                    if (alterTable != null) {
+                        statements.add(alterTable)
+                    }
                 }
 
-                alterTable.ifExists = ctx.IF_P() != null
-                return alterTable
+
+                return null;
             }
         }
 
-        return AlterTable(AlterType.UNKOWN)
+        return null
     }
 
     override fun visitCommentstmt(ctx: PostgreSqlParser.CommentstmtContext): Statement {
