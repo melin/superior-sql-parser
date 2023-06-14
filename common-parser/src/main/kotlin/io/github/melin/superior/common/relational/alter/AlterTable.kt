@@ -24,12 +24,16 @@ data class AlterTable(
 
     constructor(tableId: TableId): this(tableId, null)
 
-
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)
     }
 
     fun firstAction(): AlterAction {
         return if (action != null) action else actions.first()
+    }
+
+    fun getFirstAlterType(): AlterType {
+        val action = firstAction()
+        return action.alterType
     }
 }
