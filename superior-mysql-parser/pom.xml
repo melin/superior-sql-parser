@@ -9,6 +9,13 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>common-parser</artifactId>
+    <artifactId>superior-mysql-parser</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.github.melin.superior</groupId>
+            <artifactId>superior-common-parser</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

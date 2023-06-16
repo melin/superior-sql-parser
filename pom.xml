@@ -10,18 +10,19 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>spark-sql-parser</module>
-        <module>mysql-sql-parser</module>
-        <module>arithmetic-parser</module>
-        <module>appjar-parser</module>
-        <module>postgre-sql-parser</module>
-        <module>trino-sql-parser</module>
-        <module>presto-sql-parser</module>
-        <module>sqlserver-sql-parser</module>
-        <module>flink-sql-parser</module>
-        <module>common-parser</module>
-        <module>oracle-sql-parser</module>
-        <module>starrocks-sql-parser</module>
+        <module>superior-common-parser</module>
+        <module>superior-arithmetic-parser</module>
+        <module>superior-appjar-parser</module>
+
+        <module>superior-spark-parser</module>
+        <module>superior-mysql-parser</module>
+        <module>superior-postgres-parser</module>
+        <module>superior-trino-parser</module>
+        <module>superior-presto-parser</module>
+        <module>superior-sqlserver-parser</module>
+        <module>superior-flink-parser</module>
+        <module>superior-oracle-parser</module>
+        <module>superior-starrocks-parser</module>
     </modules>
 
     <properties>

@@ -9,13 +9,14 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>appjar-parser</artifactId>
+    <artifactId>superior-oracle-parser</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>io.github.melin.superior</groupId>
-            <artifactId>common-parser</artifactId>
+            <artifactId>superior-common-parser</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 </project>

@@ -9,13 +9,6 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>presto-sql-parser</artifactId>
+    <artifactId>superior-common-parser</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.github.melin.superior</groupId>
-            <artifactId>common-parser</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>
