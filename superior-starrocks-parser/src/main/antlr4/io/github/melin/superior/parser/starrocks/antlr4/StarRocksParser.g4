@@ -549,8 +549,12 @@ columnNameWithComment
 // ------------------------------------------- Task Statement ----------------------------------------------------------
 
 submitTaskStatement
-    : SUBMIT setVarHint* TASK qualifiedName?
-    AS (createTableAsSelectStatement | insertStatement )
+    : SUBMIT setVarHint* TASK qualifiedName? AS taskExecSql
+    ;
+
+taskExecSql
+    : createTableAsSelectStatement
+    | insertStatement
     ;
 
 dropTaskStatement

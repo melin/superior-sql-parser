@@ -70,6 +70,9 @@ enum class StatementType: Serializable {
 
     ARITHMETIC,
 
+    SUBMIT_TASK,
+    DROP_TASK,
+
     FLINK_CDC_BEGIN,
     FLINK_CDC_END,
     FLINK_CDC_CTAS,

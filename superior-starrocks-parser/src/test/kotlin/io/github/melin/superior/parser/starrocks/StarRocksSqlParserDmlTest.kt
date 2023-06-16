@@ -7,6 +7,8 @@ import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.parser.starrocks.relational.DropTask
+import io.github.melin.superior.parser.starrocks.relational.SubmitTask
 import org.junit.Assert
 import org.junit.Test
 
@@ -215,5 +217,25 @@ class StarRocksSqlParserDmlTest {
         Assert.assertTrue(statement.checkSql("SHOW DELETE FROM"))
 
         Assert.assertFalse(statement.checkSql("SHOW DELETE"))
+    }
+
+    @Test
+    fun taskTest() {
+        val sql = """
+            SUBMIT /*+set_var(query_timeout=100000)*/ TASK test1 AS
+            INSERT OVERWRITE insert_wiki_edit
+            SELECT * FROM source_wiki_edit;
+            
+            DROP TASK test1
+        """.trimIndent()
+
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+        Assert.assertEquals(2, statements.size)
+
+        val submitTask = statements.get(0) as SubmitTask
+        Assert.assertEquals("test1", submitTask.taskName)
+
+        val dropTask = statements.get(1) as DropTask
+        Assert.assertEquals("test1", dropTask.taskName)
     }
 }

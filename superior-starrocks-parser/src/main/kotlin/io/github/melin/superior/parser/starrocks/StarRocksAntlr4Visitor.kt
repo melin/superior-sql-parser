@@ -13,6 +13,8 @@ import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisit
 import org.antlr.v4.runtime.tree.RuleNode
 
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser.*
+import io.github.melin.superior.parser.starrocks.relational.DropTask
+import io.github.melin.superior.parser.starrocks.relational.SubmitTask
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -300,6 +302,17 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         insertTable.inputTables.addAll(inputTables)
         return insertTable
+    }
+
+    override fun visitSubmitTaskStatement(ctx: SubmitTaskStatementContext): Statement {
+        val taskName: String? = if (ctx.qualifiedName() != null) ctx.qualifiedName().text else null;
+        val taskExecSql = CommonUtils.subsql(command, ctx.taskExecSql())
+        return SubmitTask(taskName, taskExecSql)
+    }
+
+    override fun visitDropTaskStatement(ctx: DropTaskStatementContext): Statement {
+        val taskName = ctx.qualifiedName().text
+        return DropTask(taskName)
     }
 
     override fun visitQualifiedName(ctx: QualifiedNameContext): Statement? {
