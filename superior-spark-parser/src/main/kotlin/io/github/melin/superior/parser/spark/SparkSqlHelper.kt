@@ -49,6 +49,7 @@ object SparkSqlHelper {
             DROP_TABLE,
 
             SHOW,
+            DESC,
 
             CACHE,
             UNCACHE,

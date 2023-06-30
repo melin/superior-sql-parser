@@ -17,8 +17,6 @@ object CommonUtils {
                 val child = node.parent.getChild(i)
                 if (child is TerminalNodeImpl) {
                     keyWords.add(child.text.uppercase())
-                } else {
-                    break
                 }
             }
         } else {

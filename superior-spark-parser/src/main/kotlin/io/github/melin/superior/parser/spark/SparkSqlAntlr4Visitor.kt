@@ -5,11 +5,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
-import io.github.melin.superior.common.relational.common.CallProcedure
-import io.github.melin.superior.common.relational.common.ShowStatement
+import io.github.melin.superior.common.relational.common.*
 import io.github.melin.superior.parser.spark.relational.RefreshStatement
-import io.github.melin.superior.common.relational.common.UseCatalog
-import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
@@ -87,6 +84,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     val keyWords: ArrayList<String> = arrayListOf()
                     CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
+                } else if (StringUtils.equalsIgnoreCase("DESC", startNode) ||
+                    StringUtils.equalsIgnoreCase("DESCRIBE", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findShowStatementKeyWord(keyWords, it)
+                    DescStatement(*keyWords.toTypedArray())
                 } else {
                     var statement = this.visitSingleStatement(it)
                     if (statement == null) {
@@ -125,12 +127,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val statement = super.visitSingleStatement(ctx)
 
         if (statement == null) {
-            val startToken = StringUtils.lowerCase(ctx.getStart().text)
-            if ("desc".equals(startToken) || "describe".equals(startToken)) {
-                return DefaultStatement(StatementType.DESC)
-            } else {
-                throw SQLParserException("不支持的SQL: " + command)
-            }
+            throw SQLParserException("不支持的SQL: " + command)
         }
         return statement
     }
