@@ -106,7 +106,7 @@ if (statement is TableData) {
 7. [Doris](https://github.com/apache/doris/tree/master/fe/fe-core/src/main/antlr4/org/apache/doris) 未开发
 8. [ClickHouse](https://github.com/ClickHouse/ClickHouse/tree/master/utils/antlr) 未开发
 9. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql)
-10. [Flink SQL / Flink CDC SQL](https://github.com/DTStack/dt-sql-parser/tree/main/src/grammar/flinksql) 开发中...
+10. [Flink SQL / Flink CDC SQL](https://github.com/DTStack/dt-sql-parser/tree/main/src/grammar/flinksql)
 
 ## 相关项目
 1. https://gitee.com/melin/bee
