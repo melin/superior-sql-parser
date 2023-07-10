@@ -4,7 +4,6 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.AlterViewAction
 import io.github.melin.superior.common.relational.alter.DefaultAction
 import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.CommentData
@@ -169,7 +168,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
                     }
                 }
 
-                ColumnRel(columnName, dataType, defaultExpr = defaultExpr, nullable = nullable, isPk = isPk)
+                ColumnRel(columnName, dataType, defaultExpr = defaultExpr, nullable = nullable, primaryKey = isPk)
             }
 
         return CreateTable(tableId, columnRels = columnRels)

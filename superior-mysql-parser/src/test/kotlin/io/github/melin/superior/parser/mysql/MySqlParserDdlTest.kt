@@ -91,7 +91,7 @@ class MySqlParserDdlTest {
             Assert.assertEquals("dc_config", statement.tableId.tableName)
             Assert.assertEquals("系统参数配置", statement.comment)
 
-            statement.columnRels?.get(0)?.let { Assert.assertTrue(it.isPk) }
+            statement.columnRels?.get(0)?.let { Assert.assertTrue(it.primaryKey) }
         } else {
             Assert.fail()
         }

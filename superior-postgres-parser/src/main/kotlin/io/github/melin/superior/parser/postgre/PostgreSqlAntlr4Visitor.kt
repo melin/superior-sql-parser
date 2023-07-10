@@ -142,7 +142,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                     if (child.NOT() != null) {
                         columnRel.nullable = false
                     } else if (child.PRIMARY() != null) {
-                        columnRel.isPk = true
+                        columnRel.primaryKey = true
                     }
                 }
             }

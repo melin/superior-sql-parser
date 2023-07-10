@@ -54,8 +54,8 @@ class OracleSqlParserDdlTest {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(3, statement.columnRels?.size)
-            Assert.assertTrue(statement.columnRels?.get(0)?.isPk!!)
-            Assert.assertFalse(statement.columnRels?.get(1)?.isPk!!)
+            Assert.assertTrue(statement.columnRels?.get(0)?.primaryKey!!)
+            Assert.assertFalse(statement.columnRels?.get(1)?.primaryKey!!)
         } else {
             Assert.fail()
         }

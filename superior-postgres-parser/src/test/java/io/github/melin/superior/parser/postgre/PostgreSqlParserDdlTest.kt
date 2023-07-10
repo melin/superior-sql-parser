@@ -84,7 +84,7 @@ class PostgreSqlParserDdlTest {
             Assert.assertTrue(statement.temporary)
             Assert.assertEquals(TableId("test", "public", "authors"), statement.tableId)
             Assert.assertEquals(4, statement.columnRels?.size)
-            Assert.assertTrue(statement.columnRels?.get(0)?.isPk!!)
+            Assert.assertTrue(statement.columnRels?.get(0)?.primaryKey!!)
 
             Assert.assertEquals("RANGE", statement.partitionType)
             Assert.assertEquals(1, statement.partitionColumnNames?.size)

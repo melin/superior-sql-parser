@@ -6,7 +6,7 @@ data class ColumnRel(
     val comment: String? = null,
     var nullable: Boolean = true,
     var defaultExpr: String? = null,
-    var isPk: Boolean = false,
+    var primaryKey: Boolean = false,
     val columnDefType: ColumnDefType = ColumnDefType.COMPUTED
 ) {
     var expression: String? = null // 计算表达式

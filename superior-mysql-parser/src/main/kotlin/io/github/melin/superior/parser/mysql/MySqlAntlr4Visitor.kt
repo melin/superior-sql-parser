@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
 import io.github.melin.superior.common.AlterType.*
-import io.github.melin.superior.common.relational.alter.*
 
 /**
  *
@@ -139,7 +138,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         super.visitColumnCreateTable(ctx)
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
-        columnRels.forEach { columnRel: ColumnRel -> if (primaryKeys.contains(columnRel.name)) { columnRel.isPk = true } }
+        columnRels.forEach { columnRel: ColumnRel -> if (primaryKeys.contains(columnRel.name)) { columnRel.primaryKey = true } }
         val createTable = CreateTable(tableId, comment,
                 null, null, columnRels, null, null, ifNotExists)
 
