@@ -59,6 +59,7 @@ object SparkSqlHelper {
             CALL,
             HELP,
             SYNC,
+            MERGE_FILE,
 
             DELETE,
             UPDATE,
