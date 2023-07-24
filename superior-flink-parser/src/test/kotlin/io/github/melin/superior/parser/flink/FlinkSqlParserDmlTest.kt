@@ -78,6 +78,9 @@ class FlinkSqlParserDmlTest {
                         PRICE_UP AS
                             PRICE_UP.price > LAST(PRICE_DOWN.price, 1)
                 ) MR;
+                
+                set sfdf_1 = 'adf';
+                set sfdf_2 = true;
         """.trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)

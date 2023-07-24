@@ -6,6 +6,7 @@ import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
@@ -238,6 +239,14 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         cteTempTables.add(tableId)
         super.visitWithItem(ctx)
         return null
+    }
+
+    override fun visitSetStatememt(ctx: FlinkSqlParser.SetStatememtContext): Statement {
+        val tableProperty = ctx.tableProperty()
+        val key = tableProperty.tablePropertyKey().text
+        var value = tableProperty.tablePropertyValue().text
+        value = CommonUtils.cleanQuote(value)
+        return SetStatement(key, value)
     }
 
     override fun visitLimitClause(ctx: FlinkSqlParser.LimitClauseContext): Statement? {
