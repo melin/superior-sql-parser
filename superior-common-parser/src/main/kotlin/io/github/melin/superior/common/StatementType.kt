@@ -58,7 +58,7 @@ enum class StatementType: Serializable {
 
     EXPLAIN,
     SET,
-    UNSET,
+    RESET,
     USE,
 
     DATATUNNEL, // spark

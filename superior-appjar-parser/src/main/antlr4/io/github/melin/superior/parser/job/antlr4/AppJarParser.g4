@@ -12,7 +12,7 @@ jobTasks
     ;
 
 jobTask
-    :  setStatement | unsetStatement | jobStatement
+    :  setStatement | resetStatement | jobStatement
     ;
 
 jobStatement
@@ -47,8 +47,8 @@ setStatement
     : SET keyExpr EQUAL_SYMBOL value=valueExpr
     ;
 
-unsetStatement
-    : UNSET keyExpr
+resetStatement
+    : RESET keyExpr
     ;
 
 keyExpr
@@ -61,7 +61,7 @@ valueExpr
 
 word
     : ID
-    | DOT_ID | SET | UNSET
+    | DOT_ID | SET | RESET
     | STAR | DIVIDE | MODULE | PLUS | MINUS
     | EQUAL_SYMBOL | GREATER_SYMBOL | LESS_SYMBOL | EXCLAMATION_SYMBOL
     | BIT_NOT_OP | BIT_OR_OP | BIT_AND_OP | BIT_XOR_OP

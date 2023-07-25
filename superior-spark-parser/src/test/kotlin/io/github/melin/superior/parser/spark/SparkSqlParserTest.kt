@@ -1431,10 +1431,16 @@ class SparkSqlParserTest {
 
     @Test
     fun setTest() {
-        val sql = "set spark.executor.memory=30g"
+        val sql = """
+            set spark.executor.memory=30g
+            set spark.sql.enabled=true;
+            set spark.sql.test="ddsd";
+            set spark.sql.test2;
+            reset spark.sql.test;
+        """.trimIndent()
 
-        val statement = SparkSqlHelper.parseStatement(sql)
-        Assert.assertEquals(StatementType.SET, statement.statementType)
+        val statements = SparkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(5, statements.size)
     }
 
     @Test
@@ -2098,7 +2104,6 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.CREATE_FILE_VIEW, statement.statementType)
 
-        
         if (statement is CreateFileView) {
             Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
             Assert.assertEquals("/user/dataworks/users/qianxiao/demo.csv", statement.path)

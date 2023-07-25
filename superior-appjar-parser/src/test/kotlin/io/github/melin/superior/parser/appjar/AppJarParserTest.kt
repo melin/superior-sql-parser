@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.appjar
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.common.SetStatement
-import io.github.melin.superior.common.relational.common.UnSetStatement
+import io.github.melin.superior.common.relational.common.ReSetStatement
 import org.junit.Assert
 import org.junit.Test
 
@@ -27,7 +27,7 @@ class AppJarParserTest {
             set flink.test = 12,12;
             set flink.test = 3.45;
             set flink.test = ibdex.json;
-            unset flink.test;
+            reset flink.test;
             set flink.test = dw.eset_sdfe_sd;
             set flink.test = demo.test;
             set flink.test = dsd(id)%=2;
@@ -60,8 +60,8 @@ class AppJarParserTest {
         Assert.assertEquals(14, setCount)
 
         statement = statements.get(11)
-        if (statement is UnSetStatement) {
-            Assert.assertEquals(StatementType.UNSET, statement.statementType)
+        if (statement is ReSetStatement) {
+            Assert.assertEquals(StatementType.RESET, statement.statementType)
             Assert.assertEquals("flink.test", statement.key)
         } else {
             Assert.fail()

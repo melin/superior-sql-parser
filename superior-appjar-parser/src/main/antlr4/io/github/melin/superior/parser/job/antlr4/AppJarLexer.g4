@@ -13,7 +13,7 @@ LINE_COMMENT:                        (
                                      ) -> channel(HIDDEN);
 
 SET:                                 'SET';
-UNSET:                               'UNSET';
+RESET:                               'RESET';
 
 STAR:                                '*';
 DIVIDE:                              '/';

@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.Statement
 
 data class SetStatement(
     val key: String,
-    val value: String?
+    val value: String? = null
 ) : Statement() {
     override val statementType = StatementType.SET
     override val privilegeType = PrivilegeType.OTHER

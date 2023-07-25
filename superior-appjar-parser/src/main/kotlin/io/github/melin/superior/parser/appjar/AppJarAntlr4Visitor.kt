@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.appjar
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.common.SetStatement
-import io.github.melin.superior.common.relational.common.UnSetStatement
+import io.github.melin.superior.common.relational.common.ReSetStatement
 import io.github.melin.superior.parser.job.antlr4.AppJarParser
 import io.github.melin.superior.parser.job.antlr4.AppJarParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -57,9 +57,9 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return SetStatement(key, value)
     }
 
-    override fun visitUnsetStatement(ctx: AppJarParser.UnsetStatementContext): Statement {
+    override fun visitResetStatement(ctx: AppJarParser.ResetStatementContext): Statement {
         val key = ctx.keyExpr().text
-        return UnSetStatement(key)
+        return ReSetStatement(key)
     }
 
     private fun replaceWhitespace(str: String): String {
