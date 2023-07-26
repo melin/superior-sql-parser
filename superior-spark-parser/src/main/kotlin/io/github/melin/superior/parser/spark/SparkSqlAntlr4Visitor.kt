@@ -879,7 +879,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if (configKeyValueDef.matches(config)) {
                 val matcher = configKeyValueDef.find(config)!!
                 val (key, value) = matcher.destructured
-                return SetStatement(key, value)
+                return SetStatement(key, StringUtils.trim(value))
             } else if (configKeyDef.matches(config)) {
                 return SetStatement(config)
             } else {

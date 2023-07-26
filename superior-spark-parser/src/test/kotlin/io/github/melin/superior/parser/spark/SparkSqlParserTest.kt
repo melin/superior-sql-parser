@@ -1432,7 +1432,7 @@ class SparkSqlParserTest {
     @Test
     fun setTest() {
         val sql = """
-            set spark.executor.memory=30g
+            set spark.executor.memory = 30g
             set spark.sql.enabled=true;
             set spark.sql.test="ddsd";
             set spark.sql.test2;
