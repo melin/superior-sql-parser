@@ -2,23 +2,17 @@ parser grammar FlinkSqlParser;
 
 options { tokenVocab=FlinkSqlLexer; }
 
-program: statement EOF;
-
-statement
-    : sqlStatements EOF
+sqlStatements
+    : singleStatement* EOF
     ;
 
-sqlStatements
-    : (sqlStatement SEMICOLON? | emptyStatement)*
+singleStatement
+    : sqlStatement SEMICOLON?
     ;
 
 sqlStatement
     : ddlStatement | dmlStatement | describeStatement | explainStatement | useStatement | showStatememt
     | loadStatement | unloadStatememt | setStatememt | resetStatememt | jarStatememt | dtAddStatement
-    ;
-
-emptyStatement
-    : SEMICOLON
     ;
 
 ddlStatement

@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.flink
 
+import io.github.melin.superior.common.relational.common.AddJarStatememt
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
@@ -151,6 +152,36 @@ class FlinkSqlParserDmlTest {
         if (queryStmt is QueryStmt) {
             Assert.assertEquals(1, queryStmt.inputTables.size)
             Assert.assertEquals("Ticker", queryStmt.inputTables.get(0).tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun selectSqlTest1() {
+        val sql = """
+            add jar "flink-connector-jdbc-3.1.1-1.17.jar";
+
+            CREATE TABLE flink_meta_role (
+              id INT,
+              name STRING,
+              code STRING,
+              PRIMARY KEY (id) NOT ENFORCED
+            ) WITH (
+                'connector' = 'jdbc',
+                'url' = 'jdbc:mysql://172.18.5.44:3306/superior',
+                'table-name' = 'meta_role',
+                'username' = 'root',
+                'password' = 'root2023'
+            );
+
+            SELECT * FROM flink_meta_role;
+        """.trimIndent()
+
+        val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        var addStmt = statements.get(0)
+        if (addStmt is AddJarStatememt) {
+            Assert.assertEquals("flink-connector-jdbc-3.1.1-1.17.jar", addStmt.jarFileName)
         } else {
             Assert.fail()
         }

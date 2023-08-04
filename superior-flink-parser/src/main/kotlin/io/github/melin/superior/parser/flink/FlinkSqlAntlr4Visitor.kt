@@ -63,7 +63,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitSqlStatements(ctx: FlinkSqlParser.SqlStatementsContext): Statement? {
-        ctx.sqlStatement().forEach {
+        ctx.singleStatement().forEach {
             var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
             if (splitSql) {
@@ -75,7 +75,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
                 } else {
-                    var statement = this.visitSqlStatement(it)
+                    var statement = this.visitSingleStatement(it)
                     if (statement == null) {
                         statement = DefaultStatement(StatementType.UNKOWN)
                     }
