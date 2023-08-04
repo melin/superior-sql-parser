@@ -6,6 +6,8 @@ import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.AddJarStatememt
+import io.github.melin.superior.common.relational.common.RemoveJarStatememt
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -141,7 +143,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 val computedColumn = column as ComputedColumnDefinitionContext
                 val colName = computedColumn.columnName().text
                 val colComment: String? = if (computedColumn.commentSpec() != null) computedColumn.commentSpec().STRING_LITERAL().text else null
-                var computedExpr = CommonUtils.subsql(command, computedColumn.computedColumnExpression().expression())
+                val computedExpr = CommonUtils.subsql(command, computedColumn.computedColumnExpression().expression())
                 val columnRel = ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
                 columnRel.computedExpr = computedExpr
                 columnRel
@@ -207,6 +209,15 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
         super.visitQueryStatement(ctx)
         return QueryStmt(inputTables, limit, offset)
+    }
+
+    override fun visitJarStatememt(ctx: FlinkSqlParser.JarStatememtContext): Statement {
+        val jarFileName = CommonUtils.cleanQuote(ctx.jarFileName().text)
+        if (ctx.KW_ADD() != null) {
+            return AddJarStatememt(jarFileName)
+        } else {
+            return RemoveJarStatememt(jarFileName)
+        }
     }
 
     override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {
@@ -277,13 +288,11 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     private fun parseTableOptions(ctx: TablePropertyListContext): Map<String, String> {
         val properties = HashMap<String, String>()
-        if (ctx != null) {
-            ctx.tableProperty().forEach { item ->
-                val property = item as TablePropertyContext
-                val key = CommonUtils.cleanQuote(property.key.text)
-                val value = CommonUtils.cleanQuote(property.value.text)
-                properties.put(key, value)
-            }
+        ctx.tableProperty().forEach { item ->
+            val property = item as TablePropertyContext
+            val key = CommonUtils.cleanQuote(property.key.text)
+            val value = CommonUtils.cleanQuote(property.value.text)
+            properties.put(key, value)
         }
 
         return properties

@@ -73,6 +73,9 @@ enum class StatementType: Serializable {
     SUBMIT_TASK,
     DROP_TASK,
 
+    ADD_JAR,
+    REMOVE_JAR,
+
     FLINK_CDC_BEGIN,
     FLINK_CDC_END,
     FLINK_CDC_CTAS,
