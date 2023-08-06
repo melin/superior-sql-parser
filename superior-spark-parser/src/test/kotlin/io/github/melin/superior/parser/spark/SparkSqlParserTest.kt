@@ -105,6 +105,7 @@ class SparkSqlParserTest {
         if (statement is CreateTable) {
             val schemaName = statement.tableId.schemaName
             Assert.assertEquals("test", schemaName)
+            Assert.assertEquals("hello world", statement.comment)
             Assert.assertNull(statement.location)
             Assert.assertFalse(statement.external)
             Assert.assertEquals(statement.fileFormat, "ORC")

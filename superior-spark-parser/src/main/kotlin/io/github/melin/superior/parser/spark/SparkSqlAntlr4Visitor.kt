@@ -231,7 +231,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         tableProvider: TableProviderContext?,
         query: QueryContext?): Statement {
 
-        val comment = if (createTableClauses.commentSpec().size > 0) CommonUtils.cleanQuote(createTableClauses.commentSpec(0).text) else null
+        val comment = if (createTableClauses.commentSpec().size > 0) CommonUtils.cleanQuote(createTableClauses.commentSpec(0).stringLit().text) else null
         val lifeCycle = createTableClauses.lifecycle?.text?.toInt()
 
         var partitionColumnRels: List<ColumnRel>? = null
