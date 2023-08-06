@@ -270,7 +270,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
-                            val colComment = if (column.colType().commentSpec() != null) CommonUtils.cleanQuote(column.colType().commentSpec().text) else null
+                            val colComment = if (column.colType().commentSpec() != null) CommonUtils.cleanQuote(column.colType().commentSpec().stringLit().text) else null
                             ColumnRel(colName, dataType, colComment)
                         }
                 }

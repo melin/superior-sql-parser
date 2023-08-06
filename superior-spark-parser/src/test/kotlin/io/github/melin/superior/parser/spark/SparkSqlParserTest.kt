@@ -113,6 +113,7 @@ class SparkSqlParserTest {
 
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals("part sdf", statement.partitionColumnRels?.get(0)?.comment)
         } else {
             Assert.fail()
         }
