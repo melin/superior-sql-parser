@@ -406,7 +406,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 val column = item as SparkSqlParser.QualifiedColTypeWithPositionContext
                 val columnName = column.multipartIdentifier().text
                 val dataType = column.dataType().text
-                val comment = if (column.commentSpec() != null) CommonUtils.cleanQuote(column.commentSpec().text) else null
+                val comment = if (column.commentSpec() != null) CommonUtils.cleanQuote(column.commentSpec().stringLit().text) else null
 
                 var position: String? = null
                 var afterCol: String? = null
