@@ -28,4 +28,8 @@ data class InsertTable(
     var rows: ArrayList<List<String>>? = null
 
     var mysqlReplace: Boolean = false
+
+    init {
+        outputTables.add(tableId)
+    }
 }

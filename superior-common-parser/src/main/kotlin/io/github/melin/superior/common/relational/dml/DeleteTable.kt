@@ -15,4 +15,8 @@ data class DeleteTable(
     override val sqlType = SqlType.DML
 
     val outputTables: ArrayList<TableId> = arrayListOf()
+
+    init {
+        outputTables.add(tableId)
+    }
 }
