@@ -17,6 +17,8 @@ data class DeleteTable(
     val outputTables: ArrayList<TableId> = arrayListOf()
 
     init {
-        outputTables.add(tableId)
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
     }
 }

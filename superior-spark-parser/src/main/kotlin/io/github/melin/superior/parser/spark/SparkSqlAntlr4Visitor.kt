@@ -955,7 +955,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
             val insertTable = InsertTable(InsertMode.OVERWRITE, outputTables.first())
             insertTable.inputTables.addAll(inputTables)
-            insertTable.outputTables.addAll(outputTables)
+            insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
             insertTable.functionNames.addAll(functionNames)
             return insertTable
         } else if (node is SparkSqlParser.UpdateTableContext ||
@@ -1137,7 +1137,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             val tableId = parseTableName(multipartIdentifier)
             outputTables.add(tableId)
         }
-        return super.visitMultiInsertQueryBody(ctx)
+        return null
     }
 
     override fun visitQueryOrganization(ctx: SparkSqlParser.QueryOrganizationContext): Statement? {

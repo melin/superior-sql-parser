@@ -290,7 +290,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         super.visitInsert_rest(ctx.insert_rest())
 
         insertTable.inputTables.addAll(inputTables)
-        insertTable.outputTables.addAll(outputTables)
+        insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
         return insertTable
     }
 

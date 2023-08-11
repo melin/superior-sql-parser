@@ -30,6 +30,8 @@ data class InsertTable(
     var mysqlReplace: Boolean = false
 
     init {
-        outputTables.add(tableId)
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
+        }
     }
 }

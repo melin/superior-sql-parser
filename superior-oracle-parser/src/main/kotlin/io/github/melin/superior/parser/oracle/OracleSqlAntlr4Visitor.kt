@@ -329,7 +329,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         insertTable.inputTables.addAll(inputTables)
-        insertTable.outputTables.addAll(outputTables)
+        insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
         return insertTable
     }
 

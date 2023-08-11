@@ -349,7 +349,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
             val outputTables = ctx.multipleDeleteStatement().tableName().map { parseFullId(it.fullId()) }
             val deleteTable = DeleteTable(outputTables.first(), inputTables)
             super.visitTableSources(ctx.multipleDeleteStatement().tableSources())
-            deleteTable.outputTables.addAll(outputTables)
+            deleteTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
             deleteTable
         } else {
             if (ctx.singleDeleteStatement().expression() != null) {
@@ -372,7 +372,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
             super.visitTableSources(ctx.multipleUpdateStatement().tableSources())
             UpdateTable(inputTables.first(), inputTables.toMutableList())
             val updateTable = UpdateTable(inputTables.first(), intputTableIds)
-            updateTable.outputTables.addAll(inputTables)
+            updateTable.outputTables.addAll(inputTables.subList(1, inputTables.size))
             updateTable
         } else {
             this.visit(ctx.singleUpdateStatement().expression())
