@@ -1,7 +1,7 @@
 package io.github.melin.superior.parser.flink
 
 import io.github.melin.superior.common.relational.common.AddJarStatememt
-import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateCatalog
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
 import org.junit.Test
@@ -179,9 +179,40 @@ class FlinkSqlParserDmlTest {
         """.trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
-        var addStmt = statements.get(0)
+        val addStmt = statements.get(0)
         if (addStmt is AddJarStatememt) {
             Assert.assertEquals("flink-connector-jdbc-3.1.1-1.17.jar", addStmt.jarFileName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun selectSqlTest2() {
+        val sql = """
+            CREATE CATALOG my_catalog WITH (
+                'type' = 'jdbc',
+                'default-database' = 'demos',
+                'username' = 'root',
+                'password' = 'root2023',
+                'base-url' = 'jdbc:mysql://172.18.5.44:3306'
+            );
+            
+            USE CATALOG my_catalog;
+            
+            DROP CATALOG IF EXISTS my_catalog
+            
+            EXPLAIN PLAN FOR select * from my_catalog.demos.orders;
+            EXPLAIN ESTIMATED_COST, CHANGELOG_MODE, PLAN_ADVICE, JSON_EXECUTION_PLAN
+             select * from my_catalog.demos.orders;
+        """.trimIndent()
+
+        val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(5, statements.size)
+
+        val createCatalog = statements.get(0)
+        if (createCatalog is CreateCatalog) {
+            Assert.assertEquals("my_catalog", createCatalog.catalogName)
         } else {
             Assert.fail()
         }

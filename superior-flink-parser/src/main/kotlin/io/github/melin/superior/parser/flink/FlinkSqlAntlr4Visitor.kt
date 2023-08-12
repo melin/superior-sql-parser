@@ -6,16 +6,15 @@ import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.common.AddJarStatememt
-import io.github.melin.superior.common.relational.common.RemoveJarStatememt
-import io.github.melin.superior.common.relational.common.SetStatement
-import io.github.melin.superior.common.relational.common.ShowStatement
+import io.github.melin.superior.common.relational.common.*
+import io.github.melin.superior.common.relational.create.CreateCatalog
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.drop.DropCatalog
 import io.github.melin.superior.common.relational.table.ColumnDefType
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkSqlParser
@@ -110,7 +109,9 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if ("desc".equals(startToken) || "describe".equals(startToken)) {
                 return DefaultStatement(StatementType.DESC)
             } else {
-                throw SQLParserException("不支持的SQL: " + command)
+                var sql = CommonUtils.subsql(command, ctx)
+                sql = CommonUtils.cleanLastSemi(sql)
+                throw SQLParserException("不支持的SQL: " + sql)
             }
         }
         return statement
@@ -218,6 +219,26 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         } else {
             return RemoveJarStatememt(jarFileName)
         }
+    }
+
+    override fun visitCreateCatalog(ctx: FlinkSqlParser.CreateCatalogContext): Statement {
+        val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
+        val properties = parseTableOptions(ctx.withOption().tablePropertyList())
+        return CreateCatalog(catalogName, properties)
+    }
+
+    override fun visitDropCatalog(ctx: FlinkSqlParser.DropCatalogContext): Statement {
+        val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
+        return DropCatalog(catalogName)
+    }
+
+    override fun visitExplainStatement(ctx: FlinkSqlParser.ExplainStatementContext?): Statement {
+        return DefaultStatement(StatementType.EXPLAIN)
+    }
+
+    override fun visitUseStatement(ctx: FlinkSqlParser.UseStatementContext): Statement {
+        val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
+        return UseCatalog(catalogName)
     }
 
     override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {

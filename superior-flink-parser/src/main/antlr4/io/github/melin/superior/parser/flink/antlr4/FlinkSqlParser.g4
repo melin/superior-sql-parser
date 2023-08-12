@@ -39,7 +39,7 @@ explainDetails
     ;
 
 explainDetail
-    : KW_CHANGELOG_MODE | KW_JSON_EXECUTION_PLAN | KW_ESTIMATED_COST
+    : KW_CHANGELOG_MODE | KW_PLAN_ADVICE | KW_JSON_EXECUTION_PLAN | KW_ESTIMATED_COST
     ;
 
 useStatement
@@ -1305,7 +1305,8 @@ nonReservedKeywords
     |KW_PAST                          
     |KW_PATH                          
     |KW_PLACING                       
-    |KW_PLAN                          
+    |KW_PLAN
+    |KW_PLAN_ADVICE
     |KW_PRECEDING                     
     |KW_PRESERVE                      
     |KW_PRIOR                         

@@ -112,6 +112,7 @@ KW_PAST:                             'PAST';
 KW_PATH:                             'PATH';
 KW_PLACING:                          'PLACING';
 KW_PLAN:                             'PLAN';
+KW_PLAN_ADVICE:                      'PLAN_ADVICE';
 KW_PRECEDING:                        'PRECEDING';
 KW_PRESERVE:                         'PRESERVE';
 KW_PRIOR:                            'PRIOR';
