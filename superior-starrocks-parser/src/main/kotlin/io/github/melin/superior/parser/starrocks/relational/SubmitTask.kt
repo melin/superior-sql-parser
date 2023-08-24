@@ -9,7 +9,7 @@ data class SubmitTask(
     val taskName: String?,
     val taskExecSql: String
 ) : Statement() {
-    override val statementType = StatementType.SUBMIT_TASK
+    override val statementType = StatementType.SR_SUBMIT_TASK
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML
 }

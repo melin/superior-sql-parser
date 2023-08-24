@@ -12,4 +12,6 @@ data class DropFunction(
     override val statementType = StatementType.DROP_FUNCTION
     override val privilegeType = PrivilegeType.DROP
     override val sqlType = SqlType.DDL
+
+    var argumentTypes: List<String>? = null // starrocks
 }

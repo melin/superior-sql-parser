@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
+import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
@@ -279,6 +280,46 @@ class StarRocksSqlParserDdlTest {
             val dropIndex = statement.firstAction() as DropIndex
             Assert.assertEquals("index3", dropIndex.indexName)
             Assert.assertEquals("sales_records", statement.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createFuncTest() {
+        val sql = """
+            CREATE GLOBAL FUNCTION MY_UDF_JSON_GET(string, string) 
+            RETURNS string
+            properties (
+                "symbol" = "com.starrocks.udf.sample.UDFJsonGet", 
+                "type" = "StarrocksJar",
+                "file" = "http://http_host:http_port/udf-1.0-SNAPSHOT-jar-with-dependencies.jar"
+            );
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is CreateFunction) {
+            Assert.assertEquals(CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
+            Assert.assertEquals("string", statement.returnType)
+            Assert.assertEquals(2, statement.argumentTypes?.size)
+            Assert.assertEquals(3, statement.properties?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropFuncTest() {
+        val sql = """
+            DROP GLOBAL FUNCTION MY_UDF_JSON_GET(string, string) 
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is DropFunction) {
+            Assert.assertEquals(DROP_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
+            Assert.assertEquals(2, statement.argumentTypes?.size)
         } else {
             Assert.fail()
         }

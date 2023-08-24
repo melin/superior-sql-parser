@@ -18,7 +18,13 @@ data class CreateFunction(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DDL
 
+    var global: Boolean = false // starrocks
+    var properties: Map<String, String>? = null // starrocks
+    var argumentTypes: List<String>? = null // starrocks
+    var returnType: String? = null // starrocks
     var inputTables: List<TableId> = listOf()
 
     constructor(functionId: FunctionId, replace: Boolean) : this(functionId, replace, false)
+
+    constructor(functionId: FunctionId) : this(functionId, false, false)
 }

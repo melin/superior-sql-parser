@@ -315,6 +315,28 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return DropTask(taskName)
     }
 
+    override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {
+        val functionId = parseTableName(ctx.qualifiedName())
+        val global = ctx.GLOBAL() != null
+        val properties = parseOptions(ctx.properties())
+        val argumentTypes = parseTypeList(ctx.typeList())
+        val createFunction = CreateFunction(FunctionId(functionId.schemaName, functionId.tableName))
+        createFunction.global = global
+        createFunction.properties = properties
+        createFunction.argumentTypes = argumentTypes
+        createFunction.returnType = ctx.returnType.text
+        return createFunction
+    }
+
+    override fun visitDropFunctionStatement(ctx: DropFunctionStatementContext): Statement {
+        val functionId = parseTableName(ctx.qualifiedName())
+        val argumentTypes = parseTypeList(ctx.typeList())
+
+        val dropFunction = DropFunction(FunctionId(functionId.schemaName, functionId.tableName))
+        dropFunction.argumentTypes = argumentTypes
+        return dropFunction
+    }
+
     override fun visitQualifiedName(ctx: QualifiedNameContext): Statement? {
         if (currentOptType == StatementType.SELECT ||
             currentOptType == StatementType.CREATE_VIEW ||
@@ -403,5 +425,21 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         return properties
+    }
+
+    private fun parseTypeList(ctx: TypeListContext?): List<String> {
+        val types = java.util.ArrayList<String>()
+        if (ctx != null) {
+            ctx.type().forEach { item ->
+                val type = item as TypeContext
+                types.add(type.text)
+            }
+
+            if (ctx.DOTDOTDOT() != null) {
+                types.add(ctx.DOTDOTDOT().text)
+            }
+        }
+
+        return types
     }
 }

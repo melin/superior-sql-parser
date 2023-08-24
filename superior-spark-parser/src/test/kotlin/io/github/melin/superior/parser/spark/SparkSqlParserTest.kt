@@ -1099,9 +1099,12 @@ class SparkSqlParserTest {
         val sql = """
             select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10
             select * from `demo_rp`.bigdata.users1 a join address1 b on a.addr_id=b.id limit 102
+            select transform(name,idcard) USING 'python udf-python.py'  AS (name,id_card,gre) from db_mxy.person
         """.trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
+
+        Assert.assertEquals(3, statements.size)
 
         val query0 = statements.get(0)
         val query1 = statements.get(1)

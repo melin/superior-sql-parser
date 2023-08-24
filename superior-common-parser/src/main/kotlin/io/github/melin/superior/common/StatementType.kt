@@ -70,8 +70,8 @@ enum class StatementType: Serializable {
 
     ARITHMETIC,
 
-    SUBMIT_TASK,
-    DROP_TASK,
+    SR_SUBMIT_TASK,
+    SR_DROP_TASK,
 
     ADD_JAR,
     REMOVE_JAR,
