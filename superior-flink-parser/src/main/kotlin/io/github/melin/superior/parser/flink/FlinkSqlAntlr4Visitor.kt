@@ -275,8 +275,9 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     override fun visitSetStatememt(ctx: FlinkSqlParser.SetStatememtContext): Statement {
         val tableProperty = ctx.tableProperty()
-        val key = tableProperty.tablePropertyKey().text
+        var key = tableProperty.tablePropertyKey().text
         var value = tableProperty.tablePropertyValue().text
+        key = CommonUtils.cleanQuote(key)
         value = CommonUtils.cleanQuote(value)
         return SetStatement(key, value)
     }

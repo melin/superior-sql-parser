@@ -1,6 +1,8 @@
 package io.github.melin.superior.parser.flink
 
+import com.google.common.collect.Sets
 import io.github.melin.superior.common.relational.common.AddJarStatememt
+import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateCatalog
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
@@ -175,13 +177,23 @@ class FlinkSqlParserDmlTest {
                 'password' = 'root2023'
             );
 
+            set 'execution.checkpointing.checkpoints-after-tasks-finish.enabled' = false;
             SELECT * FROM flink_meta_role;
         """.trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(4, statements.size)
         val addStmt = statements.get(0)
+
         if (addStmt is AddJarStatememt) {
             Assert.assertEquals("flink-connector-jdbc-3.1.1-1.17.jar", addStmt.jarFileName)
+        } else {
+            Assert.fail()
+        }
+
+        val setStmt = statements.get(2)
+        if (setStmt is SetStatement) {
+            Assert.assertEquals("execution.checkpointing.checkpoints-after-tasks-finish.enabled", setStmt.key)
         } else {
             Assert.fail()
         }
