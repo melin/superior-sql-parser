@@ -27,7 +27,7 @@ data class CreateTableAsSelect(
 
     var replace = false
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
-    var createTableType: String = "hive"
+    var modelType: String = "hive"
 
     val inputTables: ArrayList<TableId> = arrayListOf()
     val functionNames: HashSet<FunctionId> = hashSetOf()

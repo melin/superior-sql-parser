@@ -237,7 +237,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         var partitionColumnRels: List<ColumnRel>? = null
         val partitionColumnNames: ArrayList<String> = arrayListOf()
         var columnRels: List<ColumnRel>? = null
-        var createTableType = "hive"
+        var modelType = "hive"
         if (query == null) {
             columnRels = createOrReplaceTableColTypeList?.createOrReplaceTableColType()?.map {
                 val colName = it.colName.text
@@ -247,11 +247,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
 
             if (tableProvider != null) {
-                createTableType = "spark"
+                modelType = "spark"
             }
 
             if (createTableClauses.partitioning != null) {
-                if ("spark" == createTableType) {
+                if ("spark" == modelType) {
                     createTableClauses.partitioning.children
                         .filter { it is SparkSqlParser.PartitionTransformContext }.forEach { item ->
                             val column = item as SparkSqlParser.PartitionTransformContext
@@ -304,7 +304,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
             val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
-            createTable.createTableType = createTableType;
+            createTable.modelType = modelType;
             createTable.replace = replace
 
             var querySql = StringUtils.substring(command, query.start.startIndex)
@@ -320,8 +320,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             return createTable
         } else {
             currentOptType = StatementType.CREATE_TABLE
-            val createTable = CreateTable(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
-            createTable.tableType = createTableType;
+            val createTable = CreateTable(tableId, TableType.HIVE, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
+            createTable.modelType = modelType;
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary

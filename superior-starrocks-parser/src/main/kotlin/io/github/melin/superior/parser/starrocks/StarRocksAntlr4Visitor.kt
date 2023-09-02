@@ -156,21 +156,21 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         val keyDesc = ctx.keyDesc()
-        var tableType = ""
+        var modelType = ""
         if (keyDesc != null) {
             if (keyDesc.DUPLICATE() != null) {
-                tableType = "duplicate"
+                modelType = "duplicate"
             } else if (keyDesc.AGGREGATE() != null) {
-                tableType = "aggregate"
+                modelType = "aggregate"
             } else if (keyDesc.UNIQUE() != null) {
-                tableType = "unique"
+                modelType = "unique"
             } else if (keyDesc.PRIMARY() != null) {
-                tableType = "primary"
+                modelType = "primary"
             }
         }
 
-        val table = CreateTable(tableId, comment, columnRels)
-        table.tableType = tableType
+        val table = CreateTable(tableId, TableType.STARROCKS, comment, columnRels)
+        table.modelType = modelType
         return table
     }
 

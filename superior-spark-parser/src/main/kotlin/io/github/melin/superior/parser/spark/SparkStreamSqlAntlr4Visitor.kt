@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
+import io.github.melin.superior.common.TableType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -9,7 +10,6 @@ import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
-import org.apache.commons.lang3.StringUtils
 
 class SparkStreamSqlAntlr4Visitor(val command: String?):
     SparkStreamSqlParserBaseVisitor<Statement>() {
@@ -55,7 +55,7 @@ class SparkStreamSqlAntlr4Visitor(val command: String?):
             }
         }
 
-        return CreateTable(TableId(tableName), null, null, null, columns, properties)
+        return CreateTable(TableId(tableName), TableType.SPARK_STREAM, null, columns, false, properties)
     }
 
     override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): Statement {

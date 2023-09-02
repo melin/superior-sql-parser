@@ -151,7 +151,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
         }
 
-        return CreateTable(tableId, comment, columnRels, ifNotExists, properties)
+        return CreateTable(tableId, TableType.FLINK, comment, columnRels, ifNotExists, properties)
     }
 
     override fun visitCreateTableAsSelect(ctx: FlinkSqlParser.CreateTableAsSelectContext): Statement {

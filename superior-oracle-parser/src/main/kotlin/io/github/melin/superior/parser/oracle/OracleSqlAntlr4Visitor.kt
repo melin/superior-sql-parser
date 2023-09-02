@@ -171,7 +171,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
                 ColumnRel(columnName, dataType, defaultExpr = defaultExpr, nullable = nullable, primaryKey = isPk)
             }
 
-        return CreateTable(tableId, columnRels = columnRels)
+        return CreateTable(tableId, TableType.ORACLE, columnRels = columnRels)
     }
 
     override fun visitCreate_view(ctx: OracleParser.Create_viewContext): Statement {

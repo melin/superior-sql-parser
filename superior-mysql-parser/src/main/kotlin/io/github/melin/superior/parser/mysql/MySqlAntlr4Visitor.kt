@@ -139,7 +139,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         columnRels.forEach { columnRel: ColumnRel -> if (primaryKeys.contains(columnRel.columnName)) { columnRel.primaryKey = true } }
-        val createTable = CreateTable(tableId, comment,
+        val createTable = CreateTable(tableId, TableType.MYSQL, comment,
                 null, null, columnRels, null, null, ifNotExists)
 
         if (ctx.partitionDefinitions() != null) {

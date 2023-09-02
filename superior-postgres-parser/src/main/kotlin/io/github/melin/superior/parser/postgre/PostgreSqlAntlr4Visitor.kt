@@ -149,7 +149,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             columnRel
         }
 
-        val createTable = CreateTable(tableId, columnRels = columns)
+        val createTable = CreateTable(tableId, TableType.POSTGRES, columnRels = columns)
         if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
             createTable.temporary = true
         }

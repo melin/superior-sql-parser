@@ -132,7 +132,7 @@ class StarRocksSqlParserDdlTest {
         if (statement is CreateTable) {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("meta_role", statement.tableId.tableName)
-            Assert.assertEquals("primary", statement.tableType)
+            Assert.assertEquals("primary", statement.modelType)
         } else {
             Assert.fail()
         }
