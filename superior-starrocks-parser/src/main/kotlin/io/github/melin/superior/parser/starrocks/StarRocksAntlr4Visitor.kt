@@ -4,6 +4,7 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.DescStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -59,7 +60,12 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
                     val keyWords: ArrayList<String> = arrayListOf()
                     CommonUtils.findShowStatementKeyWord(keyWords, it)
                     ShowStatement(*keyWords.toTypedArray())
-                } else {
+                } else if (StringUtils.equalsIgnoreCase("DESC", startNode) ||
+                        StringUtils.equalsIgnoreCase("DESCRIBE", startNode)) {
+                    val keyWords: ArrayList<String> = arrayListOf()
+                    CommonUtils.findShowStatementKeyWord(keyWords, it)
+                    DescStatement(*keyWords.toTypedArray())
+                }  else {
                     var statement = this.visitSingleStatement(it)
                     if (statement == null) {
                         statement = DefaultStatement(StatementType.UNKOWN)
