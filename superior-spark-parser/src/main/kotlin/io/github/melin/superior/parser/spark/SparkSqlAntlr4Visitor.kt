@@ -549,7 +549,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 val property = item as DtPropertyContext
                 val key = CommonUtils.cleanQuote(property.key.text)
                 if (property.value.columnDef().size > 0) {
-                    val list = arrayListOf<Any>()
+                    val list = arrayListOf<HashMap<String, String>>()
                     property.value.columnDef().map { col ->
                         val map = HashMap<String, String>()
                         col.dtColProperty().map { pt ->
@@ -562,7 +562,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     }
                     options.put(key, list)
                 } else if (property.value.dtPropertyValue().size > 0) {
-                    val list = arrayListOf<Any>()
+                    val list = arrayListOf<String>()
                     property.value.dtPropertyValue().map { col ->
                         val value = CommonUtils.cleanQuote(col.text)
                         list.add(value)
