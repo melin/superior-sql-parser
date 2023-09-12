@@ -1811,13 +1811,13 @@ class SparkSqlParserTest {
         
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
-            Assert.assertEquals("sftp", statement.srcType)
-            Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
+            Assert.assertEquals("sftp", statement.sourceType)
+            Assert.assertEquals("x.x.x.x", statement.sourceOptions.get("host"))
 
-            Assert.assertEquals("hive", statement.distType)
-            Assert.assertEquals("demo", statement.distOptions.get("table"))
+            Assert.assertEquals("hive", statement.sinkType)
+            Assert.assertEquals("demo", statement.sinkOptions.get("table"))
 
-            val list = statement.distOptions.get("columns") as List<String>
+            val list = statement.sinkOptions.get("columns") as List<String>
             Assert.assertEquals(2, list.size)
         } else {
             Assert.fail()
@@ -1835,15 +1835,15 @@ class SparkSqlParserTest {
         
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
-            Assert.assertEquals("sftp", statement.srcType)
-            Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
+            Assert.assertEquals("sftp", statement.sourceType)
+            Assert.assertEquals("x.x.x.x", statement.sourceOptions.get("host"))
 
             Assert.assertEquals("select * from result where type='sql'", statement.transformSql)
 
-            Assert.assertEquals("hive", statement.distType)
-            Assert.assertEquals("demo", statement.distOptions.get("table"))
+            Assert.assertEquals("hive", statement.sinkType)
+            Assert.assertEquals("demo", statement.sinkOptions.get("table"))
 
-            val list = statement.distOptions.get("columns") as List<String>
+            val list = statement.sinkOptions.get("columns") as List<String>
             Assert.assertEquals(2, list.size)
         } else {
             Assert.fail()
@@ -1856,10 +1856,10 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
-            Assert.assertEquals("sftp", statement.srcType)
-            Assert.assertEquals("x.x.x.x", statement.srcOptions.get("host"))
+            Assert.assertEquals("sftp", statement.sourceType)
+            Assert.assertEquals("x.x.x.x", statement.sourceOptions.get("host"))
 
-            Assert.assertEquals("log", statement.distType)
+            Assert.assertEquals("log", statement.sinkType)
         } else {
             Assert.fail()
         }
@@ -1879,9 +1879,9 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
-            Assert.assertEquals("hive", statement.srcType)
+            Assert.assertEquals("hive", statement.sourceType)
 
-            Assert.assertEquals("log", statement.distType)
+            Assert.assertEquals("log", statement.sinkType)
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(1, statement.functionNames.size)
         } else {
@@ -1918,10 +1918,10 @@ class SparkSqlParserTest {
         
         if (statement is DataTunnelExpr) {
             Assert.assertEquals(StatementType.DATATUNNEL, statement.statementType)
-            Assert.assertEquals("oracle", statement.srcType)
+            Assert.assertEquals("oracle", statement.sourceType)
 
-            Assert.assertEquals("log", statement.distType)
-            val list = statement.srcOptions.get("columns") as List<HashMap<String, String>>
+            Assert.assertEquals("log", statement.sinkType)
+            val list = statement.sourceOptions.get("columns") as List<HashMap<String, String>>
             Assert.assertEquals(12, list.size )
         } else {
             Assert.fail()

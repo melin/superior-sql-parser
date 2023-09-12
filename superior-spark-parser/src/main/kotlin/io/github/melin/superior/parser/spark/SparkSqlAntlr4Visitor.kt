@@ -512,8 +512,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {
-        val srcType = CommonUtils.cleanQuote(ctx.sourceName.text)
-        val distType = CommonUtils.cleanQuote(ctx.sinkName.text)
+        val sourceType = CommonUtils.cleanQuote(ctx.sourceName.text)
+        val sinkType = CommonUtils.cleanQuote(ctx.sinkName.text)
 
         currentOptType = StatementType.DATATUNNEL
 
@@ -521,16 +521,16 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             visitCtes(ctx.ctes())
         }
 
-        val srcOptions = parseDtOptions(ctx.readOpts)
+        val sourceOptions = parseDtOptions(ctx.readOpts)
 
         var transformSql: String? = null
         if (ctx.transfromSql != null) {
             transformSql = CommonUtils.cleanQuote(ctx.transfromSql.text)
         }
 
-        val distOptions = parseDtOptions(ctx.writeOpts)
+        val sinkOptions = parseDtOptions(ctx.writeOpts)
 
-        val data = DataTunnelExpr(srcType, srcOptions, transformSql, distType, distOptions)
+        val data = DataTunnelExpr(sourceType, sourceOptions, transformSql, sinkType, sinkOptions)
         data.inputTables.addAll(inputTables)
         data.functionNames.addAll(functionNames)
         return data
@@ -543,7 +543,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     private fun parseDtOptions(ctx: DtPropertyListContext?): HashMap<String, Any> {
-        val options = HashMap<String, Any>()
+        val options = LinkedHashMap<String, Any>()
         if (ctx != null) {
             ctx.dtProperty().map { item ->
                 val property = item as DtPropertyContext

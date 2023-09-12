@@ -8,11 +8,11 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
 data class DataTunnelExpr(
-    val srcType: String,
-    var srcOptions: Map<String, Any>,
-    val transformSql: String?,
-    val distType: String,
-    var distOptions: Map<String, Any>
+        val sourceType: String,
+        var sourceOptions: Map<String, Any>,
+        val transformSql: String?,
+        val sinkType: String,
+        var sinkOptions: Map<String, Any>
 ) : Statement() {
     override val statementType = StatementType.DATATUNNEL
     override val privilegeType = PrivilegeType.OTHER
