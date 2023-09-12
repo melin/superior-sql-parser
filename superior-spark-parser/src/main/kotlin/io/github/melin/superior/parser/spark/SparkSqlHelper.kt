@@ -64,6 +64,8 @@ object SparkSqlHelper {
             DELETE,
             UPDATE,
 
+            SET,
+
             EXPLAIN
             -> true
             else -> false
