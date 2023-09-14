@@ -2013,13 +2013,11 @@ class SparkSqlParserTest {
 
     @Test
     fun syncSchemaTest() {
-        val sql = "SYNC SCHEMA my_db_uc FROM hive_metastore.my_db SET OWNER wangwu"
+        val sql = "SYNC SCHEMA FROM hive_metastore.my_db SET OWNER wangwu"
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncSchemaExpr) {
             Assert.assertEquals(StatementType.SYNC, statement.statementType)
-            Assert.assertNull(statement.targetCatalogName)
-            Assert.assertEquals("my_db_uc", statement.targetDatabaseName)
             Assert.assertEquals("hive_metastore", statement.sourceCatalogName)
             Assert.assertEquals("my_db", statement.sourceDatabaseName)
             Assert.assertEquals("wangwu", statement.owner)
@@ -2030,14 +2028,11 @@ class SparkSqlParserTest {
 
     @Test
     fun syncTableTest() {
-        val sql = "SYNC TABLE main.default.my_tbl FROM hive_metastore.default.my_tbl"
+        val sql = "SYNC TABLE FROM hive_metastore.default.my_tbl"
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncTableExpr) {
             Assert.assertEquals(StatementType.SYNC, statement.statementType)
-            Assert.assertEquals("main", statement.targetTableId.catalogName)
-            Assert.assertEquals("default", statement.targetTableId.schemaName)
-            Assert.assertEquals("my_tbl", statement.targetTableId.tableName)
             Assert.assertEquals("hive_metastore", statement.sourceTableId.catalogName)
             Assert.assertEquals("default", statement.sourceTableId.schemaName)
             Assert.assertEquals("my_tbl", statement.sourceTableId.tableName)

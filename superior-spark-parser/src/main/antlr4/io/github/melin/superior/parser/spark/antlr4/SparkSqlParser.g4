@@ -252,7 +252,7 @@ statement
     | CALL HELP callHelpExpr?                                          #callHelp
     | CALL multipartIdentifier
         LEFT_PAREN callArgument (COMMA callArgument)* RIGHT_PAREN      #call
-    | SYNC type=(SCHEMA|TABLE) target=multipartIdentifier FROM source=multipartIdentifier
+    | SYNC type=(SCHEMA|TABLE) FROM source=multipartIdentifier
       (SET OWNER principal=identifier)?                                #sync
 
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand

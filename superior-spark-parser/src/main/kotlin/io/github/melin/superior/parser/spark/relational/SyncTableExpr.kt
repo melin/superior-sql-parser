@@ -7,7 +7,6 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
 data class SyncTableExpr(
-    val targetTableId: TableId,
     val sourceTableId: TableId,
     val owner: String?
 ) : Statement() {

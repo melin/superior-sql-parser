@@ -611,13 +611,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         return if ("schema" == type) {
-            val target = parseNamespace(ctx.target)
             val source = parseNamespace(ctx.source)
-            SyncSchemaExpr(target.first, target.second, source.first, source.second, owner);
+            SyncSchemaExpr(source.first, source.second, owner);
         } else {
-            val targetTableId = parseTableName(ctx.target)
             val sourceTableId = parseTableName(ctx.source)
-            SyncTableExpr(targetTableId, sourceTableId, owner)
+            SyncTableExpr(sourceTableId, owner)
         }
     }
 

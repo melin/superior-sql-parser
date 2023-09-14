@@ -6,8 +6,6 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 
 data class SyncSchemaExpr(
-    val targetCatalogName: String?,
-    val targetDatabaseName: String,
     val sourceCatalogName: String?,
     val sourceDatabaseName: String,
     val owner: String?
