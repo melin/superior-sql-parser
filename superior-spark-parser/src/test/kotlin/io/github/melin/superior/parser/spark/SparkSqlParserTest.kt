@@ -3,10 +3,7 @@ package io.github.melin.superior.parser.spark
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
-import io.github.melin.superior.common.relational.common.CallProcedure
-import io.github.melin.superior.common.relational.common.SyncDatabase
-import io.github.melin.superior.common.relational.common.SyncTable
-import io.github.melin.superior.common.relational.common.UseDatabase
+import io.github.melin.superior.common.relational.common.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
@@ -2018,7 +2015,7 @@ class SparkSqlParserTest {
         val sql = "SYNC SCHEMA FROM hive_metastore.my_db SET OWNER wangwu"
         val statement = SparkSqlHelper.parseStatement(sql)
         
-        if (statement is SyncSchemaExpr) {
+        if (statement is SyncSchemaMetaData) {
             Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.sourceCatalogName)
             Assert.assertEquals("my_db", statement.sourceDatabaseName)
@@ -2033,7 +2030,7 @@ class SparkSqlParserTest {
         val sql = "SYNC TABLE FROM hive_metastore.default.my_tbl"
         val statement = SparkSqlHelper.parseStatement(sql)
         
-        if (statement is SyncTableExpr) {
+        if (statement is SyncTableMetaData) {
             Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.sourceTableId.catalogName)
             Assert.assertEquals("default", statement.sourceTableId.schemaName)
