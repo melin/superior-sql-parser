@@ -662,7 +662,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
 
         val createDatabase = if (ctx.includeTable == null) {
-            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, null)
         } else {
             SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
         }

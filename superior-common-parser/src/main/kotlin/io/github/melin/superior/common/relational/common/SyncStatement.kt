@@ -23,7 +23,7 @@ data class SyncDatabase(
     var sinkDatabaseName: String,
     var sourceCatalogName: String?,
     var sourceDatabaseName: String,
-    var includeTable: String
+    var includeTable: String?
 ): Statement() {
     override val statementType = StatementType.SYNC_DATABASE
     override val privilegeType = PrivilegeType.CREATE
