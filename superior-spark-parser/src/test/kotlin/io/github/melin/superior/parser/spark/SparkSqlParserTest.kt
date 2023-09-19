@@ -2071,7 +2071,6 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
-        
         if (statement is AlterTable) {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
             val createIndex = statement.firstAction() as CreateIndex
@@ -2085,7 +2084,6 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
-
         
         if (statement is AlterTable) {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
@@ -2112,6 +2110,7 @@ class SparkSqlParserTest {
         }
     }
 
+    @Test
     fun tvfTest() {
         val sql = """
             SELECT * FROM range(6 + cos(3));
@@ -2119,11 +2118,8 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
 
-        if (statement is CreateFileView) {
-            Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
-            Assert.assertEquals("/user/dataworks/users/qianxiao/demo.csv", statement.path)
-            Assert.assertEquals("csv", statement.fileFormat)
-            Assert.assertEquals("gz", statement.compression)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(0, statement.inputTables.size)
         }
     }
 }
