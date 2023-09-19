@@ -1167,8 +1167,8 @@ class SparkSqlParserTest {
                 select lag(bzdy) over (order by week) bzdys, bzhyyh, bzdy, week
                 from (
                     select count(distinct partner_code) bzhyyh, count(1) bzdy, week from tdl_dt2x_table
-                )
-            ) limit 111
+                ) a
+            ) b limit 111
         """.trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2103,6 +2103,21 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.CREATE_FILE_VIEW, statement.statementType)
+
+        if (statement is CreateFileView) {
+            Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
+            Assert.assertEquals("/user/dataworks/users/qianxiao/demo.csv", statement.path)
+            Assert.assertEquals("csv", statement.fileFormat)
+            Assert.assertEquals("gz", statement.compression)
+        }
+    }
+
+    fun tvfTest() {
+        val sql = """
+            SELECT * FROM range(6 + cos(3));
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
 
         if (statement is CreateFileView) {
             Assert.assertEquals("tdl_spark_test", statement.tableId.tableName)
