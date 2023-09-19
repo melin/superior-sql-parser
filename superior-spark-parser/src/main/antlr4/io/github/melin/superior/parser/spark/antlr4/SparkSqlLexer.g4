@@ -430,6 +430,9 @@ WITHIN: 'WITHIN';
 YEAR: 'YEAR';
 YEARS: 'YEARS';
 ZONE: 'ZONE';
+
+INCLUDING: 'INCLUDING';
+EXCLUDING: 'EXCLUDING';
 //--SPARK-KEYWORD-LIST-END
 //============================
 // End of the keywords list

@@ -625,7 +625,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return CallHelp(procedure)
     }
 
-    override fun visitSync(ctx: SparkSqlParser.SyncContext): Statement {
+    override fun visitSyncTableMeta(ctx: SparkSqlParser.SyncTableMetaContext): Statement {
         val type = ctx.dtType.text.lowercase();
         var owner: String? = null
         if (ctx.principal != null) {
@@ -639,6 +639,41 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             val sourceTableId = parseTableName(ctx.source)
             SyncTableExpr(sourceTableId, owner)
         }
+    }
+
+    override fun visitSyncTableExpr(ctx: SparkSqlParser.SyncTableExprContext): Statement {
+        val sinkTable = parseTableName(ctx.sink)
+        val sourceTable = parseTableName(ctx.source)
+
+        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
+        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
+
+        val createTable = SyncTable(sinkTable, sourceTable)
+        createTable.sinkOptions = sinkOptions
+        createTable.sourceOptions = sourceOptions
+        return createTable
+    }
+
+    override fun visitSyncDatabaseExpr(ctx: SparkSqlParser.SyncDatabaseExprContext): Statement {
+        val sinkDatabase = parseNamespace(ctx.sink)
+        val sourceDatabase = parseNamespace(ctx.source)
+
+        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
+        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
+
+        val createDatabase = if (ctx.includeTable == null) {
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
+        } else {
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
+        }
+
+        if (ctx.excludeTable != null) {
+            createDatabase.excludeTable = CommonUtils.cleanQuote(ctx.excludeTable.text)
+        }
+
+        createDatabase.sinkOptions = sinkOptions
+        createDatabase.sourceOptions = sourceOptions
+        return createDatabase
     }
 
     //-----------------------------------partition-------------------------------------------------
@@ -1274,7 +1309,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
     }
 
-    private fun parseOptions(ctx: PropertyListContext?): Map<String, String> {
+    private fun parseOptions(ctx: PropertyListContext?): HashMap<String, String> {
         val properties = HashMap<String, String>()
         if (ctx != null) {
             ctx.property().forEach { item ->

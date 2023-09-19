@@ -66,7 +66,6 @@ enum class StatementType: Serializable {
     APP_JAR, // spark
     CALL, // hudi
     HELP, // hudi
-    SYNC,
 
     ARITHMETIC,
 
@@ -76,10 +75,9 @@ enum class StatementType: Serializable {
     ADD_JAR,
     REMOVE_JAR,
 
-    FLINK_CDC_BEGIN,
-    FLINK_CDC_END,
-    FLINK_CDC_CTAS,
-    FLINK_CDC_CDAS,
+    SYNC_TABLE_META,
+    SYNC_TABLE,
+    SYNC_DATABASE,
 
     UNKOWN;
 }

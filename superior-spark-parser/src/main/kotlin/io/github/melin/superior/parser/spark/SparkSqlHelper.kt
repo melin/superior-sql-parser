@@ -58,8 +58,10 @@ object SparkSqlHelper {
             DATATUNNEL,
             CALL,
             HELP,
-            SYNC,
             MERGE_FILE,
+            SYNC_TABLE_META,
+            SYNC_TABLE,
+            SYNC_DATABASE,
 
             DELETE,
             UPDATE,

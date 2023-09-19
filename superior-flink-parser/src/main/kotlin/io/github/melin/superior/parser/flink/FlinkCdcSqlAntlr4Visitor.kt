@@ -5,6 +5,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.SyncDatabase
+import io.github.melin.superior.common.relational.common.SyncTable
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParser
 import io.github.melin.superior.parser.flink.antlr4.FlinkCdcSqlParserBaseVisitor
@@ -67,23 +69,14 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false, val command: Strin
         return data
     }
 
-    override fun visitBeginStatement(ctx: FlinkCdcSqlParser.BeginStatementContext): Statement {
-        return DefaultStatement(StatementType.FLINK_CDC_BEGIN)
-    }
-
-    override fun visitEndStatement(ctx: FlinkCdcSqlParser.EndStatementContext): Statement {
-        currentOptType = StatementType.FLINK_CDC_CTAS
-        return DefaultStatement(StatementType.FLINK_CDC_END)
-    }
-
-    override fun visitCreateTable(ctx: FlinkCdcSqlParser.CreateTableContext): Statement {
+    override fun visitSyncTableExpr(ctx: FlinkCdcSqlParser.SyncTableExprContext): Statement {
         val sinkTable = parseTable(ctx.sink)
         val sourceTable = parseTable(ctx.source)
 
-        val sinkOptions: HashMap<String, String>? = parseOptions(ctx.sinkOptions)
-        val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
+        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
+        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
 
-        val createTable = FlinkCdcCreateTable(sinkTable, sourceTable)
+        val createTable = SyncTable(sinkTable, sourceTable)
         createTable.sinkOptions = sinkOptions
         createTable.sourceOptions = sourceOptions
 
@@ -114,17 +107,17 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false, val command: Strin
         return createTable
     }
 
-    override fun visitCreateDatabase(ctx: FlinkCdcSqlParser.CreateDatabaseContext): Statement {
+    override fun visitSyncDatabaseExpr(ctx: FlinkCdcSqlParser.SyncDatabaseExprContext): Statement {
         val sinkDatabase = parseDatabase(ctx.sink)
         val sourceDatabase = parseDatabase(ctx.source)
 
-        val sinkOptions: HashMap<String, String>? = parseOptions(ctx.sinkOptions)
-        val sourceOptions: HashMap<String, String>? = parseOptions(ctx.sourceOptions)
+        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
+        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
 
         val createDatabase = if (ctx.includeTable == null) {
-            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, "__ALL__")
         } else {
-            FlinkCdcCreateDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
         }
 
         if (ctx.excludeTable != null) {
@@ -160,11 +153,12 @@ class FlinkCdcSqlAntlr4Visitor(val splitSql: Boolean = false, val command: Strin
         }
     }
 
-    fun parseOptions(options: FlinkCdcSqlParser.PropertyListContext?): HashMap<String, String>? {
-        if (options == null) {
-            return null
-        }
+    fun parseOptions(options: FlinkCdcSqlParser.PropertyListContext?): HashMap<String, String> {
         val properties = HashMap<String, String>()
+        if (options == null) {
+            return properties
+        }
+
         options.children.filter { it is FlinkCdcSqlParser.PropertyContext }.map { item ->
             val property = item as FlinkCdcSqlParser.PropertyContext
             val key = CommonUtils.cleanQuote(property.key.text)

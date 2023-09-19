@@ -10,7 +10,7 @@ data class SyncSchemaExpr(
     val sourceDatabaseName: String,
     val owner: String?
 ) : Statement() {
-    override val statementType = StatementType.SYNC
+    override val statementType = StatementType.SYNC_TABLE_META
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL
 }

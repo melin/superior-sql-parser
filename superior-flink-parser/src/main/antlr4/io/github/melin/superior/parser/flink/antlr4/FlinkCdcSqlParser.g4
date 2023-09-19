@@ -11,23 +11,21 @@ singleStatement
     ;
 
 statement
-    : BEGIN STATEMENT SET                                            #beginStatement
-    | END                                                            #endStatement
-    | CREATE TABLE IF NOT EXISTS sink=multipartIdentifier
+    : CREATE TABLE IF NOT EXISTS sink=multipartIdentifier
         (PARTITIONED BY identifierList)?
         commentSpec?
         (WITH sinkOptions=propertyList)?
         AS TABLE source=multipartIdentifier
         (OPTIONS sourceOptions=propertyList)?
-        (ADD COLUMN LEFT_PAREN computeColList RIGHT_PAREN)?           #createTable
-    | CREATE DATABASE IF NOT EXISTS sink=multipartIdentifier
+        (ADD COLUMN LEFT_PAREN computeColList RIGHT_PAREN)?           #syncTableExpr
+    | CREATE (DATABASE|SCHEMA) IF NOT EXISTS sink=multipartIdentifier
         (PARTITIONED BY identifierList)?
         commentSpec?
         (WITH sinkOptions=propertyList)?
-        AS (DATABASE | KAFKA) source=multipartIdentifier
+        AS DATABASE source=multipartIdentifier
         (INCLUDING (ALL TABLES | TABLE includeTable=STRING))?
         (EXCLUDING TABLE excludeTable=STRING)?
-        (OPTIONS sourceOptions=propertyList)?                         #createDatabase
+        (OPTIONS sourceOptions=propertyList)?                         #syncDatabaseExpr
     ;
 
 multipartIdentifier

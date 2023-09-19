@@ -4,6 +4,8 @@ import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.CallProcedure
+import io.github.melin.superior.common.relational.common.SyncDatabase
+import io.github.melin.superior.common.relational.common.SyncTable
 import io.github.melin.superior.common.relational.common.UseDatabase
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView
@@ -2017,7 +2019,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncSchemaExpr) {
-            Assert.assertEquals(StatementType.SYNC, statement.statementType)
+            Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.sourceCatalogName)
             Assert.assertEquals("my_db", statement.sourceDatabaseName)
             Assert.assertEquals("wangwu", statement.owner)
@@ -2027,12 +2029,12 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun syncTableTest() {
+    fun syncTableMetaTest() {
         val sql = "SYNC TABLE FROM hive_metastore.default.my_tbl"
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncTableExpr) {
-            Assert.assertEquals(StatementType.SYNC, statement.statementType)
+            Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.sourceTableId.catalogName)
             Assert.assertEquals("default", statement.sourceTableId.schemaName)
             Assert.assertEquals("my_tbl", statement.sourceTableId.tableName)
@@ -2120,6 +2122,44 @@ class SparkSqlParserTest {
 
         if (statement is QueryStmt) {
             Assert.assertEquals(0, statement.inputTables.size)
+        }
+    }
+
+    @Test
+    fun syncTableTest() {
+        val sql = """
+            CREATE TABLE IF NOT EXISTS user
+            WITH ('jdbcWriteBatchSize' = '1024')
+            AS TABLE mysql
+            OPTIONS('server-id'='8001-8004')
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is SyncTable) {
+            val table = statement.sinkTableId
+            Assert.assertEquals("user", table.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun syncDatabaseTest() {
+        val sql = """
+            CREATE DATABASE IF NOT EXISTS holo_tpcds 
+            WITH ('sink.parallelism' = '4') 
+            AS DATABASE mysql.tpcds 
+            INCLUDING ALL TABLES 
+            EXCLUDING TABLE "test"
+            OPTIONS('server-id'='8001-8004')
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is SyncDatabase) {
+            Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
+            Assert.assertEquals("test", statement.excludeTable)
+        } else {
+            Assert.fail()
         }
     }
 }

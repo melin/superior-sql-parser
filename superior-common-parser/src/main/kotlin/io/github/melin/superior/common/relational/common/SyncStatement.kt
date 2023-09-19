@@ -1,15 +1,15 @@
-package io.github.melin.superior.parser.flink
+package io.github.melin.superior.common.relational.common
 
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
 
-data class FlinkCdcCreateTable(
+data class SyncTable(
     var sinkTableId: TableId,
     var sourceTableId: TableId,
 ): Statement() {
-    override val statementType = StatementType.FLINK_CDC_CTAS
+    override val statementType = StatementType.SYNC_TABLE
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
@@ -18,14 +18,14 @@ data class FlinkCdcCreateTable(
     var computeCols: List<ColumnRel>? = null
 }
 
-data class FlinkCdcCreateDatabase(
+data class SyncDatabase(
     var sinkCatalogName: String?,
     var sinkDatabaseName: String,
     var sourceCatalogName: String?,
     var sourceDatabaseName: String,
     var includeTable: String
 ): Statement() {
-    override val statementType = StatementType.FLINK_CDC_CDAS
+    override val statementType = StatementType.SYNC_DATABASE
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 

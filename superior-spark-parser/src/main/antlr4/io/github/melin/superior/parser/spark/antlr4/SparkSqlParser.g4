@@ -230,7 +230,7 @@ statement
     | DROP INDEX (IF EXISTS)? identifier ON TABLE? identifierReference #dropIndex
 
     | MERGE TABLE multipartIdentifier partitionSpec?
-            (OPTIONS options=propertyList)?                                #mergeFile
+            (OPTIONS options=propertyList)?                            #mergeFile
 
     | CREATE TEMPORARY? VIEW multipartIdentifier tableProvider
         FILE path=stringLit
@@ -253,9 +253,24 @@ statement
     | CALL multipartIdentifier
         LEFT_PAREN callArgument (COMMA callArgument)* RIGHT_PAREN      #call
     | SYNC dtType=(SCHEMA|TABLE) FROM source=multipartIdentifier
-      (SET OWNER principal=identifier)?                                #sync
+      (SET OWNER principal=identifier)?                                #syncTableMeta
 
-    | unsupportedHiveNativeCommands .*?                                #failNativeCommand
+    | CREATE TABLE IF NOT EXISTS sink=multipartIdentifier
+        (PARTITIONED BY identifierList)?
+        commentSpec?
+        (WITH sinkOptions=propertyList)?
+        AS TABLE source=multipartIdentifier
+        (OPTIONS sourceOptions=propertyList)?                          #syncTableExpr
+    | CREATE (DATABASE|SCHEMA) IF NOT EXISTS sink=multipartIdentifier
+        (PARTITIONED BY identifierList)?
+        commentSpec?
+        (WITH sinkOptions=propertyList)?
+        AS DATABASE source=multipartIdentifier
+        (INCLUDING (ALL TABLES | TABLE includeTable=stringLit))?
+        (EXCLUDING TABLE excludeTable=stringLit)?
+        (OPTIONS sourceOptions=propertyList)?                           #syncDatabaseExpr
+
+    | unsupportedHiveNativeCommands .*?                                 #failNativeCommand
     ;
 
 timezone
@@ -1626,6 +1641,8 @@ ansiNonReserved
     | SIZE_LIMIT
     | SINGLE
     | MAX_FILE_SIZE
+    | INCLUDING
+    | EXCLUDING
 //--ANSI-NON-RESERVED-END
     ;
 
@@ -1985,5 +2002,7 @@ nonReserved
     | SIZE_LIMIT
     | SINGLE
     | MAX_FILE_SIZE
+    | INCLUDING
+    | EXCLUDING
 //--DEFAULT-NON-RESERVED-END
     ;

@@ -1,5 +1,7 @@
 package io.github.melin.superior.parser.flink
 
+import io.github.melin.superior.common.relational.common.SyncDatabase
+import io.github.melin.superior.common.relational.common.SyncTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -22,7 +24,7 @@ class FlinkCdcSqlParserTest {
         """.trimIndent()
 
         val statement = FlinkCdcSqlHelper.parseStatement(sql)
-        if (statement is FlinkCdcCreateTable) {
+        if (statement is SyncTable) {
             val table = statement.sinkTableId
             Assert.assertEquals("user", table.tableName)
             Assert.assertEquals(2, statement.computeCols?.size)
@@ -44,7 +46,7 @@ class FlinkCdcSqlParserTest {
         """.trimIndent()
 
         val statement = FlinkCdcSqlHelper.parseStatement(sql)
-        if (statement is FlinkCdcCreateDatabase) {
+        if (statement is SyncDatabase) {
             Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
             Assert.assertEquals("test", statement.excludeTable)
         } else {
@@ -74,7 +76,7 @@ class FlinkCdcSqlParserTest {
         """.trimIndent()
 
         val statement = FlinkCdcSqlHelper.parseStatement(sql)
-        if (statement is FlinkCdcCreateDatabase) {
+        if (statement is SyncDatabase) {
             Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
             Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))
         } else {
