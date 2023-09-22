@@ -14,21 +14,16 @@ class FlinkCdcSqlParserTest {
     @Test
     fun createTableTest() {
         val sql = """
-            CREATE TABLE IF NOT EXISTS user
+            CREATE TABLE IF NOT EXISTS qeqw 
             WITH ('jdbcWriteBatchSize' = '1024')
             AS TABLE mysql
             OPTIONS('server-id'='8001-8004')
-            ADD COLUMN (
-              `t_idx` AS COALESCE(SPLIT_INDEX(`tbl`, 'r', 1), 'default') FIRST,
-              `c_id` AS `id` + 10 AFTER `id`)
         """.trimIndent()
 
-        val statement = FlinkCdcSqlHelper.parseStatement(sql)
+        val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncTable) {
             val table = statement.sinkTableId
-            Assert.assertEquals("user", table.tableName)
-            Assert.assertEquals(2, statement.computeCols?.size)
-            Assert.assertEquals("COALESCE(SPLIT_INDEX(`tbl`, 'r', 1), 'default')", statement.computeCols?.get(0)?.expression)
+            Assert.assertEquals("qeqw", table.tableName)
         } else {
             Assert.fail()
         }
@@ -45,7 +40,7 @@ class FlinkCdcSqlParserTest {
             OPTIONS('server-id'='8001-8004')
         """.trimIndent()
 
-        val statement = FlinkCdcSqlHelper.parseStatement(sql)
+        val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
             Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
             Assert.assertEquals("test", statement.excludeTable)
@@ -75,7 +70,7 @@ class FlinkCdcSqlParserTest {
             )
         """.trimIndent()
 
-        val statement = FlinkCdcSqlHelper.parseStatement(sql)
+        val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
             Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
             Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))

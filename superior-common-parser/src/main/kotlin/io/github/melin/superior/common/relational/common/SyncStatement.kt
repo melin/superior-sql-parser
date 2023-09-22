@@ -13,8 +13,8 @@ data class SyncTable(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
-    var sinkOptions: HashMap<String, String>? = null
-    var sourceOptions: HashMap<String, String>? = null
+    var sinkOptions: Map<String, String>? = null
+    var sourceOptions: Map<String, String>? = null
     var computeCols: List<ColumnRel>? = null
 }
 
@@ -29,8 +29,8 @@ data class SyncDatabase(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
-    var sinkOptions: HashMap<String, String>? = null
-    var sourceOptions: HashMap<String, String>? = null
+    var sinkOptions: Map<String, String>? = null
+    var sourceOptions: Map<String, String>? = null
     var excludeTable: String? = null
 }
 

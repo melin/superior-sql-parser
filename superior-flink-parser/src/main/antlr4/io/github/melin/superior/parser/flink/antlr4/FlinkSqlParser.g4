@@ -13,6 +13,7 @@ singleStatement
 sqlStatement
     : ddlStatement | dmlStatement | describeStatement | explainStatement | useStatement | showStatememt
     | loadStatement | unloadStatememt | setStatememt | resetStatememt | jarStatememt | dtAddStatement
+    | cdcStatement
     ;
 
 ddlStatement
@@ -23,6 +24,23 @@ ddlStatement
 
 dmlStatement
     : queryStatement | insertStatement
+    ;
+
+cdcStatement
+    : KW_CREATE KW_TABLE KW_IF KW_NOT KW_EXISTS sink=sourceTable
+        (KW_PARTITIONED KW_BY identifierList)?
+        commentSpec?
+        (KW_WITH sinkOptions=tablePropertyList)?
+        KW_AS KW_TABLE source=sourceTable
+        (KW_OPTIONS sourceOptions=tablePropertyList)?                       #syncTableExpr
+    | KW_CREATE (KW_DATABASE|KW_SCHEMA) KW_IF KW_NOT KW_EXISTS sink=sourceTable
+        (KW_PARTITIONED KW_BY identifierList)?
+        commentSpec?
+        (KW_WITH sinkOptions=tablePropertyList)?
+        KW_AS KW_DATABASE source=sourceTable
+        (KW_INCLUDING (KW_ALL KW_TABLES | KW_TABLE includeTable=stringLiteral))?
+        (KW_EXCLUDING KW_TABLE excludeTable=stringLiteral)?
+        (KW_OPTIONS sourceOptions=tablePropertyList)?                       #syncDatabaseExpr
     ;
 
 // some statemen

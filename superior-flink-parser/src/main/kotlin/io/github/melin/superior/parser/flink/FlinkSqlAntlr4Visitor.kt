@@ -241,6 +241,42 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return UseCatalog(catalogName)
     }
 
+    override fun visitSyncTableExpr(ctx: FlinkSqlParser.SyncTableExprContext): Statement {
+        val sinkTable = parseSourceTable(ctx.sink.uid())
+        val sourceTable = parseSourceTable(ctx.source.uid())
+
+        val sinkOptions = parseTableOptions(ctx.sinkOptions)
+        val sourceOptions = parseTableOptions(ctx.sourceOptions)
+
+        val createTable = SyncTable(sinkTable, sourceTable)
+        createTable.sinkOptions = sinkOptions
+        createTable.sourceOptions = sourceOptions
+
+        return createTable
+    }
+
+    override fun visitSyncDatabaseExpr(ctx: FlinkSqlParser.SyncDatabaseExprContext): Statement {
+        val sinkDatabase = parseDatabase(ctx.sink.uid())
+        val sourceDatabase = parseDatabase(ctx.source.uid())
+
+        val sinkOptions = parseTableOptions(ctx.sinkOptions)
+        val sourceOptions = parseTableOptions(ctx.sourceOptions)
+
+        val createDatabase = if (ctx.includeTable == null) {
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, null)
+        } else {
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
+        }
+
+        if (ctx.excludeTable != null) {
+            createDatabase.excludeTable = CommonUtils.cleanQuote(ctx.excludeTable.text)
+        }
+
+        createDatabase.sinkOptions = sinkOptions
+        createDatabase.sourceOptions = sourceOptions
+        return createDatabase
+    }
+
     override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {
         if (ctx.timeAttrColumn() != null) {
             val tableId = parseSourceTable(ctx.timeAttrColumn().uid())
@@ -303,6 +339,20 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         } else if (nodes.size == 1) {
             val tableName = CommonUtils.cleanQuote(nodes.get(0).text)
             return TableId(tableName)
+        } else {
+            throw SQLParserException("parse multipart error: " + nodes.size)
+        }
+    }
+
+    fun parseDatabase(uid: UidContext): Pair<String?, String> {
+        val nodes = uid.identifier()
+        if (nodes.size == 2) {
+            val database = CommonUtils.cleanQuote(nodes.get(0).text)
+            val schema = CommonUtils.cleanQuote(nodes.get(1).text)
+            return Pair(database, schema)
+        } else if (nodes.size == 1) {
+            val schema = CommonUtils.cleanQuote(nodes.get(0).text)
+            return Pair(null, schema)
         } else {
             throw SQLParserException("parse multipart error: " + nodes.size)
         }
