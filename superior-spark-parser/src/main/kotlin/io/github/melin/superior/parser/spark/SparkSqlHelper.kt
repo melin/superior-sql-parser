@@ -42,11 +42,13 @@ object SparkSqlHelper {
 
             CREATE_FILE_VIEW,
             CREATE_VIEW,
+            CREATE_FUNCTION,
             CREATE_TEMP_VIEW_USING,
             DROP_DATABASE,
             DROP_SCHEMA,
             DROP_VIEW,
             DROP_TABLE,
+            DROP_FUNCTION,
 
             SHOW,
             DESC,
