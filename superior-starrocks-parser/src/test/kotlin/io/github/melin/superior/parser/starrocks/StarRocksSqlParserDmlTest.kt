@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.starrocks
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
+import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -17,10 +18,14 @@ class StarRocksSqlParserDmlTest {
     @Test
     fun selectTest0() {
         val sql = """
-            SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20
+            SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20;
+            select hello('test', 23)
         """.trimIndent()
 
-        val statement = StarRocksHelper.parseStatement(sql)
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+        Assert.assertEquals(2, statements.size)
+
+        val statement = statements.get(0)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
@@ -28,6 +33,14 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(20, statement.offset)
             Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),
                 statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+
+        val statement1 = statements.get(1)
+        if (statement1 is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement1.statementType)
+            Assert.assertEquals(0, statement1.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -237,5 +250,20 @@ class StarRocksSqlParserDmlTest {
 
         val dropTask = statements.get(1) as DropTask
         Assert.assertEquals("test1", dropTask.taskName)
+    }
+
+    @Test
+    fun ctasTest() {
+        val sql = """
+            CREATE TABLE order_new (a, b, c) AS SELECT k1, k2, k3 FROM orders;
+        """.trimIndent()
+
+        val statements = StarRocksHelper.parseMultiStatement(sql)
+        Assert.assertEquals(1, statements.size)
+
+        val statement = statements.get(0) as CreateTableAsSelect
+
+        Assert.assertEquals("order_new", statement.tableId.tableName)
+        Assert.assertEquals("orders", statement.inputTables.get(0).tableName)
     }
 }

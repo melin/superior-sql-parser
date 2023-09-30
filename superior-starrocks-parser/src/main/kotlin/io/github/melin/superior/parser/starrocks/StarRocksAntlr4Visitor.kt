@@ -32,6 +32,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
+    private var functionNames: HashSet<FunctionId> = hashSetOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
@@ -90,6 +91,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         inputTables = arrayListOf()
         outputTables = arrayListOf()
         cteTempTables = arrayListOf()
+        functionNames = hashSetOf()
     }
 
     override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {
@@ -180,6 +182,24 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return table
     }
 
+    override fun visitCreateTableAsSelectStatement(ctx: CreateTableAsSelectStatementContext): Statement? {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
+        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+        val ifNotExists = ctx.EXISTS() != null
+
+        val createTable = CreateTableAsSelect(tableId, comment)
+        createTable.ifNotExists = ifNotExists
+        val properties = parseOptions(ctx.properties())
+        createTable.properties = properties
+
+        createTable.querySql = querySql
+        this.visitQueryStatement(ctx.queryStatement())
+        createTable.inputTables.addAll(inputTables)
+        createTable.functionNames.addAll(functionNames)
+        return createTable
+    }
+
     override fun visitCreateViewStatement(ctx: CreateViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
@@ -190,6 +210,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         this.visitQueryStatement(ctx.queryStatement())
         createView.inputTables.addAll(inputTables)
+        createView.functionNames.addAll(functionNames)
         return createView;
     }
 
@@ -203,6 +224,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         this.visitQueryStatement(ctx.queryStatement())
         createView.inputTables.addAll(inputTables)
+        createView.functionNames.addAll(functionNames)
         return createView;
     }
 
@@ -256,7 +278,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     override fun visitAlterViewStatement(ctx: AlterViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
-        val action = AlterViewAction(querySql, inputTables)
+        val action = AlterViewAction(querySql, inputTables, functionNames)
         return AlterTable(tableId, action)
     }
 
@@ -264,7 +286,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         currentOptType = StatementType.SELECT
         super.visitQueryRelation(ctx.queryRelation())
         val queryStmt = QueryStmt(inputTables, limit, offset)
-
+        queryStmt.functionNames.addAll(functionNames)
         queryStmts.add(queryStmt)
         return queryStmt
     }
@@ -307,6 +329,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             else InsertTable(InsertMode.OVERWRITE, tableId)
 
         insertTable.inputTables.addAll(inputTables)
+        insertTable.functionNames.addAll(functionNames)
         return insertTable
     }
 
@@ -345,19 +368,46 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitQualifiedName(ctx: QualifiedNameContext): Statement? {
         if (currentOptType == StatementType.SELECT ||
-            currentOptType == StatementType.CREATE_VIEW ||
-            currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
-            currentOptType == StatementType.UPDATE ||
-            currentOptType == StatementType.DELETE ||
-            currentOptType == StatementType.MERGE ||
-            currentOptType == StatementType.INSERT ||
-            currentOptType == StatementType.CREATE_FUNCTION) {
+                currentOptType == StatementType.CREATE_TABLE_AS_SELECT ||
+                currentOptType == StatementType.CREATE_VIEW ||
+                currentOptType == StatementType.CREATE_MATERIALIZED_VIEW ||
+                currentOptType == StatementType.UPDATE ||
+                currentOptType == StatementType.DELETE ||
+                currentOptType == StatementType.MERGE ||
+                currentOptType == StatementType.INSERT ||
+                currentOptType == StatementType.CREATE_FUNCTION) {
 
             val tableId = parseTableName(ctx)
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }
+        return null
+    }
+
+    override fun visitSimpleFunctionCall(ctx: SimpleFunctionCallContext): Statement? {
+        if (StatementType.SELECT == currentOptType ||
+                StatementType.CREATE_VIEW == currentOptType ||
+                StatementType.CREATE_MATERIALIZED_VIEW == currentOptType ||
+                StatementType.INSERT == currentOptType ||
+                StatementType.CREATE_TABLE_AS_SELECT == currentOptType) {
+
+            val names = ctx.qualifiedName().identifier()
+            if (names.size == 3) {
+                val catalog = StringUtils.lowerCase(names.get(0).text)
+                val schema = StringUtils.lowerCase(names.get(1).text)
+                val funcName = StringUtils.lowerCase(names.get(2).text)
+                functionNames.add(FunctionId(catalog, schema, funcName))
+            } else if (names.size == 2) {
+                val schema = StringUtils.lowerCase(names.get(0).text)
+                val funcName = StringUtils.lowerCase(names.get(1).text)
+                functionNames.add(FunctionId(schema, funcName))
+            } else if (names.size == 1) {
+                val funcName = StringUtils.lowerCase(names.get(0).text)
+                functionNames.add(FunctionId(funcName))
+            }
+        }
+
         return null
     }
 

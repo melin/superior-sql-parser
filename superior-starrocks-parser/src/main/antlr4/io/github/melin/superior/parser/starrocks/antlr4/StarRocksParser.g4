@@ -2113,7 +2113,7 @@ functionCall
     | specialFunctionExpression                                                           #specialFunction
     | aggregationFunction over?                                                           #aggregationFunctionCall
     | windowFunction over                                                                 #windowFunctionCall
-    | qualifiedName LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN  over?                        #simpleFunctionCall
+    | qualifiedName LEFT_PAREN (expression (COMMA expression)*)? RIGHT_PAREN  over?       #simpleFunctionCall
     ;
 
 aggregationFunction
