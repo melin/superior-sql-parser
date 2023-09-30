@@ -330,6 +330,18 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         insertTable.inputTables.addAll(inputTables)
         insertTable.functionNames.addAll(functionNames)
+
+        if (ctx.expressionsWithDefault().size > 0) {
+            val rows: ArrayList<List<String>> = ArrayList()
+            ctx.expressionsWithDefault().forEach {
+                var text = it.text
+                text = StringUtils.substringBetween(text, "(", ")").trim()
+                text = CommonUtils.cleanQuote(text)
+                rows.add(listOf(text))
+            }
+            insertTable.rows = rows
+        }
+
         return insertTable
     }
 

@@ -1153,26 +1153,26 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return null
     }
 
-    /*override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): Statement? {
+    override fun visitRowConstructor(ctx: SparkSqlParser.RowConstructorContext): Statement? {
         val row = ctx.children.filter { it is SparkSqlParser.NamedExpressionContext }.map {
             var text = it.text
-            text = StringUtil.cleanQuote(text)
+            text = CommonUtils.cleanQuote(text)
             text
         }.toList()
 
         rows.add(row)
-        return super.visitRowConstructor(ctx)
-    }*/
+        return null
+    }
 
-    override fun visitInlineTable(ctx: SparkSqlParser.InlineTableContext): Statement? {
-        ctx.children.filter { it is SparkSqlParser.ExpressionContext }.forEach {
+    override fun visitParenthesizedExpression(ctx: SparkSqlParser.ParenthesizedExpressionContext): Statement? {
+        val row = ctx.children.filter { it is SparkSqlParser.ExpressionContext }.map {
             var text = it.text
-            text = StringUtils.substringBetween(text, "(", ")").trim()
             text = CommonUtils.cleanQuote(text)
-            val list = listOf(text)
-            rows.add(list)
-        }
-        return super.visitInlineTable(ctx)
+            text
+        }.toList()
+
+        rows.add(row)
+        return null
     }
 
     override fun visitFromClause(ctx: SparkSqlParser.FromClauseContext): Statement? {

@@ -1272,7 +1272,7 @@ class SparkSqlParserTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
-            Assert.assertEquals("users", statement.tableId?.tableName)
+            Assert.assertEquals("users", statement.tableId.tableName)
             Assert.assertEquals(2, statement.rows?.size)
         } else {
             Assert.fail()
