@@ -69,8 +69,14 @@ enum class StatementType: Serializable {
 
     ARITHMETIC,
 
+    // StarRocks
     SR_SUBMIT_TASK,
     SR_DROP_TASK,
+    SR_CREATE_ROUTINE_LOAD,
+    SR_PAUSE_ROUTINE_LOAD,
+    SR_RESUME_ROUTINE_LOAD,
+    SR_STOP_ROUTINE_LOAD,
+    SR_ALTER_ROUTINE_LOAD,
 
     ADD_JAR,
     REMOVE_JAR,

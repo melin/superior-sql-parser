@@ -14,8 +14,7 @@ import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisit
 import org.antlr.v4.runtime.tree.RuleNode
 
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser.*
-import io.github.melin.superior.parser.starrocks.relational.DropTask
-import io.github.melin.superior.parser.starrocks.relational.SubmitTask
+import io.github.melin.superior.parser.starrocks.relational.*
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -67,9 +66,9 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
                     CommonUtils.findShowStatementKeyWord(keyWords, it)
                     DescStatement(*keyWords.toTypedArray())
                 }  else {
-                    var statement = this.visitSingleStatement(it)
+                    val statement = this.visitSingleStatement(it)
                     if (statement == null) {
-                        statement = DefaultStatement(StatementType.UNKOWN)
+                        throw SQLParserException("not support sql")
                     }
                     statement
                 }
@@ -354,6 +353,73 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     override fun visitDropTaskStatement(ctx: DropTaskStatementContext): Statement {
         val taskName = ctx.qualifiedName().text
         return DropTask(taskName)
+    }
+
+    override fun visitCreateRoutineLoadStatement(ctx: CreateRoutineLoadStatementContext): Statement {
+        val catalogName: String? = if (ctx.db != null && ctx.db.identifier().size == 2)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(1).text) else null
+        val schemaName: String? = if (ctx.db != null && ctx.db.identifier().size > 0)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(0).text) else null
+
+        val jobName = ctx.name.text;
+        val tableId = parseTableName(ctx.table)
+        val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
+        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        val source = ctx.source.text
+        val sourceProperties = if (ctx.dataSourceProperties() != null) parseOptions(ctx.dataSourceProperties().propertyList()) else null
+
+        return CreateRoutineLoad(catalogName, schemaName, jobName, tableId,
+                loadPropertiesExpr, jobProperties, source, sourceProperties)
+    }
+
+    override fun visitAlterRoutineLoadStatement(ctx: AlterRoutineLoadStatementContext): Statement {
+        val catalogName: String? = if (ctx.db != null && ctx.db.identifier().size == 2)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(1).text) else null
+        val schemaName: String? = if (ctx.db != null && ctx.db.identifier().size > 0)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(0).text) else null
+
+        val jobName = ctx.name.text;
+        val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
+        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        var source: String? = null;
+        var sourceProperties: Map<String, String>? = null;
+        if (ctx.dataSource() != null) {
+            source = ctx.dataSource().source.text
+            sourceProperties = parseOptions(ctx.dataSource().dataSourceProperties().propertyList())
+        }
+
+        return AlterRoutineLoad(catalogName, schemaName, jobName,
+                loadPropertiesExpr, jobProperties, source, sourceProperties)
+    }
+
+    override fun visitPauseRoutineLoadStatement(ctx: PauseRoutineLoadStatementContext): Statement {
+        val catalogName: String? = if (ctx.db != null && ctx.db.identifier().size == 2)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(1).text) else null
+        val schemaName: String? = if (ctx.db != null && ctx.db.identifier().size > 0)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(0).text) else null
+
+        val jobName = ctx.name.text;
+        return PauseRoutineLoad(catalogName, schemaName, jobName)
+    }
+
+    override fun visitResumeRoutineLoadStatement(ctx: ResumeRoutineLoadStatementContext): Statement {
+        val catalogName: String? = if (ctx.db != null && ctx.db.identifier().size == 2)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(1).text) else null
+        val schemaName: String? = if (ctx.db != null && ctx.db.identifier().size > 0)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(0).text) else null
+
+        val jobName = ctx.name.text;
+        return ResumeRoutineLoad(catalogName, schemaName, jobName)
+    }
+
+    override fun visitStopRoutineLoadStatement(ctx: StopRoutineLoadStatementContext): Statement {
+        val catalogName: String? = if (ctx.db != null && ctx.db.identifier().size == 2)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(1).text) else null
+        val schemaName: String? = if (ctx.db != null && ctx.db.identifier().size > 0)
+            CommonUtils.cleanQuote(ctx.db.identifier().get(0).text) else null
+
+        val jobName = ctx.name.text;
+        return StopRoutineLoad(catalogName, schemaName, jobName)
     }
 
     override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {

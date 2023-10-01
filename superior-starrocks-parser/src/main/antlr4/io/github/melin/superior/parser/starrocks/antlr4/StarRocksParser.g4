@@ -1001,7 +1001,7 @@ deleteStatement
 // ------------------------------------------- Routine Statement -----------------------------------------------------------
 createRoutineLoadStatement
     : CREATE ROUTINE LOAD (db=qualifiedName DOT)? name=identifier ON table=qualifiedName
-        (loadProperties (COMMA loadProperties)*)?
+        loadPropertiesExpr
         jobProperties?
         FROM source=identifier
         dataSourceProperties?
@@ -1009,13 +1009,17 @@ createRoutineLoadStatement
 
 alterRoutineLoadStatement
     : ALTER ROUTINE LOAD FOR (db=qualifiedName DOT)? name=identifier
-        (loadProperties (COMMA loadProperties)*)?
+        loadPropertiesExpr
         jobProperties?
         dataSource?
     ;
 
 dataSource
     : FROM source=identifier dataSourceProperties
+    ;
+
+loadPropertiesExpr
+    : (loadProperties (COMMA loadProperties)*)?
     ;
 
 loadProperties
