@@ -84,7 +84,7 @@ object SparkSqlHelper {
             if (name != null) {
                 val matchResult = KEYWORD_REGEX.find(name)
                 if (matchResult != null) {
-                    keywords.add(matchResult.groupValues.get(0))
+                    keywords.add(matchResult.groupValues.get(1))
                 }
             }
         }
