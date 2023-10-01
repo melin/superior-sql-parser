@@ -23,6 +23,7 @@
 2. parseMultiStatement(String sql) // 解析多个完整sql，支持空格、换行、分号分隔
 3. splitSql(String sql) // sql 文本包含多个完整sql，方法用于分隔sql语句，支持空格、换行、分号分隔
 4. checkSqlSyntax(String sql) // 验证单个完整sql语法是否正确
+5. sqlKeywords() // 获取sql 关键字，主要用于sql editor 关键字提示
 ```
 
 ## Example

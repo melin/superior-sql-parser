@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.trino
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -17,6 +18,21 @@ import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
  * Created by libinsong on 2018/1/10.
  */
 object TrinoSqlHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until TrinoSqlBaseLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = TrinoSqlBaseLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)

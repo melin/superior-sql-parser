@@ -2142,6 +2142,7 @@ class SparkSqlParserTest {
 
     @Test
     fun syncDatabaseTest() {
+        val keywords = SparkSqlHelper.sqlKeywords();
         val sql = """
             CREATE DATABASE IF NOT EXISTS holo_tpcds 
             WITH ('sink.parallelism' = '4') 
@@ -2159,4 +2160,5 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
 }

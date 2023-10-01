@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils
  */
 object CommonUtils {
 
+    val KEYWORD_REGEX = "'([A-Z_]+)'".toRegex()
+
     fun findShowStatementKeyWord(keyWords: ArrayList<String>, node: ParseTree) {
         if (node is TerminalNodeImpl) {
             val count = node.parent.childCount

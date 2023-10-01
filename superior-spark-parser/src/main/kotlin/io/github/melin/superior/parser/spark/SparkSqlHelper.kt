@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.spark
 
+import com.github.melin.superior.sql.parser.util.CommonUtils.KEYWORD_REGEX
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.StatementType.*
@@ -74,6 +75,21 @@ object SparkSqlHelper {
             -> true
             else -> false
         }
+    }
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until SparkSqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = SparkSqlLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
     }
 
     @JvmStatic fun parseStatement(command: String): Statement {

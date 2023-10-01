@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.flink
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
@@ -16,6 +17,21 @@ import org.apache.commons.lang3.StringUtils
  * Created by libinsong on 2018/1/10.
  */
 object FlinkSqlHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until FlinkSqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = FlinkSqlLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)

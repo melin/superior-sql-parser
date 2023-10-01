@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.spark
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import org.antlr.v4.runtime.CharStreams
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlLexer
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlLexer
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 
@@ -23,6 +25,21 @@ object SparkStreamSqlHelper {
             -> true
             else -> false
         }
+    }
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until SparkStreamSqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = SparkStreamSqlLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
     }
 
     @JvmStatic fun parseStatement(command: String) : ArrayList<Statement> {

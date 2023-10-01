@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.appjar
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
@@ -17,6 +18,21 @@ import io.github.melin.superior.parser.job.antlr4.AppJarParser
  * Created by binsong.li on 2018/3/31 下午1:47
  */
 object AppJarHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until AppJarLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = AppJarLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String) : ArrayList<Statement> {
         val trimCmd = StringUtils.trim(command)

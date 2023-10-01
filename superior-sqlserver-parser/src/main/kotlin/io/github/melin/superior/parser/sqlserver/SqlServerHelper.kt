@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.sqlserver
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.antlr4.ParseErrorListener
@@ -18,6 +19,22 @@ import org.apache.commons.lang3.StringUtils
  * Created by libinsong on 2020/6/30 10:01 上午
  */
 object SqlServerHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until SqlServerLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = SqlServerLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
+
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {

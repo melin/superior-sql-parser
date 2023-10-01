@@ -1,5 +1,6 @@
 package com.github.melin.superior.sql.parser.mysql
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -19,6 +20,21 @@ import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
  * Created by libinsong on 2018/1/10.
  */
 object MySqlHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until MySqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = MySqlLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)

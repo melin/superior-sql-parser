@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.oracle
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
@@ -17,6 +18,21 @@ import org.apache.commons.lang3.StringUtils
  * Created by libinsong on 2020/6/30 9:58 上午
  */
 object OracleSqlHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until OracleLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = OracleLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String): Statement {
         var sql = StringUtils.trim(command);

@@ -1,5 +1,6 @@
 package io.github.melin.superior.parser.presto
 
+import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.relational.Statement
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -17,6 +18,21 @@ import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
  * Created by libinsong on 2018/1/10.
  */
 object PrestoSqlHelper {
+
+    @JvmStatic fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until PrestoSqlBaseLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = PrestoSqlBaseLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(0))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
 
     @JvmStatic fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
