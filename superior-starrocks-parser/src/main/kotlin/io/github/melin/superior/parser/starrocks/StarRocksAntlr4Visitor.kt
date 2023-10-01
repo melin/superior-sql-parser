@@ -422,6 +422,38 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return StopRoutineLoad(catalogName, schemaName, jobName)
     }
 
+    override fun visitLoadStatement(ctx: LoadStatementContext): Statement {
+        val schemaName: String? = if (ctx.label.db != null)
+            CommonUtils.cleanQuote(ctx.label.db.text) else null
+
+        val labelName = ctx.label.label.text
+        var tableNames = arrayListOf<String>();
+        ctx.dataDescList().dataDesc().forEach { it ->
+            if (it.dstTableName != null) {
+                tableNames.add(it.dstTableName.text)
+            }
+        }
+
+        return LoadFiles(schemaName, labelName, tableNames)
+    }
+
+    override fun visitAlterLoadStatement(ctx: AlterLoadStatementContext): Statement {
+        val schemaName: String? = if (ctx.db != null)
+            CommonUtils.cleanQuote(ctx.db.text) else null
+
+        val labelName = ctx.identifier().text
+
+        return AlterLoadFiles(schemaName, labelName)
+    }
+
+    override fun visitCancelLoadStatement(ctx: CancelLoadStatementContext): Statement {
+        val schemaName: String? = if (ctx.FROM() != null) ctx.identifier().text else null
+        val expression: String = ctx.expression().text
+        var labelName: String = StringUtils.substringAfter(expression, "=")
+        labelName = CommonUtils.cleanQuote(labelName.trim())
+        return CancelLoadFiles(schemaName, labelName)
+    }
+
     override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {
         val functionId = parseTableName(ctx.qualifiedName())
         val global = ctx.GLOBAL() != null

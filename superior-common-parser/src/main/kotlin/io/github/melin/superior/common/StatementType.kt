@@ -77,6 +77,9 @@ enum class StatementType: Serializable {
     SR_RESUME_ROUTINE_LOAD,
     SR_STOP_ROUTINE_LOAD,
     SR_ALTER_ROUTINE_LOAD,
+    SR_LOAD_FILES,
+    SR_CANCEL_LOAD_FILES,
+    SR_ALTER_LOAD_FILES,
 
     ADD_JAR,
     REMOVE_JAR,
