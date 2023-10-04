@@ -2155,7 +2155,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
             Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
-            Assert.assertEquals("test", statement.excludeTable)
+            Assert.assertEquals("test", statement.excludingTables)
         } else {
             Assert.fail()
         }
