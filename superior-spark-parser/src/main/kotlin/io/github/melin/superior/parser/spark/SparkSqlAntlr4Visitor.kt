@@ -662,13 +662,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
 
         val createDatabase = if (ctx.includeTable == null) {
-            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, null)
+            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second)
         } else {
             SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
         }
 
         if (ctx.excludeTable != null) {
-            createDatabase.excludeTable = CommonUtils.cleanQuote(ctx.excludeTable.text)
+            createDatabase.excludingTables = CommonUtils.cleanQuote(ctx.excludeTable.text)
         }
 
         createDatabase.sinkOptions = sinkOptions
