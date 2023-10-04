@@ -649,8 +649,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
 
         val createTable = SyncTable(sinkTable, sourceTable)
-        createTable.sinkOptions = sinkOptions
-        createTable.sourceOptions = sourceOptions
+        createTable.sinkOptions.putAll(sinkOptions)
+        createTable.sourceOptions.putAll(sourceOptions)
         return createTable
     }
 
@@ -671,8 +671,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             createDatabase.excludingTables = CommonUtils.cleanQuote(ctx.excludeTable.text)
         }
 
-        createDatabase.sinkOptions = sinkOptions
-        createDatabase.sourceOptions = sourceOptions
+        createDatabase.sinkOptions.putAll(sinkOptions)
+        createDatabase.sourceOptions.putAll(sourceOptions)
         return createDatabase
     }
 

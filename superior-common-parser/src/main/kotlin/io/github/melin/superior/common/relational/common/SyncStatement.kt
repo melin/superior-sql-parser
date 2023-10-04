@@ -1,5 +1,6 @@
 package io.github.melin.superior.common.relational.common
 
+import com.google.common.collect.Maps
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
@@ -13,8 +14,8 @@ data class SyncTable(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
-    var sinkOptions: Map<String, String>? = null
-    var sourceOptions: Map<String, String>? = null
+    val sinkOptions: HashMap<String, String> = Maps.newHashMap();
+    val sourceOptions: HashMap<String, String> = Maps.newHashMap();
     var computeCols: List<ColumnRel>? = null
 }
 
@@ -29,8 +30,8 @@ data class SyncDatabase(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
-    var sinkOptions: Map<String, String>? = null
-    var sourceOptions: Map<String, String>? = null
+    val sinkOptions: HashMap<String, String> = Maps.newHashMap();
+    val sourceOptions: HashMap<String, String> = Maps.newHashMap();
     var excludingTables: String? = null
 }
 
