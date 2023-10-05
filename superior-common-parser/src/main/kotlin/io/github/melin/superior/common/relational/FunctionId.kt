@@ -1,11 +1,15 @@
 package io.github.melin.superior.common.relational
 
+import com.google.common.collect.Lists
 import org.apache.commons.lang3.StringUtils
 
 data class FunctionId(
     val catalogName: String?,
     val schemaName: String?,
     val functionName: String) {
+
+    var funcType: String = "CF" // callfunction & TVF
+    var functionArguments: List<String> = Lists.newArrayList();
 
     constructor(schemaName: String?, tableName: String):
             this(null, schemaName, tableName)

@@ -1287,8 +1287,27 @@ class SparkSqlParserTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
-            Assert.assertEquals("delta_lsw_test", statement.tableId?.tableName)
+            Assert.assertEquals("delta_lsw_test", statement.tableId.tableName)
             Assert.assertEquals(2, statement.rows?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertIntoTest2() {
+        val sql = "insert into demo SELECT * FROM hudi_table_changes('db.table', 'latest_state', 'earliest')"
+        val statement = SparkSqlHelper.parseStatement(sql)
+
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals(InsertMode.INTO, statement.mode)
+
+            Assert.assertEquals("demo", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.functionNames.size)
+            Assert.assertEquals("hudi_table_changes", statement.functionNames.first().functionName)
+            Assert.assertEquals("TVF", statement.functionNames.first().funcType)
+            Assert.assertEquals(3, statement.functionNames.first().functionArguments.size)
         } else {
             Assert.fail()
         }

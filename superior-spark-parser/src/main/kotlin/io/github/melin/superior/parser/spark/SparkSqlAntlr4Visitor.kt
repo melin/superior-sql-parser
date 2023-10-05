@@ -1099,7 +1099,30 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     //-----------------------------------private method-------------------------------------------------
 
-    override fun visitFunctionName(ctx: SparkSqlParser.FunctionNameContext): Statement? {
+    override fun visitFunctionCall(ctx: SparkSqlParser.FunctionCallContext): Statement? {
+        val functionId = parseFunctionName(ctx.functionName())
+        if (functionId != null) {
+            val args = ctx.functionArgument().map { CommonUtils.cleanQuote(it.text) }.toList()
+            functionId.functionArguments = args
+            functionNames.add(functionId)
+        }
+
+        return super.visitFunctionCall(ctx);
+    }
+
+    override fun visitFunctionTable(ctx: SparkSqlParser.FunctionTableContext): Statement? {
+        val functionId = parseFunctionName(ctx.functionName())
+        if (functionId != null) {
+            val args = ctx.functionTableArgument().map { CommonUtils.cleanQuote(it.text) }.toList()
+            functionId.functionArguments = args
+            functionId.funcType = "TVF"
+            functionNames.add(functionId)
+        }
+
+        return super.visitFunctionTable(ctx);
+    }
+
+    private fun parseFunctionName(ctx: SparkSqlParser.FunctionNameContext): FunctionId? {
         if (StatementType.SELECT == currentOptType ||
             StatementType.CREATE_VIEW == currentOptType ||
             StatementType.INSERT == currentOptType ||
@@ -1113,17 +1136,17 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 val catalog = StringUtils.lowerCase(names.get(0).text)
                 val schema = StringUtils.lowerCase(names.get(1).text)
                 val funcName = StringUtils.lowerCase(names.get(2).text)
-                functionNames.add(FunctionId(catalog, schema, funcName))
+                return FunctionId(catalog, schema, funcName)
             } else if (names.size == 2) {
                 val schema = StringUtils.lowerCase(names.get(0).text)
                 val funcName = StringUtils.lowerCase(names.get(1).text)
-                functionNames.add(FunctionId(schema, funcName))
+                return FunctionId(schema, funcName)
             } else if (names.size == 1) {
                 val funcName = StringUtils.lowerCase(names.get(0).text)
-                functionNames.add(FunctionId(funcName))
+                return FunctionId(funcName)
             }
         }
-        return super.visitFunctionName(ctx)
+        return null;
     }
 
     override fun visitCtes(ctx: SparkSqlParser.CtesContext): Statement? {
