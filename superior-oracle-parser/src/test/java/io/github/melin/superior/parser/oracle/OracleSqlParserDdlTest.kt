@@ -14,8 +14,8 @@ class OracleSqlParserDdlTest {
     @Test
     fun createDatabaseTest() {
         val sql = """
-            CREATE DATABASE bigdata1 USER SYSTEM IDENTIFIED BY 123213
-            drop DATABASE bigdata2
+            CREATE DATABASE bigdata1 USER SYSTEM IDENTIFIED BY 123213;
+            DROP DATABASE INCLUDING BACKUPS NOPROMPT
         """.trimIndent()
 
         val statements = OracleSqlHelper.parseMultiStatement(sql)
@@ -116,8 +116,8 @@ class OracleSqlParserDdlTest {
     @Test
     fun commentTest0() {
         val sql = """
-            COMMENT ON COLUMN employees.job_id IS 'abbreviated job title'
-            COMMENT ON COLUMN employees1.job_id IS 'abbreviated job title';
+            COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
+            COMMENT ON COLUMN employees1.job_id IS 'abbreviated job title'
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseMultiStatement(sql)

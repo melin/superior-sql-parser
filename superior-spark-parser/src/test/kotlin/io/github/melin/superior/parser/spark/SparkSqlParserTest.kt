@@ -1968,9 +1968,9 @@ class SparkSqlParserTest {
         
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statement.statementType)
-            Assert.assertEquals("catalog_name", statement.procedureId.catalogName)
-            Assert.assertEquals("system", statement.procedureId.schemaName)
-            Assert.assertEquals("create_savepoint", statement.procedureId.procedureName)
+            Assert.assertEquals("catalog_name", statement.procedureIds.first().catalogName)
+            Assert.assertEquals("system", statement.procedureIds.first().schemaName)
+            Assert.assertEquals("create_savepoint", statement.procedureIds.first().procedureName)
             Assert.assertEquals(2, statement.properties.size)
         } else {
             Assert.fail()
@@ -1984,7 +1984,7 @@ class SparkSqlParserTest {
         
         if (statement is CallProcedure) {
             Assert.assertEquals(StatementType.CALL, statement.statementType)
-            Assert.assertEquals("stats_file_sizes", statement.procedureId.procedureName)
+            Assert.assertEquals("stats_file_sizes", statement.procedureIds.first().procedureName)
             Assert.assertEquals(1, statement.properties.size)
         } else {
             Assert.fail()

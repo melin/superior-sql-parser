@@ -173,7 +173,7 @@ class OracleProcessParserTest {
         val procedure2 = statements.get(1)
 
         if (procedure1 is CallProcedure) {
-            Assert.assertEquals("UpdateCourse", procedure1.procedureNames.first().procedureName)
+            Assert.assertEquals("UpdateCourse", procedure1.procedureIds.first().procedureName)
         } else {
             Assert.fail()
         }
