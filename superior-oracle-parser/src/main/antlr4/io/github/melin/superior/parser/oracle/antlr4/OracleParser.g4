@@ -26,7 +26,7 @@ options {
 }
 
 sql_script
-    : ((sql_plus_command | unit_statement) SEMICOLON?)* EOF
+    : sql_plus_command_no_semicolon? ((sql_plus_command | unit_statement) (SEMICOLON '/'? (sql_plus_command | unit_statement))* SEMICOLON? '/'?) EOF
     ;
 
 unit_statement
@@ -441,7 +441,7 @@ enable_disable_volume
 // Function DDLs
 
 drop_function
-    : DROP FUNCTION function_name ';'
+    : DROP FUNCTION function_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-FLASHBACK-ARCHIVE.html
@@ -462,7 +462,7 @@ alter_hierarchy
     ;
 
 alter_function
-    : ALTER FUNCTION function_name COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)? ';'
+    : ALTER FUNCTION function_name COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-JAVA.html
@@ -587,19 +587,19 @@ drop_lockdown_profile
 // Package DDLs
 
 drop_package
-    : DROP PACKAGE BODY? (schema_object_name '.')? package_name ';'
+    : DROP PACKAGE BODY? (schema_object_name '.')? package_name
     ;
 
 alter_package
-    : ALTER PACKAGE package_name COMPILE DEBUG? (PACKAGE | BODY | SPECIFICATION)? compiler_parameters_clause* (REUSE SETTINGS)? ';'
+    : ALTER PACKAGE package_name COMPILE DEBUG? (PACKAGE | BODY | SPECIFICATION)? compiler_parameters_clause* (REUSE SETTINGS)?
     ;
 
 create_package
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? ';'
+    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE (schema_object_name '.')? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name?
     ;
 
 create_package_body
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE BODY (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? ';'
+    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE BODY (schema_object_name '.')? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name?
     ;
 
 // Create Package Specific Clauses
@@ -655,11 +655,11 @@ drop_pmem_filestore
 // Procedure DDLs
 
 drop_procedure
-    : DROP PROCEDURE procedure_name ';'
+    : DROP PROCEDURE procedure_name
     ;
 
 alter_procedure
-    : ALTER PROCEDURE procedure_name COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)? ';'
+    : ALTER PROCEDURE procedure_name COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)?
     ;
 
 function_body
@@ -706,7 +706,7 @@ drop_rollback_segment
     ;
 
 drop_role
-    : DROP ROLE role_name ';'
+    : DROP ROLE role_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/create-pmem-filestore.html
@@ -733,18 +733,18 @@ create_rollback_segment
 // Trigger DDLs
 
 drop_trigger
-    : DROP TRIGGER trigger_name ';'
+    : DROP TRIGGER trigger_name
     ;
 
 alter_trigger
     : ALTER TRIGGER alter_trigger_name=trigger_name
-      ((ENABLE | DISABLE) | RENAME TO rename_trigger_name=trigger_name | COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)?) ';'
+      ((ENABLE | DISABLE) | RENAME TO rename_trigger_name=trigger_name | COMPILE DEBUG? compiler_parameters_clause* (REUSE SETTINGS)?)
     ;
 
 create_trigger
     : CREATE ( OR REPLACE )? TRIGGER trigger_name
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
-      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body ';'
+      trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body
     ;
 
 trigger_follows_clause
@@ -788,10 +788,10 @@ compound_trigger_block
     ;
 
 timing_point_section
-    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT ';'
-    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW ';'
-    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT ';'
-    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW ';'
+    : bk=BEFORE STATEMENT IS trigger_block BEFORE STATEMENT
+    | bk=BEFORE EACH ROW IS trigger_block BEFORE EACH ROW
+    | ak=AFTER STATEMENT IS trigger_block AFTER STATEMENT
+    | ak=AFTER EACH ROW IS trigger_block AFTER EACH ROW
     ;
 
 non_dml_event
@@ -844,7 +844,7 @@ referencing_element
 // DDLs
 
 drop_type
-    : DROP TYPE BODY? type_name (FORCE | VALIDATE)? ';'
+    : DROP TYPE BODY? type_name (FORCE | VALIDATE)?
     ;
 
 alter_type
@@ -856,7 +856,7 @@ alter_type
     | alter_collection_clauses
     | modifier_clause
     | overriding_subprogram_spec
-    ) dependent_handling_clause? ';'
+    ) dependent_handling_clause?
     ;
 
 // Alter Type Specific Clauses
@@ -899,7 +899,7 @@ dependent_exceptions_part
     ;
 
 create_type
-    : CREATE (OR REPLACE)? TYPE (type_definition | type_body) ';'
+    : CREATE (OR REPLACE)? TYPE (type_definition | type_body)
     ;
 
 // Create Type Specific Clauses
@@ -1038,11 +1038,11 @@ type_elements_parameter
 // Sequence DDLs
 
 drop_sequence
-    : DROP SEQUENCE sequence_name ';'
+    : DROP SEQUENCE sequence_name
     ;
 
 alter_sequence
-    : ALTER SEQUENCE sequence_name sequence_spec+ ';'
+    : ALTER SEQUENCE sequence_name sequence_spec+
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-SESSION.html
@@ -1066,7 +1066,7 @@ alter_session_set_clause
     ;
 
 create_sequence
-    : CREATE SEQUENCE sequence_name (sequence_start_clause | sequence_spec)* ';'
+    : CREATE SEQUENCE sequence_name (sequence_start_clause | sequence_spec)*
     ;
 
 // Common Sequence
@@ -1299,7 +1299,11 @@ privilege_audit_clause
     ;
 
 action_audit_clause
-    : (standard_actions | component_actions)+
+    : (standard_actions | component_actions | system_actions)+
+    ;
+
+system_actions
+    : ACTIONS system_privilege (',' system_privilege)*
     ;
 
 standard_actions
@@ -1459,7 +1463,6 @@ create_index
     : CREATE (UNIQUE | BITMAP)? INDEX index_name
        ON (cluster_index_clause | table_index_clause | bitmap_join_index_clause)
        (USABLE | UNUSABLE)?
-       ';'
     ;
 
 cluster_index_clause
@@ -1584,7 +1587,7 @@ indextype
 
 //https://docs.oracle.com/cd/E11882_01/server.112/e41084/statements_1010.htm#SQLRF00805
 alter_index
-    : ALTER INDEX index_name (alter_index_ops_set1 | alter_index_ops_set2) ';'
+    : ALTER INDEX index_name (alter_index_ops_set1 | alter_index_ops_set2)
     ;
 
 alter_index_ops_set1
@@ -1744,7 +1747,7 @@ create_user
           | user_lock_clause
           | user_editions_clause
           | container_clause
-        )+ ';'
+        )+
     ;
 
 // The standard clauses only permit one user per statement.
@@ -1764,8 +1767,7 @@ alter_user
         | container_clause
         | container_data_clause
         )+
-      ';'
-      | user_object_name (',' user_object_name)* proxy_clause ';'
+      | user_object_name (',' user_object_name)* proxy_clause
     ;
 
 drop_user
@@ -1856,7 +1858,6 @@ administer_key_management
                                 | secret_management_clauses
                                 | zero_downtime_software_patching_clauses
                                 )
-        ';'
     ;
 
 keystore_management_clauses
@@ -2146,7 +2147,6 @@ associate_statistics
     : ASSOCIATE STATISTICS
         WITH (column_association | function_association)
         storage_table_clause?
-      ';'
     ;
 
 column_association
@@ -2216,7 +2216,6 @@ unified_auditing
             | CONTEXT NAMESPACE oracle_namespace
                       ATTRIBUTES attribute_name (',' attribute_name)* (BY audit_user (',' audit_user)*)?
             )
-      ';'
     ;
 
 policy_name
@@ -2234,7 +2233,6 @@ audit_traditional
             )
         (BY (SESSION | ACCESS) )? (WHENEVER NOT? SUCCESSFUL)?
         audit_container_clause?
-      ';'
     ;
 
 audit_direct_path
@@ -2348,7 +2346,7 @@ sql_statement_shortcut
     ;
 
 drop_index
-    : DROP INDEX index_name ';'
+    : DROP INDEX index_name
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DISASSOCIATE-STATISTICS.html
@@ -2407,7 +2405,7 @@ noaudit_statement
     ;
 
 rename_object
-    : RENAME object_name TO object_name ';'
+    : RENAME object_name TO object_name
     ;
 
 grant_statement
@@ -2423,7 +2421,7 @@ grant_statement
       (WITH (ADMIN | DELEGATE) OPTION)?
       (WITH HIERARCHY OPTION)?
       (WITH GRANT OPTION)?
-      container_clause? ';'
+      container_clause?
     ;
 
 container_clause
@@ -2476,7 +2474,6 @@ create_directory
     : CREATE (OR REPLACE)? DIRECTORY directory_name
         (SHARING '=' (METADATA | NONE))?
         AS directory_path
-      ';'
     ;
 
 directory_name
@@ -2505,7 +2502,6 @@ alter_library
        ( COMPILE library_debug? compiler_parameters_clause* (REUSE SETTINGS)?
        | library_editionable
        )
-     ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-JAVA.html
@@ -2614,7 +2610,6 @@ alter_view
        | READ (ONLY | WRITE)
        | alter_view_editionable?
        )
-      ';'
     ;
 
 alter_view_editionable
@@ -2736,7 +2731,6 @@ alter_tablespace
        | flashback_mode_clause
        | tablespace_retention_clause
        )
-     ';'
     ;
 
 datafile_tempfile_clauses
@@ -2782,7 +2776,6 @@ create_tablespace
         | temporary_tablespace_clause
         | undo_tablespace_clause
         )
-      ';'
     ;
 
 permanent_tablespace_clause
@@ -2950,7 +2943,6 @@ alter_materialized_view
        | COMPILE
        | CONSIDER FRESH
        )?
-     ';'
     ;
 
 alter_mv_option1
@@ -3176,7 +3168,6 @@ create_materialized_view
         (FOR UPDATE)?
         ( (DISABLE | ENABLE) QUERY REWRITE )?
         AS select_only_statement
-        ';'
     ;
 
 scoped_table_ref_constraint
@@ -3205,7 +3196,6 @@ create_mv_refresh
 
 drop_materialized_view
     : DROP MATERIALIZED VIEW tableview_name (PRESERVE TABLE)?
-        ';'
     ;
 
 create_context
@@ -3213,7 +3203,6 @@ create_context
            (INITIALIZED (EXTERNALLY | GLOBALLY)
            | ACCESSED GLOBALLY
            )?
-      ';'
     ;
 
 oracle_namespace
@@ -3231,7 +3220,6 @@ create_cluster
           )*
           parallel_clause? (ROWDEPENDENCIES | NOROWDEPENDENCIES)?
           (CACHE | NOCACHE)?
-          ';'
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-PROFILE.html
@@ -3313,7 +3301,6 @@ create_table
         (MEMOPTIMIZE FOR READ)?
         (MEMOPTIMIZE FOR WRITE)?
         (PARENT tableview_name)?
-      ';'
     ;
 
 xmltype_table
@@ -3955,11 +3942,11 @@ upgrade_table_clause
     ;
 
 truncate_table
-    : TRUNCATE TABLE tableview_name ((PRESERVE | PURGE) MATERIALIZED VIEW LOG)? ((DROP ALL?|REUSE) STORAGE)? CASCADE? SEMICOLON
+    : TRUNCATE TABLE tableview_name ((PRESERVE | PURGE) MATERIALIZED VIEW LOG)? ((DROP ALL?|REUSE) STORAGE)? CASCADE?
     ;
 
 drop_table
-    : DROP TABLE tableview_name (AS tableview_name)? (CASCADE CONSTRAINTS)? PURGE? (AS quoted_string)? FORCE? SEMICOLON
+    : DROP TABLE tableview_name (AS tableview_name)? (CASCADE CONSTRAINTS)? PURGE? (AS quoted_string)? FORCE?
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/DROP-TABLESPACE.html
@@ -3979,7 +3966,7 @@ including_contents_clause
     ;
 
 drop_view
-    : DROP VIEW tableview_name (CASCADE CONSTRAINT)? SEMICOLON
+    : DROP VIEW tableview_name (CASCADE CONSTRAINT)?
     ;
 
 comment_on_column
@@ -4004,7 +3991,7 @@ alter_synonym
 create_synonym
     // Synonym's schema cannot be specified for public synonyms
     : CREATE (OR REPLACE)? PUBLIC SYNONYM synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
-    | CREATE (OR REPLACE)? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    | CREATE (OR REPLACE)? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN (schema_name PERIOD)? link_name)?
     ;
 
 drop_synonym
@@ -4085,7 +4072,6 @@ alter_cluster
         | cache_or_nocache
         )+
         parallel_clause?
-        ';'
     ;
 
 drop_analytic_view
@@ -4162,7 +4148,6 @@ alter_database
        | property_clauses
        | replay_upgrade_clauses
        )
-      ';'
     ;
 
 database_clause
@@ -4649,7 +4634,6 @@ alter_table
       | move_table_clause
       )
       ((enable_disable_clause | enable_or_disable (TABLE LOCK | ALL TRIGGERS) )+)?
-      ';'
     ;
 
 memoptimize_read_write_clause
@@ -5467,7 +5451,7 @@ return_statement
     ;
 
 call_statement
-    : CALL? routine_name function_argument? (INTO bind_variable)?
+    : CALL? routine_name function_argument? ('.' routine_name function_argument?)* (INTO bind_variable)?
     ;
 
 pipe_row_statement
@@ -5570,7 +5554,7 @@ set_constraint_command
 // https://docs.oracle.com/cd/E18283_01/server.112/e17118/statements_4010.htm#SQLRF01110
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/COMMIT.html
 commit_statement
-    : COMMIT WORK?
+    : COMMIT WORK? write_clause?
       ( COMMENT CHAR_STRING write_clause?
       | FORCE ( CHAR_STRING (',' numeric)?
               | CORRUPT_XID CHAR_STRING
@@ -6539,15 +6523,20 @@ xmlserialize_param_ident_part
 
 // SqlPlus
 
+sql_plus_command_no_semicolon
+    : set_command
+    ;
 sql_plus_command
-    : '/'
-    | EXIT
+    : EXIT
     | PROMPT_MESSAGE
     | SHOW (ERR | ERRORS)
-    | START_CMD
     | whenever_command
-    | set_command
     | timing_command
+    | start_command
+    ;
+
+start_command
+    : START_CMD id_expression PERIOD (SQL | FILE_EXT)
     ;
 
 whenever_command
