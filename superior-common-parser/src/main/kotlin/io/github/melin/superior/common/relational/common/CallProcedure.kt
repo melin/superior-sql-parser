@@ -8,7 +8,7 @@ import io.github.melin.superior.common.relational.ProcedureId
 import io.github.melin.superior.common.relational.Statement
 
 data class CallProcedure(
-    val procedureId: ProcedureId,
+    var procedureNames: HashSet<ProcedureId>,
     var properties: Map<String, String> = mapOf()
 ) : Statement() {
     override val statementType = StatementType.CALL

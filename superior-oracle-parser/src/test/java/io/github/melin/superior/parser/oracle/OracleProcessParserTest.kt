@@ -161,7 +161,7 @@ class OracleProcessParserTest {
     @Test
     fun callProcessTest() {
         val sql = """
-            Call UpdateCourse('tes')
+            Call UpdateCourse('tes');
             begin
                 UpdateCourse('tes');
             end;
@@ -173,7 +173,7 @@ class OracleProcessParserTest {
         val procedure2 = statements.get(1)
 
         if (procedure1 is CallProcedure) {
-            Assert.assertEquals("UpdateCourse", procedure1.procedureId.procedureName)
+            Assert.assertEquals("UpdateCourse", procedure1.procedureNames.first().procedureName)
         } else {
             Assert.fail()
         }

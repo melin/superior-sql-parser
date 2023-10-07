@@ -245,14 +245,17 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitCall_statement(ctx: OracleParser.Call_statementContext): Statement {
-        val procedureId = if (ctx.routine_name().id_expression().size > 0) {
-            ProcedureId(ctx.routine_name().identifier().text, ctx.routine_name().id_expression().get(0).text)
-        } else {
-            ProcedureId(ctx.routine_name().identifier().text)
+        ctx.routine_name().forEach {callStat ->
+            val procedureId = if (callStat.id_expression().size > 0) {
+                ProcedureId(callStat.identifier().text, callStat.id_expression().get(0).text)
+            } else {
+                ProcedureId(callStat.identifier().text)
+            }
+
+            procedureNames.add(procedureId)
         }
 
-        procedureNames.add(procedureId)
-        return CallProcedure(procedureId)
+        return CallProcedure(procedureNames)
     }
 
     override fun visitAlter_table(ctx: OracleParser.Alter_tableContext): Statement {
