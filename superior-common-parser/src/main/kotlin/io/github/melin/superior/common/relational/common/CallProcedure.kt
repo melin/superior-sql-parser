@@ -18,4 +18,8 @@ data class CallProcedure(
     constructor(procedureId: ProcedureId): this(Sets.newHashSet(procedureId))
 
     constructor(procedureId: ProcedureId, properties: Map<String, String>): this(Sets.newHashSet(procedureId), properties)
+
+    fun first(): ProcedureId {
+        return procedureIds.first()
+    }
 }
