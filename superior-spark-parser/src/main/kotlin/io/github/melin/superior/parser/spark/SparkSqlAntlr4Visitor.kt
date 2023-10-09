@@ -884,11 +884,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if (causes.single != null) single = causes.single.TRUE() != null
         }
 
-        val exportData = ExportData(tableId, filePath, properties, partitionVals,
+        val exportTable = ExportTable(tableId, filePath, properties, partitionVals,
             fileFormat, compression, maxFileSize, overwrite, single, inputTables)
 
-        exportData.functionNames.addAll(functionNames)
-        return exportData
+        exportTable.functionNames.addAll(functionNames)
+        return exportTable
     }
 
     override fun visitUse(ctx: SparkSqlParser.UseContext): Statement {

@@ -1721,7 +1721,7 @@ class SparkSqlParserTest {
         """.trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
-        if (statement is ExportData) {
+        if (statement is ExportTable) {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(StatementType.EXPORT_TABLE, statement.statementType)
             Assert.assertEquals("druid_result", statement.tableId.tableName)

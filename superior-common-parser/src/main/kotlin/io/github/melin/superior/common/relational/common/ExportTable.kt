@@ -1,4 +1,4 @@
-package io.github.melin.superior.parser.spark.relational
+package io.github.melin.superior.common.relational.common
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
-data class ExportData(
+data class ExportTable(
     override val tableId: TableId,
     val path: String,
     var properties: Map<String, String>,
@@ -24,6 +24,12 @@ data class ExportData(
     override val sqlType = SqlType.DML
 
     val functionNames: HashSet<FunctionId> = hashSetOf()
+
+    constructor(
+        tableId: TableId,
+        path: String,
+        properties: Map<String, String>):
+            this(tableId, path, properties, linkedMapOf(), null, null, null, false, false, arrayListOf())
 
     constructor(
         tableId: TableId,

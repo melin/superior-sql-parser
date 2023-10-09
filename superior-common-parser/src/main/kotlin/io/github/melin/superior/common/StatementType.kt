@@ -33,6 +33,7 @@ enum class StatementType: Serializable {
     TRUNCATE_TABLE,
     REFRESH_TABLE,
     EXPORT_TABLE,
+    CANCEL_EXPORT,
     ANALYZE_TABLE,
 
     ALTER_DATABASE,

@@ -2,12 +2,13 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.dml.QueryStmt
+import io.github.melin.superior.common.relational.common.CancelExport
+import io.github.melin.superior.common.relational.common.ExportTable
 import io.github.melin.superior.parser.starrocks.relational.*
 import org.junit.Assert
 import org.junit.Test
 
-class StarRocksSqlParserLoadTest {
+class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun createRoutineLoadTest() {
@@ -181,6 +182,49 @@ class StarRocksSqlParserLoadTest {
             Assert.assertEquals(StatementType.SR_ALTER_LOAD_FILES, statement.statementType)
             Assert.assertEquals("test_db", statement.schemaName)
             Assert.assertEquals("label1", statement.labelName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createExportTest() {
+        val sql = """
+            EXPORT TABLE testTbl 
+            TO "s3a://s3-package/export/"
+            WITH BROKER
+            (
+                "aws.s3.access_key" = "xxx",
+                "aws.s3.secret_key" = "yyy",
+                "aws.s3.region" = "zzz"
+            );
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+
+        if (statement is ExportTable) {
+            Assert.assertEquals(StatementType.EXPORT_TABLE, statement.statementType)
+            Assert.assertEquals("testTbl", statement.tableId.tableName)
+            Assert.assertEquals("s3a://s3-package/export/", statement.path)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun cancelExportTest() {
+        val sql = """
+            CANCEL Export
+            FROM example_db
+            WHERE queryid = "921d8f80-7c9d-11eb-9342-acde48001121";
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+
+        if (statement is CancelExport) {
+            Assert.assertEquals(StatementType.CANCEL_EXPORT, statement.statementType)
+            Assert.assertEquals("example_db", statement.database)
+            Assert.assertEquals("921d8f80-7c9d-11eb-9342-acde48001121", statement.queryId)
         } else {
             Assert.fail()
         }

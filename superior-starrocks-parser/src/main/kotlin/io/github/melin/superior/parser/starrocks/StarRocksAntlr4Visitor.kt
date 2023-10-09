@@ -4,7 +4,9 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.CancelExport
 import io.github.melin.superior.common.relational.common.DescStatement
+import io.github.melin.superior.common.relational.common.ExportTable
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -452,6 +454,24 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         var labelName: String = StringUtils.substringAfter(expression, "=")
         labelName = CommonUtils.cleanQuote(labelName.trim())
         return CancelLoadFiles(schemaName, labelName)
+    }
+
+    override fun visitExportStatement(ctx: ExportStatementContext): Statement {
+        val tableId = parseTableName(ctx.tableDesc().qualifiedName())
+        val filePath = CommonUtils.cleanQuote(ctx.string().text)
+        val properties = parseOptions(ctx.properties())
+        return ExportTable(tableId, filePath, properties)
+    }
+
+    override fun visitCancelExportStatement(ctx: CancelExportStatementContext): Statement {
+        val database: String? = if (ctx.catalog != null ) ctx.catalog.text else null
+        val expr = ctx.expression().text
+        var queryId: String = StringUtils.substringBetween(expr, "\"", "\"")
+        if (StringUtils.isBlank(queryId)) {
+            queryId = StringUtils.substringBetween(expr, "'", "'")
+        }
+
+        return CancelExport(database, queryId)
     }
 
     override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {
