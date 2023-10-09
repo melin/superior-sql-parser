@@ -1,16 +1,16 @@
-package io.github.melin.superior.parser.starrocks.relational
+package io.github.melin.superior.common.relational.io
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.relational.TableId
 
-data class AlterLoadFiles(
+data class LoadTable(
     val schemaName: String?,
-    val labelName: String
+    val labelName: String,
+    val tableNames: List<String>
 ) : Statement() {
-    override val statementType = StatementType.SR_ALTER_LOAD_FILES
+    override val statementType = StatementType.LOAD_TABLE
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 }

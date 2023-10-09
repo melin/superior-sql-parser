@@ -2,8 +2,11 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
-import io.github.melin.superior.common.relational.common.CancelExport
-import io.github.melin.superior.common.relational.common.ExportTable
+import io.github.melin.superior.common.relational.common.*
+import io.github.melin.superior.common.relational.io.AlterLoadTable
+import io.github.melin.superior.common.relational.io.CancelLoadTable
+import io.github.melin.superior.common.relational.io.ExportTable
+import io.github.melin.superior.common.relational.io.LoadTable
 import io.github.melin.superior.parser.starrocks.relational.*
 import org.junit.Assert
 import org.junit.Test
@@ -140,8 +143,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
         val statement = StarRocksHelper.parseStatement(sql)
 
-        if (statement is LoadFiles) {
-            Assert.assertEquals(StatementType.SR_LOAD_FILES, statement.statementType)
+        if (statement is LoadTable) {
+            Assert.assertEquals(StatementType.LOAD_TABLE, statement.statementType)
             Assert.assertEquals("test_db", statement.schemaName)
             Assert.assertEquals("label_brokerload_multiplefile_multipletable", statement.labelName)
             Assert.assertEquals(2, statement.tableNames.size)
@@ -159,8 +162,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
         val statement = StarRocksHelper.parseStatement(sql)
 
-        if (statement is CancelLoadFiles) {
-            Assert.assertEquals(StatementType.SR_CANCEL_LOAD_FILES, statement.statementType)
+        if (statement is CancelLoadTable) {
+            Assert.assertEquals(StatementType.CANCEL_LOAD_TABLE, statement.statementType)
             Assert.assertEquals("db1", statement.schemaName)
             Assert.assertEquals("label", statement.labelName)
         } else {
@@ -178,8 +181,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
         val statement = StarRocksHelper.parseStatement(sql)
 
-        if (statement is AlterLoadFiles) {
-            Assert.assertEquals(StatementType.SR_ALTER_LOAD_FILES, statement.statementType)
+        if (statement is AlterLoadTable) {
+            Assert.assertEquals(StatementType.ALTER_LOAD_TABLE, statement.statementType)
             Assert.assertEquals("test_db", statement.schemaName)
             Assert.assertEquals("label1", statement.labelName)
         } else {

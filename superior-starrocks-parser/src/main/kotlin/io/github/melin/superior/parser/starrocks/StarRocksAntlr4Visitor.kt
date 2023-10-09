@@ -4,14 +4,15 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
-import io.github.melin.superior.common.relational.common.CancelExport
-import io.github.melin.superior.common.relational.common.DescStatement
-import io.github.melin.superior.common.relational.common.ExportTable
-import io.github.melin.superior.common.relational.common.ShowStatement
+import io.github.melin.superior.common.relational.common.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.*
+import io.github.melin.superior.common.relational.io.AlterLoadTable
+import io.github.melin.superior.common.relational.io.CancelLoadTable
+import io.github.melin.superior.common.relational.io.ExportTable
+import io.github.melin.superior.common.relational.io.LoadTable
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 
@@ -429,14 +430,14 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             CommonUtils.cleanQuote(ctx.label.db.text) else null
 
         val labelName = ctx.label.label.text
-        var tableNames = arrayListOf<String>();
+        val tableNames = arrayListOf<String>();
         ctx.dataDescList().dataDesc().forEach { it ->
             if (it.dstTableName != null) {
                 tableNames.add(it.dstTableName.text)
             }
         }
 
-        return LoadFiles(schemaName, labelName, tableNames)
+        return LoadTable(schemaName, labelName, tableNames)
     }
 
     override fun visitAlterLoadStatement(ctx: AlterLoadStatementContext): Statement {
@@ -445,7 +446,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         val labelName = ctx.identifier().text
 
-        return AlterLoadFiles(schemaName, labelName)
+        return AlterLoadTable(schemaName, labelName)
     }
 
     override fun visitCancelLoadStatement(ctx: CancelLoadStatementContext): Statement {
@@ -453,7 +454,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val expression: String = ctx.expression().text
         var labelName: String = StringUtils.substringAfter(expression, "=")
         labelName = CommonUtils.cleanQuote(labelName.trim())
-        return CancelLoadFiles(schemaName, labelName)
+        return CancelLoadTable(schemaName, labelName)
     }
 
     override fun visitExportStatement(ctx: ExportStatementContext): Statement {

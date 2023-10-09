@@ -1,4 +1,4 @@
-package io.github.melin.superior.common.relational.common
+package io.github.melin.superior.common.relational.io
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType

@@ -8,6 +8,7 @@ import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.*
+import io.github.melin.superior.common.relational.io.ExportTable
 import io.github.melin.superior.common.relational.table.*
 import io.github.melin.superior.parser.spark.relational.*
 import org.junit.Assert
