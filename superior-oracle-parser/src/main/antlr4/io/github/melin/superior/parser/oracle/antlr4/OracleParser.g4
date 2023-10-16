@@ -7136,6 +7136,7 @@ regular_id
     | SELF
     | SERIALLY_REUSABLE
     | SET
+    | SEQ
     | SHARDSPACE
     | SIGNTYPE
     | SIMPLE_INTEGER
