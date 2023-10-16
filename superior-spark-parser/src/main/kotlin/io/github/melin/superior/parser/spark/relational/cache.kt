@@ -13,7 +13,7 @@ data class CacheTable(
         val queryStmt: QueryStmt?
 ) : Statement() {
     override val statementType = StatementType.CACHE
-    override val privilegeType = PrivilegeType.OTHER
+    override val privilegeType = PrivilegeType.READ
     override val sqlType = SqlType.DML
 
     constructor(tableId: TableId, options: Map<String, String>): this(tableId, options, null)
