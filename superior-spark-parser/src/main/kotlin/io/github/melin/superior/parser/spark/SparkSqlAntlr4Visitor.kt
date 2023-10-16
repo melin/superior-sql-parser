@@ -838,6 +838,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
+        val querySql = CommonUtils.subsql(command, ctx)
+        queryStmt.setSql(querySql)
         return queryStmt
     }
 
