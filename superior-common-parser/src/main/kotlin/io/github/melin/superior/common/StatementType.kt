@@ -53,6 +53,7 @@ enum class StatementType: Serializable {
     SHOW,
     DESC,
 
+    // spark
     CACHE,
     UNCACHE,
     CLEAR_CACHE,

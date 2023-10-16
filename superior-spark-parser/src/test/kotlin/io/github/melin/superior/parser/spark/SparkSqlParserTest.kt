@@ -2162,7 +2162,6 @@ class SparkSqlParserTest {
 
     @Test
     fun syncDatabaseTest() {
-        val keywords = SparkSqlHelper.sqlKeywords();
         val sql = """
             CREATE DATABASE IF NOT EXISTS holo_tpcds 
             WITH ('sink.parallelism' = '4') 
@@ -2181,4 +2180,34 @@ class SparkSqlParserTest {
         }
     }
 
+    @Test
+    fun cacheTest() {
+        val sql = """
+            cache lazy table fire_service_calls_tbl_cache OPTIONS ('storageLevel' 'DISK_ONLY') as 
+            select * from (select * from demo.db.fire_service_calls_tbl) a
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is CacheTable) {
+            Assert.assertEquals("fire_service_calls_tbl_cache", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.options.size)
+            Assert.assertEquals(1, statement.queryStmt?.inputTables?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun uncacheTest() {
+        val sql = """
+            uncache table fire_service_calls_tbl_cache;
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is UnCacheTable) {
+            Assert.assertEquals("fire_service_calls_tbl_cache", statement.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
 }

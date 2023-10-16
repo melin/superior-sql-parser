@@ -821,12 +821,29 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
     //-----------------------------------cache-------------------------------------------------
 
-    override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext?): Statement {
-        return DefaultStatement(StatementType.CACHE)
+    override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext): Statement {
+        val tableId = parseTableName(ctx.identifierReference())
+        val options = parseOptions(ctx.propertyList())
+        if (ctx.query() != null) {
+            val query = parseQuery(ctx.query())
+            return CacheTable(tableId, options, query)
+        } else {
+            return CacheTable(tableId, options)
+        }
     }
 
-    override fun visitUncacheTable(ctx: SparkSqlParser.UncacheTableContext?): Statement {
-        return DefaultStatement(StatementType.UNCACHE)
+    private fun parseQuery(ctx: QueryContext): QueryStmt {
+        currentOptType = StatementType.SELECT
+        this.visitQuery(ctx)
+
+        val queryStmt = QueryStmt(inputTables, limit, offset)
+        queryStmt.functionNames.addAll(functionNames)
+        return queryStmt
+    }
+
+    override fun visitUncacheTable(ctx: SparkSqlParser.UncacheTableContext): Statement {
+        val tableId = parseTableName(ctx.identifierReference())
+        return UnCacheTable(tableId)
     }
 
     override fun visitClearCache(ctx: SparkSqlParser.ClearCacheContext?): Statement {
