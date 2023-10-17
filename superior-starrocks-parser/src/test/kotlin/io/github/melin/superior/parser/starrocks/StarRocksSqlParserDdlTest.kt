@@ -6,6 +6,8 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
+import io.github.melin.superior.parser.starrocks.relational.CancelRefreshMaterializedView
+import io.github.melin.superior.parser.starrocks.relational.RefreshMaterializedView
 import org.junit.Assert
 import org.junit.Test
 
@@ -249,6 +251,37 @@ class StarRocksSqlParserDdlTest {
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(3, statements.size)
+    }
+
+    @Test
+    fun refreshMaterializedViewTest() {
+        val sql = """
+           REFRESH MATERIALIZED VIEW lo_mv1 PARTITION START ("2020-02-01") END ("2020-03-01") FORCE;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is RefreshMaterializedView) {
+            Assert.assertEquals(REFRESH_MV, statement.statementType)
+
+            Assert.assertEquals("lo_mv1", statement.tableId.tableName)
+            Assert.assertEquals("2020-02-01", statement.partitionStart)
+            Assert.assertEquals("2020-03-01", statement.partitionEnd)
+            Assert.assertTrue(statement.force)
+            Assert.assertEquals("Async", statement.mode)
+        }
+    }
+
+    @Test
+    fun cancelRefreshMaterializedViewTest() {
+        val sql = """
+           CANCEL REFRESH MATERIALIZED VIEW lo_mv1;
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is CancelRefreshMaterializedView) {
+            Assert.assertEquals(CANCEL_REFRESH_MV, statement.statementType)
+            Assert.assertEquals("lo_mv1", statement.tableId.tableName)
+        }
     }
 
     @Test

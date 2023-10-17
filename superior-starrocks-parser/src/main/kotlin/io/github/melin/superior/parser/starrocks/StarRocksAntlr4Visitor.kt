@@ -222,6 +222,27 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return createView;
     }
 
+    override fun visitRefreshMaterializedViewStatement(ctx: RefreshMaterializedViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val force: Boolean = ctx.FORCE() != null;
+        val mode: String = if (ctx.SYNC() != null) "Sync" else "Async"
+        var partitionStart: String? = null
+        var partitionEnd: String? = null
+
+        if (ctx.partitionRangeDesc() != null) {
+            val values = ctx.partitionRangeDesc().string();
+            partitionStart = CommonUtils.cleanQuote(values.get(0).text)
+            partitionEnd = CommonUtils.cleanQuote(values.get(1).text)
+        }
+
+        return RefreshMaterializedView(tableId, force, mode, partitionStart, partitionEnd)
+    }
+
+    override fun visitCancelRefreshMaterializedViewStatement(ctx: CancelRefreshMaterializedViewStatementContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        return CancelRefreshMaterializedView(tableId)
+    }
+
     override fun visitDropTableStatement(ctx: DropTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val ifExists = ctx.EXISTS() != null

@@ -58,6 +58,10 @@ enum class StatementType: Serializable {
     UNCACHE,
     CLEAR_CACHE,
 
+    //
+    REFRESH_MV,
+    CANCEL_REFRESH_MV,
+
     EXPLAIN,
     SET,
     RESET,
