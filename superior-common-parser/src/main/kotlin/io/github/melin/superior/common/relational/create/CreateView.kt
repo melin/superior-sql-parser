@@ -6,11 +6,12 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnRel
 
 data class CreateView(
     override val tableId: TableId,
-    var querySql: String? = null,
+    var queryStmt: QueryStmt,
     val comment: String? = null,
     var ifNotExists: Boolean = false, //是否存在 if not exists 关键字
     var columnRels: List<ColumnRel>? = null
@@ -25,7 +26,4 @@ data class CreateView(
 
     var fileFormat: String? = null
     var properties: Map<String, String> = mapOf()
-
-    val inputTables: ArrayList<TableId> = arrayListOf()
-    val functionNames: HashSet<FunctionId> = hashSetOf()
 }

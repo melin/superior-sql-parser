@@ -175,6 +175,7 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals("my first view", statement.comment)
             Assert.assertEquals(4, statement.columnRels?.size)
             Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
+            Assert.assertEquals(TableId("example_table"), statement.queryStmt.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -217,6 +218,7 @@ class StarRocksSqlParserDdlTest {
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
+            Assert.assertEquals(TableId("lineorder"), statement.queryStmt.inputTables.get(0))
         } else {
             Assert.fail()
         }

@@ -5,6 +5,7 @@ import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.SortType
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnRel
 import java.util.HashMap
 
@@ -35,16 +36,14 @@ data class RenameTableAction(
 }
 
 data class AlterTouchPartitionAction(
-    var newTableId: TableId, // 修改表，新列名称
-    var partitionVals: LinkedHashMap<String, String>?
+    val newTableId: TableId, // 修改表，新列名称
+    val partitionVals: LinkedHashMap<String, String>?
 ): AlterAction() {
     override var alterType: AlterType = AlterType.TOUCH_TABLE
 }
 
 data class AlterViewAction(
-    var querySql: String, // 修改表，新列名称
-    var inputTables: List<TableId>,
-    var functionNames: HashSet<FunctionId>? = null
+    val queryStmt: QueryStmt // 修改表，新列名称
 ): AlterAction() {
     override var alterType: AlterType = AlterType.ALTER_VIEW
 }

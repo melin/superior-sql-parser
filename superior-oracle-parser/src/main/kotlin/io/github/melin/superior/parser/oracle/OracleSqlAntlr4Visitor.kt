@@ -179,13 +179,10 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val schemaName = if (ctx.schema_name() != null) ctx.schema_name().text else null
         val tableName = ctx.v.text
         val tableId = TableId(schemaName, tableName)
-
         val replace = if (ctx.REPLACE() != null) true else false
-        val createView = CreateView(tableId)
+        val queryStmt = this.parseSelect_only_statement(ctx.select_only_statement()) as QueryStmt
+        val createView = CreateView(tableId, queryStmt)
         createView.replace = replace
-
-        super.visitSelect_only_statement(ctx.select_only_statement())
-        createView.inputTables.addAll(inputTables)
         return createView
     }
 
@@ -193,10 +190,10 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         val tableId = parseTableViewName(ctx.tableview_name())
         //val ifNotExists = if (ctx.IF_P() != null) true else false
-        val createView = CreateMaterializedView(tableId)
+        val queryStmt = this.parseSelect_only_statement(ctx.select_only_statement()) as QueryStmt
+        val createView = CreateMaterializedView(tableId, queryStmt)
 
         super.visitSelect_only_statement(ctx.select_only_statement())
-        createView.inputTables.addAll(inputTables)
         return createView
     }
 
@@ -274,6 +271,14 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         super.visitSelect_statement(ctx)
         val queryStmt = QueryStmt(inputTables, limit, offset)
 
+        queryStmts.add(queryStmt)
+        return queryStmt
+    }
+
+    private fun parseSelect_only_statement(ctx: OracleParser.Select_only_statementContext): Statement {
+        currentOptType = StatementType.SELECT
+        super.visitSelect_only_statement(ctx)
+        val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmts.add(queryStmt)
         return queryStmt
     }

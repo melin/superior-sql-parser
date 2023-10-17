@@ -718,20 +718,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val tableId = parseTableName(ctx.identifierReference())
         val ifNotExists = ctx.NOT() != null
-
-        var querySql = ""
-        ctx.children.filter { it is QueryContext }.forEach { it ->
-            val query = it as QueryContext
-            querySql = StringUtils.substring(command, query.start.startIndex)
-        }
+        val queryStmt = parseQuery(ctx.query())
 
         currentOptType = StatementType.CREATE_VIEW
         this.visitQuery(ctx.query())
 
         val columnNameList = parseColumRefs(ctx.identifierCommentList())
-        val createView = CreateView(tableId, querySql, comment, ifNotExists, columnNameList)
-        createView.inputTables.addAll(inputTables)
-        createView.functionNames.addAll(functionNames)
+        val createView = CreateView(tableId, queryStmt, comment, ifNotExists, columnNameList)
 
         if (ctx.REPLACE() != null) {
             createView.replace = true
@@ -769,17 +762,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     override fun visitAlterViewQuery(ctx: SparkSqlParser.AlterViewQueryContext): Statement {
         val tableId = parseTableName(ctx.identifierReference())
-
-        var querySql = ""
-        ctx.children.filter { it is QueryContext }.forEach {
-            val query = it as QueryContext
-            querySql = StringUtils.substring(command, query.start.startIndex)
-        }
+        val queryStmt = parseQuery(ctx.query())
 
         currentAlterType = ALTER_VIEW
         visitQuery(ctx.query())
 
-        val action = AlterViewAction(querySql, inputTables, functionNames)
+        val action = AlterViewAction(queryStmt)
         return AlterTable(tableId, action)
     }
 

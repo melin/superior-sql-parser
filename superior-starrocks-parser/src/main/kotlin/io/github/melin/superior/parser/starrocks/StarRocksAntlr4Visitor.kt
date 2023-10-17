@@ -207,12 +207,10 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
         val ifNotExists = ctx.NOT() != null
-        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
-        val createView = CreateView(tableId, querySql, comment, ifNotExists, columns)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val createView = CreateView(tableId, queryStmt, comment, ifNotExists, columns)
 
         this.visitQueryStatement(ctx.queryStatement())
-        createView.inputTables.addAll(inputTables)
-        createView.functionNames.addAll(functionNames)
         return createView;
     }
 
@@ -221,12 +219,11 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment());
         val ifNotExists = ctx.NOT() != null
-        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
-        val createView = CreateMaterializedView(tableId, querySql, comment, ifNotExists, columns)
+
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val createView = CreateMaterializedView(tableId, queryStmt, comment, ifNotExists, columns)
 
         this.visitQueryStatement(ctx.queryStatement())
-        createView.inputTables.addAll(inputTables)
-        createView.functionNames.addAll(functionNames)
         return createView;
     }
 
@@ -279,8 +276,8 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitAlterViewStatement(ctx: AlterViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
-        val action = AlterViewAction(querySql, inputTables, functionNames)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val action = AlterViewAction(queryStmt)
         return AlterTable(tableId, action)
     }
 
@@ -289,6 +286,10 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         super.visitQueryRelation(ctx.queryRelation())
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
+
+        val querySql = CommonUtils.subsql(command, ctx)
+        queryStmt.setSql(querySql)
+
         queryStmts.add(queryStmt)
         return queryStmt
     }

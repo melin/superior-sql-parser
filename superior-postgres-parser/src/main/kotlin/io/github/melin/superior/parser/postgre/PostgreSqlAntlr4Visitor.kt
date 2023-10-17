@@ -212,17 +212,13 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         currentOptType = StatementType.CREATE_VIEW
         val tableId = parseTableName(ctx.qualified_name())
         val replace = if (ctx.REPLACE() != null) true else false
-        val createView = CreateView(tableId)
+        val queryStmt = this.visitSelectstmt(ctx.selectstmt()) as QueryStmt
+        val createView = CreateView(tableId, queryStmt)
         createView.replace = replace
 
         if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
             createView.temporary = true
         }
-
-        super.visitSelectstmt(ctx.selectstmt())
-        createView.inputTables.addAll(inputTables)
-
-        ctx.selectstmt()
         return createView
     }
 
@@ -230,11 +226,9 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         val tableId = parseTableName(ctx.create_mv_target().qualified_name())
         val ifNotExists = if (ctx.IF_P() != null) true else false
-        val createView = CreateMaterializedView(tableId)
+        val queryStmt = this.visitSelectstmt(ctx.selectstmt()) as QueryStmt
+        val createView = CreateMaterializedView(tableId, queryStmt)
         createView.ifNotExists = ifNotExists
-
-        super.visitSelectstmt(ctx.selectstmt())
-        createView.inputTables = inputTables
         return createView
     }
 

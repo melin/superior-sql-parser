@@ -113,7 +113,7 @@ class PostgreSqlParserDdlTest {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
             Assert.assertEquals("comedies", statement.tableId.tableName)
 
-            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -140,7 +140,7 @@ class PostgreSqlParserDdlTest {
             Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals("sales_summary", statement.tableId.tableName)
 
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

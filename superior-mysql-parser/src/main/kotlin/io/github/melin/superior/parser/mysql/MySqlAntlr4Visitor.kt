@@ -433,7 +433,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
 
     private fun parseFullId(fullId: MySqlParser.FullIdContext): TableId {
         var databaseName: String? = null
-        var tableName = ""
+        var tableName: String = ""
 
         if (fullId.childCount == 2) {
             databaseName = fullId.uid().get(0).text

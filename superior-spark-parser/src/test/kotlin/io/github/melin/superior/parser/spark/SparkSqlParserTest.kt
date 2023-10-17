@@ -636,7 +636,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
             Assert.assertEquals("view_users", statement.tableId.tableName)
             Assert.assertEquals("view test", statement.comment)
-            Assert.assertEquals("select * from account", statement.querySql)
+            Assert.assertEquals("select * from account", statement.queryStmt.getSql())
         } else {
             Assert.fail()
         }
@@ -656,11 +656,11 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
             Assert.assertEquals("view_users", statement.tableId.tableName)
             Assert.assertEquals("view test", statement.comment)
-            Assert.assertEquals(1, statement.functionNames.size)
-            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
+            Assert.assertEquals(1, statement.queryStmt.functionNames.size)
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.queryStmt.functionNames.first())
 
-            Assert.assertEquals("select *, bigdata.test(name) from account", statement.querySql)
-            Assert.assertEquals("account", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("select *, bigdata.test(name) from account", statement.queryStmt.getSql())
+            Assert.assertEquals("account", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -700,8 +700,8 @@ class SparkSqlParserTest {
             Assert.assertEquals("v1", statement.tableId.tableName)
             val action = statement.firstAction() as AlterViewAction
             Assert.assertEquals(AlterType.ALTER_VIEW, statement.firstAction().alterType)
-            Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", action.querySql)
-            Assert.assertEquals("t2", action.inputTables.get(0).tableName)
+            Assert.assertEquals("SELECT x, UPPER(s) s FROM t2", action.queryStmt.getSql())
+            Assert.assertEquals("t2", action.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }

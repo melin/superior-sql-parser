@@ -85,7 +85,7 @@ class FlinkSqlParserDdlTest {
         val createView = statements.get(1)
         if (createView is CreateView) {
             Assert.assertEquals("MDM_VIEW_PRODUCT_ENRICHMENT", createView.tableId.tableName)
-            Assert.assertEquals(3, createView.inputTables.size)
+            Assert.assertEquals(3, createView.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

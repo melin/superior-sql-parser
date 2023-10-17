@@ -171,7 +171,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         currentOptType = StatementType.CREATE_VIEW
         val tableId = parseSourceTable(ctx.uid())
         val comment: String? = if (ctx.commentSpec() != null) ctx.commentSpec().STRING_LITERAL().text else null;
-        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         var columnNameList: List<ColumnRel>? = null
@@ -179,11 +179,11 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
         }
 
-        val createTable = CreateView(tableId, querySql, comment, ifNotExists, columnNameList)
+        val createView = CreateView(tableId, queryStmt, comment, ifNotExists, columnNameList)
 
         super.visitQueryStatement(ctx.queryStatement())
-        createTable.inputTables.addAll(inputTables)
-        return createTable
+        createView.queryStmt.inputTables = inputTables
+        return createView
     }
 
     override fun visitInsertSimpleStatement(ctx: FlinkSqlParser.InsertSimpleStatementContext): Statement {
