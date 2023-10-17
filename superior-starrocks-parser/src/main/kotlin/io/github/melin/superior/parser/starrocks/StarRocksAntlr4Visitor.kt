@@ -38,6 +38,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
+    private var mvRefreshType: String = "Sync"
 
     fun getSqlStatements(): List<Statement> {
         return statements
@@ -218,8 +219,23 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
         val createView = CreateMaterializedView(tableId, queryStmt, comment, ifNotExists, columns)
 
+        ctx.materializedViewDesc().forEach { this.visitMaterializedViewDesc(it) }
+        createView.modelType = mvRefreshType
+
         this.visitQueryStatement(ctx.queryStatement())
         return createView;
+    }
+
+    override fun visitRefreshSchemeDesc(ctx: RefreshSchemeDescContext): Statement? {
+        if (ctx.ASYNC() != null) {
+            mvRefreshType = "Async"
+        } else if (ctx.MANUAL() != null) {
+            mvRefreshType = "Manual"
+        } else if (ctx.INCREMENTAL() != null) {
+            mvRefreshType = "Incremental"
+        }
+
+        return null;
     }
 
     override fun visitRefreshMaterializedViewStatement(ctx: RefreshMaterializedViewStatementContext): Statement {

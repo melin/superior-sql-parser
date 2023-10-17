@@ -20,5 +20,6 @@ data class CreateMaterializedView(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DDL
 
+    var modelType: String = "Sync" // 表模型类型
     var properties: Map<String, String> = mapOf()
 }

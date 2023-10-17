@@ -219,6 +219,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals("Async", statement.modelType)
             Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
             Assert.assertEquals(TableId("lineorder"), statement.queryStmt.inputTables.get(0))
         } else {
