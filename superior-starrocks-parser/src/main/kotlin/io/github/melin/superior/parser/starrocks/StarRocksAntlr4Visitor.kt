@@ -187,18 +187,13 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     override fun visitCreateTableAsSelectStatement(ctx: CreateTableAsSelectStatementContext): Statement? {
         val tableId = parseTableName(ctx.qualifiedName())
         val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
-        val querySql = StringUtils.substring(command, ctx.queryStatement().start.startIndex)
         val ifNotExists = ctx.EXISTS() != null
 
-        val createTable = CreateTableAsSelect(tableId, comment)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val createTable = CreateTableAsSelect(tableId, queryStmt, comment)
         createTable.ifNotExists = ifNotExists
         val properties = parseOptions(ctx.properties())
         createTable.properties = properties
-
-        createTable.querySql = querySql
-        this.visitQueryStatement(ctx.queryStatement())
-        createTable.inputTables.addAll(inputTables)
-        createTable.functionNames.addAll(functionNames)
         return createTable
     }
 

@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.presto
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.DefaultStatement
+import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
@@ -27,6 +28,7 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     private var offset:Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
+    private var functionNames: HashSet<FunctionId> = hashSetOf()
 
     private var statements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
@@ -93,22 +95,23 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
     }
 
+    private fun parseQuery(ctx: PrestoSqlBaseParser.QueryContext): QueryStmt {
+        currentOptType = StatementType.SELECT
+        this.visitQuery(ctx)
+
+        val queryStmt = QueryStmt(inputTables, limit, offset)
+        queryStmt.functionNames.addAll(functionNames)
+        val querySql = CommonUtils.subsql(command, ctx)
+        queryStmt.setSql(querySql)
+        return queryStmt
+    }
+
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = createTableSource(ctx.qualifiedName())
-        val createTable = CreateTableAsSelect(tableId)
-
-        var querySql = StringUtils.substring(command, ctx.query().start.startIndex)
-        if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
-            querySql = StringUtils.substringBetween(querySql, "(", ")")
-        }
-
+        val queryStmt = parseQuery(ctx.query())
+        val createTable = CreateTableAsSelect(tableId, queryStmt)
         createTable.lifeCycle = 7
-        createTable.querySql = querySql
-
-        super.visitQuery(ctx.query())
-
-        createTable.inputTables.addAll(inputTables)
         return createTable
     }
 

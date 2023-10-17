@@ -70,7 +70,7 @@ class TrinoSqlParserTest {
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("dd_s_s", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

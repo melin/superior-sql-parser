@@ -320,19 +320,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         if (query != null) {
             currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-            val createTable = CreateTableAsSelect(tableId, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
+            val queryStmt = parseQuery(query)
+
+            val createTable = CreateTableAsSelect(tableId, queryStmt, comment, lifeCycle,
+                    partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.modelType = modelType;
             createTable.replace = replace
-
-            var querySql = StringUtils.substring(command, query.start.startIndex)
-            if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
-                querySql = StringUtils.substringBetween(querySql, "(", ")")
-            }
-
-            createTable.querySql = querySql
-            super.visitQuery(query)
-            createTable.inputTables.addAll(inputTables)
-            createTable.functionNames.addAll(functionNames)
             createTable.partitionColumnNames.addAll(partitionColumnNames)
             return createTable
         } else {
@@ -826,7 +819,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
-        val querySql = CommonUtils.subsql(command, ctx)
+        var querySql = CommonUtils.subsql(command, ctx)
+        if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
+            querySql = StringUtils.substring(querySql, 1, -1)
+        }
         queryStmt.setSql(querySql)
         return queryStmt
     }

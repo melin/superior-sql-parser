@@ -264,6 +264,6 @@ class StarRocksSqlParserDmlTest {
         val statement = statements.get(0) as CreateTableAsSelect
 
         Assert.assertEquals("order_new", statement.tableId.tableName)
-        Assert.assertEquals("orders", statement.inputTables.get(0).tableName)
+        Assert.assertEquals("orders", statement.queryStmt.inputTables.get(0).tableName)
     }
 }

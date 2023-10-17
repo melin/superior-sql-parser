@@ -453,14 +453,14 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", statement.tableId.tableName)
-            Assert.assertEquals("select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("users", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals("select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id", statement.queryStmt.getSql())
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("users", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
 
             Assert.assertTrue(statement.ifNotExists)
 
-            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.queryStmt.functionNames.first())
         } else {
             Assert.fail()
         }
@@ -482,8 +482,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("ICEBERG", statement.fileFormat)
             Assert.assertEquals("t", tableName)
-            Assert.assertEquals("SELECT 1 as a, \"a\" as b", statement.querySql)
-            Assert.assertEquals("b", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals("SELECT 1 as a, \"a\" as b", statement.queryStmt.getSql())
+            Assert.assertEquals("b", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -499,10 +499,10 @@ class SparkSqlParserTest {
             val tableName = statement.tableId.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("tdl_users_1", tableName)
-            Assert.assertEquals("select * from users a left outer join address b on a.addr_id = b.id", statement.querySql)
-            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals("select * from users a left outer join address b on a.addr_id = b.id", statement.queryStmt.getSql())
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
             Assert.assertEquals("parquet", statement.fileFormat)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
         } else {
             Assert.fail()
         }
@@ -520,8 +520,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("tdl_users_1", tableName)
             //Assert.assertEquals("select * from users a left outer join address b on a.addr_id = b.id", statement.querySql)
-            Assert.assertEquals(3, statement.inputTables.size)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals(3, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
         } else {
             Assert.fail()
         }
@@ -538,7 +538,7 @@ class SparkSqlParserTest {
             val tableName = statement.tableId.tableName
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("test_iceberg_1", tableName)
-            Assert.assertEquals("SELECT 'xxx' as name, 23 as price, '20211203' as ds", statement.querySql)
+            Assert.assertEquals("SELECT 'xxx' as name, 23 as price, '20211203' as ds", statement.queryStmt.getSql())
         } else {
             Assert.fail()
         }
@@ -556,10 +556,11 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertEquals("tdl_users_1", tableName)
-            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id", statement.querySql)
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("users", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals("select * from bigdata.users a left outer join address b on a.addr_id = b.id",
+                    statement.queryStmt.getSql())
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("users", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
         } else {
             Assert.fail()
         }

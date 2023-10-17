@@ -242,10 +242,8 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
     override fun visitCreateasstmt(ctx: PostgreSqlParser.CreateasstmtContext): Statement {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.create_as_target().qualified_name())
-        val createTable = CreateTableAsSelect(tableId)
-        super.visitSelectstmt(ctx.selectstmt())
-
-        createTable.inputTables.addAll(inputTables)
+        val queryStmt = this.visitSelectstmt(ctx.selectstmt()) as QueryStmt
+        val createTable = CreateTableAsSelect(tableId, queryStmt)
         return createTable
     }
 

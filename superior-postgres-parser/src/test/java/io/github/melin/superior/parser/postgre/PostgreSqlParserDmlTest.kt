@@ -134,8 +134,8 @@ class PostgreSqlParserDmlTest {
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("films_recent", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("films", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("films", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }

@@ -162,9 +162,8 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         }
 
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
-        val createTable = CreateTableAsSelect(tableId, comment, null, null, null, null, null, ifNotExists)
-        super.visitSelectStatement(ctx.selectStatement())
-        createTable.inputTables.addAll(inputTables)
+        val queryStmt = this.visitSelectStatement(ctx.selectStatement()) as QueryStmt
+        val createTable = CreateTableAsSelect(tableId, queryStmt, comment, null, null, null, null, null, ifNotExists)
         return createTable
     }
 

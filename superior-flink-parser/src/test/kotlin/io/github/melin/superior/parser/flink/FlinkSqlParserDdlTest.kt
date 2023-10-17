@@ -1,7 +1,6 @@
 package io.github.melin.superior.parser.flink
 
 import io.github.melin.superior.common.relational.create.CreateTable
-import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.InsertTable
 import org.junit.Assert

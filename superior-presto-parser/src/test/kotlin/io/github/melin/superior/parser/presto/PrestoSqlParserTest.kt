@@ -70,7 +70,7 @@ class PrestoSqlParserTest {
         if (statement is CreateTableAsSelect) {
             Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("dd_s_s", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.inputTables?.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -85,8 +85,8 @@ class PrestoSqlParserTest {
         val statement = PrestoSqlHelper.parseStatement(sql)
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
-            Assert.assertEquals("bigdata", statement.tableId?.schemaName)
-            Assert.assertEquals("tdl_small_files_2", statement.tableId?.tableName)
+            Assert.assertEquals("bigdata", statement.tableId.schemaName)
+            Assert.assertEquals("tdl_small_files_2", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
