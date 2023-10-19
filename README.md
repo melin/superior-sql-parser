@@ -126,7 +126,8 @@ WITH (
    'sink.buffer-flush.interval' = '2s',
    'sink.max-retries' = '5'
 ) 
-AS DATABASE demos INCLUDING table 'orders|users'            OPTIONS(
+AS DATABASE demos INCLUDING table 'orders|users'            
+OPTIONS(
    'connector' = 'mysql-cdc',
    'hostname' = '172.18.5.44',
    'port' = '3306',
