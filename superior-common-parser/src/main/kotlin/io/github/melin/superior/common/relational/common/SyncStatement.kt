@@ -35,7 +35,7 @@ data class SyncDatabase(
     var excludingTables: String? = null
 }
 
-data class SyncSchemaMetadata(
+data class SyncDatabaseMetadata(
         val catalogName: String?,
         val databaseName: String,
         val owner: String?

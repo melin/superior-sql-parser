@@ -620,15 +620,15 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitSyncTableMeta(ctx: SparkSqlParser.SyncTableMetaContext): Statement {
-        val type = ctx.dtType.text.lowercase();
+        val syncType = ctx.dtType.text.lowercase();
         var owner: String? = null
         if (ctx.principal != null) {
             owner = ctx.principal.text
         }
 
-        return if ("schema" == type) {
+        return if ("database" == syncType) {
             val source = parseNamespace(ctx.source)
-            SyncSchemaMetadata(source.first, source.second, owner);
+            SyncDatabaseMetadata(source.first, source.second, owner);
         } else {
             val sourceTableId = parseTableName(ctx.source)
             SyncTableMetadata(sourceTableId, owner)

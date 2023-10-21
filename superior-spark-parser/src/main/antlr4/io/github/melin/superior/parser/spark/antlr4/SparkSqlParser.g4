@@ -252,7 +252,7 @@ statement
     | CALL HELP callHelpExpr?                                          #callHelp
     | CALL multipartIdentifier
         LEFT_PAREN callArgument (COMMA callArgument)* RIGHT_PAREN      #call
-    | SYNC dtType=(SCHEMA|TABLE) FROM source=multipartIdentifier
+    | SYNC dtType=(DATABASE|TABLE) FROM source=multipartIdentifier
       (SET OWNER principal=identifier)?                                #syncTableMeta
 
     | CREATE TABLE IF NOT EXISTS sink=multipartIdentifier

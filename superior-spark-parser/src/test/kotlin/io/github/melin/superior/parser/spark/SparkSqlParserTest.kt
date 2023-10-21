@@ -2033,13 +2033,13 @@ class SparkSqlParserTest {
 
     @Test
     fun syncSchemaTest() {
-        val sql = "SYNC SCHEMA FROM hive_metastore.my_db SET OWNER wangwu"
+        val sql = "SYNC Database FROM hive_metastore.my_db SET OWNER wangwu"
         val statement = SparkSqlHelper.parseStatement(sql)
         
-        if (statement is SyncSchemaMetadata) {
+        if (statement is SyncDatabaseMetadata) {
             Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
-            Assert.assertEquals("hive_metastore", statement.sourceCatalogName)
-            Assert.assertEquals("my_db", statement.sourceDatabaseName)
+            Assert.assertEquals("hive_metastore", statement.catalogName)
+            Assert.assertEquals("my_db", statement.databaseName)
             Assert.assertEquals("wangwu", statement.owner)
         } else {
             Assert.fail()
@@ -2053,9 +2053,9 @@ class SparkSqlParserTest {
         
         if (statement is SyncTableMetadata) {
             Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
-            Assert.assertEquals("hive_metastore", statement.sourceTableId.catalogName)
-            Assert.assertEquals("default", statement.sourceTableId.schemaName)
-            Assert.assertEquals("my_tbl", statement.sourceTableId.tableName)
+            Assert.assertEquals("hive_metastore", statement.tableId.catalogName)
+            Assert.assertEquals("default", statement.tableId.schemaName)
+            Assert.assertEquals("my_tbl", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
