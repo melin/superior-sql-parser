@@ -29,10 +29,11 @@ data class AlterPropsAction(
     constructor(properties: HashMap<String, String>): this(null, properties)
 }
 
-data class RenameTableAction(
-    var newTableId: TableId
+data class RenameAction(
+    var newTableId: TableId,
+    var ifExists: Boolean = false
 ): AlterAction() {
-    override var alterType: AlterType = AlterType.RENAME_TABLE
+    override var alterType: AlterType = AlterType.RENAME
 }
 
 data class AlterTouchPartitionAction(

@@ -7,7 +7,7 @@ import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.parser.starrocks.relational.CancelRefreshMaterializedView
-import io.github.melin.superior.parser.starrocks.relational.RefreshMaterializedView
+import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 import org.junit.Assert
 import org.junit.Test
 

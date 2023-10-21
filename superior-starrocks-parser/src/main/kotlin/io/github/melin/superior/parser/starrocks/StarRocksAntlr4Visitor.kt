@@ -143,16 +143,15 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     override fun visitAlterMaterializedViewStatement(ctx: AlterMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         if (ctx.refreshSchemeDesc() != null) {
-            val async = ctx.refreshSchemeDesc().ASYNC() != null
-            return AlterMaterializedView(AlterType.REFRESH_MV, tableId, RefreshMvAction(async))
+            return AlterMaterializedView(tableId, DefaultAction(AlterType.REFRESH_MV))
         } else if (ctx.tableRenameClause() != null) {
             val newName = ctx.tableRenameClause().identifier().text
-            return AlterMaterializedView(AlterType.RENAME_TABLE, tableId, RenameTableAction(TableId(newName)))
+            return AlterMaterializedView(tableId, RenameAction(TableId(newName)))
         } else {
             val properties = parseOptions(ctx.modifyTablePropertiesClause().propertyList())
             val action = AlterPropsAction()
             action.properties.putAll(properties)
-            return AlterMaterializedView(AlterType.SET_TABLE_PROPS, tableId, action)
+            return AlterMaterializedView(tableId, action)
         }
     }
 

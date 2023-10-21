@@ -387,10 +387,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val newTableId = parseTableName(ctx.to)
 
         return if (ctx.VIEW() != null) {
-            val action = RenameTableAction(newTableId)
+            val action = RenameAction(newTableId)
             AlterView(tableId, action)
         } else {
-            val action = RenameTableAction(newTableId)
+            val action = RenameAction(newTableId)
             AlterTable(tableId, action)
         }
     }

@@ -3,13 +3,12 @@ package io.github.melin.superior.parser.postgre
 import io.github.melin.superior.common.AlterType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.alter.AlterColumnAction
-import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.CreateIndex
-import io.github.melin.superior.common.relational.alter.DropIndex
+import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
+import io.github.melin.superior.common.relational.drop.DropMaterializedView
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.junit.Assert
@@ -141,6 +140,55 @@ class PostgreSqlParserDdlTest {
             Assert.assertEquals("sales_summary", statement.tableId.tableName)
 
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun dropMvTest() {
+        val sql = """
+            DROP MATERIALIZED VIEW tickets_mv;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is DropMaterializedView) {
+            Assert.assertEquals(StatementType.DROP_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals(TableId("tickets_mv"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun refreshMvTest() {
+        val sql = """
+            REFRESH MATERIALIZED VIEW tickets_mv;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is RefreshMaterializedView) {
+            Assert.assertEquals(StatementType.REFRESH_MV, statement.statementType)
+            Assert.assertEquals(TableId("tickets_mv"), statement.tableId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun renameMvTest() {
+        val sql = """
+            ALTER MATERIALIZED VIEW tickets_mv RENAME TO tickets_mv_1;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is AlterMaterializedView) {
+            Assert.assertEquals(StatementType.ALTER_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals(TableId("tickets_mv"), statement.tableId)
+            Assert.assertEquals(AlterType.RENAME, statement.firstAction().alterType)
         } else {
             Assert.fail()
         }

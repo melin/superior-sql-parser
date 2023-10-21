@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils
 
 import io.github.melin.superior.common.AlterType.*
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -230,6 +231,38 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val createView = CreateMaterializedView(tableId, queryStmt)
         createView.ifNotExists = ifNotExists
         return createView
+    }
+
+    override fun visitRefreshmatviewstmt(ctx: PostgreSqlParser.RefreshmatviewstmtContext): Statement {
+        val tableId = parseTableName(ctx.qualified_name())
+        return RefreshMaterializedView(tableId)
+    }
+
+    override fun visitRenamestmt(ctx: PostgreSqlParser.RenamestmtContext): Statement? {
+        if (ctx.TABLE() != null) {
+            val tableId = parseTableName(ctx.qualified_name())
+            val newTable = ctx.name().get(0).text
+            val ifexists = ctx.EXISTS() != null
+            val action = RenameAction(TableId(newTable), ifexists)
+            return AlterTable(tableId, action)
+        } else if (ctx.VIEW() != null) {
+            if (ctx.MATERIALIZED() == null) {
+                val tableId = parseTableName(ctx.qualified_name())
+                val newTable = ctx.name().get(0).text
+                val ifexists = ctx.EXISTS() != null
+                val action = RenameAction(TableId(newTable), ifexists)
+                return AlterView(tableId, action)
+            } else {
+                val tableId = parseTableName(ctx.qualified_name())
+                val newTable = ctx.name().get(0).text
+                val ifexists = ctx.EXISTS() != null
+                val action = RenameAction(TableId(newTable), ifexists)
+                return AlterMaterializedView(tableId, action)
+            }
+        } else {
+
+            return null
+        }
     }
 
     override fun visitSelectstmt(ctx: PostgreSqlParser.SelectstmtContext): Statement {

@@ -199,7 +199,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         val tableId = parseFullId(ctx.renameTableClause().get(0).tableName(0).fullId())
         val newTableId = parseFullId(ctx.renameTableClause().get(0).tableName(1).fullId())
 
-        val action = RenameTableAction(newTableId)
+        val action = RenameAction(newTableId)
         return AlterTable(tableId, action)
     }
 

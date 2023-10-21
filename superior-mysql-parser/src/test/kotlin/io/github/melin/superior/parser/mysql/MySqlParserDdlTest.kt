@@ -271,8 +271,8 @@ class MySqlParserDdlTest {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
-            val action = statement.firstAction() as RenameTableAction
-            Assert.assertEquals(AlterType.RENAME_TABLE, action.alterType)
+            val action = statement.firstAction() as RenameAction
+            Assert.assertEquals(AlterType.RENAME, action.alterType)
             Assert.assertEquals("dc_users", action.newTableId.tableName)
         } else {
             Assert.fail()

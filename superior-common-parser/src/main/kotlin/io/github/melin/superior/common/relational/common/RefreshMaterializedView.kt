@@ -1,4 +1,4 @@
-package io.github.melin.superior.parser.starrocks.relational
+package io.github.melin.superior.common.relational.common
 
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
