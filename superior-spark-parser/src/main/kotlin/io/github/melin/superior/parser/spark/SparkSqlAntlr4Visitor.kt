@@ -628,10 +628,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         return if ("schema" == type) {
             val source = parseNamespace(ctx.source)
-            SyncSchemaMetaData(source.first, source.second, owner);
+            SyncSchemaMetadata(source.first, source.second, owner);
         } else {
             val sourceTableId = parseTableName(ctx.source)
-            SyncTableMetaData(sourceTableId, owner)
+            SyncTableMetadata(sourceTableId, owner)
         }
     }
 

@@ -35,7 +35,7 @@ data class SyncDatabase(
     var excludingTables: String? = null
 }
 
-data class SyncSchemaMetaData(
+data class SyncSchemaMetadata(
         val sourceCatalogName: String?,
         val sourceDatabaseName: String,
         val owner: String?
@@ -45,7 +45,7 @@ data class SyncSchemaMetaData(
     override val sqlType = SqlType.DDL
 }
 
-data class SyncTableMetaData(
+data class SyncTableMetadata(
         val sourceTableId: TableId,
         val owner: String?
 ) : Statement() {
