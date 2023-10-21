@@ -36,8 +36,8 @@ data class SyncDatabase(
 }
 
 data class SyncSchemaMetadata(
-        val sourceCatalogName: String?,
-        val sourceDatabaseName: String,
+        val catalogName: String?,
+        val databaseName: String,
         val owner: String?
 ) : Statement() {
     override val statementType = StatementType.SYNC_TABLE_META
@@ -46,7 +46,7 @@ data class SyncSchemaMetadata(
 }
 
 data class SyncTableMetadata(
-        val sourceTableId: TableId,
+        val tableId: TableId,
         val owner: String?
 ) : Statement() {
     override val statementType = StatementType.SYNC_TABLE_META
