@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
-import io.github.melin.superior.common.AlterType.*
+import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.*
@@ -44,7 +44,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     SparkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private var currentAlterType: AlterType = UNKOWN
+    private var currentAlterActionType: AlterActionType = UNKOWN
     private var multiInsertToken: String? = null
 
     private var limit: Int? = null
@@ -109,7 +109,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     private fun clean() {
         currentOptType = StatementType.UNKOWN
-        currentAlterType = UNKOWN
+        currentAlterActionType = UNKOWN
         multiInsertToken = null
 
         limit = null
@@ -472,7 +472,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val columnName = ctx.from.text
         val newColumnName = ctx.to.text
 
-        val action = AlterColumnAction(RENAME_COLUMN, columnName)
+        val action = AlterColumnAction(RENAME, columnName)
         action.newColumName = newColumnName
         return AlterTable(tableId, action)
     }
@@ -757,7 +757,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val tableId = parseTableName(ctx.identifierReference())
         val queryStmt = parseQuery(ctx.query())
 
-        currentAlterType = ALTER_VIEW
+        currentAlterActionType = ALTER_VIEW_QUERY
         visitQuery(ctx.query())
 
         val action = AlterViewAction(queryStmt)
@@ -1171,7 +1171,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             currentOptType == StatementType.DATATUNNEL ||
             currentOptType == StatementType.UPDATE ||
             currentOptType == StatementType.DELETE ||
-            currentAlterType == ALTER_VIEW) {
+            currentAlterActionType == ALTER_VIEW_QUERY) {
 
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)

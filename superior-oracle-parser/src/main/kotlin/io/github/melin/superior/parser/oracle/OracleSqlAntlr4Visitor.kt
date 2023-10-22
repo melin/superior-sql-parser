@@ -4,7 +4,7 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
-import io.github.melin.superior.common.relational.alter.DefaultAction
+import io.github.melin.superior.common.relational.alter.AlterTableAction
 import io.github.melin.superior.common.relational.common.CallProcedure
 import io.github.melin.superior.common.relational.common.CommentData
 import io.github.melin.superior.common.relational.common.ShowStatement
@@ -262,7 +262,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitAlter_view(ctx: OracleParser.Alter_viewContext): Statement {
         val tableId = parseTableViewName(ctx.tableview_name())
-        val action = DefaultAction(AlterType.ALTER_VIEW)
+        val action = AlterTableAction(AlterActionType.ALTER_VIEW_QUERY)
         return AlterTable(tableId, action)
     }
 

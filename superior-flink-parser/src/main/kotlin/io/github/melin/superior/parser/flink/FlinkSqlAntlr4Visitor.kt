@@ -36,7 +36,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     FlinkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
-    private var currentAlterType: AlterType = AlterType.UNKOWN
+    private var currentAlterActionType: AlterActionType = AlterActionType.UNKOWN
     private var multiInsertToken: String? = null
 
     private var limit: Int? = null

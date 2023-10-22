@@ -130,20 +130,20 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         val action = AlterDbPropsAction()
         action.properties.put("quota", quota)
-        return AlterDatabase(AlterType.SET_DATABASE_PROPS, databaseName, action)
+        return AlterDatabase(AlterActionType.SET_PROPS, databaseName, action)
     }
 
     override fun visitAlterDatabaseRenameStatement(ctx: AlterDatabaseRenameStatementContext): Statement {
         val databaseName: String = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
         val newDatabaseName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
         val action = RenameDbAction(newDatabaseName)
-        return AlterDatabase(AlterType.RENAME_DATABASE, databaseName, action)
+        return AlterDatabase(AlterActionType.RENAME, databaseName, action)
     }
 
     override fun visitAlterMaterializedViewStatement(ctx: AlterMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         if (ctx.refreshSchemeDesc() != null) {
-            return AlterMaterializedView(tableId, DefaultAction(AlterType.REFRESH_MV))
+            return AlterMaterializedView(tableId, AlterTableAction(AlterActionType.REFRESH_MV))
         } else if (ctx.tableRenameClause() != null) {
             val newName = ctx.tableRenameClause().identifier().text
             return AlterMaterializedView(tableId, RenameAction(TableId(newName)))

@@ -22,7 +22,7 @@ import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
-import io.github.melin.superior.common.AlterType.*
+import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 
@@ -461,14 +461,12 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                     var alterTable: AlterTable? = null;
                     val partitionCmd = ctx.partition_cmd()
                     if (partitionCmd.ATTACH() != null) {
-                        alterTable = AlterTable(tableId, DefaultAction(ATTACH_PARTITION))
+                        alterTable = AlterTable(tableId, AlterTableAction(ATTACH_PARTITION))
                     } else {
-                        alterTable = AlterTable(tableId, DefaultAction(DETACH_PARTITION))
+                        alterTable = AlterTable(tableId, AlterTableAction(DETACH_PARTITION))
                     }
 
-                    if (alterTable != null) {
-                        statements.add(alterTable)
-                    }
+                    statements.add(alterTable)
                 }
 
 

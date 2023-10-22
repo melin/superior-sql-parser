@@ -18,7 +18,7 @@ import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
-import io.github.melin.superior.common.AlterType.*
+import io.github.melin.superior.common.AlterActionType.*
 
 /**
  *

@@ -32,7 +32,7 @@ data class AlterTable(
         return if (action != null) action else actions.first()
     }
 
-    fun getFirstAlterType(): AlterType {
+    fun getFirstAlterType(): AlterActionType {
         val action = firstAction()
         return action.alterType
     }

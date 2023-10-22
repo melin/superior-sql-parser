@@ -2,28 +2,23 @@ package io.github.melin.superior.common
 
 import java.io.Serializable
 
-enum class AlterType : Serializable {
-    SET_TABLE_LOCATION,
-    SET_TABLE_PROPS,
-    SET_DATABASE_PROPS,
+enum class AlterActionType : Serializable {
+    SET_PROPS,
     TOUCH_TABLE,
 
     ALTER_COLUMN,
-    ALTER_VIEW,
+    ALTER_VIEW_QUERY,
 
-    ADD_COLUMN,
     ADD_UNIQUE_KEY,
     ADD_PRIMARY_KEY,
-    SET_COLUMN_DEFAULT,
-
-    DROP_COLUMN,
-    DROP_COLUMN_DRFAULT,
-
     ADD_INDEX,
     DROP_INDEX,
 
-    RENAME_COLUMN,
-    RENAME_DATABASE,
+    ADD_COLUMN,
+    SET_COLUMN_DEFAULT,
+    DROP_COLUMN,
+    DROP_COLUMN_DRFAULT,
+
     RENAME,
     REFRESH_MV,
 

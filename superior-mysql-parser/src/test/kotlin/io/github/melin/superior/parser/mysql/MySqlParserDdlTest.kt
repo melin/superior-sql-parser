@@ -272,7 +272,7 @@ class MySqlParserDdlTest {
             Assert.assertEquals("datacompute", statement.tableId.schemaName)
             Assert.assertEquals("users_quan", statement.tableId.tableName)
             val action = statement.firstAction() as RenameAction
-            Assert.assertEquals(AlterType.RENAME, action.alterType)
+            Assert.assertEquals(AlterActionType.RENAME, action.alterType)
             Assert.assertEquals("dc_users", action.newTableId.tableName)
         } else {
             Assert.fail()
@@ -341,7 +341,7 @@ class MySqlParserDdlTest {
             Assert.assertEquals("t1", statement.tableId.tableName)
 
             val action = statement.firstAction() as AlterColumnAction
-            Assert.assertEquals(AlterType.ALTER_COLUMN, action.alterType)
+            Assert.assertEquals(AlterActionType.ALTER_COLUMN, action.alterType)
             Assert.assertEquals("age", action.columName)
             Assert.assertEquals("BIGINT", action.dataType)
         } else {
@@ -360,7 +360,7 @@ class MySqlParserDdlTest {
             Assert.assertEquals("users_quan", statement.tableId.tableName)
 
             val action = statement.firstAction() as AlterColumnAction
-            Assert.assertEquals(AlterType.ADD_COLUMN, action.alterType)
+            Assert.assertEquals(AlterActionType.ADD_COLUMN, action.alterType)
             Assert.assertEquals("age", action.columName)
             Assert.assertEquals("年龄", action.comment)
         } else {
@@ -379,7 +379,7 @@ class MySqlParserDdlTest {
             Assert.assertEquals("users_quan", statement.tableId.tableName)
 
             val action = statement.firstAction() as DropColumnAction
-            Assert.assertEquals(AlterType.DROP_COLUMN, action.alterType)
+            Assert.assertEquals(AlterActionType.DROP_COLUMN, action.alterType)
             Assert.assertEquals("age", action.columNames.get(0))
         } else {
             Assert.fail()
@@ -469,7 +469,7 @@ class MySqlParserDdlTest {
         if (statement is AlterTable) {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
             val dropIndex = statement.firstAction() as DropIndex
-            Assert.assertEquals(AlterType.DROP_INDEX, dropIndex.alterType)
+            Assert.assertEquals(AlterActionType.DROP_INDEX, dropIndex.alterType)
             Assert.assertEquals("test_index", dropIndex.indexName)
         }
     }
@@ -483,7 +483,7 @@ class MySqlParserDdlTest {
 
         
         if (statement is AlterTable) {
-            Assert.assertEquals(AlterType.TRUNCATE_PARTITION, statement.firstAction().alterType)
+            Assert.assertEquals(AlterActionType.TRUNCATE_PARTITION, statement.firstAction().alterType)
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
         }
     }

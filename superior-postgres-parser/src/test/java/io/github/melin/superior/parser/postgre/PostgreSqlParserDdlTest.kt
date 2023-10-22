@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.postgre
 
-import io.github.melin.superior.common.AlterType
+import io.github.melin.superior.common.AlterActionType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
@@ -188,7 +188,7 @@ class PostgreSqlParserDdlTest {
         if (statement is AlterMaterializedView) {
             Assert.assertEquals(StatementType.ALTER_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals(TableId("tickets_mv"), statement.tableId)
-            Assert.assertEquals(AlterType.RENAME, statement.firstAction().alterType)
+            Assert.assertEquals(AlterActionType.RENAME, statement.firstAction().alterType)
         } else {
             Assert.fail()
         }
@@ -238,7 +238,7 @@ class PostgreSqlParserDdlTest {
         if (statement is AlterTable) {
             Assert.assertEquals(TableId("films"), statement.tableId)
             val createIndex = statement.firstAction() as CreateIndex
-            Assert.assertEquals(AlterType.ADD_INDEX, createIndex.alterType)
+            Assert.assertEquals(AlterActionType.ADD_INDEX, createIndex.alterType)
             Assert.assertEquals("title_idx", createIndex.indexName)
         }
     }
@@ -253,7 +253,7 @@ class PostgreSqlParserDdlTest {
         
         if (statement is AlterTable) {
             val dropIndex = statement.firstAction() as DropIndex
-            Assert.assertEquals(AlterType.DROP_INDEX, dropIndex.alterType)
+            Assert.assertEquals(AlterActionType.DROP_INDEX, dropIndex.alterType)
             Assert.assertEquals("title_idx", dropIndex.indexName)
         }
     }
@@ -296,12 +296,12 @@ class PostgreSqlParserDdlTest {
         val alterTable1 = statements.get(0) as AlterTable
         Assert.assertEquals("distributors", alterTable1.tableId.tableName)
         var action = alterTable1.actions.get(0) as AlterColumnAction
-        Assert.assertEquals(AlterType.ADD_COLUMN, action.alterType)
+        Assert.assertEquals(AlterActionType.ADD_COLUMN, action.alterType)
         Assert.assertEquals("address", action.columName)
         Assert.assertEquals("varchar(30)", action.dataType)
 
         action = alterTable1.actions.get(1) as AlterColumnAction
-        Assert.assertEquals(AlterType.SET_COLUMN_DEFAULT, action.alterType)
+        Assert.assertEquals(AlterActionType.SET_COLUMN_DEFAULT, action.alterType)
         Assert.assertEquals("status", action.columName)
         Assert.assertEquals("current", action.defaultExpression)
     }
