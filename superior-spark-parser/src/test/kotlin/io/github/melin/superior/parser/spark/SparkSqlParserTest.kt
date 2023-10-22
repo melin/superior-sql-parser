@@ -2037,7 +2037,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncDatabaseMetadata) {
-            Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
+            Assert.assertEquals(StatementType.SYNC_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.catalogName)
             Assert.assertEquals("my_db", statement.databaseName)
             Assert.assertEquals("wangwu", statement.owner)
@@ -2052,7 +2052,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is SyncTableMetadata) {
-            Assert.assertEquals(StatementType.SYNC_TABLE_META, statement.statementType)
+            Assert.assertEquals(StatementType.SYNC_META, statement.statementType)
             Assert.assertEquals("hive_metastore", statement.tableId.catalogName)
             Assert.assertEquals("default", statement.tableId.schemaName)
             Assert.assertEquals("my_tbl", statement.tableId.tableName)

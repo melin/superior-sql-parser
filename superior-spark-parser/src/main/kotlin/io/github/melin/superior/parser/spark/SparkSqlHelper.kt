@@ -62,7 +62,7 @@ object SparkSqlHelper {
             CALL,
             HELP,
             MERGE_FILE,
-            SYNC_TABLE_META,
+            SYNC_META,
             SYNC_TABLE,
             SYNC_DATABASE,
 

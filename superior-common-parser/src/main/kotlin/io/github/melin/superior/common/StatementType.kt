@@ -91,7 +91,7 @@ enum class StatementType: Serializable {
     ADD_JAR,
     REMOVE_JAR,
 
-    SYNC_TABLE_META,
+    SYNC_META,
     SYNC_TABLE,
     SYNC_DATABASE,
 

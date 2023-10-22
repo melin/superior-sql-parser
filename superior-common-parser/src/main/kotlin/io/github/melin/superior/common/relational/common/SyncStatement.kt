@@ -40,7 +40,7 @@ data class SyncDatabaseMetadata(
         val databaseName: String,
         val owner: String?
 ) : Statement() {
-    override val statementType = StatementType.SYNC_TABLE_META
+    override val statementType = StatementType.SYNC_META
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL
 }
@@ -49,7 +49,7 @@ data class SyncTableMetadata(
         val tableId: TableId,
         val owner: String?
 ) : Statement() {
-    override val statementType = StatementType.SYNC_TABLE_META
+    override val statementType = StatementType.SYNC_META
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL
 }
