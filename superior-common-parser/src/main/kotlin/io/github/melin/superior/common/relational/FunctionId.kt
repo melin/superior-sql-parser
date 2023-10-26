@@ -8,6 +8,17 @@ data class FunctionId(
     val schemaName: String?,
     val functionName: String) {
 
+    companion object {
+        @JvmStatic
+        fun of(functionName: String) = TableId(functionName)
+
+        @JvmStatic
+        fun of(schemaName: String, functionName: String) = TableId(schemaName, functionName)
+
+        @JvmStatic
+        fun of(catalogName: String, schemaName: String, functionName: String) = TableId(catalogName, schemaName, functionName)
+    }
+
     var funcType: String = "CF" // callfunction & TVF
     var functionArguments: List<String> = Lists.newArrayList();
 

@@ -8,6 +8,17 @@ data class TableId(
     val tableName: String,
     val metaType: String?) {
 
+    companion object {
+        @JvmStatic
+        fun of(tableName: String) = TableId(tableName)
+
+        @JvmStatic
+        fun of(schemaName: String, tableName: String) = TableId(schemaName, tableName)
+
+        @JvmStatic
+        fun of(catalogName: String, schemaName: String, tableName: String) = TableId(catalogName, schemaName, tableName)
+    }
+
     constructor(catalogName: String?, schemaName: String?, tableName: String):
             this(catalogName, schemaName, tableName, null)
 
