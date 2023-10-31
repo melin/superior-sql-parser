@@ -194,7 +194,7 @@ class MySqlParserDmlTest {
 
     @Test
     fun countCondTest() {
-        val sql = "select count(type='mac' or null) From test_table where a=2"
+        val sql = "select count(type='mac' or null) From test_table where a=2 limit 50"
 
         val statement = MySqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.SELECT, statement.statementType)
