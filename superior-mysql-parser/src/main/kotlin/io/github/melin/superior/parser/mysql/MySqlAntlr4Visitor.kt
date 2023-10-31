@@ -421,7 +421,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     }
 
     override fun visitLimitClause(ctx: MySqlParser.LimitClauseContext): Statement? {
-        if (ctx.limit.decimalLiteral() != null) {
+        if (ctx.limit != null && ctx.limit.decimalLiteral() != null) {
             limit = ctx.limit.text.toInt()
         }
         if (ctx.offset != null && ctx.offset.decimalLiteral() != null) {
