@@ -88,8 +88,9 @@ enum class StatementType: Serializable {
     CANCEL_LOAD_TABLE,
     ALTER_LOAD_TABLE,
 
-    ADD_JAR,
-    REMOVE_JAR,
+    ADD_RESOURCE,
+    LIST_RESOURCE,
+    REMOVE_RESOURCE,
 
     SYNC_META,
     SYNC_TABLE,

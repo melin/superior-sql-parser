@@ -208,9 +208,9 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     override fun visitJarStatememt(ctx: FlinkSqlParser.JarStatememtContext): Statement {
         val jarFileName = CommonUtils.cleanQuote(ctx.jarFileName().text)
         if (ctx.KW_ADD() != null) {
-            return AddJarStatememt(jarFileName)
+            return AddResourceStatememt(jarFileName, "jar")
         } else {
-            return RemoveJarStatememt(jarFileName)
+            return RemoveResourceStatememt(jarFileName, "jar")
         }
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3</version>
     <packaging>pom</packaging>
 
     <modules>

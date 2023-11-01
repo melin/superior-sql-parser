@@ -1,18 +1,24 @@
 package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
-import io.github.melin.superior.common.*
+import io.github.melin.superior.common.AlterActionType
 import io.github.melin.superior.common.AlterActionType.*
+import io.github.melin.superior.common.SQLParserException
+import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.TableType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.*
-import io.github.melin.superior.parser.spark.relational.RefreshStatement
 import io.github.melin.superior.common.relational.create.*
-import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
-import io.github.melin.superior.common.relational.drop.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
+import io.github.melin.superior.common.relational.drop.DropFunction
+import io.github.melin.superior.common.relational.drop.DropTable
+import io.github.melin.superior.common.relational.drop.DropView
 import io.github.melin.superior.common.relational.io.ExportTable
-import io.github.melin.superior.common.relational.table.*
+import io.github.melin.superior.common.relational.table.ColumnRel
+import io.github.melin.superior.common.relational.table.RepairTable
+import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.AlterColumnActionContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.ColDefinitionOptionContext
@@ -32,9 +38,7 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import io.github.melin.superior.parser.spark.relational.*
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
+import java.util.regex.Pattern
 
 /**
  *
@@ -1099,6 +1103,27 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
         mergeTable.inputTables = inputTables
         return mergeTable
+    }
+
+    override fun visitManageResource(ctx: SparkSqlParser.ManageResourceContext): Statement {
+        val resouceType = StringUtils.lowerCase(ctx.identifier().text)
+        val rawArg = StringUtils.substring(command, ctx.identifier().stop.stopIndex + 1, ctx.stop.stopIndex + 1)
+
+        val files = arrayListOf<String>()
+        if (StringUtils.isNotBlank(rawArg)) {
+            val pattern = Pattern.compile("(\".*?[^\\\\]\"|'.*?[^\\\\]'|[^ \\n\\r\\t\"']+)")
+            val matcher = pattern.matcher(rawArg)
+            while (matcher.find()) {
+                val match = matcher.group()
+                files.add(CommonUtils.cleanQuote(match))
+            }
+        }
+
+        return if (ctx.ADD() != null) {
+            AddResourceStatememt(files, resouceType)
+        } else {
+            ListResourceStatememt(files, resouceType)
+        }
     }
 
     //-----------------------------------private method-------------------------------------------------

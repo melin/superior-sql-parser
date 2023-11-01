@@ -2211,4 +2211,26 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun resourceManagerTest() {
+        val sql = """
+            ADD ARCHIVE /tmp/test.tar.gz;
+            ADD ARCHIVE "/path/to/some.zip";
+            ADD ARCHIVE '/some/other.tgz';
+            ADD ARCHIVE "/path with space/abc.tar";
+            ADD ARCHIVES "/path with space/def.tgz" '/path with space/ghi.zip';
+            
+            LIST JAR;
+            LIST JAR /tmp/test.jar /some/random.jar /another/random.jar;
+        """.trimIndent()
+
+        val statements = SparkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(7, statements.size)
+        val addResource = statements.get(4) as AddResourceStatememt
+        Assert.assertEquals(2, addResource.fileNames.size)
+
+        val listResource = statements.get(6) as ListResourceStatememt
+        Assert.assertEquals(3, listResource.fileNames.size)
+    }
 }
