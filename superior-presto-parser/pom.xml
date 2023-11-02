@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.melin.superior</groupId>
         <artifactId>superior-sql-parser</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>superior-presto-parser</artifactId>
