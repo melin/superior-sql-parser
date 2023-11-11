@@ -1331,14 +1331,14 @@ class SparkSqlParserTest {
 
     @Test
     fun insertOverwriteTest0() {
-        val sql = "insert OVERWRITE TABLE users PARTITION(ds='20170220') values('libinsong')"
+        val sql = "insert OVERWRITE TABLE users PARTITION(ds='20170220', type='login') values('libinsong')"
         val statement = SparkSqlHelper.parseStatement(sql)
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
-            Assert.assertEquals(1, statement.partitionVals?.size)
-            Assert.assertEquals("users", statement.tableId?.tableName)
+            Assert.assertEquals(2, statement.partitionVals?.size)
+            Assert.assertEquals("users", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -1353,7 +1353,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
             Assert.assertEquals(1, statement.partitionVals?.size)
-            Assert.assertEquals("users", statement.tableId?.tableName)
+            Assert.assertEquals("users", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
@@ -1361,13 +1361,13 @@ class SparkSqlParserTest {
 
     @Test
     fun insertOverwriteQueryTest2() {
-        val sql = "insert INTO users PARTITION(ds='20170220') select * from account a join address b on a.addr_id=b.id"
+        val sql = "insert INTO users PARTITION(ds='20170220', type='login') select * from account a join address b on a.addr_id=b.id"
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals("users", statement.tableId?.tableName)
+            Assert.assertEquals("users", statement.tableId.tableName)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
-            Assert.assertEquals(1, statement.partitionVals?.size)
+            Assert.assertEquals(2, statement.partitionVals?.size)
             Assert.assertEquals("select * from account a join address b on a.addr_id=b.id", statement.querySql)
 
             Assert.assertEquals(2, statement.inputTables.size)

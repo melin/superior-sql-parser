@@ -1378,9 +1378,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     private fun parsePartitionSpec(ctx: PartitionSpecContext?): LinkedHashMap<String, String> {
         val partitions: LinkedHashMap<String, String> = LinkedHashMap()
         if (ctx != null) {
-            val count = ctx.partitionVal().size
             ctx.partitionVal().forEach {
-                if (count == 1) {
+                if (it.childCount == 1) {
                     partitions.put(it.identifier().text, "__dynamic__")
                 } else {
                     var value = it.getChild(2).text
