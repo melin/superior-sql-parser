@@ -1063,6 +1063,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             stmt.properties = properties
             stmt.fileFormat = fileFormat
             stmt
+        } else if (ctx is SparkSqlParser.InsertOverwriteHiveDirContext) {
+            val path = ctx.path.STRING_LITERAL().text;
+            val stmt = InsertTable(InsertMode.OVERWRITE_HIVE_DIR, TableId(path))
+            stmt
         } else {
             throw SQLParserException("not support InsertMode.OVERWRITE_HIVE_DIR")
         }
