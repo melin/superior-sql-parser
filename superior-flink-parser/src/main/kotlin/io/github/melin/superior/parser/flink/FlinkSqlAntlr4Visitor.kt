@@ -188,12 +188,10 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
         }
 
-        val insertTable = InsertTable(insertMode, tableId, columnNameList)
-        super.visitQueryStatement(ctx.queryStatement())
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val insertTable = InsertTable(insertMode, queryStmt, tableId, columnNameList)
 
-        insertTable.inputTables.addAll(inputTables)
         insertTable.outputTables.add(tableId)
-        insertTable.functionNames.addAll(functionNames)
         return insertTable
     }
 

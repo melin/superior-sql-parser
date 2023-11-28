@@ -172,7 +172,7 @@ class SparkStreamSqlParserTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test_result1", statement.tableId?.tableName)
-            Assert.assertEquals("select * from users", statement.querySql)
+            Assert.assertEquals("select * from users", statement.queryStmt.getSql())
         } else {
             Assert.fail()
         }

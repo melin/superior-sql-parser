@@ -311,10 +311,8 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val tableId = parseTableName(ctx.insert_target().qualified_name())
         addOutputTableId(tableId)
 
-        val insertTable = InsertTable(InsertMode.INTO, tableId)
-        super.visitInsert_rest(ctx.insert_rest())
-
-        insertTable.inputTables.addAll(inputTables)
+        val queryStmt = this.visitSelectstmt(ctx.insert_rest().selectstmt()) as QueryStmt
+        val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
         insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
         return insertTable
     }

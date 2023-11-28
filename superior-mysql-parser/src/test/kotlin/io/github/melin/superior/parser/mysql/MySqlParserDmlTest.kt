@@ -168,7 +168,7 @@ class MySqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
-            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -186,7 +186,7 @@ class MySqlParserDmlTest {
             Assert.assertEquals("bigdata", statement.tableId?.schemaName)
             Assert.assertEquals("user", statement.tableId?.tableName)
             Assert.assertTrue(statement.mysqlReplace)
-            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

@@ -232,7 +232,7 @@ class PostgreSqlParserDmlTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
-            Assert.assertEquals(0, statement.inputTables.size)
+            Assert.assertEquals(0, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -255,7 +255,7 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("employees_log", statement.tableId?.tableName)
             Assert.assertEquals(2, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -273,7 +273,7 @@ class PostgreSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

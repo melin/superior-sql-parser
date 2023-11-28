@@ -352,18 +352,17 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitInsertStatement(ctx: InsertStatementContext): Statement {
-        currentOptType = StatementType.INSERT
         val tableId = parseTableName(ctx.qualifiedName())
-        if (ctx.queryStatement() != null) {
-            visitQueryStatement(ctx.queryStatement())
+        val queryStmt = if (ctx.queryStatement() != null) {
+            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        } else {
+            QueryStmt()
         }
 
+        currentOptType = StatementType.INSERT
         val insertTable =
-            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, tableId)
-            else InsertTable(InsertMode.OVERWRITE, tableId)
-
-        insertTable.inputTables.addAll(inputTables)
-        insertTable.functionNames.addAll(functionNames)
+            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, queryStmt, tableId)
+            else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
 
         if (ctx.expressionsWithDefault().size > 0) {
             val rows: ArrayList<List<String>> = ArrayList()

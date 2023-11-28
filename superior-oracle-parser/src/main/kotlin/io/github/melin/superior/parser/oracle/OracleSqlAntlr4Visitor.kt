@@ -310,10 +310,11 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             addOutputTableId(tableId)
 
             if (tableInsert.select_statement() != null) {
-                super.visitSelect_statement(tableInsert.select_statement())
+                val queryStmt = this.visitSelect_statement(tableInsert.select_statement()) as QueryStmt
+                InsertTable(InsertMode.INTO, queryStmt, tableId)
+            } else {
+                InsertTable(InsertMode.INTO, QueryStmt(), tableId)
             }
-
-            InsertTable(InsertMode.INTO, tableId)
         } else {
             if (ctx.multi_table_insert().conditional_insert_clause() == null) {
                 val tableInserts = ctx.multi_table_insert().multi_table_element()
@@ -330,13 +331,13 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             }
 
             if (ctx.multi_table_insert().select_statement() != null) {
-                super.visitSelect_statement(ctx.multi_table_insert().select_statement())
+                val queryStmt = this.visitSelect_statement(ctx.multi_table_insert().select_statement()) as QueryStmt
+                InsertTable(InsertMode.INTO, queryStmt, outputTables.first())
+            } else {
+                InsertTable(InsertMode.INTO, QueryStmt(), outputTables.first())
             }
-
-            InsertTable(InsertMode.INTO, outputTables.first())
         }
 
-        insertTable.inputTables.addAll(inputTables)
         insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
         return insertTable
     }

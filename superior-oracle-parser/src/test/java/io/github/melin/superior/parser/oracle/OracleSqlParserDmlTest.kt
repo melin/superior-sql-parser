@@ -103,7 +103,7 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("pivot_dest", statement.outputTables.get(0).tableName)
             Assert.assertEquals(1, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -126,7 +126,7 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -152,7 +152,7 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -178,7 +178,7 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("dest_tab1", statement.outputTables.get(0).tableName)
             Assert.assertEquals(3, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -196,7 +196,7 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)
             Assert.assertEquals(1, statement.outputTables.size)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

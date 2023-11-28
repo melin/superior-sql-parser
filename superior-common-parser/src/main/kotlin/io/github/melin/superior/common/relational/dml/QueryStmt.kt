@@ -17,4 +17,6 @@ data class QueryStmt(
     override val sqlType = SqlType.DQL
 
     val functionNames: HashSet<FunctionId> = hashSetOf()
+
+    constructor() : this(listOf())
 }

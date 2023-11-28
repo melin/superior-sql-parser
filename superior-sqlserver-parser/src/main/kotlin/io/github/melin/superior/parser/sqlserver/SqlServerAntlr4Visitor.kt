@@ -133,11 +133,11 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             this.visitWith_expression(ctx.with_expression())
         }
 
+        val queryStmt = QueryStmt(inputTables)
         val insertTable =
-            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, tableId)
-            else InsertTable(InsertMode.OVERWRITE, tableId)
+            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, queryStmt, tableId)
+            else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
 
-        insertTable.inputTables.addAll(inputTables)
         return insertTable
     }
 

@@ -175,8 +175,8 @@ class StarRocksSqlParserDmlTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("test2", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -192,8 +192,8 @@ class StarRocksSqlParserDmlTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("test2", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -209,7 +209,7 @@ class StarRocksSqlParserDmlTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("table1", statement.tableId.tableName)
-            Assert.assertEquals(0, statement.inputTables.size)
+            Assert.assertEquals(0, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }

@@ -318,25 +318,26 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
         val tableId = parseFullId(ctx.tableName().fullId())
 
         currentOptType = StatementType.INSERT
-        val insertTable = InsertTable(InsertMode.INTO, tableId)
         if (ctx.insertStatementValue().selectStatement() != null) {
-            super.visit(ctx.insertStatementValue().selectStatement())
+            val queryStmt = this.visitSelectStatement(ctx.insertStatementValue().selectStatement()) as QueryStmt
+            return InsertTable(InsertMode.INTO, queryStmt, tableId)
+        } else {
+            return InsertTable(InsertMode.INTO, QueryStmt(), tableId)
         }
-        insertTable.inputTables.addAll(inputTables)
-        return insertTable
     }
 
     override fun visitReplaceStatement(ctx: MySqlParser.ReplaceStatementContext): Statement {
         val tableId = parseFullId(ctx.tableName().fullId())
 
         currentOptType = StatementType.INSERT
-        val insertTable = InsertTable(InsertMode.INTO, tableId)
         if (ctx.insertStatementValue().selectStatement() != null) {
-            super.visit(ctx.insertStatementValue().selectStatement())
+            val queryStmt = this.visitSelectStatement(ctx.insertStatementValue().selectStatement()) as QueryStmt
+            val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
             insertTable.mysqlReplace = true
+            return insertTable
+        } else {
+            return InsertTable(InsertMode.INTO, QueryStmt(), tableId)
         }
-        insertTable.inputTables.addAll(inputTables)
-        return insertTable
     }
 
     override fun visitDeleteStatement(ctx: MySqlParser.DeleteStatementContext): Statement {

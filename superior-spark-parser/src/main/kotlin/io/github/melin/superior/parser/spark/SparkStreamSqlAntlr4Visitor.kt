@@ -7,6 +7,7 @@ import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertTable
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
@@ -71,9 +72,10 @@ class SparkStreamSqlAntlr4Visitor(val command: String?):
         val tableName = ctx.tableName.table.ID().text
 
         val tableId = TableId(schemaName, tableName)
+        val queryStmt = QueryStmt()
         val querySql = CommonUtils.subsql(command, ctx.select)
-        val insertTable = InsertTable(InsertMode.INTO, tableId)
-        insertTable.querySql = querySql
+        queryStmt.setSql(querySql)
+        val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
         return insertTable
     }
 

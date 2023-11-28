@@ -27,8 +27,10 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.CreateTableCl
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtColPropertyContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyListContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.FromClauseContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.IdentifierContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.InsertIntoContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.MultiInsertQueryContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PartitionSpecContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.PropertyListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.QueryContext
@@ -831,6 +833,20 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return queryStmt
     }
 
+    private fun parseFromClause(ctx: FromClauseContext): QueryStmt {
+        currentOptType = StatementType.SELECT
+        this.visitFromClause(ctx)
+
+        val queryStmt = QueryStmt(inputTables, limit, offset)
+        queryStmt.functionNames.addAll(functionNames)
+        var querySql = CommonUtils.subsql(command, ctx)
+        if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
+            querySql = StringUtils.substring(querySql, 1, -1)
+        }
+        queryStmt.setSql(querySql)
+        return queryStmt
+    }
+
     override fun visitUncacheTable(ctx: SparkSqlParser.UncacheTableContext): Statement {
         val tableId = parseTableName(ctx.identifierReference())
         return UnCacheTable(tableId)
@@ -1000,26 +1016,20 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         if (node is SingleInsertQueryContext) {
-            currentOptType = StatementType.INSERT
             insertSql = true
-            super.visitQuery(node.query())
-            val singleInsertStmt = parseInsertInto(node.insertInto())
-
-            val querySql = StringUtils.substring(command, node.query().start.startIndex)
-            singleInsertStmt.querySql = querySql
-            singleInsertStmt.inputTables.addAll(inputTables)
-            singleInsertStmt.functionNames.addAll(functionNames)
-            singleInsertStmt.rows = rows
-
-            return singleInsertStmt
-        } else if (StringUtils.equalsIgnoreCase("from", ctx.start.text)) {
+            val queryStmt = parseQuery(node.query())
             currentOptType = StatementType.INSERT
-            super.visitDmlStatement(ctx)
+            val insertTable = parseInsertInto(node.insertInto(), queryStmt)
+            insertTable.rows = rows
 
-            val insertTable = InsertTable(InsertMode.OVERWRITE, outputTables.first())
-            insertTable.inputTables.addAll(inputTables)
+            return insertTable
+        } else if (node is MultiInsertQueryContext) {
+            val queryStmt = parseFromClause(node.fromClause())
+            currentOptType = StatementType.INSERT
+
+            node.multiInsertQueryBody().forEach {  this.visitMultiInsertQueryBody(it) }
+            val insertTable = InsertTable(InsertMode.OVERWRITE, queryStmt, outputTables.first())
             insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
-            insertTable.functionNames.addAll(functionNames)
             return insertTable
         } else if (node is SparkSqlParser.UpdateTableContext ||
                 node is SparkSqlParser.DeleteFromTableContext ||
@@ -1030,7 +1040,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
     }
 
-    private fun parseInsertInto(ctx: InsertIntoContext): InsertTable {
+    private fun parseInsertInto(ctx: InsertIntoContext, queryStmt: QueryStmt): InsertTable {
         return if (ctx is SparkSqlParser.InsertIntoTableContext) {
             val tableId = parseTableName(ctx.identifierReference())
             val partitionVals = parsePartitionSpec(ctx.partitionSpec())
@@ -1038,7 +1048,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if (ctx.identifierList() != null) {
                 columnNameList = ctx.identifierList().identifierSeq().ident.map { ColumnRel(CommonUtils.cleanQuote(it.text)) }
             }
-            val stmt = InsertTable(InsertMode.INTO, tableId, columnNameList)
+            val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId, columnNameList)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
@@ -1048,27 +1058,27 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if (ctx.identifierList() != null) {
                 columnNameList = ctx.identifierList().identifierSeq().ident.map { ColumnRel(CommonUtils.cleanQuote(it.text)) }
             }
-            val stmt = InsertTable(InsertMode.OVERWRITE, tableId, columnNameList)
+            val stmt = InsertTable(InsertMode.OVERWRITE, queryStmt, tableId, columnNameList)
             stmt.partitionVals = partitionVals
             stmt
         } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
             val tableId = parseTableName(ctx.identifierReference())
-            InsertTable(InsertMode.INTO_REPLACE, tableId)
+            InsertTable(InsertMode.INTO_REPLACE, queryStmt, tableId)
         } else if (ctx is SparkSqlParser.InsertOverwriteDirContext) {
-            val path = if (ctx.path != null) ctx.path.STRING_LITERAL().text else "";
+            val path = if (ctx.path != null) CommonUtils.cleanQuote(ctx.path.STRING_LITERAL().text) else "";
             val properties = parseOptions(ctx.propertyList())
             val fileFormat = ctx.tableProvider().multipartIdentifier().text
 
-            val stmt = InsertTable(InsertMode.OVERWRITE_DIR, TableId(path))
+            val stmt = InsertTable(InsertMode.OVERWRITE_DIR, queryStmt, TableId(path))
             stmt.properties = properties
             stmt.fileFormat = fileFormat
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteHiveDirContext) {
-            val path = ctx.path.STRING_LITERAL().text;
-            val stmt = InsertTable(InsertMode.OVERWRITE_HIVE_DIR, TableId(path))
+            val path = CommonUtils.cleanQuote(ctx.path.STRING_LITERAL().text);
+            val stmt = InsertTable(InsertMode.OVERWRITE_HIVE_DIR, queryStmt, TableId(path))
             stmt
         } else {
-            throw SQLParserException("not support InsertMode.OVERWRITE_HIVE_DIR")
+            throw SQLParserException("not support insert into sql")
         }
     }
 

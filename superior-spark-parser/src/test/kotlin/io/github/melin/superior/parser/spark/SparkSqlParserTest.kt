@@ -1306,10 +1306,10 @@ class SparkSqlParserTest {
             Assert.assertEquals(InsertMode.INTO, statement.mode)
 
             Assert.assertEquals("demo", statement.tableId.tableName)
-            Assert.assertEquals(1, statement.functionNames.size)
-            Assert.assertEquals("hudi_table_changes", statement.functionNames.first().functionName)
-            Assert.assertEquals("TVF", statement.functionNames.first().funcType)
-            Assert.assertEquals(3, statement.functionNames.first().functionArguments.size)
+            Assert.assertEquals(1, statement.queryStmt.functionNames.size)
+            Assert.assertEquals("hudi_table_changes", statement.queryStmt.functionNames.first().functionName)
+            Assert.assertEquals("TVF", statement.queryStmt.functionNames.first().funcType)
+            Assert.assertEquals(3, statement.queryStmt.functionNames.first().functionArguments.size)
         } else {
             Assert.fail()
         }
@@ -1368,11 +1368,10 @@ class SparkSqlParserTest {
             Assert.assertEquals("users", statement.tableId.tableName)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
             Assert.assertEquals(2, statement.partitionVals?.size)
-            Assert.assertEquals("select * from account a join address b on a.addr_id=b.id", statement.querySql)
 
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("account", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("account", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
         } else {
             Assert.fail()
         }
@@ -1387,13 +1386,13 @@ class SparkSqlParserTest {
             Assert.assertEquals("users", statement.tableId?.tableName)
             Assert.assertEquals(InsertMode.INTO, statement.mode)
             Assert.assertEquals(0, statement.partitionVals?.size)
-            Assert.assertEquals(statement.querySql, "select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id")
+            Assert.assertEquals(statement.queryStmt.getSql(), "select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id")
 
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("account", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("address", statement.inputTables.get(1).tableName)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("account", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
 
-            Assert.assertEquals(FunctionId("bigdata", "test"), statement.functionNames.first())
+            Assert.assertEquals(FunctionId("bigdata", "test"), statement.queryStmt.functionNames.first())
         } else {
             Assert.fail()
         }
@@ -1409,11 +1408,10 @@ class SparkSqlParserTest {
             Assert.assertEquals("users", statement.tableId?.tableName)
             Assert.assertEquals(InsertMode.OVERWRITE, statement.mode)
             Assert.assertEquals(1, statement.partitionVals?.size)
-            Assert.assertEquals(statement.querySql, "select * from account1 union all select * from account2");
 
-            Assert.assertEquals(2, statement.inputTables.size)
-            Assert.assertEquals("account1", statement.inputTables.get(0).tableName)
-            Assert.assertEquals("account2", statement.inputTables.get(1).tableName)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("account1", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals("account2", statement.queryStmt.inputTables.get(1).tableName)
         } else {
             Assert.fail()
         }
@@ -1433,7 +1431,7 @@ class SparkSqlParserTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals(3, statement.outputTables.size)
-            Assert.assertEquals("sample_07", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("sample_07", statement.queryStmt.inputTables.get(0).tableName)
             Assert.assertEquals("toodey3", statement.outputTables.get(2).tableName)
         } else {
             Assert.fail()
@@ -1706,7 +1704,7 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is InsertTable) {
-            Assert.assertEquals(3, statement.inputTables.size)
+            Assert.assertEquals(3, statement.queryStmt.inputTables.size)
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
         } else {
             Assert.fail()
@@ -2062,17 +2060,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun notSupportSql() {
-        val sql = "insert overwrite directory '/user/ahao' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t' select * from nlp_dev.all_category_sample"
-        try {
-            SparkSqlHelper.parseStatement(sql)
-            Assert.fail()
-        } catch (e: SQLParserException) {
-            Assert.assertTrue(true)
-        }
-    }
-
-    @Test
     fun typeConstructor() {
         var sql = "select date '20220-02-13' as demo";
         SparkSqlHelper.parseStatement(sql)
@@ -2232,5 +2219,24 @@ class SparkSqlParserTest {
 
         val listResource = statements.get(6) as ListResourceStatememt
         Assert.assertEquals(3, listResource.fileNames.size)
+    }
+
+    @Test
+    fun insertOverwriteDirTest() {
+        val sql = """
+            with test as (
+                select a, b from aaa
+            )
+            insert overwrite directory 'hdfs://xxx' row format delimited fields terminated by '\t'
+            select a, b from test
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals("hdfs://xxx", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+        } else {
+            Assert.fail()
+        }
     }
 }

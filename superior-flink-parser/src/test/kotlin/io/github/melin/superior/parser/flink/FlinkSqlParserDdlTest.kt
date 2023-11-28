@@ -92,7 +92,7 @@ class FlinkSqlParserDdlTest {
         val insertTable = statements.get(2)
         if (insertTable is InsertTable) {
             Assert.assertEquals("PROCESSED_MDM_PRODUCT_ENRICHMENT", insertTable.outputTables.get(0).tableName)
-            Assert.assertEquals(1, insertTable.inputTables.size)
+            Assert.assertEquals(1, insertTable.queryStmt.inputTables.size)
             Assert.assertEquals(5, insertTable.columnRels?.size)
         } else {
             Assert.fail()
