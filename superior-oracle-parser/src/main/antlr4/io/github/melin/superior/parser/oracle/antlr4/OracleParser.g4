@@ -4127,7 +4127,7 @@ cache_or_nocache
     ;
 
 database_name
-    : regular_id
+    : id_expression
     ;
 
 alter_database
@@ -4478,6 +4478,7 @@ alter_database_link
 password_value
     : id_expression
     | numeric
+    | VALUES CHAR_STRING
     ;
 
 link_authentication
