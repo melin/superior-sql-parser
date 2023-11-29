@@ -902,7 +902,8 @@ replaceStatement
 selectStatement
     : querySpecification lockClause?
     | queryExpression lockClause?
-    | querySpecificationNointo unionStatement+
+    | (querySpecificationNointo | queryExpressionNointo)
+        unionStatement+
         (
           UNION unionType=(ALL | DISTINCT)?
           (querySpecification | queryExpression)
