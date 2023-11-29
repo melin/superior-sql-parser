@@ -203,12 +203,12 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return QueryStmt(inputTables, limit, offset)
     }
 
-    override fun visitJarStatememt(ctx: FlinkSqlParser.JarStatememtContext): Statement {
+    override fun visitJarStatement(ctx: FlinkSqlParser.JarStatementContext): Statement {
         val jarFileName = CommonUtils.cleanQuote(ctx.jarFileName().text)
         if (ctx.KW_ADD() != null) {
-            return AddResourceStatememt(jarFileName, "jar")
+            return AddResourceStatement(jarFileName, "jar")
         } else {
-            return RemoveResourceStatememt(jarFileName, "jar")
+            return RemoveResourceStatement(jarFileName, "jar")
         }
     }
 
@@ -300,7 +300,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return null
     }
 
-    override fun visitSetStatememt(ctx: FlinkSqlParser.SetStatememtContext): Statement {
+    override fun visitSetStatement(ctx: FlinkSqlParser.SetStatementContext): Statement {
         val tableProperty = ctx.tableProperty()
         var key = tableProperty.tablePropertyKey().text
         var value = tableProperty.tablePropertyValue().text

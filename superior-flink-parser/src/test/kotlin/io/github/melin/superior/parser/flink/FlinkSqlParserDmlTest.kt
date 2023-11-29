@@ -1,6 +1,6 @@
 package io.github.melin.superior.parser.flink
 
-import io.github.melin.superior.common.relational.common.AddResourceStatememt
+import io.github.melin.superior.common.relational.common.AddResourceStatement
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateCatalog
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -184,7 +184,7 @@ class FlinkSqlParserDmlTest {
         Assert.assertEquals(4, statements.size)
         val addStmt = statements.get(0)
 
-        if (addStmt is AddResourceStatememt) {
+        if (addStmt is AddResourceStatement) {
             Assert.assertEquals("flink-connector-jdbc-3.1.1-1.17.jar", addStmt.first())
         } else {
             Assert.fail()

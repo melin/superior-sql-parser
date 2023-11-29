@@ -4,7 +4,7 @@ import io.github.melin.superior.common.AlterActionType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
-import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
@@ -278,7 +278,7 @@ class PostgreSqlParserDdlTest {
 
         val statement = PostgreSqlHelper.parseStatement(sql)
         
-        if (statement is CommentData) {
+        if (statement is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, statement.statementType)
             Assert.assertEquals("Employee Information", statement.comment)
             Assert.assertFalse(statement.isNull)

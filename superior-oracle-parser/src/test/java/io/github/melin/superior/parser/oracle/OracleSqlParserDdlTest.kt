@@ -2,7 +2,7 @@ package io.github.melin.superior.parser.oracle
 
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.DefaultStatement
-import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.create.CreateDatabase
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -124,14 +124,14 @@ class OracleSqlParserDdlTest {
         val st1 = statement.get(0)
         val st2 = statement.get(1)
         
-        if (st1 is CommentData) {
+        if (st1 is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, st1.statementType)
             Assert.assertEquals("employees.job_id", st1.objValue)
             Assert.assertEquals("abbreviated job title", st1.comment)
             Assert.assertFalse(st1.isNull)
         }
 
-        if (st2 is CommentData) {
+        if (st2 is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, st2.statementType)
             Assert.assertEquals("employees1.job_id", st2.objValue)
             Assert.assertEquals("abbreviated job title", st2.comment)

@@ -5,7 +5,7 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 
-data class CommentData(
+data class CommentStatement(
     val comment: String? = null,
     val isNull: Boolean = false,
     val objType: String? = null,

@@ -3,7 +3,7 @@ package io.github.melin.superior.parser.postgre
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
-import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
@@ -495,7 +495,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val isNull = if (ctx.comment_text().NULL_P() != null) true else false
         val text: String? =
             if (ctx.comment_text().text != null) CommonUtils.cleanQuote(ctx.comment_text().sconst().text) else null
-        return CommentData(text, isNull, objType, objValue)
+        return CommentStatement(text, isNull, objType, objValue)
     }
 
     //----------------------------------------private methods------------------------------------

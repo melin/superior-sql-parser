@@ -11,8 +11,8 @@ singleStatement
     ;
 
 sqlStatement
-    : ddlStatement | dmlStatement | describeStatement | explainStatement | useStatement | showStatememt
-    | loadStatement | unloadStatememt | setStatememt | resetStatememt | jarStatememt | dtAddStatement
+    : ddlStatement | dmlStatement | describeStatement | explainStatement | useStatement | showStatement
+    | loadStatement | unloadStatement | setStatement | resetStatement | jarStatement | dtAddStatement
     | cdcStatement
     ;
 
@@ -68,7 +68,7 @@ useModuleStatement
     : KW_USE KW_MODULES uid (COMMA uid)*
     ;
 
-showStatememt
+showStatement
     : KW_SHOW (KW_CATALOGS | KW_DATABASES | KW_VIEWS | KW_JARS)
     | KW_SHOW KW_CURRENT (KW_CATALOG | KW_DATABASE)
     | KW_SHOW KW_TABLES (( KW_FROM | KW_IN ) uid)? likePredicate?
@@ -82,19 +82,19 @@ loadStatement
     : KW_LOAD KW_MODULE uid (KW_WITH tablePropertyList)?
     ;
     
-unloadStatememt
+unloadStatement
     : KW_UNLOAD KW_MODULE uid
     ;
 
-setStatememt
+setStatement
     : KW_SET (tableProperty)?
     ;
 
-resetStatememt
+resetStatement
     : KW_RESET tablePropertyKey?
     ;
     
-jarStatememt
+jarStatement
     : (KW_ADD | KW_REMOVE) KW_JAR jarFileName
     ;
 

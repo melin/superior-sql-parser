@@ -1134,9 +1134,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         return if (ctx.ADD() != null) {
-            AddResourceStatememt(files, resouceType)
+            AddResourceStatement(files, resouceType)
         } else {
-            ListResourceStatememt(files, resouceType)
+            ListResourceStatement(files, resouceType)
         }
     }
 

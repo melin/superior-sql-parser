@@ -6,7 +6,7 @@ import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.alter.AlterTableAction
 import io.github.melin.superior.common.relational.common.CallProcedure
-import io.github.melin.superior.common.relational.common.CommentData
+import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
@@ -382,21 +382,21 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val objValue = ctx.column_name().text
         val isNull = false
         val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
-        return CommentData(text, isNull, "COLUMN", objValue)
+        return CommentStatement(text, isNull, "COLUMN", objValue)
     }
 
     override fun visitComment_on_table(ctx: OracleParser.Comment_on_tableContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
         val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
-        return CommentData(text, isNull, "TABLE", objValue)
+        return CommentStatement(text, isNull, "TABLE", objValue)
     }
 
     override fun visitComment_on_materialized(ctx: OracleParser.Comment_on_materializedContext): Statement {
         val objValue = ctx.tableview_name().text
         val isNull = false
         val text: String = CommonUtils.cleanQuote(ctx.quoted_string().text)
-        return CommentData(text, isNull, "MATERIALIZED VIEW", objValue)
+        return CommentStatement(text, isNull, "MATERIALIZED VIEW", objValue)
     }
 
     override fun visitSubquery_factoring_clause(ctx: OracleParser.Subquery_factoring_clauseContext): Statement? {

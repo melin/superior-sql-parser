@@ -2214,10 +2214,10 @@ class SparkSqlParserTest {
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
         Assert.assertEquals(7, statements.size)
-        val addResource = statements.get(4) as AddResourceStatememt
+        val addResource = statements.get(4) as AddResourceStatement
         Assert.assertEquals(2, addResource.fileNames.size)
 
-        val listResource = statements.get(6) as ListResourceStatememt
+        val listResource = statements.get(6) as ListResourceStatement
         Assert.assertEquals(3, listResource.fileNames.size)
     }
 

@@ -5,7 +5,7 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 
-class ListResourceStatememt(
+class ListResourceStatement(
     val fileNames: List<String>,
     val resourceType: String
 ) : Statement() {
