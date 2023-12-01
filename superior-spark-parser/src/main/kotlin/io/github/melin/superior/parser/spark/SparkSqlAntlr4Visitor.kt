@@ -289,7 +289,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                         .filter { it is SparkSqlParser.PartitionColumnContext }.map { item ->
                             val column = item as SparkSqlParser.PartitionColumnContext
                             val colName = column.colType().colName.text
-                            val dataType = column.colType().dataType().text
+                            // primitiveDataType
+                            val dataType = column.colType().dataType().getChild(0).text
                             checkPartitionDataType(dataType)
 
                             partitionColumnNames.add(colName)
@@ -1370,7 +1371,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
      */
     private fun checkPartitionDataType(dataType: String): Boolean {
         return when (dataType.lowercase()) {
-            "string", "int", "bigint" -> true
+            "string", "int", "bigint", "varchar", "char" -> true
             else -> throw IllegalStateException("不支持数据类型：" + dataType)
         }
     }

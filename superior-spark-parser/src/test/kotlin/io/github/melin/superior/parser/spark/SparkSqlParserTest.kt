@@ -94,7 +94,7 @@ class SparkSqlParserTest {
                 item5      BOOLEAN
             )
             COMMENT 'hello world'
-            PARTITIONED BY (ds STRING COMMENT 'part sdf')
+            PARTITIONED BY (ds varchar(50) COMMENT 'part sdf')
             STORED AS ORC
             TBLPROPERTIES ('dataCenter'='hangzhou')
             lifecycle 7
