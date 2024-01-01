@@ -247,6 +247,9 @@ statement
         SINK LEFT_PAREN sinkName=stringLit RIGHT_PAREN
         (OPTIONS writeOpts=dtPropertyList)?                            #datatunnelExpr
 
+    | SPARKDISTCP sourcePath=stringLit TO sinkPath=stringLit
+        (OPTIONS opts=dtPropertyList)?                                 #sparkDistCp
+
     | DATATUNNEL HELP dtType=(SOURCE | SINK | ALL)
         LEFT_PAREN value=stringLit RIGHT_PAREN                         #datatunnelHelp
     | CALL HELP callHelpExpr?                                          #callHelp
@@ -1635,6 +1638,7 @@ ansiNonReserved
     | HELP
     | LIFECYCLE
     | DATATUNNEL
+    | SPARKDISTCP
     | SINK
     | CALL
     | OWNER
@@ -1996,6 +2000,7 @@ nonReserved
     | HELP
     | LIFECYCLE
     | DATATUNNEL
+    | SPARKDISTCP
     | SINK
     | CALL
     | OWNER

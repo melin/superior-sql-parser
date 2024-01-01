@@ -67,6 +67,7 @@ enum class StatementType: Serializable {
     RESET,
     USE,
 
+    SPARK_DIST_CP,
     DATATUNNEL, // spark
     MERGE_FILE, // spark
     APP_JAR, // spark
