@@ -479,7 +479,7 @@ match_string
 
 create_function_body
     : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? FUNCTION function_name ('(' parameter (',' parameter)* ')')?
-      RETURN type_spec (invoker_rights_clause | accessible_by_clause | parallel_enable_clause | result_cache_clause | DETERMINISTIC)*
+      RETURN type_spec (invoker_rights_clause | accessible_by_clause | default_collation_clause | parallel_enable_clause | result_cache_clause | DETERMINISTIC)*
       ((PIPELINED? (IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec))
         | (PIPELINED | AGGREGATE) USING implementation_type_name
         | sql_macro_body
@@ -506,6 +506,10 @@ result_cache_clause
 
 accessible_by_clause
     : ACCESSIBLE BY '(' accessor (',' accessor)* ')'
+    ;
+
+default_collation_clause
+    : DEFAULT COLLATION USING_NLS_COMP
     ;
 
 accessor
@@ -7560,6 +7564,7 @@ non_reserved_keywords_in_12c
     | USE_HIDDEN_PARTITIONS
     | USE_VECTOR_AGGREGATION
     | USING_NO_EXPAND
+    | USING_NLS_COMP
     | UTF16BE
     | UTF16LE
     | UTF32
