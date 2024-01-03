@@ -5427,7 +5427,7 @@ cursor_loop_param
     ;
 
 forall_statement
-    : FORALL index_name IN bounds_clause sql_statement (SAVE EXCEPTIONS)?
+    : FORALL index_name IN bounds_clause (SAVE EXCEPTIONS)? data_manipulation_language_statements
     ;
 
 bounds_clause
@@ -6174,6 +6174,12 @@ unary_expression
     |  quantified_expression
     |  standard_function
     |  atom
+    |  implicit_cursor_expression
+    ;
+
+// https://docs.oracle.com/en/database/oracle/oracle-database/21/lnpls/plsql-optimization-and-tuning.html#GUID-DAF46F06-EF3F-4B1A-A518-5238B80C69FA
+implicit_cursor_expression
+    : SQL PERCENT_BULK_EXCEPTIONS ('.' COUNT | '(' expression ')' '.' (ERROR_INDEX | ERROR_CODE))
     ;
 
 case_statement /*TODO [boolean isStatementParameter]
@@ -7175,6 +7181,8 @@ regular_id
     | VAR_
     | VALUE
     | COVAR_
+    | ERROR_INDEX
+    | ERROR_CODE
     ;
 
 non_reserved_keywords_in_12c
