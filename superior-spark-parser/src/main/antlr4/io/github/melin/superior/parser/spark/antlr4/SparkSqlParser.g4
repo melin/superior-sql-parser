@@ -245,7 +245,8 @@ statement
         readOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=stringLit)?
         SINK LEFT_PAREN sinkName=stringLit RIGHT_PAREN
-        (OPTIONS writeOpts=dtPropertyList)?                            #datatunnelExpr
+        (OPTIONS writeOpts=dtPropertyList)?
+        (PROPERTIES properties=dtPropertyList)?                        #datatunnelExpr
 
     | DISTCP sourcePath=stringLit
         (OPTIONS sourceOpts=dtPropertyList)?

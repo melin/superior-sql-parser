@@ -556,8 +556,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         val sinkOptions = parseDtOptions(ctx.writeOpts)
+        val properties = parseDtOptions(ctx.properties)
 
-        val data = DataTunnelExpr(sourceType, sourceOptions, transformSql, sinkType, sinkOptions)
+        val data = DataTunnelExpr(sourceType, sourceOptions, transformSql, sinkType, sinkOptions, properties)
         data.inputTables.addAll(inputTables)
         data.functionNames.addAll(functionNames)
         return data
