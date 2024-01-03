@@ -148,7 +148,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             val newName = ctx.tableRenameClause().identifier().text
             return AlterMaterializedView(tableId, RenameAction(TableId(newName)))
         } else {
-            val properties = parseOptions(ctx.modifyTablePropertiesClause().propertyList())
+            val properties = parseOptions(ctx.modifyPropertiesClause().propertyList())
             val action = AlterPropsAction()
             action.properties.putAll(properties)
             return AlterMaterializedView(tableId, action)

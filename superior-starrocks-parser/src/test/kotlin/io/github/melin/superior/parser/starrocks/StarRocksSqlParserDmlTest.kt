@@ -218,9 +218,9 @@ class StarRocksSqlParserDmlTest {
     @Test
     fun showTest() {
         val sql = """
-            SHOW CREATE MATERIALIZED VIEW lo_mv1
-            SHOW CREATE TABLE example_db.example_table
-            SHOW DELETE FROM bigdata
+            SHOW CREATE MATERIALIZED VIEW lo_mv1;
+            SHOW CREATE TABLE example_db.example_table;
+            SHOW DELETE FROM bigdata;
         """.trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
