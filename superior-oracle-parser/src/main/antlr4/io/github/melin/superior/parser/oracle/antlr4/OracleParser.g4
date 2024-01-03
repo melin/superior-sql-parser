@@ -5484,7 +5484,7 @@ tps_body
     ;
 
 block
-    : DECLARE? declare_spec+ body
+    : (DECLARE declare_spec*)? body
     ;
 
 // SQL Statements
