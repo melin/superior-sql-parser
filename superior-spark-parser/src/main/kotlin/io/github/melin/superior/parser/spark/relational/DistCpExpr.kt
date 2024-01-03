@@ -5,8 +5,9 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 
-data class SparkDistCp(
-        val sourPath: String,
+data class DistCpExpr(
+        val sourcePath: String,
+        var sourceOptions: Map<String, Any>,
         var sinkPath: String,
         var sinkOptions: Map<String, Any>
 ) : Statement() {

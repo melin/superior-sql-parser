@@ -42,10 +42,6 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 import java.util.regex.Pattern
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
 class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     SparkSqlParserBaseVisitor<Statement>() {
 
@@ -534,11 +530,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return AnalyzeTable(listOf(tableId))
     }
 
-    override fun visitSparkDistCp(ctx: SparkSqlParser.SparkDistCpContext): Statement {
+    override fun visitDistCpExpr(ctx: SparkSqlParser.DistCpExprContext): Statement {
         val sourPath = CommonUtils.cleanQuote(ctx.sourcePath.text)
+        val sourceOptions = parseDtOptions(ctx.sourceOpts)
         val sinkPath = CommonUtils.cleanQuote(ctx.sinkPath.text)
-        val options = parseDtOptions(ctx.opts)
-        return SparkDistCp(sourPath, sinkPath, options)
+        val sinkOptions = parseDtOptions(ctx.sinkOpts)
+        return DistCpExpr(sourPath, sourceOptions, sinkPath, sinkOptions)
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {
