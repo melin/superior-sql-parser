@@ -479,7 +479,7 @@ match_string
 
 create_function_body
     : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? FUNCTION function_name ('(' parameter (',' parameter)* ')')?
-      RETURN type_spec (invoker_rights_clause | parallel_enable_clause | result_cache_clause | DETERMINISTIC)*
+      RETURN type_spec (invoker_rights_clause | accessible_by_clause | parallel_enable_clause | result_cache_clause | DETERMINISTIC)*
       ((PIPELINED? (IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec))
         | (PIPELINED | AGGREGATE) USING implementation_type_name
         | sql_macro_body
@@ -502,6 +502,14 @@ partition_by_clause
 
 result_cache_clause
     : RESULT_CACHE relies_on_part?
+    ;
+
+accessible_by_clause
+    : ACCESSIBLE BY '(' accessor (',' accessor)* ')'
+    ;
+
+accessor
+    :  unitKind=(FUNCTION | PROCEDURE | PACKAGE | TRIGGER | TYPE) function_name
     ;
 
 relies_on_part
@@ -7170,6 +7178,7 @@ regular_id
 
 non_reserved_keywords_in_12c
     : ACL
+    | ACCESSIBLE
     | ACROSS
     | ACTION
     | ACTIONS
