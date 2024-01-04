@@ -531,11 +531,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitDistCpExpr(ctx: SparkSqlParser.DistCpExprContext): Statement {
-        val sourPath = CommonUtils.cleanQuote(ctx.sourcePath.text)
+        val sourceType = CommonUtils.cleanQuote(ctx.sourceName.text)
+        val sinkType = CommonUtils.cleanQuote(ctx.sinkName.text)
+
         val sourceOptions = parseDtOptions(ctx.sourceOpts)
-        val sinkPath = CommonUtils.cleanQuote(ctx.sinkPath.text)
         val sinkOptions = parseDtOptions(ctx.sinkOpts)
-        return DistCpExpr(sourPath, sourceOptions, sinkPath, sinkOptions)
+        val properties = parseDtOptions(ctx.properties)
+        return DistCpExpr(sourceType, sourceOptions, sinkType, sinkOptions, properties)
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {
@@ -548,14 +550,14 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             visitCtes(ctx.ctes())
         }
 
-        val sourceOptions = parseDtOptions(ctx.readOpts)
+        val sourceOptions = parseDtOptions(ctx.sourceOpts)
 
         var transformSql: String? = null
         if (ctx.transfromSql != null) {
             transformSql = CommonUtils.cleanQuote(ctx.transfromSql.text)
         }
 
-        val sinkOptions = parseDtOptions(ctx.writeOpts)
+        val sinkOptions = parseDtOptions(ctx.sinkOpts)
         val properties = parseDtOptions(ctx.properties)
 
         val data = DataTunnelExpr(sourceType, sourceOptions, transformSql, sinkType, sinkOptions, properties)
@@ -645,41 +647,6 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             val sourceTableId = parseTableName(ctx.source)
             SyncTableMetadata(sourceTableId, owner)
         }
-    }
-
-    override fun visitSyncTableExpr(ctx: SparkSqlParser.SyncTableExprContext): Statement {
-        val sinkTable = parseTableName(ctx.sink)
-        val sourceTable = parseTableName(ctx.source)
-
-        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
-        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
-
-        val createTable = SyncTable(sinkTable, sourceTable)
-        createTable.sinkOptions.putAll(sinkOptions)
-        createTable.sourceOptions.putAll(sourceOptions)
-        return createTable
-    }
-
-    override fun visitSyncDatabaseExpr(ctx: SparkSqlParser.SyncDatabaseExprContext): Statement {
-        val sinkDatabase = parseNamespace(ctx.sink)
-        val sourceDatabase = parseNamespace(ctx.source)
-
-        val sinkOptions: HashMap<String, String> = parseOptions(ctx.sinkOptions)
-        val sourceOptions: HashMap<String, String> = parseOptions(ctx.sourceOptions)
-
-        val createDatabase = if (ctx.includeTable == null) {
-            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second)
-        } else {
-            SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second, CommonUtils.cleanQuote(ctx.includeTable.text))
-        }
-
-        if (ctx.excludeTable != null) {
-            createDatabase.excludingTables = CommonUtils.cleanQuote(ctx.excludeTable.text)
-        }
-
-        createDatabase.sinkOptions.putAll(sinkOptions)
-        createDatabase.sourceOptions.putAll(sourceOptions)
-        return createDatabase
     }
 
     //-----------------------------------partition-------------------------------------------------

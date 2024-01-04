@@ -2131,44 +2131,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun syncTableTest() {
-        val sql = """
-            CREATE TABLE IF NOT EXISTS user
-            WITH ('jdbcWriteBatchSize' = '1024')
-            AS TABLE mysql
-            OPTIONS('server-id'='8001-8004')
-        """.trimIndent()
-
-        val statement = SparkSqlHelper.parseStatement(sql)
-        if (statement is SyncTable) {
-            val table = statement.sinkTableId
-            Assert.assertEquals("user", table.tableName)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
-    fun syncDatabaseTest() {
-        val sql = """
-            CREATE DATABASE IF NOT EXISTS holo_tpcds 
-            WITH ('sink.parallelism' = '4') 
-            AS DATABASE mysql.tpcds 
-            INCLUDING ALL TABLES 
-            EXCLUDING TABLE "test"
-            OPTIONS('server-id'='8001-8004')
-        """.trimIndent()
-
-        val statement = SparkSqlHelper.parseStatement(sql)
-        if (statement is SyncDatabase) {
-            Assert.assertEquals("holo_tpcds", statement.sinkDatabaseName)
-            Assert.assertEquals("test", statement.excludingTables)
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun cacheTest() {
         val sql = """
             cache lazy table fire_service_calls_tbl_cache OPTIONS ('storageLevel' 'DISK_ONLY') as 

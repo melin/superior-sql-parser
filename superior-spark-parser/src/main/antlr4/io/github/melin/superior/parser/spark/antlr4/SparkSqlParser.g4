@@ -242,16 +242,17 @@ statement
         exportTableClauses                                             #exportTable
 
     | ctes? DATATUNNEL SOURCE LEFT_PAREN sourceName=stringLit RIGHT_PAREN OPTIONS
-        readOpts=dtPropertyList
+        sourceOpts=dtPropertyList
         (TRANSFORM EQ transfromSql=stringLit)?
         SINK LEFT_PAREN sinkName=stringLit RIGHT_PAREN
-        (OPTIONS writeOpts=dtPropertyList)?
+        (OPTIONS sinkOpts=dtPropertyList)?
         (PROPERTIES properties=dtPropertyList)?                        #datatunnelExpr
 
-    | DISTCP sourcePath=stringLit
+    | DISTCP SOURCE LEFT_PAREN sourceName=stringLit RIGHT_PAREN
         (OPTIONS sourceOpts=dtPropertyList)?
-        TO sinkPath=stringLit
-        (OPTIONS sinkOpts=dtPropertyList)?                             #distCpExpr
+        SINK LEFT_PAREN sinkName=stringLit RIGHT_PAREN
+        (OPTIONS sinkOpts=dtPropertyList)?
+        (PROPERTIES properties=dtPropertyList)?                        #distCpExpr
 
     | DATATUNNEL HELP dtType=(SOURCE | SINK | ALL)
         LEFT_PAREN value=stringLit RIGHT_PAREN                         #datatunnelHelp
@@ -260,21 +261,6 @@ statement
         LEFT_PAREN callArgument (COMMA callArgument)* RIGHT_PAREN      #call
     | SYNC dtType=(DATABASE|TABLE) FROM source=multipartIdentifier
       (SET OWNER principal=identifier)?                                #syncTableMeta
-
-    | CREATE TABLE IF NOT EXISTS sink=multipartIdentifier
-        (PARTITIONED BY identifierList)?
-        commentSpec?
-        (WITH sinkOptions=propertyList)?
-        AS TABLE source=multipartIdentifier
-        (OPTIONS sourceOptions=propertyList)?                          #syncTableExpr
-    | CREATE (DATABASE|SCHEMA) IF NOT EXISTS sink=multipartIdentifier
-        (PARTITIONED BY identifierList)?
-        commentSpec?
-        (WITH sinkOptions=propertyList)?
-        AS DATABASE source=multipartIdentifier
-        (INCLUDING (ALL TABLES | TABLE includeTable=stringLit))?
-        (EXCLUDING TABLE excludeTable=stringLit)?
-        (OPTIONS sourceOptions=propertyList)?                           #syncDatabaseExpr
 
     | unsupportedHiveNativeCommands .*?                                 #failNativeCommand
     ;
