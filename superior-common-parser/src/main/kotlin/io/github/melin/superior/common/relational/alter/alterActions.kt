@@ -97,7 +97,7 @@ data class AddPartitionAction(
 
 data class DropPartitionAction(
     var ifExists: Boolean = false,
-    var partitions: List<LinkedHashMap<String, String>>
+    var partitions: List<LinkedHashMap<String, String>> = listOf()
 ): AlterAction() {
     override var alterType: AlterActionType = AlterActionType.DROP_PARTITION
 }

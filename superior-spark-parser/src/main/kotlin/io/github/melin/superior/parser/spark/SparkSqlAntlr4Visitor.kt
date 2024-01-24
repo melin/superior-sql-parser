@@ -671,10 +671,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     override fun visitDropTablePartitions(ctx: SparkSqlParser.DropTablePartitionsContext): Statement {
         val tableId = parseTableName(ctx.identifierReference())
-        val partitions = ctx.partitionSpec().map { parsePartitionSpec(it) }
         val ifExists = ctx.EXISTS() != null
-
-        val action = DropPartitionAction(ifExists, partitions)
+        val action = DropPartitionAction(ifExists)
         return AlterTable(tableId, action)
     }
 

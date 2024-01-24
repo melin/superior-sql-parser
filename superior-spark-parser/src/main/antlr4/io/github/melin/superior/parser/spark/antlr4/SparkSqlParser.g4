@@ -151,8 +151,8 @@ statement
         from=partitionSpec RENAME TO to=partitionSpec                  #renameTablePartition
     | ALTER TABLE table=identifierReference
         TOUCH partitionSpec?                                           #touchTable
-    | ALTER (TABLE | VIEW) identifierReference
-        DROP (IF EXISTS)? partitionSpec (COMMA partitionSpec)* PURGE?  #dropTablePartitions
+    | ALTER (TABLE | VIEW) identifierReference DROP (IF EXISTS)?
+        dropPartitionSpec (',' dropPartitionSpec)* PURGE?        #dropTablePartitions
     | ALTER TABLE identifierReference
         (partitionSpec)? SET locationSpec                              #setTableLocation
     | ALTER TABLE identifierReference RECOVER PARTITIONS                 #recoverPartitions
@@ -443,6 +443,14 @@ namespaces
     : NAMESPACES
     | DATABASES
     | SCHEMAS
+    ;
+
+dropPartitionSpec
+    : PARTITION '(' dropPartitionVal (',' dropPartitionVal)* ')'
+    ;
+
+dropPartitionVal
+    : identifier (comparisonOperator constant)?
     ;
 
 describeFuncName
