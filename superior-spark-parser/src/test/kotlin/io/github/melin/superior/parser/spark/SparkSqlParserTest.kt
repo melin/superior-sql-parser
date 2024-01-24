@@ -757,15 +757,27 @@ class SparkSqlParserTest {
 
     @Test
     fun alterTablePropertiesTest() {
-        val sql = "ALTER TABLE test.sale_detail SET TBLPROPERTIES ('comment' = 'new coments for statement sale_detail', 'lifeCycle' = '7')"
+        var sql = "ALTER TABLE test.sale_detail SET TBLPROPERTIES ('comment' = 'new coments for statement sale_detail', 'lifeCycle' = '7')"
 
-        val statement = SparkSqlHelper.parseStatement(sql)
-        
+        var statement = SparkSqlHelper.parseStatement(sql)
+
         if (statement is AlterTable) {
             Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
             Assert.assertEquals("sale_detail", statement.tableId.tableName)
             val action = statement.firstAction() as AlterPropsAction
             Assert.assertEquals(2, action.properties.size)
+        } else {
+            Assert.fail()
+        }
+
+        sql = "ALTER TABLE aaa.bbb SET SERDEPROPERTIES ('field.delim' = ',')"
+        statement = SparkSqlHelper.parseStatement(sql)
+
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
+            Assert.assertEquals("bbb", statement.tableId.tableName)
+            val action = statement.firstAction() as AlterSerDeAction
+            Assert.assertEquals(1, action.properties.size)
         } else {
             Assert.fail()
         }

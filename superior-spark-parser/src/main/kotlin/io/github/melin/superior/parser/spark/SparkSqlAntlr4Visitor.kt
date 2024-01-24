@@ -411,6 +411,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
     }
 
+    override fun visitSetTableSerDe(ctx: SparkSqlParser.SetTableSerDeContext): Statement {
+        val tableId = parseTableName(ctx.identifierReference())
+        val properties = parseOptions(ctx.propertyList())
+        val action = AlterSerDeAction(properties)
+        return AlterTable(tableId, action)
+    }
+
     override fun visitAddTableColumns(ctx: SparkSqlParser.AddTableColumnsContext): Statement {
         val tableId = parseTableName(ctx.identifierReference())
 

@@ -20,6 +20,12 @@ data class AlterPropsAction(
     constructor(properties: HashMap<String, String>): this(null, properties)
 }
 
+data class AlterSerDeAction(
+        var properties: HashMap<String, String> = Maps.newHashMap()
+): AlterAction() {
+    override var alterType: AlterActionType = AlterActionType.SET_SERDE
+}
+
 data class RenameAction(
     var newTableId: TableId,
     var ifExists: Boolean = false

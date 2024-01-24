@@ -4,6 +4,7 @@ import java.io.Serializable
 
 enum class AlterActionType : Serializable {
     SET_PROPS,
+    SET_SERDE,
     TOUCH_TABLE,
 
     ALTER_COLUMN,
