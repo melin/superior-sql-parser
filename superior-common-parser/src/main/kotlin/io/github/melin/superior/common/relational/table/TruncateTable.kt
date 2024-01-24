@@ -7,9 +7,16 @@ import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 
 class TruncateTable(
-    override val tableId: TableId
+    override val tableId: TableId,
+    tableIds: ArrayList<TableId> = ArrayList()
 ) : AbsTableStatement() {
     override val statementType = StatementType.TRUNCATE_TABLE
     override val privilegeType = PrivilegeType.WRITE
     override val sqlType = SqlType.DDL
+
+    init {
+        tableIds.add(tableId)
+    }
+
+    constructor(tableIds: ArrayList<TableId>): this(tableIds.first(), tableIds)
 }

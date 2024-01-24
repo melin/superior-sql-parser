@@ -289,7 +289,7 @@ class PostgreSqlParserDdlTest {
     fun alterTableTest() {
         val sql = """
             ALTER TABLE distributors ADD COLUMN address varchar(30),
-                ALTER COLUMN status SET default 'current';
+            ALTER COLUMN status SET default 'current';
         """.trimIndent()
         val statements = PostgreSqlHelper.parseMultiStatement(sql)
 

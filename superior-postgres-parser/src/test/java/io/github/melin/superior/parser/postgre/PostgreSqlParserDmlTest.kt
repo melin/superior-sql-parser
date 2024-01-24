@@ -4,6 +4,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.table.TruncateTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -264,11 +265,20 @@ class PostgreSqlParserDmlTest {
     @Test
     fun insertTest2() {
         val sql = """
+            truncate table films
             INSERT INTO films SELECT * FROM tmp_films WHERE date_prod < '2004-05-07';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
-        
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        var statement = statements.get(0)
+        if (statement is TruncateTable) {
+            Assert.assertEquals(StatementType.TRUNCATE_TABLE, statement.statementType)
+            Assert.assertEquals("films", statement.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+
+        statement = statements.get(1)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("films", statement.tableId?.tableName)

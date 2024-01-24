@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.postgre
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
+import com.google.common.collect.Lists
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.CommentStatement
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.RefreshMaterializedView
+import io.github.melin.superior.common.relational.table.TruncateTable
 
 /**
  * Created by libinsong on 2020/6/30 9:57 上午
@@ -419,6 +421,11 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         }
 
         throw SQLParserException("not support")
+    }
+
+    override fun visitTruncatestmt(ctx: PostgreSqlParser.TruncatestmtContext): Statement {
+        val tableIds = ctx.relation_expr_list().relation_expr().map { parseTableName(it) }
+        return TruncateTable(Lists.newArrayList(tableIds))
     }
 
     override fun visitAltertablestmt(ctx: PostgreSqlParser.AltertablestmtContext): Statement? {
