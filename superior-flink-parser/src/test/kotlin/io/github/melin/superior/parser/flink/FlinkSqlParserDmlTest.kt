@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.flink
 import io.github.melin.superior.common.relational.common.AddResourceStatement
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateCatalog
+import io.github.melin.superior.common.relational.dml.InsertMultiTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import org.junit.Assert
 import org.junit.Test
@@ -224,6 +225,66 @@ class FlinkSqlParserDmlTest {
         val createCatalog = statements.get(0)
         if (createCatalog is CreateCatalog) {
             Assert.assertEquals("my_catalog", createCatalog.catalogName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun multiInsertTest() {
+        val sql = """
+            CREATE TABLE pageviews (
+              user_id BIGINT,
+              page_id BIGINT,
+              viewtime TIMESTAMP,
+              proctime AS PROCTIME()
+            ) WITH (
+              'connector' = 'kafka',
+              'topic' = 'pageviews',
+              'properties.bootstrap.servers' = '...',
+              'format' = 'avro'
+            );
+            
+            CREATE TABLE pageview (
+              page_id BIGINT,
+              cnt BIGINT
+            ) WITH (
+              'connector' = 'jdbc',
+              'url' = 'jdbc:mysql://localhost:3306/mydatabase',
+              'table-name' = 'pageview'
+            );
+            
+            CREATE TABLE uniqueview (
+              page_id BIGINT,
+              cnt BIGINT
+            ) WITH (
+              'connector' = 'jdbc',
+              'url' = 'jdbc:mysql://localhost:3306/mydatabase',
+              'table-name' = 'uniqueview'
+            );
+            
+            EXECUTE STATEMENT SET
+            BEGIN
+            
+            INSERT INTO pageview
+            SELECT page_id, count(1)
+            FROM pageviews
+            GROUP BY page_id;
+            
+            INSERT INTO uniqueview
+            SELECT page_id, count(distinct user_id)
+            FROM pageviews
+            GROUP BY page_id;
+            
+           END;
+        """.trimIndent()
+
+        val statements = FlinkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(4, statements.size)
+
+        val statement = statements.get(3);
+        if (statement is InsertMultiTable) {
+            Assert.assertEquals(2, statement.insertTables.size)
         } else {
             Assert.fail()
         }

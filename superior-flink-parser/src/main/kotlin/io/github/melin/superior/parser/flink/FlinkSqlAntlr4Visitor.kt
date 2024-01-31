@@ -12,6 +12,7 @@ import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.InsertMultiTable
 import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.drop.DropCatalog
@@ -179,7 +180,26 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return CreateView(tableId, queryStmt, comment, ifNotExists, columnNameList)
     }
 
-    override fun visitInsertSimpleStatement(ctx: FlinkSqlParser.InsertSimpleStatementContext): Statement {
+    override fun visitInsertStatement(ctx: FlinkSqlParser.InsertStatementContext): Statement {
+        if (ctx.insertSimpleStatement() != null) {
+            return this.insertSimpleStatement(ctx.insertSimpleStatement())
+        } else if (ctx.insertMulStatementCompatibility() != null) {
+            val insertTables = ctx.insertMulStatementCompatibility().insertSimpleStatement().map { insertStmt ->
+                this.insertSimpleStatement(insertStmt)
+            }
+
+            return InsertMultiTable(insertTables)
+        } else if (ctx.insertMulStatement() != null) {
+            val insertTables = ctx.insertMulStatement().insertSimpleStatement().map { insertStmt ->
+                this.insertSimpleStatement(insertStmt)
+            }
+
+            return InsertMultiTable(insertTables)
+        }
+        return super.visitInsertStatement(ctx)
+    }
+
+    private fun insertSimpleStatement(ctx: FlinkSqlParser.InsertSimpleStatementContext): InsertTable {
         currentOptType = StatementType.INSERT
         val tableId = parseSourceTable(ctx.uid())
         val insertMode = if (ctx.KW_INTO() != null) InsertMode.INTO else InsertMode.OVERWRITE
