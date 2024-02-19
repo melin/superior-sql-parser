@@ -307,8 +307,16 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val properties = HashMap<String, String>()
         if (createTableClauses.tableProps != null) {
-            createTableClauses.tableProps.children.filter { it is SparkSqlParser.PropertyContext }.map { item ->
+            createTableClauses.tableProps.children.filter { it is SparkSqlParser.PropertyContext }.forEach { item ->
                 val property = item as SparkSqlParser.PropertyContext
+                val key = CommonUtils.cleanQuote(property.key.text)
+                val value = CommonUtils.cleanQuote(property.value.text)
+                properties.put(key, value)
+            }
+        } else if (createTableClauses.expressionPropertyList().size > 0) {
+            val exprProperties = createTableClauses.expressionPropertyList().get(0).expressionProperty()
+            exprProperties.forEach {item ->
+                val property = item as SparkSqlParser.ExpressionPropertyContext
                 val key = CommonUtils.cleanQuote(property.key.text)
                 val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)

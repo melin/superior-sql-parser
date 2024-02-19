@@ -301,6 +301,62 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun createTableTest10() {
+        val sql = """
+            CREATE TABLE my_table
+            USING io.github.spark_redshift_community.spark.redshift
+            OPTIONS (
+              dbtable 'my_table',
+              tempdir 's3n://path/for/temp/data',
+              url 'jdbc:redshift://redshifthost:5439/database?user=username&password=pass'
+            );
+        """
+
+        try {
+            val statement = SparkSqlHelper.parseStatement(sql)
+            if (statement is CreateTable) {
+                val tableName = statement.tableId.tableName
+                Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
+                Assert.assertEquals("my_table", tableName)
+                Assert.assertEquals(3, statement.properties?.size)
+            } else {
+                Assert.fail()
+            }
+        } catch (e: Exception) {
+            Assert.assertTrue(true)
+        }
+    }
+
+    @Test
+    fun createTableTest11() {
+        val sql = """
+            CREATE TABLE my_table
+            USING io.github.spark_redshift_community.spark.redshift
+            OPTIONS (
+              dbtable 'my_table',
+              tempdir 's3n://path/for/temp/data'
+              url 'jdbc:redshift://redshifthost:5439/database?user=username&password=pass'
+            )
+            AS SELECT * FROM tabletosave;
+        """
+
+        try {
+            val statement = SparkSqlHelper.parseStatement(sql)
+            if (statement is CreateTable) {
+                val tableName = statement.tableId.tableName
+                Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
+                Assert.assertEquals("my_table", tableName)
+                Assert.assertEquals(3, statement.properties?.size)
+                Assert.assertEquals("SELECT * FROM tabletosave", statement.querySql)
+            } else {
+                Assert.fail()
+            }
+        } catch (e: Exception) {
+            Assert.assertTrue(true)
+        }
+    }
+
+    @Test
     fun createHudiTableTest5() {
         val sql = """
             create table test_hudi_table ( id int, name string, price double, ts long, dt string) 
