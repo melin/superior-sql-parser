@@ -285,6 +285,12 @@ class FlinkSqlParserDmlTest {
         val statement = statements.get(3);
         if (statement is InsertMultiTable) {
             Assert.assertEquals(2, statement.insertTables.size)
+            val insertTable = statement.insertTables.get(0)
+
+            Assert.assertEquals("INSERT INTO pageview\n" +
+                    " SELECT page_id, count(1)\n" +
+                    " FROM pageviews\n" +
+                    " GROUP BY page_id", insertTable.getSql())
         } else {
             Assert.fail()
         }

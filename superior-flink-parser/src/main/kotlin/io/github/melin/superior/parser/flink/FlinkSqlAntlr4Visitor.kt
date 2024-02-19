@@ -212,6 +212,10 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val insertTable = InsertTable(insertMode, queryStmt, tableId, columnNameList)
 
         insertTable.outputTables.add(tableId)
+
+        var sql = CommonUtils.subsql(command, ctx)
+        sql = CommonUtils.cleanLastSemi(sql)
+        insertTable.setSql(sql)
         return insertTable
     }
 
