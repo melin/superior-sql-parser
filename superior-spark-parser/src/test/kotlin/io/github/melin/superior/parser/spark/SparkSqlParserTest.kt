@@ -314,11 +314,12 @@ class SparkSqlParserTest {
 
         try {
             val statement = SparkSqlHelper.parseStatement(sql)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             if (statement is CreateTable) {
                 val tableName = statement.tableId.tableName
                 Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
                 Assert.assertEquals("my_table", tableName)
-                Assert.assertEquals(3, statement.properties?.size)
+                Assert.assertEquals(3, statement.expressionProperties?.size)
             } else {
                 Assert.fail()
             }
@@ -342,6 +343,7 @@ class SparkSqlParserTest {
 
         try {
             val statement = SparkSqlHelper.parseStatement(sql)
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             if (statement is CreateTable) {
                 val tableName = statement.tableId.tableName
                 Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)

@@ -30,8 +30,9 @@ data class CreateTable(
 
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var replace = false
-    var modelType: String = "" // 表模型类型
+    var modelType: String = "hive" // 表模型类型
     var partitionType: String? = null // 分区类型
+    var expressionProperties: Map<String, String>? = null
 
     constructor(tableId: TableId, tableType: TableType, comment: String?, columnRels: List<ColumnRel>?):
             this(tableId, tableType, comment, null, null, columnRels, null, null, false)
