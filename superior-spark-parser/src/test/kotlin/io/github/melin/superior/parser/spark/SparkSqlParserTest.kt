@@ -744,6 +744,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(StatementType.CREATE_TEMP_VIEW_USING, statement.statementType)
             Assert.assertEquals("jdbcTable", statement.tableId.tableName)
             Assert.assertEquals("org.apache.spark.sql.jdbc", statement.fileFormat)
+            Assert.assertEquals(4, statement.properties.size)
         } else {
             Assert.fail()
         }
