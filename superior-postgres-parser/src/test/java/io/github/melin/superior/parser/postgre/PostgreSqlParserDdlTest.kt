@@ -240,6 +240,8 @@ class PostgreSqlParserDdlTest {
             val createIndex = statement.firstAction() as CreateIndex
             Assert.assertEquals(AlterActionType.ADD_INDEX, createIndex.alterType)
             Assert.assertEquals("title_idx", createIndex.indexName)
+        } else {
+            Assert.fail()
         }
     }
 
@@ -255,6 +257,8 @@ class PostgreSqlParserDdlTest {
             val dropIndex = statement.firstAction() as DropIndex
             Assert.assertEquals(AlterActionType.DROP_INDEX, dropIndex.alterType)
             Assert.assertEquals("title_idx", dropIndex.indexName)
+        } else {
+            Assert.fail()
         }
     }
 
@@ -267,6 +271,8 @@ class PostgreSqlParserDdlTest {
         if (statement is CreatePartitionTable) {
             Assert.assertEquals("pkslow_person_r", statement.tableId.tableName)
             Assert.assertEquals("pkslow_person_r1", statement.partitionTableId.tableName)
+        } else {
+            Assert.fail()
         }
     }
 
@@ -282,6 +288,8 @@ class PostgreSqlParserDdlTest {
             Assert.assertEquals(StatementType.COMMENT, statement.statementType)
             Assert.assertEquals("Employee Information", statement.comment)
             Assert.assertFalse(statement.isNull)
+        } else {
+            Assert.fail()
         }
     }
 

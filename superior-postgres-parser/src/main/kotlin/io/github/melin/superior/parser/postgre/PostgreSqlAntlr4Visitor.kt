@@ -461,7 +461,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                         }
                     }
 
-                    statements.add(alterTable)
+                    return alterTable
                 } else {
                     var alterTable: AlterTable? = null;
                     val partitionCmd = ctx.partition_cmd()
@@ -471,7 +471,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                         alterTable = AlterTable(tableId, AlterTableAction(DETACH_PARTITION))
                     }
 
-                    statements.add(alterTable)
+                    return alterTable
                 }
 
 
