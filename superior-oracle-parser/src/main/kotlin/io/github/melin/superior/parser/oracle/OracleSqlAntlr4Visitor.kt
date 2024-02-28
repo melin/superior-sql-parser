@@ -400,10 +400,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitSubquery_factoring_clause(ctx: OracleParser.Subquery_factoring_clauseContext): Statement? {
-        ctx.factoring_element().forEach {
-            cteTempTables.add(TableId(it.query_name().text))
-        }
-
+        cteTempTables.add(TableId(ctx.query_name().text))
         return super.visitSubquery_factoring_clause(ctx)
     }
 
