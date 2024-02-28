@@ -223,4 +223,24 @@ class SqlServerParserDmlTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun insertTest() {
+        val sql = """
+            insert into dbo.spt_fallback_dev
+            select *
+            from dbo.spt_fallback_usg;
+        """.trimIndent()
+
+        val statement = SqlServerHelper.parseStatement(sql)
+
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals("spt_fallback_dev", statement.outputTables.get(0).tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(TableId("dbo", "spt_fallback_usg"), statement.queryStmt.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
 }
