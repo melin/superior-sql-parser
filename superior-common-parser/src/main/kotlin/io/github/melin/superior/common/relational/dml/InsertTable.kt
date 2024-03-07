@@ -6,6 +6,9 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 
 data class InsertTable(
     val mode: InsertMode,
@@ -22,6 +25,7 @@ data class InsertTable(
     var partitionVals: LinkedHashMap<String, String>? = null
     var rows: ArrayList<List<String>>? = null
     val outputTables: ArrayList<TableId> = arrayListOf()
+    var hints: LinkedHashMap<String, LinkedList<String>>? = null
 
     var mysqlReplace: Boolean = false
 

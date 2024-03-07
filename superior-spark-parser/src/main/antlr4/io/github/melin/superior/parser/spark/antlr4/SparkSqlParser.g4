@@ -413,11 +413,11 @@ query
     ;
 
 insertInto
-    : INSERT OVERWRITE TABLE? identifierReference (partitionSpec (IF NOT EXISTS)?)?  ((BY NAME) | identifierList)? #insertOverwriteTable
-    | INSERT INTO TABLE? identifierReference partitionSpec? (IF NOT EXISTS)? ((BY NAME) | identifierList)?   #insertIntoTable
-    | INSERT INTO TABLE? identifierReference REPLACE whereClause                                             #insertIntoReplaceWhere
-    | INSERT OVERWRITE LOCAL? DIRECTORY path=stringLit rowFormat? createFileFormat?                     #insertOverwriteHiveDir
-    | INSERT OVERWRITE LOCAL? DIRECTORY (path=stringLit)? tableProvider (OPTIONS options=propertyList)? #insertOverwriteDir
+    : INSERT (hints+=hint)* OVERWRITE TABLE? identifierReference (partitionSpec (IF NOT EXISTS)?)?  ((BY NAME) | identifierList)? #insertOverwriteTable
+    | INSERT (hints+=hint)* INTO TABLE? identifierReference partitionSpec? (IF NOT EXISTS)? ((BY NAME) | identifierList)?   #insertIntoTable
+    | INSERT (hints+=hint)* INTO TABLE? identifierReference REPLACE whereClause                                             #insertIntoReplaceWhere
+    | INSERT (hints+=hint)* OVERWRITE LOCAL? DIRECTORY path=stringLit rowFormat? createFileFormat?                     #insertOverwriteHiveDir
+    | INSERT (hints+=hint)* OVERWRITE LOCAL? DIRECTORY (path=stringLit)? tableProvider (OPTIONS options=propertyList)? #insertOverwriteDir
     ;
 
 partitionSpecLocation

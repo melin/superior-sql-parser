@@ -1450,7 +1450,7 @@ class SparkSqlParserTest {
 
     @Test
     fun insertOverwriteQueryTest2() {
-        val sql = "insert INTO users PARTITION(ds='20170220', type='login') select * from account a join address b on a.addr_id=b.id"
+        val sql = "insert /*+ primarys(t1, t2) */ INTO users PARTITION(ds='20170220', type='login') select * from account a join address b on a.addr_id=b.id"
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
@@ -1461,6 +1461,9 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)
             Assert.assertEquals("account", statement.queryStmt.inputTables.get(0).tableName)
             Assert.assertEquals("address", statement.queryStmt.inputTables.get(1).tableName)
+
+            Assert.assertEquals(1, statement.hints?.size)
+            Assert.assertEquals(2, statement.hints?.get("primarys")?.size)
         } else {
             Assert.fail()
         }

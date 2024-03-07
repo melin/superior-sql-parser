@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
+import com.google.common.collect.Lists
 import io.github.melin.superior.common.AlterActionType
 import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.SQLParserException
@@ -28,6 +29,7 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtColProperty
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.DtPropertyListContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.FromClauseContext
+import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.HintContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.IdentifierContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.InsertIntoContext
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser.MultiInsertQueryContext
@@ -40,6 +42,7 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import io.github.melin.superior.parser.spark.relational.*
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
+import java.util.LinkedList
 import java.util.regex.Pattern
 
 class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
@@ -1049,6 +1052,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
             val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId, columnNameList)
             stmt.partitionVals = partitionVals
+            stmt.hints = parseHints(ctx.hints)
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteTableContext) {
             val tableId = parseTableName(ctx.identifierReference())
@@ -1059,6 +1063,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
             val stmt = InsertTable(InsertMode.OVERWRITE, queryStmt, tableId, columnNameList)
             stmt.partitionVals = partitionVals
+            stmt.hints = parseHints(ctx.hints)
             stmt
         } else if (ctx is SparkSqlParser.InsertIntoReplaceWhereContext) {
             val tableId = parseTableName(ctx.identifierReference())
@@ -1071,10 +1076,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             val stmt = InsertTable(InsertMode.OVERWRITE_DIR, queryStmt, TableId(path))
             stmt.properties = properties
             stmt.fileFormat = fileFormat
+            stmt.hints = parseHints(ctx.hints)
             stmt
         } else if (ctx is SparkSqlParser.InsertOverwriteHiveDirContext) {
             val path = CommonUtils.cleanQuote(ctx.path.STRING_LITERAL().text);
             val stmt = InsertTable(InsertMode.OVERWRITE_HIVE_DIR, queryStmt, TableId(path))
+            stmt.hints = parseHints(ctx.hints)
             stmt
         } else {
             throw SQLParserException("not support insert into sql")
@@ -1398,6 +1405,22 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     var value = it.getChild(2).text
                     value = CommonUtils.cleanQuote(value)
                     partitions.put(it.identifier().text, value)
+                }
+            }
+        }
+        return partitions
+    }
+
+    private fun parseHints(hints: List<HintContext>): LinkedHashMap<String, LinkedList<String>> {
+        val partitions: LinkedHashMap<String, LinkedList<String>> = LinkedHashMap()
+        hints.forEach {
+            it.hintStatements.forEach {
+                if (it.parameters == null || it.parameters.size == 0) {
+                    partitions.put(it.hintName.text, Lists.newLinkedList())
+                } else {
+                    val parameters = Lists.newLinkedList<String>()
+                    it.parameters.forEach { parameters.add(CommonUtils.subsql(command, it)) }
+                    partitions.put(it.hintName.text, parameters)
                 }
             }
         }
