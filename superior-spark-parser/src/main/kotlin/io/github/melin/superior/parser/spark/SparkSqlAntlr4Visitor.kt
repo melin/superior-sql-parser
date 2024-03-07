@@ -871,6 +871,15 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         return CreateFileView(tableId, path, properties, fileFormat, compression, sizeLimit)
     }
 
+    override fun visitLoadData(ctx: SparkSqlParser.LoadDataContext): Statement {
+        val tableId = parseTableName(ctx.identifierReference())
+        val path = CommonUtils.cleanQuote(ctx.path.text)
+        val local: Boolean = ctx.LOCAL() != null
+        val mode: InsertMode = if (ctx.OVERWRITE() != null) InsertMode.OVERWRITE else InsertMode.INTO
+        val partitionVals = parsePartitionSpec(ctx.partitionSpec())
+        return LoadData(tableId, path, local, partitionVals, mode)
+    }
+
     override fun visitExportTable(ctx: SparkSqlParser.ExportTableContext): Statement {
         if (ctx.ctes() != null) {
             visitCtes(ctx.ctes())

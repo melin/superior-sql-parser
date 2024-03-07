@@ -2290,4 +2290,19 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun loadDataTest() {
+        val sql = """
+            load data inpath 'hdfs:///user/xxx.txt' into table aaa.bbb partition(ds='2024-02-27');
+        """.trimIndent()
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        if (statement is LoadData) {
+            Assert.assertEquals("hdfs:///user/xxx.txt", statement.inPath)
+            Assert.assertEquals("aaa.bbb", statement.tableId.getFullTableName())
+        } else {
+            Assert.fail()
+        }
+    }
 }

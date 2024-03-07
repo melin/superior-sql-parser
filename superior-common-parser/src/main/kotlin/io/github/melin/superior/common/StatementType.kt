@@ -49,6 +49,7 @@ enum class StatementType: Serializable {
     UPDATE,
     MERGE,
     INSERT,
+    LOAD_DATA, // spark
 
     SHOW,
     DESC,
