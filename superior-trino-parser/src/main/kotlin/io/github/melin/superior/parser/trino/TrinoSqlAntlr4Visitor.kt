@@ -7,8 +7,8 @@ import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
-import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
@@ -85,18 +85,18 @@ class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
-            super.visitQuery(ctx.query())
+            super.visitRootQuery(ctx.rootQuery())
 
-            val limit = ctx.query()?.queryNoWith()?.limit?.text?.toInt()
+            val limit = ctx.rootQuery()?.query()?.queryNoWith()?.limit?.text?.toInt()
             return QueryStmt(inputTables, limit)
         } else {
             return null
         }
     }
 
-    private fun parseQuery(ctx: TrinoSqlBaseParser.QueryContext): QueryStmt {
+    private fun parseRootQuery(ctx: TrinoSqlBaseParser.RootQueryContext): QueryStmt {
         currentOptType = StatementType.SELECT
-        this.visitQuery(ctx)
+        this.visitRootQuery(ctx)
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
@@ -107,19 +107,57 @@ class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     override fun visitCreateTableAsSelect(ctx: TrinoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-        val tableId = createTableSource(ctx.qualifiedName())
-        val queryStmt = parseQuery(ctx.query())
+        val tableId = parseTableName(ctx.qualifiedName())
+        val queryStmt = parseRootQuery(ctx.rootQuery())
         val createTable = CreateTableAsSelect(tableId, queryStmt)
         createTable.lifeCycle = 7
         return createTable
     }
 
     override fun visitDropTable(ctx: TrinoSqlBaseParser.DropTableContext): Statement? {
-        val tableId = createTableSource(ctx.qualifiedName())
+        val tableId = parseTableName(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = ctx.EXISTS() != null
         return dropTable
+    }
+
+    override fun visitInsertInto(ctx: TrinoSqlBaseParser.InsertIntoContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val queryStmt = parseRootQuery(ctx.rootQuery())
+        val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId)
+        return stmt
+    }
+
+    override fun visitDelete(ctx: TrinoSqlBaseParser.DeleteContext): Statement {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.whereClause() != null) {
+            super.visitWhereClause(ctx.whereClause())
+        }
+
+        return DeleteTable(tableId, inputTables)
+    }
+
+    override fun visitUpdate(ctx: TrinoSqlBaseParser.UpdateContext): Statement {
+        currentOptType = StatementType.UPDATE
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.whereClause() != null) {
+            super.visitWhereClause(ctx.whereClause())
+        }
+
+        return UpdateTable(tableId, inputTables)
+    }
+
+    override fun visitMerge(ctx: TrinoSqlBaseParser.MergeContext): Statement {
+        currentOptType = StatementType.MERGE
+
+        val targetTable = parseTableName(ctx.qualifiedName())
+        val mergeTable = MergeTable(targetTable = targetTable)
+
+        // @TODO
+        mergeTable.inputTables = inputTables
+        return mergeTable
     }
 
     override fun visitExplain(ctx: TrinoSqlBaseParser.ExplainContext): Statement? {
@@ -132,15 +170,19 @@ class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.INSERT ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE ||
+            currentOptType == StatementType.MERGE ||
             currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
 
-            val tableName = createTableSource(ctx)
+            val tableName = parseTableName(ctx)
             inputTables.add(tableName)
         }
         return null
     }
 
-    private fun createTableSource(ctx: TrinoSqlBaseParser.QualifiedNameContext): TableId {
+    private fun parseTableName(ctx: TrinoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null

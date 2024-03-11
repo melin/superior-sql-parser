@@ -3,6 +3,8 @@ package io.github.melin.superior.parser.trino
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.drop.DropTable
 import org.junit.Assert
 import org.junit.Test
@@ -87,6 +89,37 @@ class TrinoSqlParserTest {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
             Assert.assertEquals("bigdata", statement.tableId.schemaName)
             Assert.assertEquals("tdl_small_files_2", statement.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest() {
+        val sql = """
+            insert into orders select * from new_orders;
+        """.trimIndent()
+
+        val statement = TrinoSqlHelper.parseStatement(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals("orders", statement.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteTest() {
+        val sql = """
+            DELETE FROM lineitem WHERE orderkey IN (SELECT orderkey FROM orders WHERE priority = 'LOW');
+        """.trimIndent()
+
+        val statement = TrinoSqlHelper.parseStatement(sql)
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
+            Assert.assertEquals("lineitem", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
