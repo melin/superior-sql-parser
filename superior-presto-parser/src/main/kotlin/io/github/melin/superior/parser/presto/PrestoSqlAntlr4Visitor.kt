@@ -9,6 +9,9 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
+import io.github.melin.superior.common.relational.dml.DeleteTable
+import io.github.melin.superior.common.relational.dml.InsertMode
+import io.github.melin.superior.common.relational.dml.InsertTable
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
@@ -108,15 +111,32 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
-        val tableId = createTableSource(ctx.qualifiedName())
+        val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseQuery(ctx.query())
         val createTable = CreateTableAsSelect(tableId, queryStmt)
         createTable.lifeCycle = 7
         return createTable
     }
 
+    override fun visitInsertInto(ctx: PrestoSqlBaseParser.InsertIntoContext): Statement {
+        val tableId = parseTableName(ctx.qualifiedName())
+        val queryStmt = parseQuery(ctx.query())
+        val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId)
+        return stmt
+    }
+
+    override fun visitDelete(ctx: PrestoSqlBaseParser.DeleteContext): Statement {
+        currentOptType = StatementType.DELETE
+        val tableId = parseTableName(ctx.qualifiedName())
+        if (ctx.whereClause() != null) {
+            super.visitWhereClause(ctx.whereClause())
+        }
+
+        return DeleteTable(tableId, inputTables)
+    }
+
     override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): Statement? {
-        val tableId = createTableSource(ctx.qualifiedName())
+        val tableId = parseTableName(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
         dropTable.ifExists = ctx.EXISTS() != null
@@ -133,15 +153,18 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         if (currentOptType == StatementType.SELECT ||
+            currentOptType == StatementType.INSERT ||
+            currentOptType == StatementType.UPDATE ||
+            currentOptType == StatementType.DELETE ||
             currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
 
-            val tableName = createTableSource(ctx)
+            val tableName = parseTableName(ctx)
             inputTables.add(tableName)
         }
         return null
     }
 
-    private fun createTableSource(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
+    private fun parseTableName(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null

@@ -52,7 +52,7 @@ statement
          (WITH properties)?                                            #createTable
     | DROP TABLE (IF EXISTS)? qualifiedName                            #dropTable
     | INSERT INTO qualifiedName columnAliases? query                   #insertInto
-    | DELETE FROM qualifiedName (WHERE booleanExpression)?             #delete
+    | DELETE FROM qualifiedName whereClause?                           #delete
     | TRUNCATE TABLE qualifiedName                                     #truncateTable
     | ALTER TABLE (IF EXISTS)? from=qualifiedName
         RENAME TO to=qualifiedName                                     #renameTable
@@ -337,6 +337,10 @@ relationPrimary
 
 expression
     : booleanExpression
+    ;
+
+whereClause
+    : WHERE booleanExpression
     ;
 
 booleanExpression
