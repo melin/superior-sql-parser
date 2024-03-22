@@ -8,6 +8,9 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.parser.flink.antlr4.*
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
@@ -75,6 +78,12 @@ object FlinkSqlHelper {
         parser.addParseListener(FlinkSqlParserBaseListener())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
+
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
         try {

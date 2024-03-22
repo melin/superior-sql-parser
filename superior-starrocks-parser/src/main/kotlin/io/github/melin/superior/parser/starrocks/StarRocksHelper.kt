@@ -10,6 +10,9 @@ import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParser
 import io.github.melin.superior.parser.starrocks.antlr4.StarRocksParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 
@@ -76,6 +79,11 @@ object StarRocksHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
 
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -93,6 +101,9 @@ object StarRocksHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }

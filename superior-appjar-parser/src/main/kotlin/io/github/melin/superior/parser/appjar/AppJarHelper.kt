@@ -12,6 +12,9 @@ import io.github.melin.superior.common.antlr4.UpperCaseCharStream
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.parser.job.antlr4.AppJarLexer
 import io.github.melin.superior.parser.job.antlr4.AppJarParser
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 
 /**
  *
@@ -47,6 +50,12 @@ object AppJarHelper {
         val parser = AppJarParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
+
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
         parser.interpreter.predictionMode = PredictionMode.SLL
 
         val cmdVisitor = AppJarAntlr4Visitor()
@@ -72,6 +81,9 @@ object AppJarHelper {
             } else {
                 throw e.withCommand(trimCmd)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }

@@ -14,6 +14,9 @@ import io.github.melin.superior.parser.mysql.MySqlAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 
 /**
  *
@@ -78,6 +81,11 @@ object MySqlHelper {
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -96,6 +104,9 @@ object MySqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }

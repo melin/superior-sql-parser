@@ -10,6 +10,9 @@ import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
@@ -88,8 +91,13 @@ object OracleSqlHelper {
         val parser = OracleParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        // parser.interpreter.predictionMode = PredictionMode.SLL
 
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
+        // parser.interpreter.predictionMode = PredictionMode.SLL
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -109,6 +117,9 @@ object OracleSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }

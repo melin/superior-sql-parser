@@ -12,6 +12,9 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseLexer
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 
 /**
  *
@@ -75,6 +78,12 @@ object TrinoSqlHelper {
         val parser = TrinoSqlBaseParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
+
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
         parser.interpreter.predictionMode = PredictionMode.SLL
 
         try {
@@ -95,6 +104,9 @@ object TrinoSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }

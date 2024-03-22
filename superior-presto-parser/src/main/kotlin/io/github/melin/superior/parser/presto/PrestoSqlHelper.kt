@@ -12,6 +12,9 @@ import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseLexer
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
+import org.antlr.v4.runtime.atn.LexerATNSimulator
+import org.antlr.v4.runtime.atn.ParserATNSimulator
+import org.antlr.v4.runtime.atn.PredictionContextCache
 
 /**
  *
@@ -75,8 +78,13 @@ object PrestoSqlHelper {
         val parser = PrestoSqlBaseParser(tokenStream)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-        parser.interpreter.predictionMode = PredictionMode.SLL
 
+        lexer.interpreter =
+            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
+        parser.interpreter =
+            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
+
+        parser.interpreter.predictionMode = PredictionMode.SLL
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -96,6 +104,9 @@ object PrestoSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            parser.getInterpreter().clearDFA();
+            lexer.getInterpreter().clearDFA();
         }
     }
 }
