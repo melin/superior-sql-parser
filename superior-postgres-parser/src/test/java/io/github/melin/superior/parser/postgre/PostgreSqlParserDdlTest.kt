@@ -93,6 +93,34 @@ class PostgreSqlParserDdlTest {
     }
 
     @Test
+    fun createTable1() {
+        val sql = """
+            CREATE TABLE IF NOT EXISTS sales_range_partitioned3 (
+                id INT,
+                sales_date DATE,
+                amount DECIMAL(10, 2)
+            )
+            PARTITION BY RANGE (sales_date) (
+                PARTITION p2022 VALUES LESS THAN ('2023-01-01'),
+                PARTITION p2023 VALUES LESS THAN ('2024-01-01'),
+                PARTITION p2024 VALUES LESS THAN ('2025-01-01')
+            );
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateTable) {
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
+            Assert.assertEquals(TableId("sales_range_partitioned3"), statement.tableId)
+            Assert.assertEquals(3, statement.columnRels?.size)
+            Assert.assertEquals("RANGE", statement.partitionType)
+            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun createView0() {
         val sql = """
             CREATE OR REPLACE VIEW comedies AS

@@ -640,8 +640,138 @@ copy_generic_opt_arg_list_item
    ;
 
 createstmt
-   : CREATE opttemp TABLE (IF_P NOT EXISTS)? qualified_name (OPEN_PAREN opttableelementlist CLOSE_PAREN optinherit optpartitionspec table_access_method_clause optwith oncommitoption opttablespace | OF any_name opttypedtableelementlist optpartitionspec table_access_method_clause optwith oncommitoption opttablespace | PARTITION OF qualified_name opttypedtableelementlist partitionboundspec optpartitionspec table_access_method_clause optwith oncommitoption opttablespace)
+   : CREATE opttemp TABLE (IF_P NOT EXISTS)? qualified_name
+   (
+        OPEN_PAREN opttableelementlist CLOSE_PAREN optinherit optpartitionspec table_access_method_clause gaussprimayindex optwith oncommitoption opttablespace gaussextension
+        | OF any_name opttypedtableelementlist optpartitionspec table_access_method_clause optwith oncommitoption opttablespace
+        | PARTITION OF qualified_name opttypedtableelementlist partitionboundspec optpartitionspec table_access_method_clause optwith oncommitoption opttablespace
+   )
    ;
+
+// -------- support gauss
+
+gaussprimayindex
+   : PRIMARY INDEX OPEN_PAREN colid CLOSE_PAREN
+   |
+   ;
+
+gaussextension
+   : distributeby toGroupOrNode tablePartition?
+   |
+   ;
+
+distributeby
+   : DISTRIBUTE BY (REPLICATION | ROUNDROBIN | HASH OPEN_PAREN distributebyhashlist CLOSE_PAREN)
+   | DISTRIBUTED BY OPEN_PAREN distributebyhashlist CLOSE_PAREN
+   | DISTRIBUTED (RANDOMLY | REPLICATED)
+   |
+   ;
+
+distributebyhashlist
+   : distributebyhashitem (COMMA distributebyhashitem)*
+   ;
+
+distributebyhashitem
+   : collabel
+   ;
+
+toGroupOrNode
+   : TO GROUP_P collabel
+   | TO NODE_P OPEN_PAREN collabel (COMMA collabel)* CLOSE_PAREN
+   |
+   ;
+
+ tablePartition
+   : PARTITION BY partition_list ((ENABLE_P | DISABLE_P) ROW MOVEMENT)?
+   ;
+
+ partition_list
+   : value_partition_stmt
+   | range_partition_stmt
+   | list_partition_stmt
+   | normal_partition_stmt
+   ;
+
+normal_partition_stmt
+   : OPEN_PAREN list_partition_value CLOSE_PAREN AUTOMAPPED?
+   ;
+
+list_partition_stmt
+   : LIST_P OPEN_PAREN partition_key CLOSE_PAREN OPEN_PAREN list_partition_items CLOSE_PAREN
+   ;
+
+list_partition_items
+   : list_partition_item (COMMA list_partition_item)*
+   ;
+
+list_partition_item
+   : PARTITION partition_name VALUES LESS THAN OPEN_PAREN list_partition_value CLOSE_PAREN table_space_item?
+   ;
+
+list_partition_value
+   : partition_name (COMMA partition_name)*
+   | DEFAULT
+   ;
+
+value_partition_stmt
+   : VALUES OPEN_PAREN partition_key CLOSE_PAREN
+   ;
+
+range_partition_stmt
+   : RANGE OPEN_PAREN partition_key CLOSE_PAREN OPEN_PAREN (partition_less_than_items | partition_start_end_items) CLOSE_PAREN
+   ;
+
+partition_less_than_items
+   : partition_less_than_item (COMMA partition_less_than_item)*
+   ;
+
+partition_start_end_items
+   : partition_start_end_item (COMMA partition_start_end_item)*
+   ;
+
+partition_less_than_item
+   : PARTITION partition_name VALUES LESS THAN OPEN_PAREN (partition_value | MAXVALUE) CLOSE_PAREN table_space_item?
+   ;
+
+partition_start_end_item
+   : PARTITION partition_name start_end_item table_space_item?
+   ;
+
+start_end_item
+   : start_item
+   | end_item
+   | start_item end_item (EVERY OPEN_PAREN aexprconst CLOSE_PAREN)?
+   ;
+
+start_item
+   : START OPEN_PAREN partition_value CLOSE_PAREN
+   ;
+
+end_item
+   : END_P OPEN_PAREN (partition_value | MAXVALUE) CLOSE_PAREN
+   ;
+
+partition_key
+   : colid
+   ;
+
+partition_name
+   : colid
+   ;
+
+partition_value
+   : a_expr
+   ;
+
+table_space_item
+   : TABLESPACE table_space_name
+   ;
+
+table_space_name
+   : qualified_name
+   ;
+
+// -------- support gauss
 
 opttemp
    : TEMPORARY

@@ -1991,6 +1991,114 @@ OVERRIDING
    : 'OVERRIDING'
    ;
 
+// support gauss start--------------------------------
+AUTOMAPPED
+   : 'AUTOMAPPED'
+   ;
+SAMPLE
+   : 'SAMPLE'
+   ;
+PERCENT_P
+   : 'PERCENT'
+   ;
+STAT
+   : 'STAT'
+   ;
+COLLECT
+   : 'COLLECT'
+   ;
+
+MULTISET
+   : 'MULTISET'
+   ;
+
+MINUS_P
+   : 'MINUS'
+   ;
+
+GROUPCONCAT
+   : 'GROUP_CONCAT'
+   ;
+
+SEPARATOR
+   : 'SEPARATOR'
+   ;
+
+IGNORE
+   : 'IGNORE'
+   ;
+OPEN_BRACE
+   : '{'
+   ;
+CLOSE_BRACE
+   : '}'
+   ;
+OVERWRITE
+   : 'OVERWRITE'
+   ;
+DISTRIBUTE
+   : 'DISTRIBUTE'
+   ;
+DISTRIBUTED
+   : 'DISTRIBUTED'
+   ;
+DISTRIBUTION
+   : 'DISTRIBUTION'
+   ;
+REPLICATION
+   : 'REPLICATION'
+   ;
+ROUNDROBIN
+   : 'ROUNDROBIN'
+   ;
+HASH
+   : 'HASH'
+   ;
+RANDOMLY
+   : 'RANDOMLY'
+   ;
+NODE_P
+   : 'NODE'
+   ;
+
+LIST_P
+   : 'LIST'
+   ;
+
+LESS
+   : 'LESS'
+   ;
+
+THAN
+   : 'THAN'
+   ;
+
+EVERY
+   : 'EVERY'
+   ;
+
+MOVEMENT
+   : 'MOVEMENT'
+   ;
+
+TSTag
+   : 'TSTag'
+   ;
+
+TSTime
+   : 'TSTime'
+   ;
+
+TSField
+   : 'TSField'
+   ;
+
+REPLICATED
+   : 'REPLICATED'
+   ;
+
+// support gauss end --------------------------------
+
 CONFLICT
    : 'CONFLICT'
    ;
