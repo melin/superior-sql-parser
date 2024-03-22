@@ -6,7 +6,7 @@
 
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>4.0.10</version>
+    <version>4.0.11-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -33,8 +33,8 @@
 
         <kotlin.version>1.8.21</kotlin.version>
         <antlr4.version>4.9.3</antlr4.version>
-        <slf4j.version>2.0.6</slf4j.version>
-        <log4j.version>2.19.0</log4j.version>
+        <slf4j.version>2.0.12</slf4j.version>
+        <log4j.version>2.23.1</log4j.version>
     </properties>
 
     <description>
@@ -92,13 +92,13 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>3.14.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.0.1-jre</version>
+            <version>33.1.0-jre</version>
             <scope>provided</scope>
         </dependency>
 
