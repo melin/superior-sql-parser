@@ -1,11 +1,11 @@
 ## 介绍
 
-基于antlr4 statement 解析器，获取相关表元数据，主要用于sql 权限校验等场景。支持spark sql, tidb sql, flink sql, Gauss(华为DWS) Oracle, MYSQL，Postgresql，sqlserver, db2
+基于antlr4 statement 解析器，获取相关表元数据，主要用于sql 权限校验等场景。支持spark sql, tidb sql, flink sql, Gauss, Oracle, MYSQL，Postgresql，sqlserver, db2
 ```
 <dependency>
     <groupId>io.github.melin</groupId>
     <artifactId>superior-[spark|presto|mysql|oracle|...]-parser</artifactId>
-    <version>4.0.8</version>
+    <version>4.0.10</version>
 </dependency>
 ```
 
