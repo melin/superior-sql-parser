@@ -79,11 +79,6 @@ object StarRocksHelper {
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
 
-        lexer.interpreter =
-            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
-        parser.interpreter =
-            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
-
         try {
             try {
                 // first, try parsing with potentially faster SLL mode
@@ -101,9 +96,6 @@ object StarRocksHelper {
             } else {
                 throw e.withCommand(command)
             }
-        } finally {
-            parser.getInterpreter().clearDFA();
-            lexer.getInterpreter().clearDFA();
         }
     }
 }

@@ -78,12 +78,6 @@ object FlinkSqlHelper {
         parser.addParseListener(FlinkSqlParserBaseListener())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
-
-        lexer.interpreter =
-            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
-        parser.interpreter =
-            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
-
         //parser.interpreter.predictionMode = PredictionMode.SLL
 
         try {

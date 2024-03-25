@@ -32,12 +32,6 @@ object ArithmeticHelper {
         val tokenStream = CommonTokenStream(lexer)
         val parser = ArithmeticParser(tokenStream)
         parser.bracket_enbled = bracketEnbled
-
-        lexer.interpreter =
-            LexerATNSimulator(lexer, lexer.atn, lexer.interpreter.decisionToDFA, PredictionContextCache())
-        parser.interpreter =
-            ParserATNSimulator(parser, parser.atn, parser.interpreter.decisionToDFA, PredictionContextCache())
-
         parser.interpreter.predictionMode = PredictionMode.SLL
 
         val sqlVisitor = ArithmeticAntlr4Visitor(bracketEnbled)
@@ -60,9 +54,6 @@ object ArithmeticHelper {
             } else {
                 throw e.withCommand(trimCmd)
             }
-        } finally {
-            parser.getInterpreter().clearDFA();
-            lexer.getInterpreter().clearDFA();
         }
     }
 }
