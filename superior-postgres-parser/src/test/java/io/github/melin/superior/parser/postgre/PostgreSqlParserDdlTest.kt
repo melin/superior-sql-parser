@@ -341,4 +341,17 @@ class PostgreSqlParserDdlTest {
         Assert.assertEquals("status", action.columName)
         Assert.assertEquals("current", action.defaultExpression)
     }
+
+    @Test
+    fun showTest() {
+        val sql = """
+            SHOW COLUMNS FROM TABLE awsdatacatalog.batman.nation LIMIT 2;
+            SHOW SCHEMAS FROM DATABASE awsdatacatalog LIMIT 5;
+            show table sales;
+            SHOW TABLES FROM SCHEMA dev.public;
+            show view LA_Venues_v;
+        """.trimIndent()
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(5, statements.size)
+    }
 }
