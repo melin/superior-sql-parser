@@ -1,8 +1,8 @@
-parser grammar PostgreSqlParser;
+parser grammar RedshiftParser;
 
 
-options { tokenVocab = PostgreSqlLexer;
-superClass = PostgreSqlParserBase;
+options { tokenVocab = RedshiftLexer;
+    superClass = RedshiftParserBase;
 }
 
 @header
@@ -15,7 +15,7 @@ root
    : stmtblock EOF
    ;
 
-plsqlroot
+sqlroot
    : pl_function
    ;
 
@@ -151,6 +151,7 @@ stmt
    | variableresetstmt
    | variablesetstmt
    | variableshowstmt
+   | showstmt
    | viewstmt
    | plsqlconsolecommand
    ;
@@ -358,6 +359,17 @@ functionsetresetclause
 variableshowstmt
    : SHOW (var_name | TIME ZONE | TRANSACTION ISOLATION LEVEL | SESSION AUTHORIZATION | ALL)
    ;
+
+// redshift show https://docs.aws.amazon.com/redshift/latest/dg/r_SHOW_COLUMNS.html start
+showstmt
+   : SHOW COLUMNS FROM TABLE qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   | SHOW EXTERNAL TABLE qualified_name (PARTITION)?
+   | SHOW SCHEMAS FROM DATABASE qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   | SHOW TABLE qualified_name
+   | SHOW VIEW qualified_name
+   | SHOW TABLES FROM SCHEMA qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   ;
+// end
 
 constraintssetstmt
    : SET CONSTRAINTS constraints_set_list constraints_set_mode

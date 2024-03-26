@@ -17,7 +17,7 @@ import org.junit.Test
 /**
  * Created by libinsong on 2020/6/30 11:04 上午
  */
-class PostgreSqlParserDdlTest {
+class RedshiftSqlParserDdlTest {
 
     @Test
     fun createDatabaseTest() {
@@ -26,7 +26,7 @@ class PostgreSqlParserDdlTest {
             drop DATABASE bigdata2
         """.trimIndent()
 
-        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        val statements = RedshiftSqlHelper.parseMultiStatement(sql)
 
         val createDatabse = statements.get(0)
         val dropDatabase = statements.get(1)
@@ -49,7 +49,7 @@ class PostgreSqlParserDdlTest {
             CREATE schema bigdata2;
         """.trimIndent()
 
-        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        val statements = RedshiftSqlHelper.parseMultiStatement(sql)
 
         val createSchema1 = statements.get(0)
         val createSchema2 = statements.get(1)
@@ -76,7 +76,7 @@ class PostgreSqlParserDdlTest {
             ) PARTITION BY RANGE (age); 
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -107,7 +107,7 @@ class PostgreSqlParserDdlTest {
             );
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
 
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
@@ -134,7 +134,7 @@ class PostgreSqlParserDdlTest {
             WITH CASCADED CHECK OPTION;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is CreateView) {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
@@ -161,7 +161,7 @@ class PostgreSqlParserDdlTest {
                   invoice_date;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
@@ -179,7 +179,7 @@ class PostgreSqlParserDdlTest {
             DROP MATERIALIZED VIEW tickets_mv;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
 
         if (statement is DropMaterializedView) {
             Assert.assertEquals(StatementType.DROP_MATERIALIZED_VIEW, statement.statementType)
@@ -195,7 +195,7 @@ class PostgreSqlParserDdlTest {
             REFRESH MATERIALIZED VIEW tickets_mv;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
 
         if (statement is RefreshMaterializedView) {
             Assert.assertEquals(StatementType.REFRESH_MV, statement.statementType)
@@ -211,7 +211,7 @@ class PostgreSqlParserDdlTest {
             ALTER MATERIALIZED VIEW tickets_mv RENAME TO tickets_mv_1;
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
 
         if (statement is AlterMaterializedView) {
             Assert.assertEquals(StatementType.ALTER_MATERIALIZED_VIEW, statement.statementType)
@@ -228,7 +228,7 @@ class PostgreSqlParserDdlTest {
             drop TABLE test.public.authors
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
@@ -244,7 +244,7 @@ class PostgreSqlParserDdlTest {
             drop TABLE authors, tests
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
@@ -259,7 +259,7 @@ class PostgreSqlParserDdlTest {
     fun createIndexTest() {
         val sql = "CREATE UNIQUE INDEX title_idx ON films (title) INCLUDE (director, rating);\n"
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
         
@@ -277,7 +277,7 @@ class PostgreSqlParserDdlTest {
     fun dropIndexTest() {
         val sql = "DROP INDEX title_idx"
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
 
         
@@ -293,7 +293,7 @@ class PostgreSqlParserDdlTest {
     @Test
     fun createPartitonTableTest() {
         val sql = "create table pkslow_person_r1 partition of pkslow_person_r for values from (MINVALUE) to (10);  \n"
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
 
         if (statement is CreatePartitionTable) {
@@ -310,7 +310,7 @@ class PostgreSqlParserDdlTest {
             COMMENT ON TABLE my_schema.my_table IS 'Employee Information';
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statement = RedshiftSqlHelper.parseStatement(sql)
         
         if (statement is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, statement.statementType)
@@ -327,7 +327,7 @@ class PostgreSqlParserDdlTest {
             ALTER TABLE distributors ADD COLUMN address varchar(30),
             ALTER COLUMN status SET default 'current';
         """.trimIndent()
-        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        val statements = RedshiftSqlHelper.parseMultiStatement(sql)
 
         val alterTable1 = statements.get(0) as AlterTable
         Assert.assertEquals("distributors", alterTable1.tableId.tableName)
@@ -340,5 +340,18 @@ class PostgreSqlParserDdlTest {
         Assert.assertEquals(AlterActionType.SET_COLUMN_DEFAULT, action.alterType)
         Assert.assertEquals("status", action.columName)
         Assert.assertEquals("current", action.defaultExpression)
+    }
+
+    @Test
+    fun showTest() {
+        val sql = """
+            SHOW COLUMNS FROM TABLE awsdatacatalog.batman.nation LIMIT 2;
+            SHOW SCHEMAS FROM DATABASE awsdatacatalog LIMIT 5;
+            show table sales;
+            SHOW TABLES FROM SCHEMA dev.public;
+            show view LA_Venues_v;
+        """.trimIndent()
+        val statements = RedshiftSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(5, statements.size)
     }
 }
