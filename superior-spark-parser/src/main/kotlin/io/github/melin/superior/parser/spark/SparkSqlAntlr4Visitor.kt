@@ -553,13 +553,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitDistCpExpr(ctx: SparkSqlParser.DistCpExprContext): Statement {
-        val sourceType = CommonUtils.cleanQuote(ctx.sourceName.text)
-        val sinkType = CommonUtils.cleanQuote(ctx.sinkName.text)
-
-        val sourceOptions = parseDtOptions(ctx.sourceOpts)
-        val sinkOptions = parseDtOptions(ctx.sinkOpts)
+        val options = parseDtOptions(ctx.options)
         val properties = parseDtOptions(ctx.properties)
-        return DistCpExpr(sourceType, sourceOptions, sinkType, sinkOptions, properties)
+        return DistCpExpr(options, properties)
     }
 
     override fun visitDatatunnelExpr(ctx: SparkSqlParser.DatatunnelExprContext): Statement {

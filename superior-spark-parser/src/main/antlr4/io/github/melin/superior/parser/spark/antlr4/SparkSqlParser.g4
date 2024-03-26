@@ -248,10 +248,7 @@ statement
         (OPTIONS sinkOpts=dtPropertyList)?
         (PROPERTIES properties=dtPropertyList)?                        #datatunnelExpr
 
-    | DISTCP SOURCE LEFT_PAREN sourceName=stringLit RIGHT_PAREN
-        (OPTIONS sourceOpts=dtPropertyList)?
-        SINK LEFT_PAREN sinkName=stringLit RIGHT_PAREN
-        (OPTIONS sinkOpts=dtPropertyList)?
+    | DISTCP OPTIONS options=dtPropertyList
         (PROPERTIES properties=dtPropertyList)?                        #distCpExpr
 
     | DATATUNNEL HELP dtType=(SOURCE | SINK | ALL)
