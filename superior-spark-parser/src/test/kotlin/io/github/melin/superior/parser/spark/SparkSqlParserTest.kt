@@ -2308,4 +2308,25 @@ class SparkSqlParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun distCpTest() {
+        val sql = """
+            set spark.hadoop.fs.oss.endpoint = oss-cn-hangzhou.aliyuncs.com;
+            set spark.hadoop.fs.oss.accessKeyId = xxx;
+            set spark.hadoop.fs.oss.accessKeySecret = xxx;
+            set spark.hadoop.fs.oss.attempts.maximum = 3;
+            set spark.hadoop.fs.oss.connection.timeout = 10000;
+            set spark.hadoop.fs.oss.connection.establish.timeout = 10000;
+            set spark.hadoop.fs.oss.impl = org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem;
+            DISTCP OPTIONS (
+                srcPaths = ['oss://melin1204/users'],
+                destPath = "hdfs://cdh1:8020/temp",
+                overwrite = true
+            )
+        """.trimIndent()
+
+        val statements = SparkSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(8, statements.size)
+    }
 }
