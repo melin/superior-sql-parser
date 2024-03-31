@@ -16,13 +16,16 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     private var command: String? = null
 
-    private val tableDatas = ArrayList<Statement>()
+    private val jobStmts = ArrayList<Statement>()
 
     override fun visitJobTask(ctx: AppJarParser.JobTaskContext): Statement {
-        val tableData = super.visitJobTask(ctx)
-        tableDatas.add(tableData)
+        val jobStmt = super.visitJobTask(ctx)
+        var sql = CommonUtils.subsql(command, ctx)
+        sql = CommonUtils.cleanLastSemi(sql)
+        jobStmt.setSql(sql)
 
-        return tableData;
+        jobStmts.add(jobStmt)
+        return jobStmt;
     }
 
     override fun visitJobStatement(ctx: AppJarParser.JobStatementContext): Statement {
@@ -80,8 +83,8 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return str
     }
 
-    fun getTableDatas(): ArrayList<Statement> {
-        return tableDatas
+    fun getJobStmts(): ArrayList<Statement> {
+        return jobStmts
     }
 
     fun setCommand(command: String) {

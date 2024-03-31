@@ -251,7 +251,10 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
     @Test
     fun setConfigTest8() {
         val sql = """
-            set spark.app.name=sparkAppName;set spark.memory.storageFraction=0.1;set spark.memory.fraction=0.95;set spark.memory.useLegacyMode=true;set master=yarn-cluster;/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar com.example.pontus.core.Engine customCmd "-j{'readerFields':[{'field':'uuid','type':'string'},{'field':'rule_detail','type':'string'}],'resourceSetting':{'spark.driver.memory':'2g','spark.pontus.writer.mapper':'2'},'reader':{'databaseName':'afraudtech','connectionType':'hive','table':'antifraud_rule_result'},'writerFields':[{'transform':'uuid','field':'uuid','type':'varchar(32)'},{'filter':'where id=\'test\'','transform':'rule_detail','field':'policy_recommendation','type':'text'}],'writer':{'dataSourceId':'364','connectionAttr':'jdbc:mysql://192.168.74.136:3306/athena','password':'6ydJDezPBLBuco+sCV6QL6XsdTN/ShtYIz1Gi3TVusw=','writeMode':'UPSERT','userName':'athena','connectionType':'mysql','table':'edison_warning_result'}}"  --jars /user/pontus_2.1/*
+set spark.sql.adaptive.enabled = true;
+
+spark-jobserver-examples-3.2.0-SNAPSHOT.jar com.github.melin.superior.jobserver.examples.SparkJobDemo qianxiao JavaJobDemo kk
+
             """;
 
         val statementDatas = AppJarHelper.parseStatement(sql)

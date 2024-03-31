@@ -2320,10 +2320,11 @@ class SparkSqlParserTest {
             set spark.hadoop.fs.oss.connection.establish.timeout = 10000;
             set spark.hadoop.fs.oss.impl = org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem;
             DISTCP OPTIONS (
-                srcPaths = ['oss://melin1204/users'],
-                destPath = "hdfs://cdh1:8020/temp",
-                overwrite = true
-            )
+  srcPaths = ['oss://melin1204/users'],
+  destPath = "hdfs://cdh1:8020/temp",
+  overwrite = true
+)
+
         """.trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)

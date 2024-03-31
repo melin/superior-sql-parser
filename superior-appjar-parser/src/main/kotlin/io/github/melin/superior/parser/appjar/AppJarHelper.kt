@@ -58,7 +58,7 @@ object AppJarHelper {
             try {
                 // first, try parsing with potentially faster SLL mode
                 cmdVisitor.visit(parser.jobTasks())
-                return cmdVisitor.getTableDatas()
+                return cmdVisitor.getJobStmts()
             }
             catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
@@ -67,7 +67,7 @@ object AppJarHelper {
                 // Try Again.
                 parser.interpreter.predictionMode = PredictionMode.LL
                 cmdVisitor.visit(parser.jobTasks())
-                return cmdVisitor.getTableDatas()
+                return cmdVisitor.getJobStmts()
             }
         } catch (e: ParseException) {
             if(StringUtils.isNotBlank(e.command)) {
