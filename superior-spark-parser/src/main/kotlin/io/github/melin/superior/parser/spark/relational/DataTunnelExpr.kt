@@ -16,7 +16,7 @@ data class DataTunnelExpr(
         var properties: Map<String, Any>,
 ) : Statement() {
     override val statementType = StatementType.DATATUNNEL
-    override val privilegeType = PrivilegeType.OTHER
+    override val privilegeType = PrivilegeType.READ
     override val sqlType = SqlType.DML
 
     val inputTables: ArrayList<TableId> = arrayListOf()
