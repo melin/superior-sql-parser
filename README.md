@@ -146,7 +146,8 @@ OPTIONS(
 5. [Sql Server](https://github.com/antlr/grammars-v4/tree/master/sql/tsql) 
 6. [StarRocks](https://github.com/StarRocks/starrocks/tree/main/fe/fe-core/src/main/java/com/starrocks/sql/parser)
 7. [Oracle](https://github.com/antlr/grammars-v4/tree/master/sql/plsql)
-8. [Flink SQL / Flink CDC SQL](https://github.com/DTStack/dt-sql-parser/tree/main/src/grammar/flinksql)
+8. [OceanBase](https://github.com/oceanbase/odc/tree/main/libs/ob-sql-parser)
+9. [Flink SQL / Flink CDC SQL](https://github.com/DTStack/dt-sql-parser/tree/main/src/grammar/flinksql)
 
 ## 相关项目
 1. https://gitee.com/melin/bee
