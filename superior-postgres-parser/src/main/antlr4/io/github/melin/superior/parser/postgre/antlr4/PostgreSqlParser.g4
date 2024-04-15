@@ -138,7 +138,6 @@ stmt
    | removefuncstmt
    | removeoperstmt
    | renamestmt
-   | revokestmt
    | revokerolestmt
    | rulestmt
    | seclabelstmt

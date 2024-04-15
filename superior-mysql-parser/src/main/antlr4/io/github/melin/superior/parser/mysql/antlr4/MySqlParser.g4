@@ -277,6 +277,13 @@ createDatabaseOption
     | DEFAULT? COLLATE '='? collationName
     | DEFAULT? ENCRYPTION '='? STRING_LITERAL
     | READ ONLY '='? (DEFAULT | ZERO_DECIMAL | ONE_DECIMAL)
+    | read_only_or_write
+    ;
+
+// oceanbase mysql
+read_only_or_write
+    : READ ONLY
+    | READ WRITE
     ;
 
 charSet
