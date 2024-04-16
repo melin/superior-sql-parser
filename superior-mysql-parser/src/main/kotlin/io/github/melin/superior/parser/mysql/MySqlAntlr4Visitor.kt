@@ -220,29 +220,46 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
             val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
             val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
             val dataType = CommonUtils.subsql(command, statement.columnDefinition().dataType())
-            var comment:String? = null
+            var comment: String? = null
+            var nullable: Boolean = true
+            var defaultExpr: String? = null
 
             statement.columnDefinition().children.forEach {
-                if(it is MySqlParser.CommentColumnConstraintContext) {
+                if (it is MySqlParser.CommentColumnConstraintContext) {
                     comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
+                } else if (it is MySqlParser.NullColumnConstraintContext) {
+                    nullable = it.nullNotnull().NOT() == null;
+                } else if (it is MySqlParser.DefaultColumnConstraintContext) {
+                    defaultExpr = CommonUtils.subsql(command, it.defaultValue())
                 }
             }
 
             val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType, comment)
             action.newColumName = newColumnName
+            action.nullable = nullable
+            action.defaultExpression = defaultExpr
 
             return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByAddColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
             val dataType = statement.columnDefinition().dataType().text
-            var comment:String? = null
+            var comment: String? = null
+            var nullable: Boolean = true
+            var defaultExpr: String? = null
             statement.columnDefinition().children.forEach {
-                if(it is MySqlParser.CommentColumnConstraintContext) {
+                if (it is MySqlParser.CommentColumnConstraintContext) {
                     comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
+                } else if (it is MySqlParser.NullColumnConstraintContext) {
+                    nullable = it.nullNotnull().NOT() == null;
+                } else if (it is MySqlParser.DefaultColumnConstraintContext) {
+                    defaultExpr = CommonUtils.subsql(command, it.defaultValue())
                 }
             }
 
+
             val action = AlterColumnAction(ADD_COLUMN, columnName, dataType, comment)
+            action.nullable = nullable
+            action.defaultExpression = defaultExpr
             return AlterTable(tableId, action)
         } else if(statement is MySqlParser.AlterByDropColumnContext) {
             val columnName = CommonUtils.cleanQuote(statement.uid().text)

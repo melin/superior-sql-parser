@@ -351,7 +351,7 @@ class MySqlParserDdlTest {
 
     @Test
     fun addColumnTest() {
-        val sql = "ALTER TABLE `datacompute`.`users_quan` ADD COLUMN `age` VARCHAR(45) NULL DEFAULT 18 COMMENT '年龄' AFTER `username`"
+        val sql = "ALTER TABLE `datacompute`.`users_quan` ADD COLUMN `age` VARCHAR(45) NOT NULL DEFAULT 18 COMMENT '年龄' AFTER `username`"
         val statement = MySqlHelper.parseStatement(sql)
         
         if(statement is AlterTable) {
@@ -362,6 +362,8 @@ class MySqlParserDdlTest {
             val action = statement.firstAction() as AlterColumnAction
             Assert.assertEquals(AlterActionType.ADD_COLUMN, action.alterType)
             Assert.assertEquals("age", action.columName)
+            Assert.assertFalse(action.nullable)
+            Assert.assertEquals("18", action.defaultExpression)
             Assert.assertEquals("年龄", action.comment)
         } else {
             Assert.fail()
