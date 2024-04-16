@@ -24,6 +24,10 @@ data class AlterTable(
 
     constructor(tableId: TableId): this(tableId, null)
 
+    fun addAction(action: AlterAction) {
+        actions.add(action)
+    }
+
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)
     }

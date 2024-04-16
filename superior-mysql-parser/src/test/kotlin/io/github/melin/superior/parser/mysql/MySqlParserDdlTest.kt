@@ -371,6 +371,27 @@ class MySqlParserDdlTest {
     }
 
     @Test
+    fun addColumnTest1() {
+        val sql = """
+            ALTER TABLE `mxy`.`cyj`
+            ADD COLUMN new_column1 VARCHAR(255) default null,
+            ADD COLUMN new_column2 INT not null default 0,
+            ADD COLUMN new_column3 TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+        """.trimIndent()
+        val statement = MySqlHelper.parseStatement(sql)
+
+        if (statement is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
+            Assert.assertEquals("mxy", statement.tableId.schemaName)
+            Assert.assertEquals("cyj", statement.tableId.tableName)
+
+            Assert.assertEquals(3, statement.actions.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun dropColumnTest() {
         val sql = "ALTER TABLE `datacompute`.`users_quan` DROP COLUMN `age`;"
         val statement = MySqlHelper.parseStatement(sql)

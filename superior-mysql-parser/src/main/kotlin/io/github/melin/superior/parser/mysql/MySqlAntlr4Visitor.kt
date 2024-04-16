@@ -211,93 +211,95 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
     //-----------------------------------Alter-----------------------------------------------
 
     override fun visitAlterTable(ctx: MySqlParser.AlterTableContext): Statement? {
-        if(ctx.childCount > 4) {
-            throw SQLParserException("不允许同时执行多个alter")
-        }
-        val statement = ctx.getChild(3)
         val tableId = parseFullId(ctx.tableName().fullId())
-        if (statement is MySqlParser.AlterByChangeColumnContext) {
-            val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
-            val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
-            val dataType = CommonUtils.subsql(command, statement.columnDefinition().dataType())
-            var comment: String? = null
-            var nullable: Boolean = true
-            var defaultExpr: String? = null
+        val alterTable = AlterTable(tableId)
+        ctx.alterSpecification().forEach { statement ->
+            if (statement is MySqlParser.AlterByChangeColumnContext) {
+                val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
+                val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
+                val dataType = CommonUtils.subsql(command, statement.columnDefinition().dataType())
+                var comment: String? = null
+                var nullable: Boolean = true
+                var defaultExpr: String? = null
 
-            statement.columnDefinition().children.forEach {
-                if (it is MySqlParser.CommentColumnConstraintContext) {
-                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
-                } else if (it is MySqlParser.NullColumnConstraintContext) {
-                    nullable = it.nullNotnull().NOT() == null;
-                } else if (it is MySqlParser.DefaultColumnConstraintContext) {
-                    defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                statement.columnDefinition().children.forEach {
+                    if (it is MySqlParser.CommentColumnConstraintContext) {
+                        comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
+                    } else if (it is MySqlParser.NullColumnConstraintContext) {
+                        nullable = it.nullNotnull().NOT() == null;
+                    } else if (it is MySqlParser.DefaultColumnConstraintContext) {
+                        defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                    }
                 }
-            }
 
-            val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType, comment)
-            action.newColumName = newColumnName
-            action.nullable = nullable
-            action.defaultExpression = defaultExpr
-
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterByAddColumnContext) {
-            val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
-            val dataType = statement.columnDefinition().dataType().text
-            var comment: String? = null
-            var nullable: Boolean = true
-            var defaultExpr: String? = null
-            statement.columnDefinition().children.forEach {
-                if (it is MySqlParser.CommentColumnConstraintContext) {
-                    comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
-                } else if (it is MySqlParser.NullColumnConstraintContext) {
-                    nullable = it.nullNotnull().NOT() == null;
-                } else if (it is MySqlParser.DefaultColumnConstraintContext) {
-                    defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType, comment)
+                action.newColumName = newColumnName
+                action.nullable = nullable
+                action.defaultExpression = defaultExpr
+                alterTable.addAction(action)
+            } else if(statement is MySqlParser.AlterByAddColumnContext) {
+                val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
+                val dataType = statement.columnDefinition().dataType().text
+                var comment: String? = null
+                var nullable: Boolean = true
+                var defaultExpr: String? = null
+                statement.columnDefinition().children.forEach {
+                    if (it is MySqlParser.CommentColumnConstraintContext) {
+                        comment = CommonUtils.cleanQuote(it.STRING_LITERAL().text)
+                    } else if (it is MySqlParser.NullColumnConstraintContext) {
+                        nullable = it.nullNotnull().NOT() == null;
+                    } else if (it is MySqlParser.DefaultColumnConstraintContext) {
+                        defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                    }
                 }
-            }
 
 
-            val action = AlterColumnAction(ADD_COLUMN, columnName, dataType, comment)
-            action.nullable = nullable
-            action.defaultExpression = defaultExpr
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterByDropColumnContext) {
-            val columnName = CommonUtils.cleanQuote(statement.uid().text)
-            val action = DropColumnAction(columnName)
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterByModifyColumnContext) {
-            val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
-            val dataType = statement.columnDefinition().dataType().text
+                val action = AlterColumnAction(ADD_COLUMN, columnName, dataType, comment)
+                action.nullable = nullable
+                action.defaultExpression = defaultExpr
+                alterTable.addAction(action)
+            } else if(statement is MySqlParser.AlterByDropColumnContext) {
+                val columnName = CommonUtils.cleanQuote(statement.uid().text)
+                val action = DropColumnAction(columnName)
+                return AlterTable(tableId, action)
+            } else if(statement is MySqlParser.AlterByModifyColumnContext) {
+                val columnName = CommonUtils.cleanQuote(statement.uid().get(0).text)
+                val dataType = statement.columnDefinition().dataType().text
 
-            val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType)
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterByAddIndexContext) {
-            val createIndex = CreateIndex(statement.uid().text)
-            return AlterTable(tableId, createIndex)
-        } else if(statement is MySqlParser.AlterByDropIndexContext) {
-            val dropIndex = DropIndex(statement.uid().text)
-            return AlterTable(tableId, dropIndex)
-        } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
-            val action = AlterTableAction(ADD_PRIMARY_KEY)
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
-            val action = AlterTableAction(ADD_UNIQUE_KEY)
-            return AlterTable(tableId, action)
-        } else if(statement is MySqlParser.AlterPartitionContext) {
-            val alterPartition = statement.alterPartitionSpecification()
-            if (alterPartition is AlterByTruncatePartitionContext) {
-                val action = AlterTableAction(TRUNCATE_PARTITION)
-                return AlterTable(tableId, action)
-            } else if(alterPartition is MySqlParser.AlterByDropPartitionContext) {
-                val action = AlterTableAction(DROP_PARTITION)
-                return AlterTable(tableId, action)
-            } else if(alterPartition is MySqlParser.AlterByAddPartitionContext) {
-                val action = AlterTableAction(ADD_PARTITION)
-                return AlterTable(tableId, action)
+                val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType)
+                alterTable.addAction(action)
+            } else if(statement is MySqlParser.AlterByAddIndexContext) {
+                val createIndex = CreateIndex(statement.uid().text)
+                alterTable.addAction(createIndex)
+            } else if(statement is MySqlParser.AlterByDropIndexContext) {
+                val dropIndex = DropIndex(statement.uid().text)
+                alterTable.addAction(dropIndex)
+            } else if(statement is MySqlParser.AlterByAddPrimaryKeyContext) {
+                val action = AlterTableAction(ADD_PRIMARY_KEY)
+                alterTable.addAction(action)
+            } else if(statement is MySqlParser.AlterByAddUniqueKeyContext) {
+                val action = AlterTableAction(ADD_UNIQUE_KEY)
+                alterTable.addAction(action)
+            } else if(statement is MySqlParser.AlterPartitionContext) {
+                val alterPartition = statement.alterPartitionSpecification()
+                if (alterPartition is AlterByTruncatePartitionContext) {
+                    val action = AlterTableAction(TRUNCATE_PARTITION)
+                    alterTable.addAction(action)
+                } else if(alterPartition is MySqlParser.AlterByDropPartitionContext) {
+                    val action = AlterTableAction(DROP_PARTITION)
+                    alterTable.addAction(action)
+                } else if(alterPartition is MySqlParser.AlterByAddPartitionContext) {
+                    val action = AlterTableAction(ADD_PARTITION)
+                    alterTable.addAction(action)
+                }
             }
         }
 
-        return super.visitAlterTable(ctx)
+        if (alterTable.actions.size > 0) {
+            return alterTable
+        } else {
+            return super.visitAlterTable(ctx)
+        }
     }
 
     override fun visitAnalyzeTable(ctx: MySqlParser.AnalyzeTableContext): Statement {
