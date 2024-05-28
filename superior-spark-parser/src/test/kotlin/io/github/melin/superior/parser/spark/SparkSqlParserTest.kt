@@ -312,19 +312,15 @@ class SparkSqlParserTest {
             );
         """
 
-        try {
-            val statement = SparkSqlHelper.parseStatement(sql)
-            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
-            if (statement is CreateTable) {
-                val tableName = statement.tableId.tableName
-                Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
-                Assert.assertEquals("my_table", tableName)
-                Assert.assertEquals(3, statement.expressionProperties?.size)
-            } else {
-                Assert.fail()
-            }
-        } catch (e: Exception) {
-            Assert.assertTrue(true)
+        val statement = SparkSqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
+        if (statement is CreateTable) {
+            val tableName = statement.tableId.tableName
+            Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
+            Assert.assertEquals("my_table", tableName)
+            Assert.assertEquals(3, statement.options?.size)
+        } else {
+            Assert.fail()
         }
     }
 
@@ -335,26 +331,40 @@ class SparkSqlParserTest {
             USING io.github.spark_redshift_community.spark.redshift
             OPTIONS (
               dbtable 'my_table',
-              tempdir 's3n://path/for/temp/data'
+              tempdir 's3n://path/for/temp/data',
               url 'jdbc:redshift://redshifthost:5439/database?user=username&password=pass'
             )
             AS SELECT * FROM tabletosave;
         """
 
-        try {
-            val statement = SparkSqlHelper.parseStatement(sql)
-            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
-            if (statement is CreateTable) {
-                val tableName = statement.tableId.tableName
-                Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
-                Assert.assertEquals("my_table", tableName)
-                Assert.assertEquals(3, statement.properties?.size)
-                Assert.assertEquals("SELECT * FROM tabletosave", statement.querySql)
-            } else {
-                Assert.fail()
-            }
-        } catch (e: Exception) {
-            Assert.assertTrue(true)
+        val statement = SparkSqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
+        if (statement is CreateTableAsSelect) {
+            val tableName = statement.tableId.tableName
+            Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
+            Assert.assertEquals("my_table", tableName)
+            Assert.assertEquals(3, statement.options?.size)
+            Assert.assertEquals("SELECT * FROM tabletosave", statement.queryStmt.getSql())
+        } else {
+            Assert.fail()
+        }
+    }
+
+    //@Test
+    fun createTableTest12() {
+        val sql = """
+            create table user(id Int, info String) clustered by (id) sorted by (id) into  4 buckets; 
+        """
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
+        if (statement is CreateTable) {
+            val tableName = statement.tableId.tableName
+            Assert.assertEquals("io.github.spark_redshift_community.spark.redshift", statement.fileFormat)
+            Assert.assertEquals("my_table", tableName)
+            Assert.assertEquals("SELECT * FROM tabletosave", statement.querySql)
+        } else {
+            Assert.fail()
         }
     }
 

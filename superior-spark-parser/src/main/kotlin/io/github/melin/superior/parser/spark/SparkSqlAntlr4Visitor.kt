@@ -309,7 +309,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         val properties = HashMap<String, String>()
-        var expressionProperties: HashMap<String, String>? = null
+        val options = HashMap<String, String>()
         if (createTableClauses.tableProps != null) {
             createTableClauses.tableProps.children.filter { it is SparkSqlParser.PropertyContext }.forEach { item ->
                 val property = item as SparkSqlParser.PropertyContext
@@ -317,14 +317,12 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 val value = CommonUtils.cleanQuote(property.value.text)
                 properties.put(key, value)
             }
-        } else if (createTableClauses.expressionPropertyList().size > 0) {
-            expressionProperties = HashMap()
-            val exprProperties = createTableClauses.expressionPropertyList().get(0).expressionProperty()
-            exprProperties.forEach {item ->
+        } else if (createTableClauses.options != null) {
+            createTableClauses.options.children.filter { it is SparkSqlParser.ExpressionPropertyContext }.forEach { item ->
                 val property = item as SparkSqlParser.ExpressionPropertyContext
                 val key = CommonUtils.cleanQuote(property.key.text)
                 val value = CommonUtils.cleanQuote(property.value.text)
-                expressionProperties.put(key, value)
+                options.put(key, value)
             }
         }
 
@@ -342,14 +340,14 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.modelType = modelType;
             createTable.replace = replace
-            createTable.expressionProperties = expressionProperties
+            createTable.options = options
             createTable.partitionColumnNames.addAll(partitionColumnNames)
             return createTable
         } else {
             currentOptType = StatementType.CREATE_TABLE
             val createTable = CreateTable(tableId, TableType.HIVE, comment, lifeCycle, partitionColumnRels, columnRels, properties, fileFormat, ifNotExists)
             createTable.modelType = modelType
-            createTable.expressionProperties = expressionProperties
+            createTable.options = options
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary

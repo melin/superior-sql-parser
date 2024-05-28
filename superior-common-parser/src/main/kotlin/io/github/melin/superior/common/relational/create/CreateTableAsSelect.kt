@@ -28,7 +28,7 @@ data class CreateTableAsSelect(
     var replace = false
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var modelType: String = "hive"
-    var expressionProperties: Map<String, String>? = null
+    var options: Map<String, String>? = null
 
     constructor(tableId: TableId, queryStmt: QueryStmt):
             this(tableId, queryStmt, null, null, null, null, null, null, false)

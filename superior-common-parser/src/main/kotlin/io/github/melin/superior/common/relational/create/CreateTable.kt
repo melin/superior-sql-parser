@@ -1,5 +1,6 @@
 package io.github.melin.superior.common.relational.create
 
+import com.google.common.collect.Lists
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
@@ -32,7 +33,9 @@ data class CreateTable(
     var replace = false
     var modelType: String = "hive" // 表模型类型
     var partitionType: String? = null // 分区类型
-    var expressionProperties: Map<String, String>? = null
+    var options: Map<String, String>? = null
+    var clusteredColumns: List<String> = Lists.newArrayList() // 分桶表分桶列
+    var sortedColumns: List<String> = Lists.newArrayList() // 分桶表排序列
 
     constructor(tableId: TableId, tableType: TableType, comment: String?, columnRels: List<ColumnRel>?):
             this(tableId, tableType, comment, null, null, columnRels, null, null, false)
