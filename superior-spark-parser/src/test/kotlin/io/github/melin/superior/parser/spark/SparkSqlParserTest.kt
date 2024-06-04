@@ -113,8 +113,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(7, statement.lifeCycle)
             Assert.assertEquals(PartitionType.LIST, statement.partitionType)
 
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames.get(0))
             Assert.assertEquals("part sdf", statement.partitionColumnRels?.get(0)?.comment)
             Assert.assertEquals(PartitionType.LIST, statement.partitionType)
         } else {
@@ -142,9 +142,9 @@ class SparkSqlParserTest {
             Assert.assertEquals(7, statement.lifeCycle)
             Assert.assertEquals("姓名", statement.columnRels?.get(0)?.comment)
             Assert.assertEquals(TableType.HIVE, statement.tableType)
-            Assert.assertEquals(2, statement.partitionColumnNames?.size)
-            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
-            Assert.assertEquals("event_type", statement.partitionColumnNames?.get(1))
+            Assert.assertEquals(2, statement.partitionColumnNames.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames.get(0))
+            Assert.assertEquals("event_type", statement.partitionColumnNames.get(1))
             Assert.assertEquals(PartitionType.LIST, statement.partitionType)
         } else {
             Assert.fail()
@@ -197,8 +197,8 @@ class SparkSqlParserTest {
             Assert.assertEquals("iceberg_test_dt", tableName)
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals(TableType.HIVE, statement.tableType)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -226,8 +226,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals("spark", statement.modelType)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("ds", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -256,9 +256,9 @@ class SparkSqlParserTest {
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals("orc", statement.fileFormat)
             Assert.assertEquals("spark", statement.modelType)
-            Assert.assertEquals(2, statement.partitionColumnNames?.size)
-            Assert.assertEquals("the_date", statement.partitionColumnNames?.get(0))
-            Assert.assertEquals("the_nums", statement.partitionColumnNames?.get(1))
+            Assert.assertEquals(2, statement.partitionColumnNames.size)
+            Assert.assertEquals("the_date", statement.partitionColumnNames.get(0))
+            Assert.assertEquals("the_nums", statement.partitionColumnNames.get(1))
         } else {
             Assert.fail()
         }
@@ -398,8 +398,8 @@ class SparkSqlParserTest {
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("dt", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -430,8 +430,8 @@ class SparkSqlParserTest {
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("dt", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -455,8 +455,8 @@ class SparkSqlParserTest {
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("iceberg", statement.fileFormat)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("days(ts)", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("days(ts)", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }
@@ -488,8 +488,8 @@ class SparkSqlParserTest {
 
             Assert.assertEquals(300, statement.lifeCycle)
             Assert.assertEquals("hudi", statement.fileFormat)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
-            Assert.assertEquals("dt", statement.partitionColumnNames?.get(0))
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
+            Assert.assertEquals("dt", statement.partitionColumnNames.get(0))
         } else {
             Assert.fail()
         }

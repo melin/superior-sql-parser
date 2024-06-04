@@ -158,7 +158,7 @@ class RedshiftSqlAntlr4Visitor(val splitSql: Boolean = false, val command: Strin
             val partitionType = partitionspec.colid().text.uppercase()
             val partitionColumns = partitionspec.part_params().part_elem().map { it.text }
 
-            createTable.partitionColumnNames = partitionColumns
+            createTable.partitionColumnNames.addAll(partitionColumns)
             if ("RANGE" == partitionType) {
                 createTable.partitionType = PartitionType.RANGE
             } else {
@@ -183,7 +183,7 @@ class RedshiftSqlAntlr4Visitor(val splitSql: Boolean = false, val command: Strin
                 partitionType = PartitionType.NORMAL
             }
 
-            createTable.partitionColumnNames = partitionColumns
+            createTable.partitionColumnNames.addAll(partitionColumns)
             createTable.partitionType = partitionType
         }
 

@@ -86,7 +86,7 @@ class PostgreSqlParserDdlTest {
             Assert.assertTrue(statement.columnRels?.get(0)?.primaryKey!!)
 
             Assert.assertEquals(PartitionType.RANGE, statement.partitionType)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
         } else {
             Assert.fail()
         }
@@ -114,7 +114,7 @@ class PostgreSqlParserDdlTest {
             Assert.assertEquals(TableId("sales_range_partitioned3"), statement.tableId)
             Assert.assertEquals(3, statement.columnRels?.size)
             Assert.assertEquals(PartitionType.RANGE, statement.partitionType)
-            Assert.assertEquals(1, statement.partitionColumnNames?.size)
+            Assert.assertEquals(1, statement.partitionColumnNames.size)
         } else {
             Assert.fail()
         }
