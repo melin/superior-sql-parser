@@ -3,6 +3,7 @@ package io.github.melin.superior.common.relational.create
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.PartitionType
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
@@ -28,6 +29,7 @@ data class CreateTableAsSelect(
     var replace = false
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var modelType: String = "hive"
+    var partitionType: PartitionType? = null // 分区类型
     var options: Map<String, String>? = null
 
     constructor(tableId: TableId, queryStmt: QueryStmt):

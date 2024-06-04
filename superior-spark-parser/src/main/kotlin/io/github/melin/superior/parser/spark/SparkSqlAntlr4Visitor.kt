@@ -341,7 +341,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             createTable.modelType = modelType;
             createTable.replace = replace
             createTable.options = options
-            createTable.partitionColumnNames.addAll(partitionColumnNames)
+
+            if (partitionColumnNames.size > 0) {
+                createTable.partitionColumnNames.addAll(partitionColumnNames)
+                createTable.partitionType = PartitionType.LIST
+            }
             return createTable
         } else {
             currentOptType = StatementType.CREATE_TABLE
@@ -357,7 +361,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             }
 
             if (partitionColumnNames.size > 0) {
-                createTable.partitionColumnNames = partitionColumnNames
+                createTable.partitionColumnNames.addAll(partitionColumnNames)
                 createTable.partitionType = PartitionType.LIST
             }
             return createTable

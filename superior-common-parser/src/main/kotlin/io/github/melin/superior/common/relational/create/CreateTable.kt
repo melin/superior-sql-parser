@@ -24,7 +24,7 @@ data class CreateTable(
         var temporary: Boolean = false,
         var location: String? = null,
         var querySql: String? = null,
-        var partitionColumnNames: List<String>? = null
+        val partitionColumnNames: ArrayList<String> = arrayListOf()
 ) : AbsTableStatement() { //是否存在 if exists 关键字
     override val statementType = StatementType.CREATE_TABLE
     override val privilegeType = PrivilegeType.CREATE

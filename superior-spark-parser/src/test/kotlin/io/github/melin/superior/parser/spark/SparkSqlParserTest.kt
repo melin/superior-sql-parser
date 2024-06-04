@@ -116,6 +116,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("part sdf", statement.partitionColumnRels?.get(0)?.comment)
+            Assert.assertEquals(PartitionType.LIST, statement.partitionType)
         } else {
             Assert.fail()
         }
@@ -144,6 +145,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(2, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))
             Assert.assertEquals("event_type", statement.partitionColumnNames?.get(1))
+            Assert.assertEquals(PartitionType.LIST, statement.partitionType)
         } else {
             Assert.fail()
         }
@@ -170,6 +172,8 @@ class SparkSqlParserTest {
             Assert.assertEquals(100, statement.lifeCycle)
             Assert.assertEquals(TableType.HIVE, statement.tableType)
             Assert.assertEquals("数据中心", statement.columnRels?.get(1)?.comment)
+
+            Assert.assertNull(statement.partitionType)
         } else {
             Assert.fail()
         }
