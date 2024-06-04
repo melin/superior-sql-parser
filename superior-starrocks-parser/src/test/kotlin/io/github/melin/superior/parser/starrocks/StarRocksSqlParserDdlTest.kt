@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.relational.FunctionId
+import io.github.melin.superior.common.relational.PartitionType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.create.*
@@ -135,6 +136,32 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("meta_role", statement.tableId.tableName)
             Assert.assertEquals("primary", statement.modelType)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTableTest0() {
+        val sql = """
+            CREATE TABLE site_access1 (
+                event_day DATETIME NOT NULL,
+                site_id INT DEFAULT '10',
+                city_code VARCHAR(100),
+                user_name VARCHAR(32) DEFAULT '',
+                pv BIGINT DEFAULT '0'
+            )
+            DUPLICATE KEY(event_day, site_id, city_code, user_name)
+            PARTITION BY date_trunc('day', event_day)
+            DISTRIBUTED BY HASH(event_day, site_id);
+        """.trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is CreateTable) {
+            Assert.assertEquals(CREATE_TABLE, statement.statementType)
+            Assert.assertEquals("site_access1", statement.tableId.tableName)
+            Assert.assertEquals("duplicate", statement.modelType)
+            Assert.assertEquals(PartitionType.EXPRESSION, statement.partitionType)
         } else {
             Assert.fail()
         }

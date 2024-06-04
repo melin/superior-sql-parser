@@ -5,6 +5,7 @@ import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.TableType
+import io.github.melin.superior.common.relational.PartitionType
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
@@ -32,7 +33,7 @@ data class CreateTable(
     // 建表方式：hive & spark. https://spark.apache.org/docs/3.2.0/sql-ref-syntax-ddl-create-table.html
     var replace = false
     var modelType: String = "hive" // 表模型类型
-    var partitionType: String? = null // 分区类型
+    var partitionType: PartitionType? = null // 分区类型
     var options: Map<String, String>? = null
     var clusteredColumns: List<String> = Lists.newArrayList() // 分桶表分桶列
     var sortedColumns: List<String> = Lists.newArrayList() // 分桶表排序列

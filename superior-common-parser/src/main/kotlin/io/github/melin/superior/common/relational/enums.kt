@@ -5,3 +5,13 @@ enum class SortType {
     DESC,
     UNKOWN
 }
+
+enum class PartitionType {
+    RANGE,
+    LIST,
+    HASH,
+    KEY,
+    VALUES,
+    NORMAL,
+    EXPRESSION
+}

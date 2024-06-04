@@ -189,7 +189,7 @@ class MySqlParserDdlTest {
         if(statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("app_channel_daily_report", statement.tableId.tableName)
-            Assert.assertEquals("PARTITION", statement.partitionType)
+            Assert.assertEquals(PartitionType.RANGE, statement.partitionType)
         } else {
             Assert.fail()
         }

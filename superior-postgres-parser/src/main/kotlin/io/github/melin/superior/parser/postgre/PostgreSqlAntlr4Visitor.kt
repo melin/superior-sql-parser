@@ -164,23 +164,27 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             val partitionColumns = partitionspec.part_params().part_elem().map { it.text }
 
             createTable.partitionColumnNames = partitionColumns
-            createTable.partitionType = partitionType
+            if ("RANGE" == partitionType) {
+                createTable.partitionType = PartitionType.RANGE
+            } else {
+                createTable.partitionType = PartitionType.LIST
+            }
         } else if (tablePartition != null) {
-            var partitionType = ""
+            var partitionType: PartitionType? = null;
             val partitionColumns = mutableListOf<String>();
 
             val ptSpec = tablePartition.partition_list()
             if (ptSpec.list_partition_stmt() != null) {
-                partitionType = "LIST"
+                partitionType = PartitionType.LIST
                 partitionColumns.add(ptSpec.list_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.value_partition_stmt() != null) {
-                partitionType = "VALUES"
+                partitionType = PartitionType.VALUES
                 partitionColumns.add(ptSpec.value_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.range_partition_stmt() != null) {
-                partitionType = "RANGE"
+                partitionType = PartitionType.RANGE
                 partitionColumns.add(ptSpec.range_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.normal_partition_stmt() != null) {
-                partitionType = "NORMAL"
+                partitionType = PartitionType.NORMAL
             }
 
             createTable.partitionColumnNames = partitionColumns

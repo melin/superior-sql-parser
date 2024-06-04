@@ -111,6 +111,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(statement.fileFormat, "ORC")
             Assert.assertFalse(statement.temporary)
             Assert.assertEquals(7, statement.lifeCycle)
+            Assert.assertEquals(PartitionType.LIST, statement.partitionType)
 
             Assert.assertEquals(1, statement.partitionColumnNames?.size)
             Assert.assertEquals("ds", statement.partitionColumnNames?.get(0))

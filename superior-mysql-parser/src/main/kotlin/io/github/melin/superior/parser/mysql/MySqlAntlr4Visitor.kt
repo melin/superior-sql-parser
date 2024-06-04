@@ -19,6 +19,10 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
 import io.github.melin.superior.common.AlterActionType.*
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionHashContext
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionKeyContext
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionListContext
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionRangeContext
 
 /**
  *
@@ -143,7 +147,16 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
                 null, null, columnRels, null, null, ifNotExists)
 
         if (ctx.partitionDefinitions() != null) {
-            createTable.partitionType = "PARTITION"
+            val def = ctx.partitionDefinitions().partitionFunctionDefinition()
+            if (def is PartitionFunctionHashContext) {
+                createTable.partitionType = PartitionType.HASH
+            } else if (def is PartitionFunctionKeyContext) {
+                createTable.partitionType = PartitionType.KEY
+            } else if (def is PartitionFunctionRangeContext) {
+                createTable.partitionType = PartitionType.RANGE
+            } else if (def is PartitionFunctionListContext) {
+                createTable.partitionType = PartitionType.LIST
+            }
         }
 
         return createTable

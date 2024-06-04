@@ -356,7 +356,10 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 createTable.location = createTableClauses.locationSpec().get(0).text
             }
 
-            createTable.partitionColumnNames = partitionColumnNames
+            if (partitionColumnNames.size > 0) {
+                createTable.partitionColumnNames = partitionColumnNames
+                createTable.partitionType = PartitionType.LIST
+            }
             return createTable
         }
     }

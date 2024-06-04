@@ -179,8 +179,20 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             }
         }
 
+        var partitionType: PartitionType? = null;
+        if (ctx.partitionDesc() != null) {
+            if (ctx.partitionDesc().RANGE() != null) {
+                partitionType = PartitionType.RANGE
+            } else if (ctx.partitionDesc().functionCall() != null) {
+                partitionType = PartitionType.EXPRESSION
+            } else {
+                partitionType = PartitionType.LIST
+            }
+        }
+
         val table = CreateTable(tableId, TableType.STARROCKS, comment, columnRels)
         table.modelType = modelType
+        table.partitionType = partitionType
         return table
     }
 
