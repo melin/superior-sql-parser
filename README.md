@@ -1,6 +1,6 @@
 ## 介绍
 
-基于antlr4 statement 解析器，获取相关表元数据，主要用于sql 权限校验等场景。支持spark sql, tidb sql, flink sql, Gauss, Oracle, MYSQL，Postgresql，sqlserver, db2
+基于 antlr4 的多种数据库SQL解析器，获取SQL中元数据，可用于数据平台产品中的多个场景：ddl语句提取元数据、sql 权限校验、表级血缘等场景。支持spark、flink、gauss、starrocks、Oracle、MYSQL、Postgresql，sqlserver,、db2等
 ```
 <dependency>
     <groupId>io.github.melin</groupId>
