@@ -95,47 +95,6 @@ if (statement is QueryStmt) {
 } else {
     Assert.fail()
 }
-
-// flink 整库同步paimon
-CREATE TABLE IF NOT EXISTS bigdata.paimon_account_01
-WITH (
-    'primary-keys' = 'id',
-    'paimon.bucket' = 2,
-    'paimon.changelog-producer' = 'input',
-    'paimon.sink.parallelism' = 2
-) 
-AS TABLE demos.users
-OPTIONS(
-    'connector' = 'mysql-cdc',
-    'hostname' = '172.18.5.44',
-    'port' = '3306',
-    'username' = 'root',
-    'password' = 'root2023',
-    'scan.startup.mode' = 'initial'
-)
-
-// flink 整库同步starrocks
-CREATE DATABASE IF NOT EXISTS bigdata
-WITH (
-   'connector' = 'starrocks',
-   'auto.create' = 'false',
-   'url' = 'jdbc:mysql://172.18.5.44:9030',
-   'fe-nodes' = '172.18.5.44:18030;172.18.5.45:18030;172.18.5.46:18030',
-   'username' = 'root',
-   'password' = 'root2023',
-   'sink.buffer-flush.interval' = '2s',
-   'sink.max-retries' = '5'
-) 
-AS DATABASE demos INCLUDING table 'orders|users'            
-OPTIONS(
-   'connector' = 'mysql-cdc',
-   'hostname' = '172.18.5.44',
-   'port' = '3306',
-   'username' = 'root',
-   'password' = 'root2023',
-   'checkpoint' = '10000',
-   'scan.startup.mode' = 'initial'
-)
 ```
 
 ## 支持数据库
