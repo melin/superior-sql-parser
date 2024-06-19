@@ -48,6 +48,7 @@ object AppJarHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = AppJarParser(tokenStream)
+        AbstractJarParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
@@ -75,6 +76,8 @@ object AppJarHelper {
             } else {
                 throw e.withCommand(trimCmd)
             }
+        } finally {
+            AbstractJarParser.refreshParserCaches()
         }
     }
 }

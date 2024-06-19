@@ -77,6 +77,7 @@ object SqlServerHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = SqlServerParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
@@ -98,6 +99,8 @@ object SqlServerHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

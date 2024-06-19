@@ -75,6 +75,7 @@ object FlinkSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = FlinkSqlParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.addParseListener(FlinkSqlParserBaseListener())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
@@ -98,6 +99,8 @@ object FlinkSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

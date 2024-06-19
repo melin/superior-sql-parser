@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
+import io.github.melin.superior.parser.spark.AbstractSqlParser
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseLexer
 import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
@@ -76,6 +77,7 @@ object TrinoSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = TrinoSqlBaseParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.interpreter.predictionMode = PredictionMode.SLL
@@ -98,6 +100,8 @@ object TrinoSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

@@ -73,6 +73,7 @@ object RedshiftSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = RedshiftParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
@@ -95,6 +96,8 @@ object RedshiftSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

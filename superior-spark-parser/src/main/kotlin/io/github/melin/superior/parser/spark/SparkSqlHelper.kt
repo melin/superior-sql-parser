@@ -12,9 +12,6 @@ import io.github.melin.superior.parser.spark.antlr4.SparkSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkSqlParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.atn.LexerATNSimulator
-import org.antlr.v4.runtime.atn.ParserATNSimulator
-import org.antlr.v4.runtime.atn.PredictionContextCache
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
@@ -135,6 +132,7 @@ object SparkSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = SparkSqlParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.addParseListener(SparkSqlPostProcessor())
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
@@ -159,6 +157,8 @@ object SparkSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

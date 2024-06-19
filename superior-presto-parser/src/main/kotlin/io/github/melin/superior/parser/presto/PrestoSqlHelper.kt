@@ -76,6 +76,7 @@ object PrestoSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = PrestoSqlBaseParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
@@ -99,6 +100,8 @@ object PrestoSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

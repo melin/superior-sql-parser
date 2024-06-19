@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.parser.mysql.AbstractSqlParser
 import io.github.melin.superior.parser.mysql.MySqlAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
@@ -78,6 +79,7 @@ object MySqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = MySqlParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
@@ -99,6 +101,8 @@ object MySqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

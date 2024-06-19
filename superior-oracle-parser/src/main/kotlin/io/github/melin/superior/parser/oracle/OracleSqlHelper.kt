@@ -89,6 +89,7 @@ object OracleSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = OracleParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         // parser.interpreter.predictionMode = PredictionMode.SLL

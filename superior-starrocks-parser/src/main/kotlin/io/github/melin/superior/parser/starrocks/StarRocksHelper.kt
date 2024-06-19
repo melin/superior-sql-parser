@@ -75,6 +75,7 @@ object StarRocksHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = StarRocksParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
         parser.addParseListener(PostProcessListener(3500000, 10000))
@@ -96,6 +97,8 @@ object StarRocksHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }

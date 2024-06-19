@@ -76,6 +76,7 @@ object PostgreSqlHelper {
 
         val tokenStream = CommonTokenStream(lexer)
         val parser = PostgreSqlParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
         parser.removeErrorListeners()
         parser.addErrorListener(ParseErrorListener())
 
@@ -98,6 +99,8 @@ object PostgreSqlHelper {
             } else {
                 throw e.withCommand(command)
             }
+        } finally {
+            AbstractSqlParser.refreshParserCaches()
         }
     }
 }
