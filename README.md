@@ -3,7 +3,7 @@
 基于 antlr4 的多种数据库SQL解析器，获取SQL中元数据，可用于数据平台产品中的多个场景：ddl语句提取元数据、sql 权限校验、表级血缘、sql语法校验等场景。支持spark、flink、gauss、starrocks、Oracle、MYSQL、Postgresql，sqlserver,、db2等
 ```
 <dependency>
-    <groupId>io.github.melin</groupId>
+    <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-[spark|presto|mysql|oracle|...]-parser</artifactId>
     <version>4.0.14</version>
 </dependency>
