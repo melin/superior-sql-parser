@@ -17,10 +17,12 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun selectTest0() {
-        val sql = """
+        val sql =
+            """
             SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20;
             select hello('test', 23)
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(2, statements.size)
@@ -31,8 +33,10 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
             Assert.assertEquals(20, statement.offset)
-            Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"),
-                statement.inputTables.get(0))
+            Assert.assertEquals(
+                TableId("hive1", "hive_db", "hive_table"),
+                statement.inputTables.get(0)
+            )
         } else {
             Assert.fail()
         }
@@ -48,18 +52,22 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun selectTest1() {
-        val sql = """
+        val sql =
+            """
             with t1 as (select * from bigdata.users),
                 t2 as (select 2)
             select * from t1 union all select * from t2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(TableId("bigdata", "users"),
-                statement.inputTables.get(0))
+            Assert.assertEquals(
+                TableId("bigdata", "users"),
+                statement.inputTables.get(0)
+            )
         } else {
             Assert.fail()
         }
@@ -67,9 +75,11 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun deleteTest0() {
-        val sql = """
+        val sql =
+            """
             DELETE FROM my_table PARTITION p1 WHERE k1 = 3;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DeleteTable) {
@@ -83,10 +93,12 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun deleteTest1() {
-        val sql = """
+        val sql =
+            """
             DELETE FROM score_board
             WHERE name IN (select name from users where country = "China");
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DeleteTable) {
@@ -101,21 +113,26 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun deleteTest2() {
-        val sql = """
+        val sql =
+            """
             WITH foo_producers as (
                 SELECT * from producers
                 where producers.name = 'foo'
             )
             DELETE FROM films USING foo_producers
             WHERE producer_id = foo_producers.id;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("producers", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(
+                "producers",
+                statement.inputTables.get(0).tableName
+            )
         } else {
             Assert.fail()
         }
@@ -123,20 +140,25 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun updateTest1() {
-        val sql = """
+        val sql =
+            """
             UPDATE employees
             SET sales_count = sales_count + 1           
             FROM accounts
             WHERE accounts.name = 'Acme Corporation'
                AND employees.id = accounts.sales_person;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(
+                "accounts",
+                statement.inputTables.get(0).tableName
+            )
         } else {
             Assert.fail()
         }
@@ -144,7 +166,8 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun updateTest2() {
-        val sql = """
+        val sql =
+            """
             WITH acme_accounts as (
                 SELECT * from accounts
                  WHERE accounts.name = 'Acme Corporation'
@@ -152,14 +175,18 @@ class StarRocksSqlParserDmlTest {
             UPDATE employees SET sales_count = sales_count + 1
             FROM acme_accounts
             WHERE employees.id = acme_accounts.sales_person;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(
+                "accounts",
+                statement.inputTables.get(0).tableName
+            )
         } else {
             Assert.fail()
         }
@@ -167,16 +194,21 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun insertTest1() {
-        val sql = """
+        val sql =
+            """
             INSERT INTO test SELECT * FROM test2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
-            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals(
+                "test2",
+                statement.queryStmt.inputTables.get(0).tableName
+            )
         } else {
             Assert.fail()
         }
@@ -184,16 +216,21 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun insertTest2() {
-        val sql = """
+        val sql =
+            """
             INSERT INTO test PARTITION(p1, p2) WITH LABEL `label1` SELECT * FROM test2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
-            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
+            Assert.assertEquals(
+                "test2",
+                statement.queryStmt.inputTables.get(0).tableName
+            )
         } else {
             Assert.fail()
         }
@@ -201,9 +238,11 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun insertTest3() {
-        val sql = """
+        val sql =
+            """
             INSERT INTO test.`table1` VALUES (1, "test", 23)
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is InsertTable) {
@@ -217,11 +256,13 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun showTest() {
-        val sql = """
+        val sql =
+            """
             SHOW CREATE MATERIALIZED VIEW lo_mv1;
             SHOW CREATE TABLE example_db.example_table;
             SHOW DELETE FROM bigdata;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(3, statements.size)
@@ -234,13 +275,15 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun taskTest() {
-        val sql = """
+        val sql =
+            """
             SUBMIT /*+set_var(query_timeout=100000)*/ TASK test1 AS
             INSERT OVERWRITE insert_wiki_edit
             SELECT * FROM source_wiki_edit;
             
             DROP TASK test1
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(2, statements.size)
@@ -254,9 +297,11 @@ class StarRocksSqlParserDmlTest {
 
     @Test
     fun ctasTest() {
-        val sql = """
+        val sql =
+            """
             CREATE TABLE order_new (a, b, c) AS SELECT k1, k2, k3 FROM orders;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(1, statements.size)
@@ -264,6 +309,9 @@ class StarRocksSqlParserDmlTest {
         val statement = statements.get(0) as CreateTableAsSelect
 
         Assert.assertEquals("order_new", statement.tableId.tableName)
-        Assert.assertEquals("orders", statement.queryStmt.inputTables.get(0).tableName)
+        Assert.assertEquals(
+            "orders",
+            statement.queryStmt.inputTables.get(0).tableName
+        )
     }
 }

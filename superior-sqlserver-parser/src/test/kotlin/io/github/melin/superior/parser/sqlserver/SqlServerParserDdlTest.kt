@@ -5,13 +5,12 @@ import io.github.melin.superior.common.relational.drop.DropDatabase
 import org.junit.Assert
 import org.junit.Test
 
-/**
- * Created by libinsong on 2020/6/30 11:05 上午
- */
+/** Created by libinsong on 2020/6/30 11:05 上午 */
 class SqlServerParserDdlTest {
     @Test
     fun createDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             USE master;
             GO
                 CREATE DATABASE Sales
@@ -30,7 +29,8 @@ class SqlServerParserDdlTest {
             GO
                 DROP DATABASE Sales, demos;  
             GO 
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = SqlServerHelper.parseMultiStatement(sql)
 

@@ -1,8 +1,8 @@
 package io.github.melin.superior.parser.starrocks;
 
-import org.apache.commons.lang3.StringUtils;
-
 import static java.lang.String.format;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ParsingException extends RuntimeException {
 
@@ -32,7 +32,8 @@ public class ParsingException extends RuntimeException {
             builder.append(String.format("at line %s, column %s", pos.getLine(), pos.getCol()));
         } else {
             builder.append(" ");
-            builder.append(String.format("from line %s, column %s to line %s, column %s",
+            builder.append(String.format(
+                    "from line %s, column %s to line %s, column %s",
                     pos.getLine(), pos.getCol(), pos.getEndLine(), pos.getEndCol()));
         }
 

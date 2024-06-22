@@ -8,10 +8,10 @@ import io.github.melin.superior.common.relational.Statement
 class DropSchema(
     val databaseName: String?,
     val schemaName: String,
-): Statement() {
+) : Statement() {
     override val statementType = StatementType.DROP_SCHEMA
     override val privilegeType = PrivilegeType.DROP
     override val sqlType = SqlType.DDL
 
-    constructor(schemaName: String): this(null, schemaName)
+    constructor(schemaName: String) : this(null, schemaName)
 }

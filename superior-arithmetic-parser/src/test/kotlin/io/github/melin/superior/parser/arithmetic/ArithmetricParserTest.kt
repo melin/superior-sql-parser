@@ -5,15 +5,13 @@ import io.github.melin.superior.common.StatementType
 import org.junit.Assert
 import org.junit.Test
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
+/** Created by libinsong on 2018/1/10. */
 class ArithmetricParserTest {
 
     @Test
     fun test0() {
-        val sql = """
+        val sql =
+            """
             特征1 / (特征_dd_2
                 - (log2(feature_12) + 特征3))
             """
@@ -31,7 +29,8 @@ class ArithmetricParserTest {
 
     @Test
     fun test1() {
-        val sql = """
+        val sql =
+            """
             case when rand <= 12 then 1
                                 when rand <= 23 then 2
                                 else 3 end
@@ -49,7 +48,8 @@ class ArithmetricParserTest {
 
     @Test
     fun test2() {
-        val sql = """
+        val sql =
+            """
             [特征1] / ([特征_dd_2]
                 - (log2([feature_12]) + [特征3]))
             """

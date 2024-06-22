@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 data class AlterMaterializedView(
     override val tableId: TableId,
     private val action: AlterAction?
-): AbsTableStatement() {
+) : AbsTableStatement() {
     override val statementType = StatementType.ALTER_MATERIALIZED_VIEW
     override val privilegeType = PrivilegeType.ALTER
     override val sqlType = SqlType.DDL
@@ -22,7 +22,7 @@ data class AlterMaterializedView(
         }
     }
 
-    constructor(tableId: TableId): this(tableId, null)
+    constructor(tableId: TableId) : this(tableId, null)
 
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)

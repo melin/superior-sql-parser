@@ -6,9 +6,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 import org.apache.commons.lang3.StringUtils
 
-class ShowStatement(
-    vararg val keywords: String
-) : Statement() {
+class ShowStatement(vararg val keywords: String) : Statement() {
     override val statementType = StatementType.SHOW
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML

@@ -8,7 +8,7 @@ import io.github.melin.superior.common.relational.Statement
 data class LoadTable(
     val schemaName: String?,
     val labelName: String,
-    val tableNames: List<String>
+    val tableNames: List<String>,
 ) : Statement() {
     override val statementType = StatementType.LOAD_TABLE
     override val privilegeType = PrivilegeType.CREATE

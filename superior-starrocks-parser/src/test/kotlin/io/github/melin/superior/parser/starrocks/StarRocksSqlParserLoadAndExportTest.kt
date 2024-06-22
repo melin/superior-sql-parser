@@ -15,7 +15,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun createRoutineLoadTest() {
-        val sql = """
+        val sql =
+            """
             CREATE ROUTINE LOAD example_db.example_tbl1_ordertest1 ON example_tbl1
             COLUMNS TERMINATED BY ",",
             COLUMNS (order_id, pay_dt, customer_name, nationality, temp_gender, price)
@@ -27,12 +28,16 @@ class StarRocksSqlParserLoadAndExportTest {
                 "kafka_topic" = "ordertest1",
                 "property.kafka_default_offsets" = "OFFSET_BEGINNING"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CreateRoutineLoad) {
-            Assert.assertEquals(StatementType.SR_CREATE_ROUTINE_LOAD, statement.statementType)
+            Assert.assertEquals(
+                StatementType.SR_CREATE_ROUTINE_LOAD,
+                statement.statementType
+            )
             Assert.assertNull(statement.catalogName)
             Assert.assertEquals("example_db", statement.schemaName)
             Assert.assertEquals("example_tbl1_ordertest1", statement.jobName)
@@ -45,7 +50,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun alterRoutineLoadTest() {
-        val sql = """
+        val sql =
+            """
             ALTER ROUTINE LOAD FOR example_tbl2_ordertest2
             PROPERTIES (
                 "desired_concurrent_number" = "6"
@@ -54,12 +60,16 @@ class StarRocksSqlParserLoadAndExportTest {
                 "kafka_partitions" = "0,1,2,3,4,5,6,7",
                 "kafka_offsets" = "OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_END,OFFSET_END,OFFSET_END,OFFSET_END"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is AlterRoutineLoad) {
-            Assert.assertEquals(StatementType.SR_ALTER_ROUTINE_LOAD, statement.statementType)
+            Assert.assertEquals(
+                StatementType.SR_ALTER_ROUTINE_LOAD,
+                statement.statementType
+            )
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -71,14 +81,19 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun pauseRoutineLoadTest() {
-        val sql = """
+        val sql =
+            """
             PAUSE ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is PauseRoutineLoad) {
-            Assert.assertEquals(StatementType.SR_PAUSE_ROUTINE_LOAD, statement.statementType)
+            Assert.assertEquals(
+                StatementType.SR_PAUSE_ROUTINE_LOAD,
+                statement.statementType
+            )
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -89,14 +104,19 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun resumeRoutineLoadTest() {
-        val sql = """
+        val sql =
+            """
             RESUME ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is ResumeRoutineLoad) {
-            Assert.assertEquals(StatementType.SR_RESUME_ROUTINE_LOAD, statement.statementType)
+            Assert.assertEquals(
+                StatementType.SR_RESUME_ROUTINE_LOAD,
+                statement.statementType
+            )
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -107,14 +127,19 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun stopRoutineLoadTest() {
-        val sql = """
+        val sql =
+            """
             STOP ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is StopRoutineLoad) {
-            Assert.assertEquals(StatementType.SR_STOP_ROUTINE_LOAD, statement.statementType)
+            Assert.assertEquals(
+                StatementType.SR_STOP_ROUTINE_LOAD,
+                statement.statementType
+            )
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -125,7 +150,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun createLoadTest() {
-        val sql = """
+        val sql =
+            """
             LOAD LABEL test_db.label_brokerload_multiplefile_multipletable (
                 DATA INFILE("hdfs://<hdfs_host>:<hdfs_port>/user/starrocks/file1.csv")
                 INTO TABLE table1
@@ -139,14 +165,21 @@ class StarRocksSqlParserLoadAndExportTest {
             PROPERTIES (
                 "timeout" = "3600"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is LoadTable) {
-            Assert.assertEquals(StatementType.LOAD_TABLE, statement.statementType)
+            Assert.assertEquals(
+                StatementType.LOAD_TABLE,
+                statement.statementType
+            )
             Assert.assertEquals("test_db", statement.schemaName)
-            Assert.assertEquals("label_brokerload_multiplefile_multipletable", statement.labelName)
+            Assert.assertEquals(
+                "label_brokerload_multiplefile_multipletable",
+                statement.labelName
+            )
             Assert.assertEquals(2, statement.tableNames.size)
             Assert.assertEquals("table1", statement.tableNames.get(0))
         } else {
@@ -156,14 +189,19 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun cancelLoadTest() {
-        val sql = """
+        val sql =
+            """
             CANCEL LOAD FROM db1 WHERE LABEL = "label";
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CancelLoadTable) {
-            Assert.assertEquals(StatementType.CANCEL_LOAD_TABLE, statement.statementType)
+            Assert.assertEquals(
+                StatementType.CANCEL_LOAD_TABLE,
+                statement.statementType
+            )
             Assert.assertEquals("db1", statement.schemaName)
             Assert.assertEquals("label", statement.labelName)
         } else {
@@ -173,16 +211,21 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun alterLoadTest() {
-        val sql = """
+        val sql =
+            """
             ALTER LOAD FOR test_db.label1 properties (
                 'priority'='HIGHEST'
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is AlterLoadTable) {
-            Assert.assertEquals(StatementType.ALTER_LOAD_TABLE, statement.statementType)
+            Assert.assertEquals(
+                StatementType.ALTER_LOAD_TABLE,
+                statement.statementType
+            )
             Assert.assertEquals("test_db", statement.schemaName)
             Assert.assertEquals("label1", statement.labelName)
         } else {
@@ -192,7 +235,8 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun createExportTest() {
-        val sql = """
+        val sql =
+            """
             EXPORT TABLE testTbl 
             TO "s3a://s3-package/export/"
             WITH BROKER
@@ -201,12 +245,16 @@ class StarRocksSqlParserLoadAndExportTest {
                 "aws.s3.secret_key" = "yyy",
                 "aws.s3.region" = "zzz"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is ExportTable) {
-            Assert.assertEquals(StatementType.EXPORT_TABLE, statement.statementType)
+            Assert.assertEquals(
+                StatementType.EXPORT_TABLE,
+                statement.statementType
+            )
             Assert.assertEquals("testTbl", statement.tableId.tableName)
             Assert.assertEquals("s3a://s3-package/export/", statement.path)
         } else {
@@ -216,18 +264,26 @@ class StarRocksSqlParserLoadAndExportTest {
 
     @Test
     fun cancelExportTest() {
-        val sql = """
+        val sql =
+            """
             CANCEL Export
             FROM example_db
             WHERE queryid = "921d8f80-7c9d-11eb-9342-acde48001121";
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CancelExport) {
-            Assert.assertEquals(StatementType.CANCEL_EXPORT, statement.statementType)
+            Assert.assertEquals(
+                StatementType.CANCEL_EXPORT,
+                statement.statementType
+            )
             Assert.assertEquals("example_db", statement.database)
-            Assert.assertEquals("921d8f80-7c9d-11eb-9342-acde48001121", statement.queryId)
+            Assert.assertEquals(
+                "921d8f80-7c9d-11eb-9342-acde48001121",
+                statement.queryId
+            )
         } else {
             Assert.fail()
         }

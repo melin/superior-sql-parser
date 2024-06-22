@@ -1,17 +1,15 @@
 package io.github.melin.superior.parser.redshift.antlr4;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Lexer;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Lexer;
 
 public abstract class RedshiftLexerBase extends Lexer {
     protected final Deque<String> tags = new ArrayDeque<>();
 
     protected RedshiftLexerBase(CharStream input) {
         super(input);
-
     }
 
     public void pushTag() {
@@ -45,17 +43,17 @@ public abstract class RedshiftLexerBase extends Lexer {
     }
 
     public void UnterminatedBlockCommentDebugAssert() {
-        //Debug.Assert(InputStream.LA(1) == -1 /*EOF*/);
+        // Debug.Assert(InputStream.LA(1) == -1 /*EOF*/);
     }
 
     public boolean CheckIfUtf32Letter() {
         int codePoint = getInputStream().LA(-2) << 8 + getInputStream().LA(-1);
         char[] c;
         if (codePoint < 0x10000) {
-            c = new char[]{(char) codePoint};
+            c = new char[] {(char) codePoint};
         } else {
             codePoint -= 0x10000;
-            c = new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
+            c = new char[] {(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
         }
         return Character.isLetter(c[0]);
     }

@@ -6,11 +6,13 @@ class FlinkCheckSql {
 
     @Test
     fun selectSqlTest() {
-        val sql = """
+        val sql =
+            """
             create TABLE test (
               name VARCHAR(12)
             ) 
-        """.trimIndent()
+        """
+                .trimIndent()
 
         FlinkSqlHelper.checkSqlSyntax(sql)
     }

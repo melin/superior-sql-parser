@@ -6,15 +6,13 @@ import io.github.melin.superior.common.relational.dml.InsertTable
 import org.junit.Assert
 import org.junit.Test
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
+/** Created by libinsong on 2018/1/10. */
 class FlinkSqlParserDdlTest {
 
     @Test
     fun parseMultiSqlTest() {
-        val sql = """
+        val sql =
+            """
             CREATE TABLE IF NOT EXISTS `RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT`(
               `ITEM`                 STRING,
               `UDA_ID`               DECIMAL(5,0),
@@ -65,16 +63,29 @@ class FlinkSqlParserDdlTest {
             
             INSERT INTO PROCESSED_MDM_PRODUCT_ENRICHMENT(PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED) 
             select PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED from MDM_VIEW_PRODUCT_ENRICHMENT_TRANSLATE;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
         val createTable = statements.get(0)
         if (createTable is CreateTable) {
-            Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
+            Assert.assertEquals(
+                "RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT",
+                createTable.tableId.tableName
+            )
             Assert.assertEquals(11, createTable.columnRels?.size)
-            Assert.assertEquals("PROCTIME()", createTable.columnRels?.get(8)?.computedExpr)
-            Assert.assertEquals("timestamp", createTable.columnRels?.get(9)?.metadataKey)
-            Assert.assertEquals("price * quantity", createTable.columnRels?.get(10)?.computedExpr)
+            Assert.assertEquals(
+                "PROCTIME()",
+                createTable.columnRels?.get(8)?.computedExpr
+            )
+            Assert.assertEquals(
+                "timestamp",
+                createTable.columnRels?.get(9)?.metadataKey
+            )
+            Assert.assertEquals(
+                "price * quantity",
+                createTable.columnRels?.get(10)?.computedExpr
+            )
 
             Assert.assertEquals(12, createTable.properties?.size)
         } else {
@@ -83,7 +94,10 @@ class FlinkSqlParserDdlTest {
 
         val createView = statements.get(1)
         if (createView is CreateView) {
-            Assert.assertEquals("MDM_VIEW_PRODUCT_ENRICHMENT", createView.tableId.tableName)
+            Assert.assertEquals(
+                "MDM_VIEW_PRODUCT_ENRICHMENT",
+                createView.tableId.tableName
+            )
             Assert.assertEquals(3, createView.queryStmt.inputTables.size)
         } else {
             Assert.fail()
@@ -91,7 +105,10 @@ class FlinkSqlParserDdlTest {
 
         val insertTable = statements.get(2)
         if (insertTable is InsertTable) {
-            Assert.assertEquals("PROCESSED_MDM_PRODUCT_ENRICHMENT", insertTable.outputTables.get(0).tableName)
+            Assert.assertEquals(
+                "PROCESSED_MDM_PRODUCT_ENRICHMENT",
+                insertTable.outputTables.get(0).tableName
+            )
             Assert.assertEquals(1, insertTable.queryStmt.inputTables.size)
             Assert.assertEquals(5, insertTable.columnRels?.size)
         } else {
@@ -101,7 +118,8 @@ class FlinkSqlParserDdlTest {
 
     @Test
     fun createTablesTest() {
-        val sql = """
+        val sql =
+            """
             CREATE TABLE Orders (
                 `user` BIGINT,
                 product STRING,
@@ -110,7 +128,8 @@ class FlinkSqlParserDdlTest {
             ) WITH (
                 'connector' = 'kafka'
             )
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
         val createTable = statements.get(0)

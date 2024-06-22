@@ -4,7 +4,6 @@ import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.relational.TableId
 
 data class AlterRoutineLoad(
     val catalogName: String?,

@@ -8,7 +8,7 @@ import io.github.melin.superior.common.relational.Statement
 data class ArithmeticData(
     val variables: java.util.HashSet<String> = HashSet(),
     val functions: java.util.HashSet<String> = HashSet()
-): Statement() {
+) : Statement() {
     override val statementType = StatementType.ARITHMETIC
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML

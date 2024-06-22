@@ -1,31 +1,27 @@
 package com.github.melin.superior.sql.parser.mysql
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
-import io.github.melin.superior.common.relational.Statement
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.atn.PredictionMode
-import org.antlr.v4.runtime.misc.ParseCancellationException
-import org.apache.commons.lang3.StringUtils
+import io.github.melin.superior.common.antlr4.AntlrCaches
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.parser.mysql.AbstractSqlParser
 import io.github.melin.superior.parser.mysql.MySqlAntlr4Visitor
 import io.github.melin.superior.parser.mysql.antlr4.MySqlLexer
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParserBaseVisitor
-import org.antlr.v4.runtime.atn.LexerATNSimulator
-import org.antlr.v4.runtime.atn.ParserATNSimulator
-import org.antlr.v4.runtime.atn.PredictionContextCache
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.PredictionMode
+import org.antlr.v4.runtime.misc.ParseCancellationException
+import org.apache.commons.lang3.StringUtils
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
+/** Created by libinsong on 2018/1/10. */
 object MySqlHelper {
 
-    @JvmStatic fun sqlKeywords(): List<String> {
+    @JvmStatic
+    fun sqlKeywords(): List<String> {
         val keywords = hashSetOf<String>()
         (0 until MySqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
             val name = MySqlLexer.VOCABULARY.getLiteralName(idx)
@@ -40,30 +36,36 @@ object MySqlHelper {
         return keywords.sorted()
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic
+    fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {
-            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+            throw IllegalStateException(
+                "only parser one sql, sql count: " + statements.size
+            )
         } else {
             return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+    @JvmStatic
+    fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
         val sqlVisitor = MySqlAntlr4Visitor(false, trimCmd)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
-    @JvmStatic fun splitSql(command: String): List<String> {
+    @JvmStatic
+    fun splitSql(command: String): List<String> {
         val trimCmd = StringUtils.trim(command)
         val sqlVisitor = MySqlAntlr4Visitor(true, trimCmd)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    @JvmStatic fun checkSqlSyntax(command: String) {
+    @JvmStatic
+    fun checkSqlSyntax(command: String) {
         val sqlVisitor = MySqlParserBaseVisitor<Statement>()
         innerParseStatement(command, sqlVisitor)
     }
@@ -96,13 +98,17 @@ object MySqlHelper {
                 sqlVisitor.visitSqlStatements(parser.sqlStatements())
             }
         } catch (e: ParseException) {
-            if(StringUtils.isNotBlank(e.command)) {
-                throw e;
+            if (StringUtils.isNotBlank(e.command)) {
+                throw e
             } else {
                 throw e.withCommand(command)
             }
         } finally {
-            AbstractSqlParser.refreshParserCaches()
+            val releaseAntlrCache =
+                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
+                AbstractSqlParser.refreshParserCaches()
+            }
         }
     }
 }

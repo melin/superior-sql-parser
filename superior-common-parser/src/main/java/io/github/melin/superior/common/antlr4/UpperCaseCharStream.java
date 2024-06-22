@@ -21,7 +21,7 @@ public class UpperCaseCharStream implements CharStream {
     @Override
     public int LA(int i) {
         int la = wrapped.LA(i);
-        if(la == 0 || la == IntStream.EOF) {
+        if (la == 0 || la == IntStream.EOF) {
             return la;
         } else {
             return Character.toUpperCase(la);

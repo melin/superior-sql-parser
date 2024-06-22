@@ -30,20 +30,32 @@ public class ParserUtils {
     }
 
     private static void appendEscapedChar(StringBuilder sb, char n) {
-        switch (n){
-            case '0'    : sb.append("\u0000");
-            case '\''   : sb.append("\'");
-            case '"'    : sb.append("\"");
-            case 'b'    : sb.append("\b");
-            case 'n'    : sb.append("\n");
-            case 'r'    : sb.append("\r");
-            case 't'    : sb.append("\t");
-            case 'Z'    : sb.append("\u001A");
-            case '\\'   : sb.append("\\");
+        switch (n) {
+            case '0':
+                sb.append("\u0000");
+            case '\'':
+                sb.append("\'");
+            case '"':
+                sb.append("\"");
+            case 'b':
+                sb.append("\b");
+            case 'n':
+                sb.append("\n");
+            case 'r':
+                sb.append("\r");
+            case 't':
+                sb.append("\t");
+            case 'Z':
+                sb.append("\u001A");
+            case '\\':
+                sb.append("\\");
                 // The following 2 lines are exactly what MySQL does TODO: why do we do this?
-            case '%'    : sb.append("\\%");
-            case '_'    : sb.append("\\_");
-            default     : sb.append(n);
+            case '%':
+                sb.append("\\%");
+            case '_':
+                sb.append("\\_");
+            default:
+                sb.append(n);
         }
     }
 
@@ -68,7 +80,7 @@ public class ParserUtils {
 
                     int code = 0;
                     int base = i + 2;
-                    for(int h=0; h<4; h++ ) {
+                    for (int h = 0; h < 4; h++) {
                         int digit = Character.digit(b.charAt(h + base), 16);
                         code = (code << 4) + digit;
                     }

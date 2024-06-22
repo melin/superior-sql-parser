@@ -1,29 +1,25 @@
 package io.github.melin.superior.parser.trino
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
+import io.github.melin.superior.common.antlr4.AntlrCaches
+import io.github.melin.superior.common.antlr4.ParseErrorListener
+import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.parser.spark.AbstractSqlParser
+import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
+import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseLexer
+import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
-import io.github.melin.superior.common.antlr4.ParseErrorListener
-import io.github.melin.superior.common.antlr4.ParseException
-import io.github.melin.superior.parser.spark.AbstractSqlParser
-import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseBaseVisitor
-import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseLexer
-import io.github.melin.superior.parser.trino.antlr4.TrinoSqlBaseParser
-import org.antlr.v4.runtime.atn.LexerATNSimulator
-import org.antlr.v4.runtime.atn.ParserATNSimulator
-import org.antlr.v4.runtime.atn.PredictionContextCache
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
+/** Created by libinsong on 2018/1/10. */
 object TrinoSqlHelper {
 
-    @JvmStatic fun sqlKeywords(): List<String> {
+    @JvmStatic
+    fun sqlKeywords(): List<String> {
         val keywords = hashSetOf<String>()
         (0 until TrinoSqlBaseLexer.VOCABULARY.maxTokenType).forEach { idx ->
             val name = TrinoSqlBaseLexer.VOCABULARY.getLiteralName(idx)
@@ -38,30 +34,36 @@ object TrinoSqlHelper {
         return keywords.sorted()
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
+    @JvmStatic
+    fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {
-            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+            throw IllegalStateException(
+                "only parser one sql, sql count: " + statements.size
+            )
         } else {
             return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+    @JvmStatic
+    fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
         val sqlVisitor = TrinoSqlAntlr4Visitor(false, trimCmd)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
-    @JvmStatic fun splitSql(command: String): List<String> {
+    @JvmStatic
+    fun splitSql(command: String): List<String> {
         val trimCmd = StringUtils.trim(command)
         val sqlVisitor = TrinoSqlAntlr4Visitor(true, trimCmd)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
 
-    @JvmStatic fun checkSqlSyntax(command: String) {
+    @JvmStatic
+    fun checkSqlSyntax(command: String) {
         val sqlVisitor = TrinoSqlBaseBaseVisitor<Statement>()
         innerParseStatement(command, sqlVisitor)
     }
@@ -96,12 +98,16 @@ object TrinoSqlHelper {
             }
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
-                throw e;
+                throw e
             } else {
                 throw e.withCommand(command)
             }
         } finally {
-            AbstractSqlParser.refreshParserCaches()
+            val releaseAntlrCache =
+                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
+                AbstractSqlParser.refreshParserCaches()
+            }
         }
     }
 }

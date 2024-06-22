@@ -14,7 +14,7 @@ public class SparkSqlPostProcessor extends SparkSqlParserBaseListener {
     public void exitQuotedIdentifier(SparkSqlParser.QuotedIdentifierContext ctx) {
         ParserRuleContext parent = ctx.getParent();
         parent.removeLastChild();
-        Token token = (Token)ctx.getChild(0).getPayload();
+        Token token = (Token) ctx.getChild(0).getPayload();
 
         CommonToken commonToken = new CommonToken(
                 new org.antlr.v4.runtime.misc.Pair(token.getTokenSource(), token.getInputStream()),
@@ -32,9 +32,10 @@ public class SparkSqlPostProcessor extends SparkSqlParserBaseListener {
     public void exitNonReserved(SparkSqlParser.NonReservedContext ctx) {
         ParserRuleContext parent = ctx.getParent();
         parent.removeLastChild();
-        Token token = (Token)ctx.getChild(0).getPayload();
+        Token token = (Token) ctx.getChild(0).getPayload();
 
-        parent.addChild(new CommonToken(new Pair(token.getTokenSource(), token.getInputStream()),
+        parent.addChild(new CommonToken(
+                new Pair(token.getTokenSource(), token.getInputStream()),
                 SparkSqlParser.IDENTIFIER,
                 token.getChannel(),
                 token.getStartIndex() + 0,

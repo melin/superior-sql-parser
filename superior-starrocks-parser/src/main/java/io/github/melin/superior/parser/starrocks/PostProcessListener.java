@@ -20,17 +20,22 @@ public class PostProcessListener extends StarRocksParserBaseListener {
         Token token = node.getSymbol();
         int index = token.getTokenIndex();
         if (index >= maxTokensNum) {
-            throw new ParsingException("Statement exceeds maximum length limit, please consider modify ''parse_tokens_limit'' session variable");
+            throw new ParsingException(
+                    "Statement exceeds maximum length limit, please consider modify ''parse_tokens_limit'' session variable");
         }
     }
 
     @Override
     public void exitExpressionList(StarRocksParser.ExpressionListContext ctx) {
-        long childCount = ctx.children.stream().filter(child -> child instanceof StarRocksParser.ExpressionContext).count();
+        long childCount = ctx.children.stream()
+                .filter(child -> child instanceof StarRocksParser.ExpressionContext)
+                .count();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);
-            String msg = String.format("The number of exprs are %s exceeded the maximum limit %s, please consider modify " +
-                    "''expr_children_limit'' in BE conf", childCount, maxExprChildCount);
+            String msg = String.format(
+                    "The number of exprs are %s exceeded the maximum limit %s, please consider modify "
+                            + "''expr_children_limit'' in BE conf",
+                    childCount, maxExprChildCount);
             throw new ParsingException(msg, pos);
         }
     }
@@ -40,8 +45,10 @@ public class PostProcessListener extends StarRocksParserBaseListener {
         long childCount = ctx.expressionOrDefault().size();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);
-            String msg = String.format("The number of children in expr are %s exceeded the maximum limit %s, please consider modify " +
-                    "''expr_children_limit'' in BE conf", childCount, maxExprChildCount);
+            String msg = String.format(
+                    "The number of children in expr are %s exceeded the maximum limit %s, please consider modify "
+                            + "''expr_children_limit'' in BE conf",
+                    childCount, maxExprChildCount);
             throw new ParsingException(msg, pos);
         }
     }
@@ -51,8 +58,10 @@ public class PostProcessListener extends StarRocksParserBaseListener {
         long childCount = ctx.expressionsWithDefault().size();
         if (childCount > maxExprChildCount) {
             NodePosition pos = new NodePosition(ctx.start, ctx.stop);
-            String msg = String.format("The inserted rows are {0} exceeded the maximum limit {1}, please consider modify " +
-                    "''expr_children_limit'' in BE conf", childCount, maxExprChildCount);
+            String msg = String.format(
+                    "The inserted rows are {0} exceeded the maximum limit {1}, please consider modify "
+                            + "''expr_children_limit'' in BE conf",
+                    childCount, maxExprChildCount);
             throw new ParsingException(msg, pos);
         }
     }

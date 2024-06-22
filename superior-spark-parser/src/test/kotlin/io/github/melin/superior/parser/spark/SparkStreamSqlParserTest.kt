@@ -7,15 +7,13 @@ import io.github.melin.superior.common.relational.dml.InsertTable
 import org.junit.Assert
 import org.junit.Test
 
-/**
- *
- * Created by libinsong on 2018/3/15.
- */
+/** Created by libinsong on 2018/3/15. */
 class SparkStreamSqlParserTest {
 
     @Test
     fun createTableTest() {
-        val sql = "CREATE Stream TABLE student_scores (\n" +
+        val sql =
+            "CREATE Stream TABLE student_scores (\n" +
                 "  student_number string comment '学号', \n" +
                 "  student_name string comment '姓名', \n" +
                 "  subject string comment '学科',\n" +
@@ -28,11 +26,17 @@ class SparkStreamSqlParserTest {
                 ")"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
+            Assert.assertEquals(
+                StatementType.CREATE_TABLE,
+                statement.statementType
+            )
             Assert.assertEquals("student_scores", statement.tableId.tableName)
-            Assert.assertEquals("cn-north-1", statement.properties?.get("kafka.group.id"))
+            Assert.assertEquals(
+                "cn-north-1",
+                statement.properties?.get("kafka.group.id")
+            )
         } else {
             Assert.fail()
         }
@@ -40,7 +44,8 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun createTableTest4() {
-        val sql = """
+        val sql =
+            """
             CREATE Stream TABLE orders (
                 userid string,
                 money bigint
@@ -85,7 +90,8 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun createTableTest5() {
-        val sql = "CREATE Stream TABLE tdl_hudi_stream_json_dt\n" +
+        val sql =
+            "CREATE Stream TABLE tdl_hudi_stream_json_dt\n" +
                 "    WITH (\n" +
                 "    type = 'hudi',\n" +
                 "    databaseName = \"bigdata\",\n" +
@@ -93,10 +99,16 @@ class SparkStreamSqlParserTest {
                 "    )"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is CreateTable) {
-            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
-            Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableId.tableName)
+            Assert.assertEquals(
+                StatementType.CREATE_TABLE,
+                statement.statementType
+            )
+            Assert.assertEquals(
+                "tdl_hudi_stream_json_dt",
+                statement.tableId.tableName
+            )
             Assert.assertEquals("hudi", statement.properties?.get("type"))
         } else {
             Assert.fail()
@@ -105,10 +117,10 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun setConfigTest() {
-        val sql = "set spark.test = false";
+        val sql = "set spark.test = false"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
@@ -120,10 +132,10 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun setConfigTest1() {
-        val sql = "set spark.test = 'hello world'";
+        val sql = "set spark.test = 'hello world'"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
@@ -135,10 +147,10 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun setConfigTest2() {
-        val sql = "set spark.test = 12 ";
+        val sql = "set spark.test = 12 "
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
@@ -150,10 +162,10 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun setConfigTest3() {
-        val sql = "set spark.test = 'demo' ";
+        val sql = "set spark.test = 'demo' "
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is SetStatement) {
             Assert.assertEquals(StatementType.SET, statement.statementType)
             Assert.assertEquals("spark.test", statement.key)
@@ -165,14 +177,17 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun insertSqlTest() {
-        val sql = "insert into bigdata.test_result1 select * from users";
+        val sql = "insert into bigdata.test_result1 select * from users"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test_result1", statement.tableId?.tableName)
-            Assert.assertEquals("select * from users", statement.queryStmt.getSql())
+            Assert.assertEquals(
+                "select * from users",
+                statement.queryStmt.getSql()
+            )
         } else {
             Assert.fail()
         }
@@ -180,20 +195,24 @@ class SparkStreamSqlParserTest {
 
     @Test
     fun insertUDTFSqlTest() {
-        val sql = "insert into stat_orders_kafka\n" +
-        "SELECT \n" +
+        val sql =
+            "insert into stat_orders_kafka\n" +
+                "SELECT \n" +
                 "    TUMBLE_START(proctime, INTERVAL '10' SECOND),\n" +
                 "    TUMBLE_END(proctime, INTERVAL '10' SECOND),\n" +
                 "    userid, \n" +
                 "    SUM(money) as total_money \n" +
                 "FROM (select userid, money, proctime from orders LEFT JOIN LATERAL TABLE(demoFunc(a)) as T(newuserid) ON TRUE) a\n" +
-                "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;";
+                "GROUP BY TUMBLE(proctime, INTERVAL '10' SECOND), userid;"
 
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
-        
+
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals("stat_orders_kafka", statement.tableId?.tableName)
+            Assert.assertEquals(
+                "stat_orders_kafka",
+                statement.tableId?.tableName
+            )
         } else {
             Assert.fail()
         }

@@ -1,28 +1,25 @@
 package io.github.melin.superior.parser.oracle
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
-import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.common.antlr4.AntlrCaches
 import io.github.melin.superior.common.antlr4.ParseErrorListener
 import io.github.melin.superior.common.antlr4.ParseException
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.parser.oracle.antlr4.OracleLexer
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.atn.LexerATNSimulator
-import org.antlr.v4.runtime.atn.ParserATNSimulator
-import org.antlr.v4.runtime.atn.PredictionContextCache
 import org.antlr.v4.runtime.atn.PredictionMode
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.apache.commons.lang3.StringUtils
 
-/**
- * Created by libinsong on 2020/6/30 9:58 上午
- */
+/** Created by libinsong on 2020/6/30 9:58 上午 */
 object OracleSqlHelper {
 
-    @JvmStatic fun sqlKeywords(): List<String> {
+    @JvmStatic
+    fun sqlKeywords(): List<String> {
         val keywords = hashSetOf<String>()
         (0 until OracleLexer.VOCABULARY.maxTokenType).forEach { idx ->
             val name = OracleLexer.VOCABULARY.getLiteralName(idx)
@@ -37,28 +34,33 @@ object OracleSqlHelper {
         return keywords.sorted()
     }
 
-    @JvmStatic fun parseStatement(command: String): Statement {
-        var sql = StringUtils.trim(command);
+    @JvmStatic
+    fun parseStatement(command: String): Statement {
+        var sql = StringUtils.trim(command)
         if (!StringUtils.endsWith(sql, ";")) {
             sql += ";"
         }
         val statements = this.parseMultiStatement(sql)
         if (statements.size != 1) {
-            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+            throw IllegalStateException(
+                "only parser one sql, sql count: " + statements.size
+            )
         } else {
             return statements.get(0)
         }
     }
 
-    @JvmStatic fun parseMultiStatement(command: String): List<Statement> {
+    @JvmStatic
+    fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
         val sqlVisitor = OracleSqlAntlr4Visitor(false, trimCmd)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
 
-    @JvmStatic fun splitSql(command: String): List<String> {
-        var trimCmd = StringUtils.trim(command);
+    @JvmStatic
+    fun splitSql(command: String): List<String> {
+        var trimCmd = StringUtils.trim(command)
         if (!StringUtils.endsWith(trimCmd, ";")) {
             trimCmd += ";"
         }
@@ -68,8 +70,9 @@ object OracleSqlHelper {
         return sqlVisitor.getSplitSqls()
     }
 
-    @JvmStatic fun checkSqlSyntax(command: String) {
-        var trimCmd = StringUtils.trim(command);
+    @JvmStatic
+    fun checkSqlSyntax(command: String) {
+        var trimCmd = StringUtils.trim(command)
         if (!StringUtils.endsWith(trimCmd, ";")) {
             trimCmd += ";"
         }
@@ -97,8 +100,7 @@ object OracleSqlHelper {
             try {
                 // first, try parsing with potentially faster SLL mode
                 sqlVisitor.visit(parser.sql_script())
-            }
-            catch (e: ParseCancellationException) {
+            } catch (e: ParseCancellationException) {
                 tokenStream.seek(0) // rewind input stream
                 parser.reset()
 
@@ -108,9 +110,15 @@ object OracleSqlHelper {
             }
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
-                throw e;
+                throw e
             } else {
                 throw e.withCommand(command)
+            }
+        } finally {
+            val releaseAntlrCache =
+                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
+                AbstractSqlParser.refreshParserCaches()
             }
         }
     }

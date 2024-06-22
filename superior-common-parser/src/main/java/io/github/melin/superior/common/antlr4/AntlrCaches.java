@@ -7,11 +7,14 @@ import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
 
 public class AntlrCaches {
-    private ATN atn;
 
-    private PredictionContextCache predictionContextCache = new PredictionContextCache();
+    public static final String RELEASE_ANTLR_CACHE_AFTER_PARSING = "releaseAntlrCacheAfterParsing";
 
-    private DFA[] decisionToDFA;
+    private final ATN atn;
+
+    private final PredictionContextCache predictionContextCache = new PredictionContextCache();
+
+    private final DFA[] decisionToDFA;
 
     public AntlrCaches(ATN atn) {
         this.atn = atn;
@@ -19,8 +22,7 @@ public class AntlrCaches {
     }
 
     public void installCaches(Parser parser) {
-        parser.setInterpreter(
-                new ParserATNSimulator(parser, atn, decisionToDFA, predictionContextCache));
+        parser.setInterpreter(new ParserATNSimulator(parser, atn, decisionToDFA, predictionContextCache));
     }
 
     private DFA[] makeDecisionToDFA(ATN atn) {

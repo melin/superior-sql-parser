@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 data class AlterTable(
     override val tableId: TableId,
     private val action: AlterAction?,
-): AbsTableStatement() {
+) : AbsTableStatement() {
     override val statementType = StatementType.ALTER_TABLE
     override val privilegeType = PrivilegeType.ALTER
     override val sqlType = SqlType.DDL
@@ -22,7 +22,7 @@ data class AlterTable(
         }
     }
 
-    constructor(tableId: TableId): this(tableId, null)
+    constructor(tableId: TableId) : this(tableId, null)
 
     fun addAction(action: AlterAction) {
         actions.add(action)

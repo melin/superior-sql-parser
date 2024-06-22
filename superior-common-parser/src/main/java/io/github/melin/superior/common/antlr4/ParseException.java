@@ -30,7 +30,7 @@ public class ParseException extends RuntimeException {
             if (StringUtils.isNotBlank(command)) {
                 String[] lines = command.split("\n");
                 builder.append("\n== SQL ==\n");
-                for (int i=0; i<start.getLine(); i++) {
+                for (int i = 0; i < start.getLine(); i++) {
                     builder.append(lines[i]).append("\n");
                 }
 

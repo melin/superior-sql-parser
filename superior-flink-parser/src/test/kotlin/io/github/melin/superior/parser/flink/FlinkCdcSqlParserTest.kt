@@ -5,20 +5,19 @@ import io.github.melin.superior.common.relational.common.SyncTable
 import org.junit.Assert
 import org.junit.Test
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
+/** Created by libinsong on 2018/1/10. */
 class FlinkCdcSqlParserTest {
 
     @Test
     fun createTableTest() {
-        val sql = """
+        val sql =
+            """
             CREATE TABLE IF NOT EXISTS qeqw 
             WITH ('jdbcWriteBatchSize' = '1024')
             AS TABLE mysql
             OPTIONS('server-id'='8001-8004')
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncTable) {
@@ -31,14 +30,16 @@ class FlinkCdcSqlParserTest {
 
     @Test
     fun createDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             CREATE DATABASE IF NOT EXISTS holo_tpcds 
             WITH ('sink.parallelism' = '4') 
             AS DATABASE mysql.tpcds 
             INCLUDING ALL TABLES 
             EXCLUDING TABLE "test"
             OPTIONS('server-id'='8001-8004')
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
@@ -51,7 +52,8 @@ class FlinkCdcSqlParserTest {
 
     @Test
     fun createDatabaseFromKafkaTest() {
-        val sql = """
+        val sql =
+            """
             CREATE DATABASE IF NOT EXISTS flink_cdc_demos 
             WITH (
                 'connector' = 'jdbc',
@@ -68,12 +70,19 @@ class FlinkCdcSqlParserTest {
             	'connector' = 'kafka',
                 'brokers' = '172.18.1.56:9093'
             )
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
-            Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
-            Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))
+            Assert.assertEquals(
+                "demo1, demo2, demo3, demo4",
+                statement.sourceDatabaseName
+            )
+            Assert.assertEquals(
+                "172.18.1.56:9093",
+                statement.sourceOptions?.get("brokers")
+            )
         } else {
             Assert.fail()
         }

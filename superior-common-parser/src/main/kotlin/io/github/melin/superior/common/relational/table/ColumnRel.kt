@@ -21,11 +21,18 @@ data class ColumnRel(
     var computedExpr: String? = null // 计算列
     var metadataKey: String? = null // 元数据列
 
-    constructor(columnName: String, typeName: String?, comment: String?):
-            this(columnName, typeName, comment, true, null)
+    constructor(
+        columnName: String,
+        typeName: String?,
+        comment: String?
+    ) : this(columnName, typeName, comment, true, null)
 
-    constructor(columnName: String, typeName: String?, comment: String?, columnDefType: ColumnDefType):
-            this(columnName, typeName, comment, true, null, false, columnDefType)
+    constructor(
+        columnName: String,
+        typeName: String?,
+        comment: String?,
+        columnDefType: ColumnDefType
+    ) : this(columnName, typeName, comment, true, null, false, columnDefType)
 }
 
 enum class ColumnDefType {

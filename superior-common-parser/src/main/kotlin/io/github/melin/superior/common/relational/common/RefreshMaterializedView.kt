@@ -6,13 +6,13 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 
-data class RefreshMaterializedView (
+data class RefreshMaterializedView(
     val tableId: TableId,
     val force: Boolean = false,
     val mode: String = "Async",
     val partitionStart: String? = null,
     val partitionEnd: String? = null,
-): Statement() {
+) : Statement() {
     override val statementType = StatementType.REFRESH_MV
     override val privilegeType = PrivilegeType.ADMIN
     override val sqlType = SqlType.DML

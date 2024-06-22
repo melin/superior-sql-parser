@@ -8,5 +8,5 @@ enum class PrivilegeType {
     ADMIN,
     CREATE,
     PROCEDURE,
-    OTHER
+    OTHER,
 }

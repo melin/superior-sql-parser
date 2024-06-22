@@ -5,10 +5,10 @@ import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.PartitionType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.alter.*
+import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.parser.starrocks.relational.CancelRefreshMaterializedView
-import io.github.melin.superior.common.relational.common.RefreshMaterializedView
 import org.junit.Assert
 import org.junit.Test
 
@@ -16,19 +16,24 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createCatalogTest() {
-        val sql = """
+        val sql =
+            """
             CREATE EXTERNAL CATALOG iceberg_metastore_catalog
             PROPERTIES(
                 "type"="iceberg",
                 "iceberg.catalog.type"="hive",
                 "iceberg.catalog.hive.metastore.uris"="thrift://x.x.x.x:9083"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateCatalog) {
             Assert.assertEquals(CREATE_CATALOG, statement.statementType)
-            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
+            Assert.assertEquals(
+                "iceberg_metastore_catalog",
+                statement.catalogName
+            )
         } else {
             Assert.fail()
         }
@@ -36,14 +41,19 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropCatalogTest() {
-        val sql = """
+        val sql =
+            """
             DROP CATALOG iceberg_metastore_catalog;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropCatalog) {
             Assert.assertEquals(DROP_CATALOG, statement.statementType)
-            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
+            Assert.assertEquals(
+                "iceberg_metastore_catalog",
+                statement.catalogName
+            )
         } else {
             Assert.fail()
         }
@@ -51,10 +61,12 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             CREATE DATABASE IF Not EXISTS db_test;
             Drop DATABASE IF EXISTS db_test1;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
 
@@ -70,9 +82,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             DROP DATABASE IF EXISTS db_test;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropDatabase) {
@@ -85,9 +99,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun alterDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             ALTER DATABASE example_db SET DATA QUOTA 100G;
-        """.trimIndent()
+        """
+                .trimIndent()
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterDatabase) {
             Assert.assertEquals(ALTER_DATABASE, statement.statementType)
@@ -99,9 +115,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun renameDatabaseTest() {
-        val sql = """
+        val sql =
+            """
             ALTER DATABASE example_db RENAME example_db2;
-        """.trimIndent()
+        """
+                .trimIndent()
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterDatabase) {
             Assert.assertEquals(ALTER_DATABASE, statement.statementType)
@@ -115,7 +133,8 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createTableTest() {
-        val sql = """
+        val sql =
+            """
             create table meta_role (
                 id           int          not null,
                 tenant_id    int          null comment '租户ID',
@@ -129,7 +148,8 @@ class StarRocksSqlParserDdlTest {
                 gmt_modified datetime     null
             ) ENGINE = olap PRIMARY KEY(id)
             DISTRIBUTED BY HASH (id) BUCKETS 10;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateTable) {
@@ -143,7 +163,8 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createTableTest0() {
-        val sql = """
+        val sql =
+            """
             CREATE TABLE site_access1 (
                 event_day DATETIME NOT NULL,
                 site_id INT DEFAULT '10',
@@ -154,14 +175,18 @@ class StarRocksSqlParserDdlTest {
             DUPLICATE KEY(event_day, site_id, city_code, user_name)
             PARTITION BY date_trunc('day', event_day)
             DISTRIBUTED BY HASH(event_day, site_id);
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateTable) {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("site_access1", statement.tableId.tableName)
             Assert.assertEquals("duplicate", statement.modelType)
-            Assert.assertEquals(PartitionType.EXPRESSION, statement.partitionType)
+            Assert.assertEquals(
+                PartitionType.EXPRESSION,
+                statement.partitionType
+            )
         } else {
             Assert.fail()
         }
@@ -169,14 +194,19 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropTableTest() {
-        val sql = """
+        val sql =
+            """
            DROP TABLE IF EXISTS example_db.My_table force;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropTable) {
             Assert.assertEquals(DROP_TABLE, statement.statementType)
-            Assert.assertEquals(TableId("example_db", "My_table"), statement.tableId)
+            Assert.assertEquals(
+                TableId("example_db", "My_table"),
+                statement.tableId
+            )
             Assert.assertTrue(statement.force)
         } else {
             Assert.fail()
@@ -185,7 +215,8 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createViewTest() {
-        val sql = """
+        val sql =
+            """
             CREATE VIEW example_db.example_view (
                 k1 COMMENT "first key",
                 k2 COMMENT "second key",
@@ -196,15 +227,22 @@ class StarRocksSqlParserDdlTest {
             AS SELECT c1 as k1, k2, k3, SUM(v1) FROM example_table
             WHERE k1 = 20160112
             GROUP BY k1,k2,k3;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateView) {
             Assert.assertEquals(CREATE_VIEW, statement.statementType)
             Assert.assertEquals("my first view", statement.comment)
             Assert.assertEquals(4, statement.columnRels?.size)
-            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
-            Assert.assertEquals(TableId("example_table"), statement.queryStmt.inputTables.get(0))
+            Assert.assertEquals(
+                TableId("example_db", "example_view"),
+                statement.tableId
+            )
+            Assert.assertEquals(
+                TableId("example_table"),
+                statement.queryStmt.inputTables.get(0)
+            )
         } else {
             Assert.fail()
         }
@@ -212,14 +250,19 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropViewTest() {
-        val sql = """
+        val sql =
+            """
            DROP VIEW IF EXISTS example_db.example_view;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropView) {
             Assert.assertEquals(DROP_VIEW, statement.statementType)
-            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
+            Assert.assertEquals(
+                TableId("example_db", "example_view"),
+                statement.tableId
+            )
         } else {
             Assert.fail()
         }
@@ -227,7 +270,8 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createMaterializedViewTest() {
-        val sql = """
+        val sql =
+            """
             CREATE MATERIALIZED VIEW example_db.lo_mv1
             DISTRIBUTED BY HASH(`lo_orderkey`) BUCKETS 10
             REFRESH ASYNC
@@ -241,14 +285,24 @@ class StarRocksSqlParserDdlTest {
             from lineorder 
             group by lo_orderkey, lo_custkey 
             order by lo_orderkey;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateMaterializedView) {
-            Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
+            Assert.assertEquals(
+                CREATE_MATERIALIZED_VIEW,
+                statement.statementType
+            )
             Assert.assertEquals("Async", statement.modelType)
-            Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
-            Assert.assertEquals(TableId("lineorder"), statement.queryStmt.inputTables.get(0))
+            Assert.assertEquals(
+                TableId("example_db", "lo_mv1"),
+                statement.tableId
+            )
+            Assert.assertEquals(
+                TableId("lineorder"),
+                statement.queryStmt.inputTables.get(0)
+            )
         } else {
             Assert.fail()
         }
@@ -256,9 +310,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropMaterializedViewTest() {
-        val sql = """
+        val sql =
+            """
            DROP MATERIALIZED VIEW IF EXISTS k1_k2;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropMaterializedView) {
@@ -271,11 +327,13 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun alterMaterializedViewTest() {
-        val sql = """
+        val sql =
+            """
            ALTER MATERIALIZED VIEW lo_mv1 RENAME lo_mv1_new_name;
            ALTER MATERIALIZED VIEW lo_mv2 REFRESH ASYNC EVERY(INTERVAL 1 DAY);
            ALTER MATERIALIZED VIEW mv1 SET ("session.query_timeout" = "40000");
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
         Assert.assertEquals(3, statements.size)
@@ -283,9 +341,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun refreshMaterializedViewTest() {
-        val sql = """
+        val sql =
+            """
            REFRESH MATERIALIZED VIEW lo_mv1 PARTITION START ("2020-02-01") END ("2020-03-01") FORCE;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is RefreshMaterializedView) {
@@ -301,9 +361,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun cancelRefreshMaterializedViewTest() {
-        val sql = """
+        val sql =
+            """
            CANCEL REFRESH MATERIALIZED VIEW lo_mv1;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CancelRefreshMaterializedView) {
@@ -314,10 +376,12 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createIndexTest() {
-        val sql = """
+        val sql =
+            """
             CREATE INDEX index3 ON sales_records (item_id) USING BITMAP COMMENT '';
 
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterTable) {
@@ -333,9 +397,11 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropIndexTest() {
-        val sql = """
+        val sql =
+            """
             DROP INDEX index3 ON sales_records;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterTable) {
@@ -350,7 +416,8 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun createFuncTest() {
-        val sql = """
+        val sql =
+            """
             CREATE GLOBAL FUNCTION MY_UDF_JSON_GET(string, string) 
             RETURNS string
             properties (
@@ -358,12 +425,16 @@ class StarRocksSqlParserDdlTest {
                 "type" = "StarrocksJar",
                 "file" = "http://http_host:http_port/udf-1.0-SNAPSHOT-jar-with-dependencies.jar"
             );
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateFunction) {
             Assert.assertEquals(CREATE_FUNCTION, statement.statementType)
-            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
+            Assert.assertEquals(
+                FunctionId("MY_UDF_JSON_GET"),
+                statement.functionId
+            )
             Assert.assertEquals("string", statement.returnType)
             Assert.assertEquals(2, statement.argumentTypes?.size)
             Assert.assertEquals(3, statement.properties?.size)
@@ -374,14 +445,19 @@ class StarRocksSqlParserDdlTest {
 
     @Test
     fun dropFuncTest() {
-        val sql = """
+        val sql =
+            """
             DROP GLOBAL FUNCTION MY_UDF_JSON_GET(string, string) 
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropFunction) {
             Assert.assertEquals(DROP_FUNCTION, statement.statementType)
-            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
+            Assert.assertEquals(
+                FunctionId("MY_UDF_JSON_GET"),
+                statement.functionId
+            )
             Assert.assertEquals(2, statement.argumentTypes?.size)
         } else {
             Assert.fail()

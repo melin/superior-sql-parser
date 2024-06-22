@@ -3,8 +3,8 @@ package io.github.melin.superior.common.relational.drop
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.abs.AbsTableStatement
 
 data class DropTable(
     override val tableId: TableId,
@@ -16,5 +16,4 @@ data class DropTable(
 
     val tableIds: ArrayList<TableId> = arrayListOf()
     var force: Boolean = false
-
 }

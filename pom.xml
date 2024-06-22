@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -8,6 +7,9 @@
     <artifactId>superior-sql-parser</artifactId>
     <version>4.0.15</version>
     <packaging>pom</packaging>
+    <name>Superior SQL Parser</name>
+
+    <description>Superior SQL Parser</description>
 
     <modules>
         <module>superior-common-parser</module>
@@ -31,45 +33,13 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+        <spotless.version>2.43.0</spotless.version>
 
         <kotlin.version>1.8.21</kotlin.version>
         <antlr4.version>4.9.3</antlr4.version>
         <slf4j.version>2.0.12</slf4j.version>
         <log4j.version>2.23.1</log4j.version>
     </properties>
-
-    <description>
-        Superior SQL Parser
-    </description>
-    <name>Superior SQL Parser</name>
-    <url>https://github.com/melin/superior-sql-parser</url>
-
-    <issueManagement>
-        <system>gitee</system>
-        <url>https://github.com/melin/superior-sql-parser/issues</url>
-    </issueManagement>
-
-    <scm>
-        <connection>scm:git:https://github.com/melin/superior-sql-parser.git</connection>
-        <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
-        <url>https://github.com/melin/superior-sql-parser</url>
-    </scm>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>melin</name>
-            <email>libinsong1204@gmail.com</email>
-            <url>https://github.com/melin/superior-sql-parser</url>
-        </developer>
-    </developers>
 
     <dependencies>
         <dependency>
@@ -134,20 +104,69 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat>
+                            <style>PALANTIR</style>
+                            <formatJavadoc>false</formatJavadoc>
+                        </palantirJavaFormat>
+                        <removeUnusedImports />
+                    </java>
+                    <kotlin>
+                        <ktfmt>
+                            <style>KOTLINLANG</style>
+                            <maxWidth>80</maxWidth>
+                            <blockIndent>4</blockIndent>
+                            <continuationIndent>4</continuationIndent>
+                        </ktfmt>
+                    </kotlin>
+                    <pom>
+                        <sortPom>
+                            <encoding>UTF-8</encoding>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <keepBlankLines>true</keepBlankLines>
+                            <indentBlankLines>false</indentBlankLines>
+                            <indentSchemaLocation>true</indentSchemaLocation>
+                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                            <sortModules>false</sortModules>
+                            <sortExecutions>false</sortExecutions>
+                            <predefinedSortOrder>custom_1</predefinedSortOrder>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <sortProperties>false</sortProperties>
+                        </sortPom>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
             </plugin>
 
             <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <goals> <goal>compile</goal> </goals>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                         <phase>process-sources</phase>
                         <configuration>
                             <sourceDirs>
@@ -159,7 +178,9 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <goals> <goal>test-compile</goal> </goals>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
@@ -190,13 +211,17 @@
                     </execution>
                     <execution>
                         <id>java-compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                         <phase>compile</phase>
-                        <goals> <goal>compile</goal> </goals>
                     </execution>
                     <execution>
                         <id>java-test-compile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
                         <phase>test-compile</phase>
-                        <goals> <goal>testCompile</goal> </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -205,20 +230,20 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr4.version}</version>
-                <executions>
-                    <execution>
-                        <id>antlr</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>antlr4</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <!--<listener>true</listener>-->
                     <visitor>true</visitor>
                     <!--<treatWarningsAsErrors>true</treatWarningsAsErrors>-->
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -236,6 +261,10 @@
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.2.1</version>
                 <inherited>true</inherited>
+                <configuration>
+                    <excludeResources>true</excludeResources>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -244,14 +273,46 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludeResources>true</excludeResources>
-                    <useDefaultExcludes>true</useDefaultExcludes>
-                </configuration>
             </plugin>
 
         </plugins>
     </build>
+    <url>https://github.com/melin/superior-sql-parser</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>melin</name>
+            <email>libinsong1204@gmail.com</email>
+            <url>https://github.com/melin/superior-sql-parser</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/melin/superior-sql-parser.git</connection>
+        <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
+        <url>https://github.com/melin/superior-sql-parser</url>
+    </scm>
+
+    <issueManagement>
+        <system>gitee</system>
+        <url>https://github.com/melin/superior-sql-parser/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-snapshots</id>
+            <name>maven-snapshots</name>
+            <url>http://172.18.1.33:8081/repository/maven-snapshots/</url>
+        </repository>
+    </distributionManagement>
 
     <profiles>
         <profile>
@@ -263,15 +324,6 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.5.0</version>
                         <inherited>true</inherited>
-                        <executions>
-                            <execution>
-                                <id>bundle-sources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                         <configuration>
                             <maxmemory>1024</maxmemory>
                             <encoding>UTF-8</encoding>
@@ -282,6 +334,15 @@
                             <failOnError>false</failOnError>
                             <doclint>none</doclint>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>bundle-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
                     </plugin>
 
                     <plugin>
@@ -290,10 +351,10 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -312,12 +373,4 @@
             </distributionManagement>
         </profile>
     </profiles>
-
-    <distributionManagement>
-        <repository>
-            <id>maven-snapshots</id>
-            <name>maven-snapshots</name>
-            <url>http://172.18.1.33:8081/repository/maven-snapshots/</url>
-        </repository>
-    </distributionManagement>
 </project>

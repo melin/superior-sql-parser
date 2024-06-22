@@ -6,9 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
-/**
- * Created by libinsong on 2017/4/10.
- */
+/** Created by libinsong on 2017/4/10. */
 object CommonUtils {
 
     val KEYWORD_REGEX = "'([A-Z_]+)'".toRegex()
@@ -28,14 +26,22 @@ object CommonUtils {
     }
 
     fun subsql(sql: String?, context: ParserRuleContext): String {
-        return StringUtils.substring(sql, context.start.startIndex, context.stop.stopIndex + 1)
+        return StringUtils.substring(
+            sql,
+            context.start.startIndex,
+            context.stop.stopIndex + 1
+        )
     }
 
     fun subsql(sql: String?, start: Token, stop: Token): String {
-        return StringUtils.substring(sql, start.stopIndex + 1, stop.stopIndex + 1)
+        return StringUtils.substring(
+            sql,
+            start.stopIndex + 1,
+            stop.stopIndex + 1
+        )
     }
 
-    fun cleanLastSemi(text: String) : String {
+    fun cleanLastSemi(text: String): String {
         if (StringUtils.endsWith(text, ";")) {
             return StringUtils.substring(text, 0, text.length - 1)
         }
@@ -43,21 +49,30 @@ object CommonUtils {
         return text
     }
 
-    fun cleanQuote(value: String) : String {
+    fun cleanQuote(value: String): String {
         if (StringUtils.isBlank(value)) {
-            return value;
+            return value
         }
 
-        var result = value;
-        if (StringUtils.startsWith(result, "'") && StringUtils.endsWith(result, "'")) {
+        var result = value
+        if (
+            StringUtils.startsWith(result, "'") &&
+                StringUtils.endsWith(result, "'")
+        ) {
             result = StringUtils.substring(result, 1, -1)
         }
 
-        if (StringUtils.startsWith(result, "\"") && StringUtils.endsWith(result, "\"")) {
+        if (
+            StringUtils.startsWith(result, "\"") &&
+                StringUtils.endsWith(result, "\"")
+        ) {
             result = StringUtils.substring(result, 1, -1)
         }
 
-        if (StringUtils.startsWith(value, "`") && StringUtils.endsWith(value, "`")) {
+        if (
+            StringUtils.startsWith(value, "`") &&
+                StringUtils.endsWith(value, "`")
+        ) {
             return StringUtils.substring(value, 1, -1)
         }
         return result

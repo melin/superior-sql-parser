@@ -9,14 +9,17 @@ class DropDatabase(
     val catalogName: String?,
     val databaseName: String,
     var ifExists: Boolean = false
-): Statement() {
+) : Statement() {
     override val statementType = StatementType.DROP_DATABASE
     override val privilegeType = PrivilegeType.DROP
     override val sqlType = SqlType.DDL
 
     val databaseNames: ArrayList<String> = arrayListOf()
 
-    constructor(databaseName: String): this(null, databaseName)
+    constructor(databaseName: String) : this(null, databaseName)
 
-    constructor(databaseName: String, ifExists: Boolean): this(null, databaseName, ifExists)
+    constructor(
+        databaseName: String,
+        ifExists: Boolean
+    ) : this(null, databaseName, ifExists)
 }

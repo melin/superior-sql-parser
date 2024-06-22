@@ -7,28 +7,27 @@ import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
-import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.InsertMode
 import io.github.melin.superior.common.relational.dml.InsertTable
+import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseBaseVisitor
 import io.github.melin.superior.parser.presto.antlr4.PrestoSqlBaseParser
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
-/**
- *
- * Created by libinsong on 2018/1/10.
- */
-class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?):
-    PrestoSqlBaseBaseVisitor<Statement>() {
+/** Created by libinsong on 2018/1/10. */
+class PrestoSqlAntlr4Visitor(
+    val splitSql: Boolean = false,
+    val command: String?
+) : PrestoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
-    private var limit:Int? = null
-    private var offset:Int? = null
+    private var limit: Int? = null
+    private var offset: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
     private var functionNames: HashSet<FunctionId> = hashSetOf()
@@ -44,11 +43,16 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return sqls
     }
 
-    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
+    override fun shouldVisitNextChild(
+        node: RuleNode,
+        currentResult: Statement?
+    ): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
+    override fun visitSqlStatements(
+        ctx: PrestoSqlBaseParser.SqlStatementsContext
+    ): Statement? {
         ctx.singleStatement().forEach {
             var sql = CommonUtils.subsql(command, it)
             sql = CommonUtils.cleanLastSemi(sql)
@@ -56,17 +60,18 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text
-                val statement = if (StringUtils.equalsIgnoreCase("show", startNode)) {
-                    val keyWords: ArrayList<String> = arrayListOf()
-                    CommonUtils.findShowStatementKeyWord(keyWords, it)
-                    ShowStatement(*keyWords.toTypedArray())
-                } else {
-                    var statement = this.visitSingleStatement(it)
-                    if (statement == null) {
-                        statement = DefaultStatement(StatementType.UNKOWN)
+                val statement =
+                    if (StringUtils.equalsIgnoreCase("show", startNode)) {
+                        val keyWords: ArrayList<String> = arrayListOf()
+                        CommonUtils.findShowStatementKeyWord(keyWords, it)
+                        ShowStatement(*keyWords.toTypedArray())
+                    } else {
+                        var statement = this.visitSingleStatement(it)
+                        if (statement == null) {
+                            statement = DefaultStatement(StatementType.UNKOWN)
+                        }
+                        statement
                     }
-                    statement
-                }
 
                 statement.setSql(sql)
                 statements.add(statement)
@@ -86,7 +91,9 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         cteTempTables = arrayListOf()
     }
 
-    override fun visitStatementDefault(ctx: PrestoSqlBaseParser.StatementDefaultContext): Statement? {
+    override fun visitStatementDefault(
+        ctx: PrestoSqlBaseParser.StatementDefaultContext
+    ): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
@@ -109,7 +116,9 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return queryStmt
     }
 
-    override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): Statement? {
+    override fun visitCreateTableAsSelect(
+        ctx: PrestoSqlBaseParser.CreateTableAsSelectContext
+    ): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseQuery(ctx.query())
@@ -118,14 +127,18 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return createTable
     }
 
-    override fun visitInsertInto(ctx: PrestoSqlBaseParser.InsertIntoContext): Statement {
+    override fun visitInsertInto(
+        ctx: PrestoSqlBaseParser.InsertIntoContext
+    ): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseQuery(ctx.query())
         val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId)
         return stmt
     }
 
-    override fun visitDelete(ctx: PrestoSqlBaseParser.DeleteContext): Statement {
+    override fun visitDelete(
+        ctx: PrestoSqlBaseParser.DeleteContext
+    ): Statement {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.qualifiedName())
         if (ctx.whereClause() != null) {
@@ -135,7 +148,9 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): Statement? {
+    override fun visitDropTable(
+        ctx: PrestoSqlBaseParser.DropTableContext
+    ): Statement? {
         val tableId = parseTableName(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
@@ -143,20 +158,26 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return dropTable
     }
 
-    override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): Statement? {
+    override fun visitExplain(
+        ctx: PrestoSqlBaseParser.ExplainContext
+    ): Statement? {
         return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): Statement? {
+    override fun visitQualifiedName(
+        ctx: PrestoSqlBaseParser.QualifiedNameContext
+    ): Statement? {
         if (!(ctx.parent is PrestoSqlBaseParser.TableNameContext)) {
             return null
         }
 
-        if (currentOptType == StatementType.SELECT ||
-            currentOptType == StatementType.INSERT ||
-            currentOptType == StatementType.UPDATE ||
-            currentOptType == StatementType.DELETE ||
-            currentOptType == StatementType.CREATE_TABLE_AS_SELECT) {
+        if (
+            currentOptType == StatementType.SELECT ||
+                currentOptType == StatementType.INSERT ||
+                currentOptType == StatementType.UPDATE ||
+                currentOptType == StatementType.DELETE ||
+                currentOptType == StatementType.CREATE_TABLE_AS_SELECT
+        ) {
 
             val tableName = parseTableName(ctx)
             inputTables.add(tableName)
@@ -164,24 +185,27 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return null
     }
 
-    private fun parseTableName(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
+    private fun parseTableName(
+        ctx: PrestoSqlBaseParser.QualifiedNameContext
+    ): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null
         var databaseName: String? = null
-        val tableName = if (list.size == 1) {
-            ctx.text
-        } else if (list.size == 2) {
-            val index = StringUtils.lastIndexOf(ctx.text, ".")
-            databaseName = StringUtils.substring(ctx.text, 0, index)
+        val tableName =
+            if (list.size == 1) {
+                ctx.text
+            } else if (list.size == 2) {
+                val index = StringUtils.lastIndexOf(ctx.text, ".")
+                databaseName = StringUtils.substring(ctx.text, 0, index)
 
-            StringUtils.substring(ctx.text, index + 1)
-        } else {
-            val items = StringUtils.split(ctx.text, ".");
-            catalogName = items[0];
-            databaseName = items[1];
-            items[2]
-        }
+                StringUtils.substring(ctx.text, index + 1)
+            } else {
+                val items = StringUtils.split(ctx.text, ".")
+                catalogName = items[0]
+                databaseName = items[1]
+                items[2]
+            }
 
         return TableId(catalogName, databaseName, tableName)
     }

@@ -8,10 +8,10 @@ import io.github.melin.superior.common.relational.Statement
 class CreateCatalog(
     val catalogName: String,
     var properties: Map<String, String>? = null,
-): Statement() {
+) : Statement() {
     override val statementType = StatementType.CREATE_CATALOG
     override val privilegeType = PrivilegeType.ADMIN
     override val sqlType = SqlType.DDL
 
-    constructor(catalogName: String): this(catalogName, null)
+    constructor(catalogName: String) : this(catalogName, null)
 }

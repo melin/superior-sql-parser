@@ -1,9 +1,8 @@
 package io.github.melin.superior.parser.starrocks;
 
+import java.io.Serializable;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-import java.io.Serializable;
 
 // Used to record element position in the sql. ParserRuleContext records the input start and end token,
 // and we can transform their line and col info to NodePosition.
@@ -63,6 +62,4 @@ public class NodePosition implements Serializable {
     public boolean isZero() {
         return line == 0 && col == 0 && endLine == 0 && endCol == 0;
     }
-
-
 }

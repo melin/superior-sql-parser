@@ -24,7 +24,10 @@ data class CreateFunction(
     var returnType: String? = null // starrocks
     var inputTables: List<TableId> = listOf()
 
-    constructor(functionId: FunctionId, replace: Boolean) : this(functionId, replace, false)
+    constructor(
+        functionId: FunctionId,
+        replace: Boolean
+    ) : this(functionId, replace, false)
 
     constructor(functionId: FunctionId) : this(functionId, false, false)
 }

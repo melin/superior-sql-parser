@@ -1,4 +1,3 @@
 package io.github.melin.superior.common.type
 
-abstract class AbsDataTimeType: AbsType() {
-}
+abstract class AbsDataTimeType : AbsType() {}

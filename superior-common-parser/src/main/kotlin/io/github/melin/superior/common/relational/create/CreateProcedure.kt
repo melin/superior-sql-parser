@@ -24,7 +24,10 @@ data class CreateProcedure(
     val functionNames: HashSet<FunctionId> = hashSetOf()
     val procedureNames: HashSet<ProcedureId> = hashSetOf()
 
-    constructor(procedureId: ProcedureId, replace: Boolean) : this(procedureId, replace, false)
+    constructor(
+        procedureId: ProcedureId,
+        replace: Boolean
+    ) : this(procedureId, replace, false)
 
     constructor() : this(null)
 }

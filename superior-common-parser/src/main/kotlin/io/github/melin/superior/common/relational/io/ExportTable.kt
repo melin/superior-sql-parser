@@ -4,8 +4,8 @@ import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.FunctionId
-import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.abs.AbsTableStatement
 
 data class ExportTable(
     override val tableId: TableId,
@@ -17,7 +17,7 @@ data class ExportTable(
     var maxFileSize: String? = null,
     var overwrite: Boolean = false,
     var single: Boolean = false,
-    var inputTables: ArrayList<TableId>
+    var inputTables: ArrayList<TableId>,
 ) : AbsTableStatement() {
     override val statementType = StatementType.EXPORT_TABLE
     override val privilegeType = PrivilegeType.READ
@@ -28,8 +28,19 @@ data class ExportTable(
     constructor(
         tableId: TableId,
         path: String,
-        properties: Map<String, String>):
-            this(tableId, path, properties, linkedMapOf(), null, null, null, false, false, arrayListOf())
+        properties: Map<String, String>,
+    ) : this(
+        tableId,
+        path,
+        properties,
+        linkedMapOf(),
+        null,
+        null,
+        null,
+        false,
+        false,
+        arrayListOf()
+    )
 
     constructor(
         tableId: TableId,
@@ -40,6 +51,17 @@ data class ExportTable(
         compression: String? = null,
         maxFileSize: String? = null,
         overwrite: Boolean = false,
-        single: Boolean = false,):
-            this(tableId, path, properties, partitionVals, fileFormat, compression, maxFileSize, overwrite, single, arrayListOf())
+        single: Boolean = false,
+    ) : this(
+        tableId,
+        path,
+        properties,
+        partitionVals,
+        fileFormat,
+        compression,
+        maxFileSize,
+        overwrite,
+        single,
+        arrayListOf()
+    )
 }

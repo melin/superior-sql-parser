@@ -8,8 +8,8 @@ import io.github.melin.superior.common.relational.TableId
 
 data class MergeTable(
     var targetTable: TableId,
-    var inputTables: List<TableId> = listOf()
-): Statement() {
+    var inputTables: List<TableId> = listOf(),
+) : Statement() {
     override val statementType = StatementType.MERGE
     override val privilegeType = PrivilegeType.WRITE
     override val sqlType = SqlType.DML

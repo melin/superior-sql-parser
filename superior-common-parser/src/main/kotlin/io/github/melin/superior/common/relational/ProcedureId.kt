@@ -5,13 +5,15 @@ import org.apache.commons.lang3.StringUtils
 data class ProcedureId(
     val catalogName: String?,
     val schemaName: String?,
-    val procedureName: String) {
+    val procedureName: String
+) {
 
-    constructor(schemaName: String?, tableName: String):
-            this(null, schemaName, tableName)
+    constructor(
+        schemaName: String?,
+        tableName: String
+    ) : this(null, schemaName, tableName)
 
-    constructor(tableName: String):
-            this(null, null, tableName)
+    constructor(tableName: String) : this(null, null, tableName)
 
     fun getFullFunctionName(): String {
         if (catalogName != null) {

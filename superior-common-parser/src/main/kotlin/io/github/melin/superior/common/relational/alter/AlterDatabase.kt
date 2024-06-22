@@ -5,10 +5,10 @@ import io.github.melin.superior.common.relational.abs.AbsDatabaseStatement
 import kotlin.collections.ArrayList
 
 data class AlterDatabase(
-        val alterActionType: AlterActionType,
-        override val databaseName: String,
-        private val action: AlterAction?
-): AbsDatabaseStatement() {
+    val alterActionType: AlterActionType,
+    override val databaseName: String,
+    private val action: AlterAction?
+) : AbsDatabaseStatement() {
     override val statementType = StatementType.ALTER_DATABASE
     override val privilegeType = PrivilegeType.ALTER
     override val sqlType = SqlType.DDL
@@ -22,7 +22,10 @@ data class AlterDatabase(
         }
     }
 
-    constructor(alterActionType: AlterActionType, databaseName: String): this(alterActionType, databaseName, null)
+    constructor(
+        alterActionType: AlterActionType,
+        databaseName: String
+    ) : this(alterActionType, databaseName, null)
 
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)

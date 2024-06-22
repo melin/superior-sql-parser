@@ -7,12 +7,10 @@ import java.util.HashMap
 data class AlterDbPropsAction(
     var location: String? = null,
     var properties: HashMap<String, String> = Maps.newHashMap()
-): AlterAction() {
+) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.SET_PROPS
 }
 
-data class RenameDbAction(
-    var newDatabaseName: String
-): AlterAction() {
+data class RenameDbAction(var newDatabaseName: String) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.RENAME
 }

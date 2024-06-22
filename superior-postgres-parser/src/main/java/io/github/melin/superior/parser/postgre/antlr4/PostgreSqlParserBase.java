@@ -1,8 +1,7 @@
 package io.github.melin.superior.parser.postgre.antlr4;
 
-import java.util.List;
-
 import io.github.melin.superior.common.antlr4.UpperCaseCharStream;
+import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,10 +24,16 @@ public abstract class PostgreSqlParserBase extends Parser {
                 if (coi.nonreservedword_or_sconst() != null)
                     if (coi.nonreservedword_or_sconst().nonreservedword() != null)
                         if (coi.nonreservedword_or_sconst().nonreservedword().identifier() != null)
-                            if (coi.nonreservedword_or_sconst().nonreservedword().identifier()
-                                    .Identifier() != null) {
-                                lang = coi.nonreservedword_or_sconst().nonreservedword().identifier()
-                                        .Identifier().getText();
+                            if (coi.nonreservedword_or_sconst()
+                                            .nonreservedword()
+                                            .identifier()
+                                            .Identifier()
+                                    != null) {
+                                lang = coi.nonreservedword_or_sconst()
+                                        .nonreservedword()
+                                        .identifier()
+                                        .Identifier()
+                                        .getText();
                                 break;
                             }
             }
@@ -39,9 +44,7 @@ public abstract class PostgreSqlParserBase extends Parser {
             if (a.func_as() != null) {
                 func_as = a;
                 break;
-
             }
-
         }
         if (func_as != null) {
             String txt = GetRoutineBodyString(func_as.func_as().sconst(0));
@@ -97,7 +100,8 @@ public abstract class PostgreSqlParserBase extends Parser {
         PostgreSqlParser parser = new PostgreSqlParser(tokens);
         lexer.removeErrorListeners();
         parser.removeErrorListeners();
-        LexerDispatchingErrorListener listener_lexer = new LexerDispatchingErrorListener((Lexer)(((CommonTokenStream)(this.getInputStream())).getTokenSource()));
+        LexerDispatchingErrorListener listener_lexer = new LexerDispatchingErrorListener(
+                (Lexer) (((CommonTokenStream) (this.getInputStream())).getTokenSource()));
         ParserDispatchingErrorListener listener_parser = new ParserDispatchingErrorListener(this);
         lexer.addErrorListener(listener_lexer);
         parser.addErrorListener(listener_parser);

@@ -9,7 +9,11 @@ import java.util.*
 object DateUtils {
     fun getCurrentDateTime(): String {
         try {
-            val ldt = LocalDateTime.ofInstant(Date().toInstant(), ZoneId.systemDefault())
+            val ldt =
+                LocalDateTime.ofInstant(
+                    Date().toInstant(),
+                    ZoneId.systemDefault()
+                )
             val format = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
             return ldt.format(format)
         } catch (ex: DateTimeException) {

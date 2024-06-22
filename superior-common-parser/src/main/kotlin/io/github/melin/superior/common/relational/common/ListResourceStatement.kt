@@ -13,9 +13,10 @@ class ListResourceStatement(
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DML
 
-    constructor(fileName: String, resourceType: String): this(
-        listOf(fileName), resourceType
-    )
+    constructor(
+        fileName: String,
+        resourceType: String
+    ) : this(listOf(fileName), resourceType)
 
     fun first(): String {
         return fileNames.first()
