@@ -408,10 +408,7 @@ class SparkSqlParserTest {
         """
 
         val statement = SparkSqlHelper.parseStatement(sql)
-        Assert.assertEquals(
-            StatementType.CREATE_TABLE,
-            statement.statementType
-        )
+        Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
         if (statement is CreateTable) {
             val tableName = statement.tableId.tableName
             Assert.assertEquals("user", tableName)
@@ -423,7 +420,7 @@ class SparkSqlParserTest {
     @Test
     fun createTableTest13() {
         val sql =
-                """
+            """
             CREATE TABLE cyj123.pipeline_normal99 (
                 id int,
                 name string,
@@ -442,14 +439,14 @@ class SparkSqlParserTest {
         """
 
         val statement = SparkSqlHelper.parseStatement(sql)
-        Assert.assertEquals(
-                StatementType.CREATE_TABLE,
-                statement.statementType
-        )
+        Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
         if (statement is CreateTable) {
             val tableName = statement.tableId.tableName
             Assert.assertEquals("pipeline_normal99", tableName)
-            Assert.assertEquals("org.apache.paimon.hive.PaimonStorageHandler", statement.storageHandler)
+            Assert.assertEquals(
+                "org.apache.paimon.hive.PaimonStorageHandler",
+                statement.storageHandler
+            )
         } else {
             Assert.fail()
         }
