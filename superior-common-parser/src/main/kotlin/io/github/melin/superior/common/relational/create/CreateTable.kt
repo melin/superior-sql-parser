@@ -37,6 +37,7 @@ data class CreateTable(
     var options: Map<String, String>? = null
     var clusteredColumns: List<String> = Lists.newArrayList() // 分桶表分桶列
     var sortedColumns: List<String> = Lists.newArrayList() // 分桶表排序列
+    var storageHandler: String? = null
 
     constructor(
         tableId: TableId,

@@ -31,6 +31,7 @@ data class CreateTableAsSelect(
     var modelType: String = "hive"
     var partitionType: PartitionType? = null // 分区类型
     var options: Map<String, String>? = null
+    var storageHandler: String? = null
 
     constructor(
         tableId: TableId,

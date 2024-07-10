@@ -425,10 +425,16 @@ class SparkSqlAntlr4Visitor(
         }
 
         var fileFormat = tableProvider?.multipartIdentifier()?.text
+        var storageHandler: String? = null;
         createTableClauses.createFileFormat()
         if (createTableClauses.createFileFormat().size == 1) {
-            fileFormat =
-                createTableClauses.createFileFormat().get(0).fileFormat().text
+            val createFileFormatContext = createTableClauses.createFileFormat().get(0);
+            if (createFileFormatContext.fileFormat() != null) {
+                fileFormat = createFileFormatContext.fileFormat().text
+            } else if (createFileFormatContext.storageHandler() != null) {
+                storageHandler = createFileFormatContext.storageHandler().stringLit().STRING_LITERAL().text
+                storageHandler = CommonUtils.cleanQuote(storageHandler)
+            }
         }
 
         if (query != null) {
@@ -450,6 +456,7 @@ class SparkSqlAntlr4Visitor(
             createTable.modelType = modelType
             createTable.replace = replace
             createTable.options = options
+            createTable.storageHandler = storageHandler;
 
             if (partitionColumnNames.size > 0) {
                 createTable.partitionColumnNames.addAll(partitionColumnNames)
@@ -475,6 +482,7 @@ class SparkSqlAntlr4Visitor(
             createTable.replace = replace
             createTable.external = external
             createTable.temporary = temporary
+            createTable.storageHandler = storageHandler;
 
             if (createTableClauses.locationSpec().size > 0) {
                 createTable.location =

@@ -400,7 +400,7 @@ class SparkSqlParserTest {
         }
     }
 
-    // @Test
+    @Test
     fun createTableTest12() {
         val sql =
             """
@@ -409,17 +409,47 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
         Assert.assertEquals(
-            StatementType.CREATE_TABLE_AS_SELECT,
+            StatementType.CREATE_TABLE,
             statement.statementType
         )
         if (statement is CreateTable) {
             val tableName = statement.tableId.tableName
-            Assert.assertEquals(
-                "io.github.spark_redshift_community.spark.redshift",
-                statement.fileFormat
+            Assert.assertEquals("user", tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTableTest13() {
+        val sql =
+                """
+            CREATE TABLE cyj123.pipeline_normal99 (
+                id int,
+                name string,
+                class string,
+                area_code int,
+                pt string,
+                is_delete int,
+                age int
             )
-            Assert.assertEquals("my_table", tableName)
-            Assert.assertEquals("SELECT * FROM tabletosave", statement.querySql)
+            STORED BY 'org.apache.paimon.hive.PaimonStorageHandler' 
+            TBLPROPERTIES (
+                'table_type' = 'PAIMON',
+                'bucket' = '2',
+                'transient_lastDdlTime' = '1717400524'
+            ) 
+        """
+
+        val statement = SparkSqlHelper.parseStatement(sql)
+        Assert.assertEquals(
+                StatementType.CREATE_TABLE,
+                statement.statementType
+        )
+        if (statement is CreateTable) {
+            val tableName = statement.tableId.tableName
+            Assert.assertEquals("pipeline_normal99", tableName)
+            Assert.assertEquals("org.apache.paimon.hive.PaimonStorageHandler", statement.storageHandler)
         } else {
             Assert.fail()
         }
