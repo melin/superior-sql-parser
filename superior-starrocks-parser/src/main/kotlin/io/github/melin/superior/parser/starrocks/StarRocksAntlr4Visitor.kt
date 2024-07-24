@@ -469,7 +469,6 @@ class StarRocksAntlr4Visitor(
     }
 
     override fun visitInsertStatement(ctx: InsertStatementContext): Statement {
-        val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt =
             if (ctx.queryStatement() != null) {
                 this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
@@ -477,24 +476,32 @@ class StarRocksAntlr4Visitor(
                 QueryStmt()
             }
 
-        currentOptType = StatementType.INSERT
-        val insertTable =
-            if (ctx.INTO() != null)
-                InsertTable(InsertMode.INTO, queryStmt, tableId)
-            else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
+        if (ctx.FILES() == null) {
+            val tableId = parseTableName(ctx.qualifiedName())
+            currentOptType = StatementType.INSERT
+            val insertTable =
+                if (ctx.INTO() != null)
+                    InsertTable(InsertMode.INTO, queryStmt, tableId)
+                else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
 
-        if (ctx.expressionsWithDefault().size > 0) {
-            val rows: ArrayList<List<String>> = ArrayList()
-            ctx.expressionsWithDefault().forEach {
-                var text = it.text
-                text = StringUtils.substringBetween(text, "(", ")").trim()
-                text = CommonUtils.cleanQuote(text)
-                rows.add(listOf(text))
+            if (ctx.expressionsWithDefault().size > 0) {
+                val rows: ArrayList<List<String>> = ArrayList()
+                ctx.expressionsWithDefault().forEach {
+                    var text = it.text
+                    text = StringUtils.substringBetween(text, "(", ")").trim()
+                    text = CommonUtils.cleanQuote(text)
+                    rows.add(listOf(text))
+                }
+                insertTable.rows = rows
             }
-            insertTable.rows = rows
+            return insertTable
+        } else {
+            val filesProperties = parseOptions(ctx.propertyList())
+            currentOptType = StatementType.INSERT
+            return if (ctx.INTO() != null)
+                InsertFiles(InsertMode.INTO, queryStmt, filesProperties)
+            else InsertFiles(InsertMode.OVERWRITE, queryStmt, filesProperties)
         }
-
-        return insertTable
     }
 
     override fun visitSubmitTaskStatement(

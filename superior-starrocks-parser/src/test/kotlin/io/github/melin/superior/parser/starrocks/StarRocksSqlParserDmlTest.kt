@@ -4,10 +4,7 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.InsertTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.parser.starrocks.relational.DropTask
 import io.github.melin.superior.parser.starrocks.relational.SubmitTask
 import org.junit.Assert
@@ -249,6 +246,34 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("table1", statement.tableId.tableName)
             Assert.assertEquals(0, statement.queryStmt.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertTest4() {
+        val sql =
+            """
+            INSERT OVERWRITE
+            FILES(
+                "path" = "s3://test/test.parquest",
+                "format" = "parquet",
+                "compression" = "uncompressed",
+                "target_max_file_size" = "10240", -- 1M
+                "aws.s3.access_key" = "test_access_key",
+                "aws.s3.secret_key" = "test_secret_key",
+                "aws.s3.region" = "test-region-1"
+            )
+            SELECT * FROM test_db.test_table;
+        """
+                .trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is InsertFiles) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals(7, statement.properties.size)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
