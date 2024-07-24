@@ -408,6 +408,7 @@ DELETEXML                      : 'DELETEXML';
 DEMAND                         : 'DEMAND';
 DENSE_RANKM                    : 'DENSE_RANKM';
 DEPENDENT                      : 'DEPENDENT';
+DEPRECATE                      : 'DEPRECATE';
 DEPTH                          : 'DEPTH';
 DEQUEUE                        : 'DEQUEUE';
 DEREF                          : 'DEREF';
@@ -2352,16 +2353,16 @@ LEAST            : 'LEAST';
 GREATEST         : 'GREATEST';
 TO_DATE          : 'TO_DATE';
 
-CHARSETID        : 'CHARSETID';
-CHARSETFORM      : 'CHARSETFORM';
-DURATION         : 'DURATION';
-EXTEND           : 'EXTEND';
-MAXLEN           : 'MAXLEN';
-PERSISTABLE      : 'PERSISTABLE';
-POLYMORPHIC      : 'POLYMORPHIC';
-STRUCT           : 'STRUCT';
-TDO              : 'TDO';
-WM_CONCAT        : 'WM_CONCAT';
+CHARSETID   : 'CHARSETID';
+CHARSETFORM : 'CHARSETFORM';
+DURATION    : 'DURATION';
+EXTEND      : 'EXTEND';
+MAXLEN      : 'MAXLEN';
+PERSISTABLE : 'PERSISTABLE';
+POLYMORPHIC : 'POLYMORPHIC';
+STRUCT      : 'STRUCT';
+TDO         : 'TDO';
+WM_CONCAT   : 'WM_CONCAT';
 
 // Rule #358 <NATIONAL_CHAR_STRING_LIT> - subtoken typecast in <REGULAR_ID>, it also incorporates <character_representation>
 //  Lowercase 'n' is a usual addition to the standard
@@ -2501,7 +2502,7 @@ SPACES: [ \t\r\n]+ -> channel(HIDDEN);
 
 fragment NEWLINE_EOF    : NEWLINE | EOF;
 fragment QUESTION_MARK  : '?';
-fragment SIMPLE_LETTER  : [A-Z];
+fragment SIMPLE_LETTER  : [\p{Letter}];
 fragment FLOAT_FRAGMENT : UNSIGNED_INTEGER* '.'? UNSIGNED_INTEGER+;
 fragment NEWLINE        : '\r'? '\n';
 fragment SPACE          : [ \t];
