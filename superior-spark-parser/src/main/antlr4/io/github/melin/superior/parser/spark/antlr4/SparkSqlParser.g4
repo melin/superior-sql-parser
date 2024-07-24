@@ -213,16 +213,16 @@ statement
     | (MSCK)? REPAIR TABLE identifierReference
         (option=(ADD|DROP|SYNC) PARTITIONS)?                           #repairTable
     | op=(ADD | LIST) identifier .*?                                   #manageResource
-    | SET ROLE .*?                                                     #failNativeCommand
+    | SET ROLE setKey                                                     #failNativeCommand
     | SET TIME ZONE interval                                           #setTimeZone
     | SET TIME ZONE timezone                                           #setTimeZone
-    | SET TIME ZONE .*?                                                #setTimeZone
+    | SET TIME ZONE setKey                                                #setTimeZone
     | SET configKey EQ configValue                                     #setQuotedConfiguration
-    | SET configKey (EQ .*?)?                                          #setConfiguration
-    | SET .*? EQ configValue                                           #setQuotedConfiguration
-    | SET .*?                                                          #setConfiguration
+    | SET configKey (EQ setKey)?                                          #setConfiguration
+    | SET setKey EQ configValue                                           #setQuotedConfiguration
+    | SET setKey                                                          #setConfiguration
     | RESET configKey                                                  #resetQuotedConfiguration
-    | RESET .*?                                                        #resetConfiguration
+    | RESET setKey                                                       #resetConfiguration
     | CREATE INDEX (IF NOT EXISTS)? identifier ON TABLE?
         identifierReference (USING indexType=identifier)?
         LEFT_PAREN columns=multipartIdentifierPropertyList RIGHT_PAREN
@@ -262,6 +262,11 @@ statement
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
+setKey
+    : (identifier | '.')+
+    | DOUBLEQUOTED_STRING
+    ;
+
 timezone
     : stringLit
     | LOCAL
@@ -272,7 +277,9 @@ configKey
     ;
 
 configValue
-    : backQuotedIdentifier
+    : number
+    | identifier
+    | booleanValue
     ;
 
 callArgument
