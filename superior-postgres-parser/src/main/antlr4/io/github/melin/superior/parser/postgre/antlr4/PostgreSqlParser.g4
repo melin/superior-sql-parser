@@ -2107,6 +2107,11 @@ common_func_opt_item
    | SECURITY INVOKER
    | LEAKPROOF
    | NOT LEAKPROOF
+   | SHIPPABLE
+   | NOT SHIPPABLE
+   | FENCED
+   | NOT FENCED
+   | PACKAGE
    | COST numericonly
    | ROWS numericonly
    | SUPPORT any_name
@@ -4431,6 +4436,9 @@ unreserved_keyword
    | LARGE_P
    | LAST_P
    | LEAKPROOF
+   | SHIPPABLE
+   | FENCED
+   | PACKAGE
    | LEVEL
    | LISTEN
    | LOAD

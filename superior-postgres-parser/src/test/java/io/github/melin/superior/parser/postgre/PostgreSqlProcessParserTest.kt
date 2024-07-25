@@ -148,7 +148,9 @@ class PostgreSqlProcessParserTest {
                receiver int, 
                amount dec
             )
-            LANGUAGE plpgsql
+             RETURNS SETOF record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
             as ${'$'}${'$'}
             BEGIN
                 update accounts

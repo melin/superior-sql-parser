@@ -1096,6 +1096,18 @@ LEAKPROOF
    : 'LEAKPROOF'
    ;
 
+SHIPPABLE
+   : 'SHIPPABLE'
+   ;
+
+FENCED
+   : 'FENCED'
+   ;
+
+PACKAGE
+   : 'PACKAGE'
+   ;
+
 LEVEL
    : 'LEVEL'
    ;
