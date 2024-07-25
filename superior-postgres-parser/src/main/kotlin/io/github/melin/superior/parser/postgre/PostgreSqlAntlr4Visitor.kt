@@ -63,6 +63,14 @@ class PostgreSqlAntlr4Visitor(
         return if (currentResult == null) true else false
     }
 
+    override fun visitDecl_cursor_query(
+        ctx: PostgreSqlParser.Decl_cursor_queryContext
+    ): Statement? {
+        val statement = visitSelectstmt(ctx.selectstmt())
+        childStatements.add(statement)
+        return null
+    }
+
     override fun visitStmtmulti(
         ctx: PostgreSqlParser.StmtmultiContext
     ): Statement? {
@@ -241,22 +249,22 @@ class PostgreSqlAntlr4Visitor(
         return createTable
     }
 
+    override fun visitFunc_as(
+        ctx: PostgreSqlParser.Func_asContext
+    ): Statement? {
+        if (ctx.Definition != null) {
+            visitPlsqlroot(ctx.Definition as PlsqlrootContext)
+        }
+        return super.visitFunc_as(ctx)
+    }
+
     override fun visitCreatefunctionstmt(
         ctx: PostgreSqlParser.CreatefunctionstmtContext
     ): Statement {
         currentOptType =
             if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
 
-        val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
-        if (optItems != null) {
-            optItems
-                .filter {
-                    it.func_as() != null && it.func_as().Definition != null
-                }
-                .forEach {
-                    visitPlsqlroot(it.func_as().Definition as PlsqlrootContext)
-                }
-        }
+        super.visitCreatefunctionstmt(ctx)
 
         val replace =
             if (ctx.opt_or_replace().REPLACE() != null) true else false

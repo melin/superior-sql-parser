@@ -78,6 +78,8 @@ class PostgreSqlProcessParserTest {
         }
     }
 
+
+
     @Test
     fun createFunctionTest3() {
         val sql = """
@@ -170,6 +172,56 @@ class PostgreSqlProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
+            Assert.assertEquals(2, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createFunctionTest5() {
+        val sql = """
+            CREATE OR REPLACE FUNCTION fetch_film_titles_and_years(
+               OUT p_title VARCHAR(255), 
+               OUT p_release_year INTEGER
+            )
+            RETURNS SETOF RECORD 
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+                film_cursor CURSOR FOR
+                    SELECT title, release_year
+                    FROM film;
+                film_record RECORD;
+            BEGIN
+                -- Open cursor
+                OPEN film_cursor;
+            
+                -- Fetch rows and return
+                LOOP
+                    FETCH NEXT FROM film_cursor INTO film_record;
+                    EXIT WHEN NOT FOUND;
+            
+                    p_title = film_record.title;
+                    p_release_year = film_record.release_year;
+                    RETURN NEXT;
+                END LOOP;
+            
+                -- Close cursor
+                CLOSE film_cursor;
+                
+                update accounts
+                set balance = balance + amount 
+                where id = receiver;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId( "fetch_film_titles_and_years"), statement.functionId)
             Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()

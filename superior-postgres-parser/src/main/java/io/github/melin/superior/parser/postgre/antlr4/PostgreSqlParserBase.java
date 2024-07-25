@@ -46,6 +46,8 @@ public abstract class PostgreSqlParserBase extends Parser {
                 break;
             }
         }
+
+        lang = StringUtils.trim(lang);
         if (func_as != null) {
             String txt = GetRoutineBodyString(func_as.func_as().sconst(0));
             PostgreSqlParser ph = getPostgreSQLParser(StringUtils.trim(txt));
