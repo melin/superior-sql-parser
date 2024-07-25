@@ -2782,7 +2782,7 @@ class SparkSqlParserTest {
     fun distCpTest() {
         val sql =
             """
-            set spark.hadoop.fs.oss.endpoint = oss-cn-hangzhou.aliyuncs.com;
+            SET SPARK.HADOOP.FS.OSS.ENDPOINT = OSS-CN-HANGZHOU.ALIYUNCS.COM;
             set spark.hadoop.fs.oss.accessKeyId = xxx;
             set spark.hadoop.fs.oss.accessKeySecret = xxx;
             set spark.hadoop.fs.oss.attempts.maximum = 3;

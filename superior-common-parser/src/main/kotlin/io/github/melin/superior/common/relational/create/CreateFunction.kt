@@ -5,7 +5,6 @@ import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.relational.TableId
 
 data class CreateFunction(
     val functionId: FunctionId,
@@ -16,13 +15,13 @@ data class CreateFunction(
 ) : Statement() {
     override val statementType = StatementType.CREATE_FUNCTION
     override val privilegeType = PrivilegeType.CREATE
-    override val sqlType = SqlType.DDL
+    override val sqlType = SqlType.DML
 
     var global: Boolean = false // starrocks
     var properties: Map<String, String>? = null // starrocks
     var argumentTypes: List<String>? = null // starrocks
     var returnType: String? = null // starrocks
-    var inputTables: List<TableId> = listOf()
+    var childStatements: ArrayList<Statement> = arrayListOf()
 
     constructor(
         functionId: FunctionId,

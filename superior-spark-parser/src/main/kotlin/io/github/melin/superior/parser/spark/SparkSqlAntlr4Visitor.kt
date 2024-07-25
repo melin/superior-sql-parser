@@ -1247,59 +1247,19 @@ class SparkSqlAntlr4Visitor(
         }
     }
 
-    private val configKeyValueDef =
-        """([a-zA-Z_\d\\.:]+)\s*=([^;]*);*""".toRegex()
-    private val configKeyDef = """([a-zA-Z_\d\\.:]+)$""".toRegex()
-    private val configValueDef = """([^;]*);*""".toRegex()
-    private val strLiteralDef =
-        """(".*?[^\\]"|'.*?[^\\]'|[^ \n\r\t"']+)""".toRegex()
-
     override fun visitSetConfiguration(
         ctx: SparkSqlParser.SetConfigurationContext
     ): Statement {
-        if (ctx.configKey() != null) {
-            val keyStr = ctx.configKey().getText()
-            if (ctx.EQ() != null) {
-                val value =
-                    StringUtils.trim(
-                        CommonUtils.subsql(command, ctx.EQ().symbol, ctx.stop)
-                    )
-                if (configValueDef.matches(value)) {
-                    return SetStatement(keyStr, value)
-                } else {
-                    throw SQLParserException(
-                        "value not support: " + CommonUtils.subsql(command, ctx)
-                    )
-                }
-            } else {
-                return SetStatement(keyStr)
-            }
-        } else {
-            val config =
-                StringUtils.trim(
-                    CommonUtils.subsql(command, ctx.SET().symbol, ctx.stop)
-                )
-            if (configKeyValueDef.matches(config)) {
-                val matcher = configKeyValueDef.find(config)!!
-                val (key, value) = matcher.destructured
-                return SetStatement(key, StringUtils.trim(value))
-            } else if (configKeyDef.matches(config)) {
-                return SetStatement(config)
-            } else {
-                throw SQLParserException(
-                    "not support: " + CommonUtils.subsql(command, ctx)
-                )
-            }
-        }
+        return SetStatement(ctx.setKey().text)
     }
 
     override fun visitSetQuotedConfiguration(
         ctx: SparkSqlParser.SetQuotedConfigurationContext
     ): Statement {
         assert(ctx.configValue() != null)
-        if (ctx.configKey() != null) {
+        if (ctx.setKey() != null) {
             return SetStatement(
-                ctx.configKey().getText(),
+                ctx.setKey().getText(),
                 ctx.configValue().getText()
             )
         } else {
@@ -1317,19 +1277,7 @@ class SparkSqlAntlr4Visitor(
                 CommonUtils.subsql(command, ctx.RESET().symbol, ctx.stop)
             )
 
-        if (configKeyDef.matches(key)) {
-            return ReSetStatement(key)
-        } else {
-            throw SQLParserException(
-                "not support" + CommonUtils.subsql(command, ctx)
-            )
-        }
-    }
-
-    override fun visitResetQuotedConfiguration(
-        ctx: SparkSqlParser.ResetQuotedConfigurationContext
-    ): Statement {
-        return ReSetStatement(ctx.configKey().getText())
+        return ReSetStatement(key)
     }
 
     // -----------------------------------insert &

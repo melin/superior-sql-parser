@@ -1015,7 +1015,7 @@ createasstmt
    ;
 
 create_as_target
-   : qualified_name opt_column_list table_access_method_clause optwith oncommitoption opttablespace
+   : qualified_name opt_column_list table_access_method_clause optwith oncommitoption opttablespace gaussextension
    ;
 
 opt_with_data

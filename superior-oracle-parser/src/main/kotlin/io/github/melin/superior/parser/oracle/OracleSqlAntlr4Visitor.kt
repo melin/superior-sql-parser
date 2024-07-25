@@ -14,6 +14,7 @@ import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Declare_specContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Function_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Procedure_nameContext
@@ -36,10 +37,11 @@ class OracleSqlAntlr4Visitor(
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
-    private var functionNames: HashSet<FunctionId> = hashSetOf()
-    private var procedureNames: HashSet<ProcedureId> = hashSetOf()
 
+    // 多语句解析结果
     private var statements: ArrayList<Statement> = arrayListOf()
+    // 存储过程和函数中包含的子语句
+    private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
@@ -54,7 +56,8 @@ class OracleSqlAntlr4Visitor(
         node: RuleNode,
         currentResult: Statement?
     ): Boolean {
-        return if (currentResult == null) true else false
+        return if (currentResult == null && !(node is Declare_specContext)) true
+        else false
     }
 
     override fun visitSql_script(
@@ -83,6 +86,15 @@ class OracleSqlAntlr4Visitor(
                 statement.setSql(sql)
                 statements.add(statement)
 
+                if (statement is CreateFunction) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                } else if (statement is CreateProcedure) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                }
+
+                currentOptType = StatementType.UNKOWN
                 clean()
             }
         }
@@ -110,23 +122,54 @@ class OracleSqlAntlr4Visitor(
                 statement.setSql(sql)
                 statements.add(statement)
 
+                if (statement is CreateFunction) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                } else if (statement is CreateProcedure) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                }
+
+                currentOptType = StatementType.UNKOWN
                 clean()
             }
         }
         return null
     }
 
-    private fun clean() {
-        currentOptType = StatementType.UNKOWN
+    override fun visitSeq_of_declare_specs(
+        ctx: OracleParser.Seq_of_declare_specsContext
+    ): Statement? {
+        return super.visitSeq_of_declare_specs(ctx)
+    }
 
+    override fun visitBody(ctx: OracleParser.BodyContext?): Statement? {
+        return super.visitBody(ctx)
+    }
+
+    override fun visitSeq_of_statements(
+        ctx: OracleParser.Seq_of_statementsContext?
+    ): Statement? {
+        val stmt: Statement? = super.visitSeq_of_statements(ctx)
+        if (stmt != null) {
+            if (
+                currentOptType != StatementType.CREATE_FUNCTION &&
+                    currentOptType != StatementType.CREATE_PROCEDURE
+            ) {
+                childStatements.add(stmt)
+            }
+        }
+        clean()
+        return stmt
+    }
+
+    private fun clean() {
         limit = null
         offset = null
         queryStmts = arrayListOf()
         inputTables = arrayListOf()
         outputTables = arrayListOf()
         cteTempTables = arrayListOf()
-        functionNames = hashSetOf()
-        procedureNames = hashSetOf()
     }
 
     private fun addOutputTableId(tableId: TableId) {
@@ -236,12 +279,7 @@ class OracleSqlAntlr4Visitor(
         super.visitCreate_procedure_body(ctx)
         val procedureName = ctx.procedure_name()
         val procedureId = parseProcedureName(procedureName)
-        val procedure = CreateProcedure(procedureId)
-        procedure.inputTables.addAll(inputTables)
-        procedure.outputTables.addAll(outputTables)
-        procedure.functionNames.addAll(functionNames)
-        procedure.procedureNames.addAll(procedureNames)
-        return procedure
+        return CreateProcedure(procedureId)
     }
 
     override fun visitCreate_function_body(
@@ -251,8 +289,6 @@ class OracleSqlAntlr4Visitor(
         val funcName = ctx.function_name()
         val functionId = parseFunctionName(funcName)
         val function = CreateFunction(functionId)
-
-        function.inputTables = inputTables
         return function
     }
 
@@ -276,32 +312,14 @@ class OracleSqlAntlr4Visitor(
         ctx: OracleParser.Anonymous_blockContext?
     ): Statement {
         super.visitAnonymous_block(ctx)
-        val procedure = CreateProcedure()
-        procedure.inputTables.addAll(inputTables)
-        procedure.outputTables.addAll(outputTables)
-        procedure.functionNames.addAll(functionNames)
-        procedure.procedureNames.addAll(procedureNames)
-        return procedure
+        return CreateProcedure()
     }
 
     override fun visitCall_statement(
         ctx: OracleParser.Call_statementContext
     ): Statement {
-        ctx.routine_name().forEach { callStat ->
-            val procedureId =
-                if (callStat.id_expression().size > 0) {
-                    ProcedureId(
-                        callStat.identifier().text,
-                        callStat.id_expression().get(0).text
-                    )
-                } else {
-                    ProcedureId(callStat.identifier().text)
-                }
-
-            procedureNames.add(procedureId)
-        }
-
-        return CallProcedure(procedureNames)
+        val procedureId = ProcedureId(ctx.routine_name().get(0).text)
+        return CallProcedure(procedureId)
     }
 
     override fun visitAlter_table(

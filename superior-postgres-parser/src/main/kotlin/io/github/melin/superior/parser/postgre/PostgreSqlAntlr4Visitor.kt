@@ -4,6 +4,7 @@ import com.github.melin.superior.sql.parser.util.CommonUtils
 import com.google.common.collect.Lists
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterActionType.*
+import io.github.melin.superior.common.StatementType.*
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.CommentStatement
@@ -41,7 +42,10 @@ class PostgreSqlAntlr4Visitor(
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
+    // 多语句解析结果
     private var statements: ArrayList<Statement> = arrayListOf()
+    // 存储过程和函数中包含的子语句
+    private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
@@ -85,15 +89,36 @@ class PostgreSqlAntlr4Visitor(
                 statement.setSql(sql)
                 statements.add(statement)
 
+                if (statement is CreateFunction) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                } else if (statement is CreateProcedure) {
+                    statement.childStatements = childStatements
+                    childStatements = arrayListOf()
+                }
+
+                currentOptType = StatementType.UNKOWN
                 clean()
             }
         }
         return null
     }
 
-    private fun clean() {
-        currentOptType = StatementType.UNKOWN
+    override fun visitStmt(ctx: PostgreSqlParser.StmtContext): Statement? {
+        val stmt: Statement? = super.visitStmt(ctx)
+        if (stmt != null) {
+            if (
+                currentOptType != CREATE_FUNCTION &&
+                    currentOptType != CREATE_PROCEDURE
+            ) {
+                childStatements.add(stmt)
+            }
+        }
+        clean()
+        return stmt
+    }
 
+    private fun clean() {
         limit = null
         offset = null
         inputTables = arrayListOf()
@@ -137,7 +162,7 @@ class PostgreSqlAntlr4Visitor(
     override fun visitCreatestmt(
         ctx: PostgreSqlParser.CreatestmtContext
     ): Statement {
-        currentOptType = StatementType.CREATE_TABLE
+        currentOptType = CREATE_TABLE
 
         if (ctx.PARTITION() != null) {
             val partitionTableId = parseTableName(ctx.qualified_name(0))
@@ -220,8 +245,7 @@ class PostgreSqlAntlr4Visitor(
         ctx: PostgreSqlParser.CreatefunctionstmtContext
     ): Statement {
         currentOptType =
-            if (ctx.FUNCTION() != null) StatementType.CREATE_FUNCTION
-            else StatementType.CREATE_PROCEDURE
+            if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
 
         val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
         if (optItems != null) {
@@ -253,9 +277,10 @@ class PostgreSqlAntlr4Visitor(
                     )
                 }
 
-            val createFunction = CreateFunction(functionId, replace)
-            createFunction.inputTables = inputTables
-            return createFunction
+            currentOptType =
+                if (ctx.FUNCTION() != null) CREATE_FUNCTION
+                else CREATE_PROCEDURE
+            return CreateFunction(functionId, replace)
         } else {
             val procedureId =
                 if (funcName.type_function_name() != null) {
@@ -271,10 +296,10 @@ class PostgreSqlAntlr4Visitor(
                     )
                 }
 
-            val createProcedure = CreateProcedure(procedureId, replace)
-            createProcedure.inputTables = inputTables
-            createProcedure.outputTables = outputTables
-            return createProcedure
+            currentOptType =
+                if (ctx.FUNCTION() != null) CREATE_FUNCTION
+                else CREATE_PROCEDURE
+            return CreateProcedure(procedureId, replace)
         }
     }
 

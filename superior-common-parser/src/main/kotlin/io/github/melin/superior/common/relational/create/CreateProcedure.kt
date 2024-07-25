@@ -3,10 +3,8 @@ package io.github.melin.superior.common.relational.create
 import io.github.melin.superior.common.PrivilegeType
 import io.github.melin.superior.common.SqlType
 import io.github.melin.superior.common.StatementType
-import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.ProcedureId
 import io.github.melin.superior.common.relational.Statement
-import io.github.melin.superior.common.relational.TableId
 
 data class CreateProcedure(
     val procedureId: ProcedureId?,
@@ -17,12 +15,9 @@ data class CreateProcedure(
 ) : Statement() {
     override val statementType = StatementType.CREATE_PROCEDURE
     override val privilegeType = PrivilegeType.CREATE
-    override val sqlType = SqlType.DDL
+    override val sqlType = SqlType.DML
 
-    var inputTables: ArrayList<TableId> = arrayListOf()
-    var outputTables: ArrayList<TableId> = arrayListOf()
-    val functionNames: HashSet<FunctionId> = hashSetOf()
-    val procedureNames: HashSet<ProcedureId> = hashSetOf()
+    var childStatements: ArrayList<Statement> = arrayListOf()
 
     constructor(
         procedureId: ProcedureId,

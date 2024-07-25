@@ -217,11 +217,8 @@ statement
     | SET TIME ZONE interval                                           #setTimeZone
     | SET TIME ZONE timezone                                           #setTimeZone
     | SET TIME ZONE setKey                                                #setTimeZone
-    | SET configKey EQ configValue                                     #setQuotedConfiguration
-    | SET configKey (EQ setKey)?                                          #setConfiguration
     | SET setKey EQ configValue                                           #setQuotedConfiguration
     | SET setKey                                                          #setConfiguration
-    | RESET configKey                                                  #resetQuotedConfiguration
     | RESET setKey                                                       #resetConfiguration
     | CREATE INDEX (IF NOT EXISTS)? identifier ON TABLE?
         identifierReference (USING indexType=identifier)?
@@ -263,7 +260,7 @@ statement
     ;
 
 setKey
-    : (identifier | '.')+
+    : (identifier | '.' | MINUS)+
     | DOUBLEQUOTED_STRING
     ;
 
@@ -278,8 +275,9 @@ configKey
 
 configValue
     : number
-    | identifier
+    | (identifier | '.' | MINUS)+
     | booleanValue
+    | DOUBLEQUOTED_STRING
     ;
 
 callArgument

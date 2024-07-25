@@ -72,7 +72,7 @@ class PostgreSqlProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "check_password"), statement.functionId)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -88,6 +88,10 @@ class PostgreSqlProcessParserTest {
             )
             LANGUAGE plpgsql
             as ${'$'}${'$'}
+            DECLARE
+               max_rk int;
+               max_trade_time_length int;
+               max_trade_time character varying;
             BEGIN
                 update accounts_1
                 set balance = balance - amount 
@@ -99,14 +103,38 @@ class PostgreSqlProcessParserTest {
             
                 commit;
             END;${'$'}${'$'};
+            
+            create or replace procedure prac_transfer1(
+                           sender int,
+                           receiver int, 
+                           amount dec
+                        )
+                        LANGUAGE plpgsql
+                        as ${'$'}${'$'}
+                        DECLARE
+                           max_rk int;
+                           max_trade_time_length int;
+                           max_trade_time character varying;
+                        BEGIN
+                            update accounts_1
+                            set balance = balance - amount 
+                            where id = sender;
+                        
+                            update accounts_2
+                            set balance = balance + amount 
+                            where id = receiver;
+                        
+                            commit;
+                        END;${'$'}${'$'};
         """.trimIndent()
 
-        val statement = PostgreSqlHelper.parseStatement(sql)
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        val statement = statements.get(0)
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
-            Assert.assertEquals(2, statement.outputTables.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -140,7 +168,7 @@ class PostgreSqlProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
-            Assert.assertEquals(1, statement.outputTables.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }

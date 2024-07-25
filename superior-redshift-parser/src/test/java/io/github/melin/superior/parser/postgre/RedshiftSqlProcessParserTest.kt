@@ -72,7 +72,7 @@ class RedshiftSqlProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "check_password"), statement.functionId)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -106,7 +106,7 @@ class RedshiftSqlProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
-            Assert.assertEquals(2, statement.outputTables.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -140,7 +140,7 @@ class RedshiftSqlProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
-            Assert.assertEquals(1, statement.outputTables.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }

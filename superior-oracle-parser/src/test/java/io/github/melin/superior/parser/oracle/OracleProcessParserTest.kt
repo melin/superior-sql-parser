@@ -31,7 +31,7 @@ class OracleProcessParserTest {
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -57,7 +57,7 @@ class OracleProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId("test", "get_bal"), statement.functionId)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -83,7 +83,7 @@ class OracleProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "get_bal"), statement.functionId)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -123,10 +123,7 @@ class OracleProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId("UpdateCourse"), statement.procedureId)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(TableId("courses_tbl"), statement.inputTables.get(0))
-            //Assert.assertEquals(1, statement.outputTables.size)
-            //Assert.assertEquals(TableId("student_courses"), statement.outputTables.get(0))
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -179,7 +176,7 @@ class OracleProcessParserTest {
         }
 
         if (procedure2 is CreateProcedure) {
-            Assert.assertEquals(1, procedure2.procedureNames.size)
+            Assert.assertEquals(1, procedure2.childStatements.size)
         } else {
             Assert.fail()
         }
