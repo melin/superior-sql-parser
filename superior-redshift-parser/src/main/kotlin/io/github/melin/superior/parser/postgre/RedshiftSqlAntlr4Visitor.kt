@@ -20,6 +20,7 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import io.github.melin.superior.parser.redshift.antlr4.RedshiftParser
+import io.github.melin.superior.parser.redshift.antlr4.RedshiftParser.SqlrootContext
 import io.github.melin.superior.parser.redshift.antlr4.RedshiftParserBaseVisitor
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
@@ -44,6 +45,8 @@ class RedshiftSqlAntlr4Visitor(
     private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
+    private var plsql: String? = null
+
     fun getSqlStatements(): List<Statement> {
         return statements
     }
@@ -57,6 +60,17 @@ class RedshiftSqlAntlr4Visitor(
         currentResult: Statement?
     ): Boolean {
         return if (currentResult == null) true else false
+    }
+
+    override fun visitDecl_cursor_query(
+            ctx: RedshiftParser.Decl_cursor_queryContext
+    ): Statement? {
+        val statement = visitSelectstmt(ctx.selectstmt())
+        if (plsql != null) {
+            statement.setSql(CommonUtils.subsql(plsql, ctx))
+        }
+        childStatements.add(statement)
+        return null
     }
 
     override fun visitStmtmulti(
@@ -94,9 +108,12 @@ class RedshiftSqlAntlr4Visitor(
         val stmt: Statement? = super.visitStmt(ctx)
         if (stmt != null) {
             if (
-                currentOptType != StatementType.CREATE_FUNCTION &&
-                    currentOptType != StatementType.CREATE_PROCEDURE
+                currentOptType != CREATE_FUNCTION &&
+                    currentOptType != CREATE_PROCEDURE
             ) {
+                if (plsql != null) {
+                    stmt.setSql(CommonUtils.subsql(plsql, ctx))
+                }
                 childStatements.add(stmt)
             }
         }
@@ -228,6 +245,19 @@ class RedshiftSqlAntlr4Visitor(
         }
 
         return createTable
+    }
+
+    override fun visitFunc_as(
+            ctx: RedshiftParser.Func_asContext
+    ): Statement? {
+        if (ctx.Definition != null) {
+            plsql = CommonUtils.subsql(command, ctx)
+            plsql = StringUtils.substringBetween(plsql, "$$", "$$")
+            plsql = StringUtils.trim(plsql)
+            visitSqlroot(ctx.Definition as SqlrootContext)
+            plsql = null;
+        }
+        return super.visitFunc_as(ctx)
     }
 
     override fun visitCreatefunctionstmt(

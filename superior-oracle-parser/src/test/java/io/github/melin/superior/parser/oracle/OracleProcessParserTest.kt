@@ -227,6 +227,10 @@ class OracleProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals("SELECT order_total \n" +
+                    "   INTO acc_bal \n" +
+                    "   FROM orders \n" +
+                    "   WHERE customer_id = acc_no", statement.childStatements.get(0).getSql())
         } else {
             Assert.fail()
         }

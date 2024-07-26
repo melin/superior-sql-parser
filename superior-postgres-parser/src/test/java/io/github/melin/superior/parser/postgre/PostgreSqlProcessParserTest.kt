@@ -286,6 +286,9 @@ class PostgreSqlProcessParserTest {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId( "prac_transfer1"), statement.procedureId)
             Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals("update accounts_1\n" +
+                    "    set balance = balance - amount \n" +
+                    "    where id = sender", statement.childStatements.get(0).getSql())
         } else {
             Assert.fail()
         }

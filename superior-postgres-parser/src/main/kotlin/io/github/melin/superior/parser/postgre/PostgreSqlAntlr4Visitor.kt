@@ -48,6 +48,8 @@ class PostgreSqlAntlr4Visitor(
     private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
+    private var plsql: String? = null
+
     fun getSqlStatements(): List<Statement> {
         return statements
     }
@@ -67,6 +69,9 @@ class PostgreSqlAntlr4Visitor(
         ctx: PostgreSqlParser.Decl_cursor_queryContext
     ): Statement? {
         val statement = visitSelectstmt(ctx.selectstmt())
+        if (plsql != null) {
+            statement.setSql(CommonUtils.subsql(plsql, ctx))
+        }
         childStatements.add(statement)
         return null
     }
@@ -110,6 +115,9 @@ class PostgreSqlAntlr4Visitor(
                 currentOptType != CREATE_FUNCTION &&
                     currentOptType != CREATE_PROCEDURE
             ) {
+                if (plsql != null) {
+                    stmt.setSql(CommonUtils.subsql(plsql, ctx))
+                }
                 childStatements.add(stmt)
             }
         }
@@ -244,7 +252,11 @@ class PostgreSqlAntlr4Visitor(
         ctx: PostgreSqlParser.Func_asContext
     ): Statement? {
         if (ctx.Definition != null) {
+            plsql = CommonUtils.subsql(command, ctx)
+            plsql = StringUtils.substringBetween(plsql, "$$", "$$")
+            plsql = StringUtils.trim(plsql)
             visitPlsqlroot(ctx.Definition as PlsqlrootContext)
+            plsql = null;
         }
         return super.visitFunc_as(ctx)
     }
