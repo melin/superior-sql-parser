@@ -8,6 +8,7 @@ import io.github.melin.superior.common.relational.Statement
 
 data class CreateFunction(
     val functionId: FunctionId,
+    val childStatements: ArrayList<Statement>,
     var replace: Boolean = false,
     var temporary: Boolean = false,
     val className: String? = null,
@@ -21,12 +22,15 @@ data class CreateFunction(
     var properties: Map<String, String>? = null // starrocks
     var argumentTypes: List<String>? = null // starrocks
     var returnType: String? = null // starrocks
-    var childStatements: ArrayList<Statement> = arrayListOf()
 
     constructor(
         functionId: FunctionId,
+        childStatements: ArrayList<Statement>,
         replace: Boolean
-    ) : this(functionId, replace, false)
+    ) : this(functionId, childStatements, replace, false)
 
-    constructor(functionId: FunctionId) : this(functionId, false, false)
+    constructor(
+        functionId: FunctionId,
+        childStatements: ArrayList<Statement>
+    ) : this(functionId, childStatements, false, false)
 }

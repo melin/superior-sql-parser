@@ -56,8 +56,7 @@ class StarRocksAntlr4Visitor(
 
     override fun visitSqlStatements(ctx: SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -714,7 +713,8 @@ class StarRocksAntlr4Visitor(
         val argumentTypes = parseTypeList(ctx.typeList())
         val createFunction =
             CreateFunction(
-                FunctionId(functionId.schemaName, functionId.tableName)
+                FunctionId(functionId.schemaName, functionId.tableName),
+                arrayListOf(),
             )
         createFunction.global = global
         createFunction.properties = properties

@@ -26,22 +26,22 @@ object CommonUtils {
     }
 
     fun subsql(sql: String?, context: ParserRuleContext): String {
-        return StringUtils.substring(
-            sql,
-            context.start.startIndex,
-            context.stop.stopIndex + 1
-        )
+        val currSql =
+            StringUtils.substring(
+                sql,
+                context.start.startIndex,
+                context.stop.stopIndex + 1
+            )
+        return cleanLastSemi(currSql)
     }
 
     fun subsql(sql: String?, start: Token, stop: Token): String {
-        return StringUtils.substring(
-            sql,
-            start.stopIndex + 1,
-            stop.stopIndex + 1
-        )
+        val currSql =
+            StringUtils.substring(sql, start.stopIndex + 1, stop.stopIndex + 1)
+        return cleanLastSemi(currSql)
     }
 
-    fun cleanLastSemi(text: String): String {
+    private fun cleanLastSemi(text: String): String {
         if (StringUtils.endsWith(text, ";")) {
             return StringUtils.substring(text, 0, text.length - 1)
         }

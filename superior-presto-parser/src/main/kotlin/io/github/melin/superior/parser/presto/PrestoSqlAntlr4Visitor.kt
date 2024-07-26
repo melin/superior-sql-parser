@@ -54,8 +54,7 @@ class PrestoSqlAntlr4Visitor(
         ctx: PrestoSqlBaseParser.SqlStatementsContext
     ): Statement? {
         ctx.singleStatement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {

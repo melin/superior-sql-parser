@@ -62,6 +62,10 @@ class PostgreSqlProcessParserTest {
                 FROM    pwds
                 WHERE   username = ${'$'}1;
                 RETURN passed;
+                
+                update accounts_2
+                set balance = balance + amount 
+                where id = receiver;
             END;
             ${'$'}${'$'}  LANGUAGE plpgsql
                 SECURITY DEFINER
@@ -72,7 +76,7 @@ class PostgreSqlProcessParserTest {
         if (statement is CreateFunction) {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "check_password"), statement.functionId)
-            Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals(2, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -223,6 +227,65 @@ class PostgreSqlProcessParserTest {
             Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
             Assert.assertEquals(FunctionId( "fetch_film_titles_and_years"), statement.functionId)
             Assert.assertEquals(2, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createFunctionTest6() {
+        val sql = """
+            create or replace procedure prac_transfer(
+               sender int,
+               receiver int, 
+               amount dec
+            )
+             RETURNS SETOF record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            as ${'$'}${'$'}
+            BEGIN
+                update accounts
+                set balance = balance - amount 
+                where id = sender;            
+                commit;
+            END;${'$'}${'$'};
+            
+            create or replace procedure prac_transfer1(
+               sender int,
+               receiver int, 
+               amount dec
+            )
+             RETURNS SETOF record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            as ${'$'}${'$'}
+            BEGIN
+                update accounts_1
+                set balance = balance - amount 
+                where id = sender;            
+                commit;
+            END;${'$'}${'$'};
+        """.trimIndent()
+
+        val statements = PostgreSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(2, statements.size)
+        var statement = statements.get(0)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId( "prac_transfer"), statement.procedureId)
+            Assert.assertEquals(1, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+
+        statement = statements.get(1)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId( "prac_transfer1"), statement.procedureId)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }

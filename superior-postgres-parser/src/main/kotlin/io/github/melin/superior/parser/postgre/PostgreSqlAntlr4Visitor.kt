@@ -75,8 +75,7 @@ class PostgreSqlAntlr4Visitor(
         ctx: PostgreSqlParser.StmtmultiContext
     ): Statement? {
         ctx.stmt().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -96,14 +95,6 @@ class PostgreSqlAntlr4Visitor(
 
                 statement.setSql(sql)
                 statements.add(statement)
-
-                if (statement is CreateFunction) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                } else if (statement is CreateProcedure) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                }
 
                 currentOptType = StatementType.UNKOWN
                 clean()
@@ -263,6 +254,7 @@ class PostgreSqlAntlr4Visitor(
     ): Statement {
         currentOptType =
             if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
+        childStatements = arrayListOf()
 
         super.visitCreatefunctionstmt(ctx)
 
@@ -288,7 +280,7 @@ class PostgreSqlAntlr4Visitor(
             currentOptType =
                 if (ctx.FUNCTION() != null) CREATE_FUNCTION
                 else CREATE_PROCEDURE
-            return CreateFunction(functionId, replace)
+            return CreateFunction(functionId, childStatements, replace)
         } else {
             val procedureId =
                 if (funcName.type_function_name() != null) {
@@ -307,7 +299,7 @@ class PostgreSqlAntlr4Visitor(
             currentOptType =
                 if (ctx.FUNCTION() != null) CREATE_FUNCTION
                 else CREATE_PROCEDURE
-            return CreateProcedure(procedureId, replace)
+            return CreateProcedure(procedureId, childStatements, replace)
         }
     }
 

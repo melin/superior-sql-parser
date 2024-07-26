@@ -17,8 +17,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     override fun visitJobTask(ctx: AppJarParser.JobTaskContext): Statement {
         val jobStmt = super.visitJobTask(ctx)
-        var sql = CommonUtils.subsql(command, ctx)
-        sql = CommonUtils.cleanLastSemi(sql)
+        val sql = CommonUtils.subsql(command, ctx)
         jobStmt.setSql(sql)
 
         jobStmts.add(jobStmt)

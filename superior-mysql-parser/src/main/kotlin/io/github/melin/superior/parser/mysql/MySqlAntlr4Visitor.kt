@@ -50,8 +50,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
         ctx: MySqlParser.SqlStatementsContext
     ): Statement? {
         ctx.sqlStatement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {

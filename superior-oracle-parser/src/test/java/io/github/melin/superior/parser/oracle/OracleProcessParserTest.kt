@@ -22,6 +22,8 @@ class OracleProcessParserTest {
             BEGIN
                 FOR ORD IN C_ORDERS
                     LOOP
+                        SELECT CUSTOMER_NAME, PRICE FROM ORDERS_TEST;
+                        SELECT CUSTOMER_NAME, PRICE FROM ORDERS_TEST_1;
                         dbms_output.put_line(ORD.CUSTOMER_NAME || ORD.PRICE);
                     END LOOP;
             END;
@@ -31,7 +33,7 @@ class OracleProcessParserTest {
         
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
-            Assert.assertEquals(2, statement.childStatements.size)
+            Assert.assertEquals(4, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -123,7 +125,7 @@ class OracleProcessParserTest {
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(ProcedureId("UpdateCourse"), statement.procedureId)
-            Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals(3, statement.childStatements.size)
         } else {
             Assert.fail()
         }
@@ -177,6 +179,54 @@ class OracleProcessParserTest {
 
         if (procedure2 is CreateProcedure) {
             Assert.assertEquals(1, procedure2.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun processTest4() {
+        val sql = """
+            DECLARE
+                CURSOR C_ORDERS IS
+                    SELECT CUSTOMER_NAME, PRICE FROM ORDERS;
+            BEGIN
+                FOR ORD IN C_ORDERS
+                    LOOP
+                        SELECT CUSTOMER_NAME, PRICE FROM ORDERS_TEST;
+                        SELECT CUSTOMER_NAME, PRICE FROM ORDERS_TEST_1;
+                        dbms_output.put_line(ORD.CUSTOMER_NAME || ORD.PRICE);
+                    END LOOP;
+            END;
+            
+            CREATE FUNCTION test.get_bal(acc_no IN NUMBER) 
+               RETURN NUMBER 
+               IS acc_bal NUMBER(11,2);
+            BEGIN 
+               SELECT order_total 
+               INTO acc_bal 
+               FROM orders 
+               WHERE customer_id = acc_no; 
+               RETURN(acc_bal); 
+             END;
+        """.trimIndent()
+
+        val statements = OracleSqlHelper.parseMultiStatement(sql)
+        Assert.assertEquals(2, statements.size)
+        var statement = statements.get(0)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(4, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+
+        statement = statements.get(1)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(1, statement.childStatements.size)
         } else {
             Assert.fail()
         }

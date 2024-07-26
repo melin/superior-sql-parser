@@ -87,8 +87,7 @@ class SparkSqlAntlr4Visitor(
         ctx: SparkSqlParser.SqlStatementsContext
     ): Statement? {
         ctx.singleStatement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -1047,6 +1046,7 @@ class SparkSqlAntlr4Visitor(
         val replace = if (ctx.REPLACE() != null) true else false
         return CreateFunction(
             FunctionId(functionId.schemaName, functionId.tableName),
+            arrayListOf(),
             replace,
             temporary,
             classNmae,

@@ -8,6 +8,7 @@ import io.github.melin.superior.common.relational.Statement
 
 data class CreateProcedure(
     val procedureId: ProcedureId?,
+    val childStatements: ArrayList<Statement>,
     var replace: Boolean = false,
     var temporary: Boolean = false,
     val className: String? = null,
@@ -17,12 +18,13 @@ data class CreateProcedure(
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
 
-    var childStatements: ArrayList<Statement> = arrayListOf()
-
     constructor(
         procedureId: ProcedureId,
+        childStatements: ArrayList<Statement>,
         replace: Boolean
-    ) : this(procedureId, replace, false)
+    ) : this(procedureId, childStatements, replace, false)
 
-    constructor() : this(null)
+    constructor(
+        childStatements: ArrayList<Statement>
+    ) : this(null, childStatements)
 }

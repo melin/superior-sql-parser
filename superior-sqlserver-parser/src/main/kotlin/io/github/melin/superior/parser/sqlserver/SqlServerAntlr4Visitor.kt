@@ -56,8 +56,7 @@ class SqlServerAntlr4Visitor(
 
     override fun visitBatch(ctx: SqlServerParser.BatchContext): Statement? {
         ctx.sql_clauses().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {

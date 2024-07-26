@@ -14,12 +14,13 @@ import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
-import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Declare_specContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Function_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Procedure_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Seq_of_statementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
+import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
@@ -56,7 +57,20 @@ class OracleSqlAntlr4Visitor(
         node: RuleNode,
         currentResult: Statement?
     ): Boolean {
-        return if (currentResult == null && !(node is Declare_specContext)) true
+        if (currentResult != null) {
+            if (
+                StringUtils.isBlank(currentResult.getSql()) &&
+                    node is ParserRuleContext
+            ) {
+                val sql = CommonUtils.subsql(command, node)
+                currentResult.setSql(sql)
+            }
+            childStatements.add(currentResult)
+            clean()
+        }
+
+        return if (currentResult == null || node is Seq_of_statementsContext)
+            true
         else false
     }
 
@@ -64,8 +78,7 @@ class OracleSqlAntlr4Visitor(
         ctx: OracleParser.Sql_scriptContext
     ): Statement? {
         ctx.sql_plus_command().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -85,23 +98,12 @@ class OracleSqlAntlr4Visitor(
 
                 statement.setSql(sql)
                 statements.add(statement)
-
-                if (statement is CreateFunction) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                } else if (statement is CreateProcedure) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                }
-
                 currentOptType = StatementType.UNKOWN
-                clean()
             }
         }
 
         ctx.unit_statement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -121,46 +123,10 @@ class OracleSqlAntlr4Visitor(
 
                 statement.setSql(sql)
                 statements.add(statement)
-
-                if (statement is CreateFunction) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                } else if (statement is CreateProcedure) {
-                    statement.childStatements = childStatements
-                    childStatements = arrayListOf()
-                }
-
                 currentOptType = StatementType.UNKOWN
-                clean()
             }
         }
         return null
-    }
-
-    override fun visitSeq_of_declare_specs(
-        ctx: OracleParser.Seq_of_declare_specsContext
-    ): Statement? {
-        return super.visitSeq_of_declare_specs(ctx)
-    }
-
-    override fun visitBody(ctx: OracleParser.BodyContext?): Statement? {
-        return super.visitBody(ctx)
-    }
-
-    override fun visitSeq_of_statements(
-        ctx: OracleParser.Seq_of_statementsContext?
-    ): Statement? {
-        val stmt: Statement? = super.visitSeq_of_statements(ctx)
-        if (stmt != null) {
-            if (
-                currentOptType != StatementType.CREATE_FUNCTION &&
-                    currentOptType != StatementType.CREATE_PROCEDURE
-            ) {
-                childStatements.add(stmt)
-            }
-        }
-        clean()
-        return stmt
     }
 
     private fun clean() {
@@ -276,19 +242,21 @@ class OracleSqlAntlr4Visitor(
     override fun visitCreate_procedure_body(
         ctx: OracleParser.Create_procedure_bodyContext
     ): Statement {
+        childStatements = arrayListOf()
         super.visitCreate_procedure_body(ctx)
         val procedureName = ctx.procedure_name()
         val procedureId = parseProcedureName(procedureName)
-        return CreateProcedure(procedureId)
+        return CreateProcedure(procedureId, childStatements)
     }
 
     override fun visitCreate_function_body(
         ctx: OracleParser.Create_function_bodyContext
     ): Statement {
+        childStatements = arrayListOf()
         super.visitCreate_function_body(ctx)
         val funcName = ctx.function_name()
         val functionId = parseFunctionName(funcName)
-        val function = CreateFunction(functionId)
+        val function = CreateFunction(functionId, childStatements)
         return function
     }
 
@@ -311,15 +279,18 @@ class OracleSqlAntlr4Visitor(
     override fun visitAnonymous_block(
         ctx: OracleParser.Anonymous_blockContext?
     ): Statement {
+        childStatements = arrayListOf()
         super.visitAnonymous_block(ctx)
-        return CreateProcedure()
+        return CreateProcedure(childStatements)
     }
 
     override fun visitCall_statement(
         ctx: OracleParser.Call_statementContext
     ): Statement {
         val procedureId = ProcedureId(ctx.routine_name().get(0).text)
-        return CallProcedure(procedureId)
+        val callProcedure = CallProcedure(procedureId)
+        callProcedure.setSql(CommonUtils.subsql(command, ctx))
+        return callProcedure
     }
 
     override fun visitAlter_table(
@@ -343,6 +314,7 @@ class OracleSqlAntlr4Visitor(
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
         val queryStmt = QueryStmt(inputTables, limit, offset)
+        queryStmt.setSql(CommonUtils.subsql(command, ctx))
 
         queryStmts.add(queryStmt)
         return queryStmt
@@ -507,10 +479,10 @@ class OracleSqlAntlr4Visitor(
         currentOptType = StatementType.MERGE
 
         val mergeTableId = parseTableViewName(ctx.tableview_name())
+        cteTempTables.add(mergeTableId)
         val mergeTable = MergeTable(mergeTableId)
-        super.visitSelected_tableview(ctx.selected_tableview())
-
         mergeTable.inputTables = inputTables
+        super.visitMerge_statement(ctx)
         return mergeTable
     }
 
@@ -564,6 +536,13 @@ class OracleSqlAntlr4Visitor(
             limit = ctx.expression().text.toInt()
         } catch (e: Exception) {}
         return super.visitFetch_clause(ctx)
+    }
+
+    override fun visitCursor_declaration(
+        ctx: OracleParser.Cursor_declarationContext
+    ): Statement? {
+        super.visitCursor_declaration(ctx)
+        return null
     }
 
     override fun visitTableview_name(

@@ -68,8 +68,7 @@ class FlinkSqlAntlr4Visitor(
         ctx: FlinkSqlParser.SqlStatementsContext
     ): Statement? {
         ctx.singleStatement().forEach {
-            var sql = CommonUtils.subsql(command, it)
-            sql = CommonUtils.cleanLastSemi(sql)
+            val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -117,8 +116,7 @@ class FlinkSqlAntlr4Visitor(
             if ("desc".equals(startToken) || "describe".equals(startToken)) {
                 return DefaultStatement(StatementType.DESC)
             } else {
-                var sql = CommonUtils.subsql(command, ctx)
-                sql = CommonUtils.cleanLastSemi(sql)
+                val sql = CommonUtils.subsql(command, ctx)
                 throw SQLParserException("不支持的SQL: " + sql)
             }
         }
@@ -307,7 +305,6 @@ class FlinkSqlAntlr4Visitor(
         insertTable.outputTables.add(tableId)
 
         var sql = CommonUtils.subsql(command, ctx)
-        sql = CommonUtils.cleanLastSemi(sql)
         insertTable.setSql(sql)
         return insertTable
     }
