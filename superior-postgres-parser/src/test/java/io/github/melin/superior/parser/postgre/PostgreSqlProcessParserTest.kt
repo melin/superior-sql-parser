@@ -293,4 +293,33 @@ class PostgreSqlProcessParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun processTest5() {
+        val sql = """
+            CREATE FUNCTION get_bal(acc_no IN NUMBER) 
+            RETURNS SETOF record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            as ${'$'}${'$'}
+            BEGIN 
+               INSERT INTO widgets(map_id,widget_name)
+                SELECT mt.map_id, 'Bupo'
+                FROM map_tags mt
+                WHERE mt.map_license = '12345';
+             END ${'$'}${'$'};
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("get_bal"), statement.functionId)
+            Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals(StatementType.INSERT, statement.childStatements.get(0).statementType)
+        } else {
+            Assert.fail()
+        }
+
+    }
 }
