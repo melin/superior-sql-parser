@@ -88,10 +88,7 @@ class FlinkSqlParserDmlTest {
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
         var queryStmt = statements.get(0)
         if (queryStmt is QueryStmt) {
-            Assert.assertEquals(
-                "Orders",
-                queryStmt.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("Orders", queryStmt.inputTables.get(0).tableName)
             Assert.assertEquals(10, queryStmt.limit)
         } else {
             Assert.fail()
@@ -147,10 +144,7 @@ class FlinkSqlParserDmlTest {
         queryStmt = statements.get(7)
         if (queryStmt is QueryStmt) {
             Assert.assertEquals(1, queryStmt.inputTables.size)
-            Assert.assertEquals(
-                "ShopSales",
-                queryStmt.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("ShopSales", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -158,10 +152,7 @@ class FlinkSqlParserDmlTest {
         queryStmt = statements.get(8)
         if (queryStmt is QueryStmt) {
             Assert.assertEquals(1, queryStmt.inputTables.size)
-            Assert.assertEquals(
-                "Ticker",
-                queryStmt.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("Ticker", queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -196,20 +187,14 @@ class FlinkSqlParserDmlTest {
         val addStmt = statements.get(0)
 
         if (addStmt is AddResourceStatement) {
-            Assert.assertEquals(
-                "flink-connector-jdbc-3.1.1-1.17.jar",
-                addStmt.first()
-            )
+            Assert.assertEquals("flink-connector-jdbc-3.1.1-1.17.jar", addStmt.first())
         } else {
             Assert.fail()
         }
 
         val setStmt = statements.get(2)
         if (setStmt is SetStatement) {
-            Assert.assertEquals(
-                "execution.checkpointing.checkpoints-after-tasks-finish.enabled",
-                setStmt.key
-            )
+            Assert.assertEquals("execution.checkpointing.checkpoints-after-tasks-finish.enabled", setStmt.key)
         } else {
             Assert.fail()
         }
@@ -308,10 +293,7 @@ class FlinkSqlParserDmlTest {
             val insertTable = statement.insertTables.get(0)
 
             Assert.assertEquals(
-                "INSERT INTO pageview\n" +
-                    " SELECT page_id, count(1)\n" +
-                    " FROM pageviews\n" +
-                    " GROUP BY page_id",
+                "INSERT INTO pageview\n" + " SELECT page_id, count(1)\n" + " FROM pageviews\n" + " GROUP BY page_id",
                 insertTable.getSql()
             )
         } else {

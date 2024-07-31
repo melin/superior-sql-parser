@@ -12,9 +12,7 @@ data class FunctionId(
     companion object {
         @JvmStatic fun of(functionName: String) = TableId(functionName)
 
-        @JvmStatic
-        fun of(schemaName: String, functionName: String) =
-            TableId(schemaName, functionName)
+        @JvmStatic fun of(schemaName: String, functionName: String) = TableId(schemaName, functionName)
 
         @JvmStatic
         fun of(catalogName: String, schemaName: String, functionName: String) =
@@ -24,10 +22,7 @@ data class FunctionId(
     var funcType: String = "CF" // callfunction & TVF
     var functionArguments: List<String> = Lists.newArrayList()
 
-    constructor(
-        schemaName: String?,
-        tableName: String
-    ) : this(null, schemaName, tableName)
+    constructor(schemaName: String?, tableName: String) : this(null, schemaName, tableName)
 
     constructor(tableName: String) : this(null, null, tableName)
 

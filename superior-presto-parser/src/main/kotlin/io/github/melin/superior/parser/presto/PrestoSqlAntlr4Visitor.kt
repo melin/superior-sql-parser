@@ -19,10 +19,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2018/1/10. */
-class PrestoSqlAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : PrestoSqlBaseBaseVisitor<Statement>() {
+class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    PrestoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -43,16 +41,11 @@ class PrestoSqlAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSqlStatements(
-        ctx: PrestoSqlBaseParser.SqlStatementsContext
-    ): Statement? {
+    override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
@@ -90,9 +83,7 @@ class PrestoSqlAntlr4Visitor(
         cteTempTables = arrayListOf()
     }
 
-    override fun visitStatementDefault(
-        ctx: PrestoSqlBaseParser.StatementDefaultContext
-    ): Statement? {
+    override fun visitStatementDefault(ctx: PrestoSqlBaseParser.StatementDefaultContext): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitQuery(ctx.query())
@@ -115,9 +106,7 @@ class PrestoSqlAntlr4Visitor(
         return queryStmt
     }
 
-    override fun visitCreateTableAsSelect(
-        ctx: PrestoSqlBaseParser.CreateTableAsSelectContext
-    ): Statement? {
+    override fun visitCreateTableAsSelect(ctx: PrestoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseQuery(ctx.query())
@@ -126,18 +115,14 @@ class PrestoSqlAntlr4Visitor(
         return createTable
     }
 
-    override fun visitInsertInto(
-        ctx: PrestoSqlBaseParser.InsertIntoContext
-    ): Statement {
+    override fun visitInsertInto(ctx: PrestoSqlBaseParser.InsertIntoContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseQuery(ctx.query())
         val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId)
         return stmt
     }
 
-    override fun visitDelete(
-        ctx: PrestoSqlBaseParser.DeleteContext
-    ): Statement {
+    override fun visitDelete(ctx: PrestoSqlBaseParser.DeleteContext): Statement {
         currentOptType = StatementType.DELETE
         val tableId = parseTableName(ctx.qualifiedName())
         if (ctx.whereClause() != null) {
@@ -147,9 +132,7 @@ class PrestoSqlAntlr4Visitor(
         return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitDropTable(
-        ctx: PrestoSqlBaseParser.DropTableContext
-    ): Statement? {
+    override fun visitDropTable(ctx: PrestoSqlBaseParser.DropTableContext): Statement? {
         val tableId = parseTableName(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
@@ -157,15 +140,11 @@ class PrestoSqlAntlr4Visitor(
         return dropTable
     }
 
-    override fun visitExplain(
-        ctx: PrestoSqlBaseParser.ExplainContext
-    ): Statement? {
+    override fun visitExplain(ctx: PrestoSqlBaseParser.ExplainContext): Statement? {
         return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitQualifiedName(
-        ctx: PrestoSqlBaseParser.QualifiedNameContext
-    ): Statement? {
+    override fun visitQualifiedName(ctx: PrestoSqlBaseParser.QualifiedNameContext): Statement? {
         if (!(ctx.parent is PrestoSqlBaseParser.TableNameContext)) {
             return null
         }
@@ -184,9 +163,7 @@ class PrestoSqlAntlr4Visitor(
         return null
     }
 
-    private fun parseTableName(
-        ctx: PrestoSqlBaseParser.QualifiedNameContext
-    ): TableId {
+    private fun parseTableName(ctx: PrestoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null

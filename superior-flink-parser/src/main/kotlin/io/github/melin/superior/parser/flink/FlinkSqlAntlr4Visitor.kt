@@ -30,10 +30,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2018/1/10. */
-class FlinkSqlAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : FlinkSqlParserBaseVisitor<Statement>() {
+class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    FlinkSqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var currentAlterActionType: AlterActionType = AlterActionType.UNKOWN
@@ -57,16 +55,11 @@ class FlinkSqlAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSqlStatements(
-        ctx: FlinkSqlParser.SqlStatementsContext
-    ): Statement? {
+    override fun visitSqlStatements(ctx: FlinkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
@@ -106,9 +99,7 @@ class FlinkSqlAntlr4Visitor(
         functionNames = hashSetOf()
     }
 
-    override fun visitSqlStatement(
-        ctx: FlinkSqlParser.SqlStatementContext
-    ): Statement? {
+    override fun visitSqlStatement(ctx: FlinkSqlParser.SqlStatementContext): Statement? {
         val statement = super.visitSqlStatement(ctx)
 
         if (statement == null) {
@@ -123,17 +114,11 @@ class FlinkSqlAntlr4Visitor(
         return statement
     }
 
-    override fun visitSimpleCreateTable(
-        ctx: FlinkSqlParser.SimpleCreateTableContext
-    ): Statement {
+    override fun visitSimpleCreateTable(ctx: FlinkSqlParser.SimpleCreateTableContext): Statement {
         val tableId = parseSourceTable(ctx.sourceTable().uid())
-        val comment: String? =
-            if (ctx.commentSpec() != null)
-                ctx.commentSpec().STRING_LITERAL().text
-            else null
+        val comment: String? = if (ctx.commentSpec() != null) ctx.commentSpec().STRING_LITERAL().text else null
         val properties = parseTableOptions(ctx.withOption().tablePropertyList())
-        val ifNotExists: Boolean =
-            if (ctx.ifNotExists() != null) true else false
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
 
         val columnRels =
             ctx.columnOptionDefinition().map {
@@ -142,138 +127,73 @@ class FlinkSqlAntlr4Visitor(
                     val colName = column.columnName().text
                     val dataType = column.columnType().text
                     val colComment: String? =
-                        if (column.commentSpec() != null)
-                            column.commentSpec().STRING_LITERAL().text
-                        else null
-                    ColumnRel(
-                        colName,
-                        dataType,
-                        colComment,
-                        ColumnDefType.PHYSICAL
-                    )
+                        if (column.commentSpec() != null) column.commentSpec().STRING_LITERAL().text else null
+                    ColumnRel(colName, dataType, colComment, ColumnDefType.PHYSICAL)
                 } else if (column is MetadataColumnDefinitionContext) {
                     val colName = column.columnName().text
                     val dataType = column.columnType().text
                     var metadataKey: String? = null
                     if (column.metadataKey() != null) {
-                        metadataKey =
-                            CommonUtils.cleanQuote(column.metadataKey().text)
+                        metadataKey = CommonUtils.cleanQuote(column.metadataKey().text)
                     }
-                    val columnRel =
-                        ColumnRel(
-                            colName,
-                            dataType,
-                            null,
-                            ColumnDefType.METADATA
-                        )
+                    val columnRel = ColumnRel(colName, dataType, null, ColumnDefType.METADATA)
                     columnRel.metadataKey = metadataKey
                     columnRel
                 } else {
-                    val computedColumn =
-                        column as ComputedColumnDefinitionContext
+                    val computedColumn = column as ComputedColumnDefinitionContext
                     val colName = computedColumn.columnName().text
                     val colComment: String? =
-                        if (computedColumn.commentSpec() != null)
-                            computedColumn.commentSpec().STRING_LITERAL().text
+                        if (computedColumn.commentSpec() != null) computedColumn.commentSpec().STRING_LITERAL().text
                         else null
                     val computedExpr =
-                        CommonUtils.subsql(
-                            command,
-                            computedColumn
-                                .computedColumnExpression()
-                                .expression()
-                        )
-                    val columnRel =
-                        ColumnRel(
-                            colName,
-                            null,
-                            colComment,
-                            ColumnDefType.COMPUTED
-                        )
+                        CommonUtils.subsql(command, computedColumn.computedColumnExpression().expression())
+                    val columnRel = ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
                     columnRel.computedExpr = computedExpr
                     columnRel
                 }
             }
 
-        return CreateTable(
-            tableId,
-            TableType.FLINK,
-            comment,
-            columnRels,
-            ifNotExists,
-            properties
-        )
+        return CreateTable(tableId, TableType.FLINK, comment, columnRels, ifNotExists, properties)
     }
 
-    override fun visitCreateTableAsSelect(
-        ctx: FlinkSqlParser.CreateTableAsSelectContext
-    ): Statement {
+    override fun visitCreateTableAsSelect(ctx: FlinkSqlParser.CreateTableAsSelectContext): Statement {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseSourceTable(ctx.sourceTable().uid())
         val properties = parseTableOptions(ctx.withOption().tablePropertyList())
 
-        val ifNotExists: Boolean =
-            if (ctx.ifNotExists() != null) true else false
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
-        return CreateTableAsSelect(
-            tableId,
-            queryStmt,
-            null,
-            ifNotExists,
-            properties
-        )
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        return CreateTableAsSelect(tableId, queryStmt, null, ifNotExists, properties)
     }
 
-    override fun visitCreateView(
-        ctx: FlinkSqlParser.CreateViewContext
-    ): Statement {
+    override fun visitCreateView(ctx: FlinkSqlParser.CreateViewContext): Statement {
         currentOptType = StatementType.CREATE_VIEW
         val tableId = parseSourceTable(ctx.uid())
-        val comment: String? =
-            if (ctx.commentSpec() != null)
-                ctx.commentSpec().STRING_LITERAL().text
-            else null
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val comment: String? = if (ctx.commentSpec() != null) ctx.commentSpec().STRING_LITERAL().text else null
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
 
-        val ifNotExists: Boolean =
-            if (ctx.ifNotExists() != null) true else false
+        val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
         var columnNameList: List<ColumnRel>? = null
         if (ctx.columnNameList() != null) {
-            columnNameList =
-                ctx.columnNameList().columnName().map {
-                    ColumnRel(CommonUtils.cleanQuote(it.uid().text))
-                }
+            columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
         }
 
-        return CreateView(
-            tableId,
-            queryStmt,
-            comment,
-            ifNotExists,
-            columnNameList
-        )
+        return CreateView(tableId, queryStmt, comment, ifNotExists, columnNameList)
     }
 
-    override fun visitInsertStatement(
-        ctx: FlinkSqlParser.InsertStatementContext
-    ): Statement {
+    override fun visitInsertStatement(ctx: FlinkSqlParser.InsertStatementContext): Statement {
         if (ctx.insertSimpleStatement() != null) {
             return this.insertSimpleStatement(ctx.insertSimpleStatement())
         } else if (ctx.insertMulStatementCompatibility() != null) {
             val insertTables =
-                ctx.insertMulStatementCompatibility()
-                    .insertSimpleStatement()
-                    .map { insertStmt ->
-                        this.insertSimpleStatement(insertStmt)
-                    }
+                ctx.insertMulStatementCompatibility().insertSimpleStatement().map { insertStmt ->
+                    this.insertSimpleStatement(insertStmt)
+                }
 
             return InsertMultiTable(insertTables)
         } else if (ctx.insertMulStatement() != null) {
             val insertTables =
-                ctx.insertMulStatement().insertSimpleStatement().map {
-                    insertStmt ->
+                ctx.insertMulStatement().insertSimpleStatement().map { insertStmt ->
                     this.insertSimpleStatement(insertStmt)
                 }
 
@@ -282,25 +202,17 @@ class FlinkSqlAntlr4Visitor(
         return super.visitInsertStatement(ctx)
     }
 
-    private fun insertSimpleStatement(
-        ctx: FlinkSqlParser.InsertSimpleStatementContext
-    ): InsertTable {
+    private fun insertSimpleStatement(ctx: FlinkSqlParser.InsertSimpleStatementContext): InsertTable {
         currentOptType = StatementType.INSERT
         val tableId = parseSourceTable(ctx.uid())
-        val insertMode =
-            if (ctx.KW_INTO() != null) InsertMode.INTO else InsertMode.OVERWRITE
+        val insertMode = if (ctx.KW_INTO() != null) InsertMode.INTO else InsertMode.OVERWRITE
         var columnNameList: List<ColumnRel>? = null
         if (ctx.columnNameList() != null) {
-            columnNameList =
-                ctx.columnNameList().columnName().map {
-                    ColumnRel(CommonUtils.cleanQuote(it.uid().text))
-                }
+            columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
         }
 
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
-        val insertTable =
-            InsertTable(insertMode, queryStmt, tableId, columnNameList)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val insertTable = InsertTable(insertMode, queryStmt, tableId, columnNameList)
 
         insertTable.outputTables.add(tableId)
 
@@ -309,9 +221,7 @@ class FlinkSqlAntlr4Visitor(
         return insertTable
     }
 
-    override fun visitQueryStatement(
-        ctx: FlinkSqlParser.QueryStatementContext
-    ): Statement {
+    override fun visitQueryStatement(ctx: FlinkSqlParser.QueryStatementContext): Statement {
         if (currentOptType == StatementType.UNKOWN) {
             currentOptType = StatementType.SELECT
         }
@@ -319,9 +229,7 @@ class FlinkSqlAntlr4Visitor(
         return QueryStmt(inputTables, limit, offset)
     }
 
-    override fun visitJarStatement(
-        ctx: FlinkSqlParser.JarStatementContext
-    ): Statement {
+    override fun visitJarStatement(ctx: FlinkSqlParser.JarStatementContext): Statement {
         val jarFileName = CommonUtils.cleanQuote(ctx.jarFileName().text)
         if (ctx.KW_ADD() != null) {
             return AddResourceStatement(jarFileName, "jar")
@@ -330,37 +238,27 @@ class FlinkSqlAntlr4Visitor(
         }
     }
 
-    override fun visitCreateCatalog(
-        ctx: FlinkSqlParser.CreateCatalogContext
-    ): Statement {
+    override fun visitCreateCatalog(ctx: FlinkSqlParser.CreateCatalogContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
         val properties = parseTableOptions(ctx.withOption().tablePropertyList())
         return CreateCatalog(catalogName, properties)
     }
 
-    override fun visitDropCatalog(
-        ctx: FlinkSqlParser.DropCatalogContext
-    ): Statement {
+    override fun visitDropCatalog(ctx: FlinkSqlParser.DropCatalogContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
         return DropCatalog(catalogName)
     }
 
-    override fun visitExplainStatement(
-        ctx: FlinkSqlParser.ExplainStatementContext?
-    ): Statement {
+    override fun visitExplainStatement(ctx: FlinkSqlParser.ExplainStatementContext?): Statement {
         return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitUseStatement(
-        ctx: FlinkSqlParser.UseStatementContext
-    ): Statement {
+    override fun visitUseStatement(ctx: FlinkSqlParser.UseStatementContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.uid().text)
         return UseCatalog(catalogName)
     }
 
-    override fun visitSyncTableExpr(
-        ctx: FlinkSqlParser.SyncTableExprContext
-    ): Statement {
+    override fun visitSyncTableExpr(ctx: FlinkSqlParser.SyncTableExprContext): Statement {
         val sinkTable = parseSourceTable(ctx.sink.uid())
         val sourceTable = parseSourceTable(ctx.source.uid())
 
@@ -374,9 +272,7 @@ class FlinkSqlAntlr4Visitor(
         return createTable
     }
 
-    override fun visitSyncDatabaseExpr(
-        ctx: FlinkSqlParser.SyncDatabaseExprContext
-    ): Statement {
+    override fun visitSyncDatabaseExpr(ctx: FlinkSqlParser.SyncDatabaseExprContext): Statement {
         val sinkDatabase = parseDatabase(ctx.sink.uid())
         val sourceDatabase = parseDatabase(ctx.source.uid())
 
@@ -385,12 +281,7 @@ class FlinkSqlAntlr4Visitor(
 
         val createDatabase =
             if (ctx.includeTable == null) {
-                SyncDatabase(
-                    sinkDatabase.first,
-                    sinkDatabase.second,
-                    sourceDatabase.first,
-                    sourceDatabase.second
-                )
+                SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second)
             } else {
                 SyncDatabase(
                     sinkDatabase.first,
@@ -402,8 +293,7 @@ class FlinkSqlAntlr4Visitor(
             }
 
         if (ctx.excludeTable != null) {
-            createDatabase.excludingTables =
-                CommonUtils.cleanQuote(ctx.excludeTable.text)
+            createDatabase.excludingTables = CommonUtils.cleanQuote(ctx.excludeTable.text)
         }
 
         createDatabase.sinkOptions.putAll(sinkOptions)
@@ -411,9 +301,7 @@ class FlinkSqlAntlr4Visitor(
         return createDatabase
     }
 
-    override fun visitWindowTVFParam(
-        ctx: FlinkSqlParser.WindowTVFParamContext
-    ): Statement? {
+    override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {
         if (ctx.timeAttrColumn() != null) {
             val tableId = parseSourceTable(ctx.timeAttrColumn().uid())
             inputTables.add(tableId)
@@ -421,9 +309,7 @@ class FlinkSqlAntlr4Visitor(
         return null
     }
 
-    override fun visitTablePath(
-        ctx: FlinkSqlParser.TablePathContext
-    ): Statement? {
+    override fun visitTablePath(ctx: FlinkSqlParser.TablePathContext): Statement? {
         if (
             StatementType.SELECT == currentOptType ||
                 StatementType.INSERT == currentOptType ||
@@ -435,28 +321,21 @@ class FlinkSqlAntlr4Visitor(
 
             val tableId = parseSourceTable(ctx.uid())
 
-            if (
-                !inputTables.contains(tableId) &&
-                    !cteTempTables.contains(tableId)
-            ) {
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }
         return null
     }
 
-    override fun visitWithItem(
-        ctx: FlinkSqlParser.WithItemContext
-    ): Statement? {
+    override fun visitWithItem(ctx: FlinkSqlParser.WithItemContext): Statement? {
         val tableId = TableId(ctx.withItemName().text)
         cteTempTables.add(tableId)
         super.visitWithItem(ctx)
         return null
     }
 
-    override fun visitSetStatement(
-        ctx: FlinkSqlParser.SetStatementContext
-    ): Statement {
+    override fun visitSetStatement(ctx: FlinkSqlParser.SetStatementContext): Statement {
         val tableProperty = ctx.tableProperty()
         var key = tableProperty.tablePropertyKey().text
         var value = tableProperty.tablePropertyValue().text
@@ -465,9 +344,7 @@ class FlinkSqlAntlr4Visitor(
         return SetStatement(key, value)
     }
 
-    override fun visitLimitClause(
-        ctx: FlinkSqlParser.LimitClauseContext
-    ): Statement? {
+    override fun visitLimitClause(ctx: FlinkSqlParser.LimitClauseContext): Statement? {
         if (ctx.limit != null) {
             limit = ctx.limit.text.toInt()
         }
@@ -507,9 +384,7 @@ class FlinkSqlAntlr4Visitor(
         }
     }
 
-    private fun parseTableOptions(
-        ctx: TablePropertyListContext
-    ): Map<String, String> {
+    private fun parseTableOptions(ctx: TablePropertyListContext): Map<String, String> {
         val properties = HashMap<String, String>()
         ctx.tableProperty().forEach { item ->
             val property = item as TablePropertyContext

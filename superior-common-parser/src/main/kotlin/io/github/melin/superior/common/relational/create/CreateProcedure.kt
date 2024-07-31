@@ -24,7 +24,5 @@ data class CreateProcedure(
         replace: Boolean
     ) : this(procedureId, childStatements, replace, false)
 
-    constructor(
-        childStatements: ArrayList<Statement>
-    ) : this(null, childStatements)
+    constructor(childStatements: ArrayList<Statement>) : this(null, childStatements)
 }

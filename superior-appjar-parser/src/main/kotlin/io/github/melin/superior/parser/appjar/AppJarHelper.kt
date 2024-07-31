@@ -72,8 +72,7 @@ object AppJarHelper {
                 throw e.withCommand(trimCmd)
             }
         } finally {
-            val releaseAntlrCache =
-                System.getenv(RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            val releaseAntlrCache = System.getenv(RELEASE_ANTLR_CACHE_AFTER_PARSING)
             if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
                 AbstractJarParser.refreshParserCaches()
             }

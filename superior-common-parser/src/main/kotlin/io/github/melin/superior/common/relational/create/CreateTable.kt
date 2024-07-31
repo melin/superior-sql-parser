@@ -44,17 +44,7 @@ data class CreateTable(
         tableType: TableType,
         comment: String?,
         columnRels: List<ColumnRel>?
-    ) : this(
-        tableId,
-        tableType,
-        comment,
-        null,
-        null,
-        columnRels,
-        null,
-        null,
-        false
-    )
+    ) : this(tableId, tableType, comment, null, null, columnRels, null, null, false)
 
     constructor(
         tableId: TableId,
@@ -62,17 +52,7 @@ data class CreateTable(
         comment: String?,
         lifeCycle: Int?,
         columnRels: List<ColumnRel>?
-    ) : this(
-        tableId,
-        tableType,
-        comment,
-        lifeCycle,
-        null,
-        columnRels,
-        null,
-        null,
-        false
-    )
+    ) : this(tableId, tableType, comment, lifeCycle, null, columnRels, null, null, false)
 
     constructor(
         tableId: TableId,
@@ -81,15 +61,5 @@ data class CreateTable(
         columnRels: List<ColumnRel>? = null,
         ifNotExists: Boolean,
         properties: Map<String, String>? = null
-    ) : this(
-        tableId,
-        tableType,
-        comment,
-        null,
-        null,
-        columnRels,
-        properties,
-        null,
-        ifNotExists
-    )
+    ) : this(tableId, tableType, comment, null, null, columnRels, properties, null, ifNotExists)
 }

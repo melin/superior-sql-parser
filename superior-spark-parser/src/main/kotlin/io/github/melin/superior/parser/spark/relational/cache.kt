@@ -7,19 +7,12 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.QueryStmt
 
-data class CacheTable(
-    val tableId: TableId,
-    var options: Map<String, String>,
-    val queryStmt: QueryStmt?
-) : Statement() {
+data class CacheTable(val tableId: TableId, var options: Map<String, String>, val queryStmt: QueryStmt?) : Statement() {
     override val statementType = StatementType.CACHE
     override val privilegeType = PrivilegeType.READ
     override val sqlType = SqlType.DML
 
-    constructor(
-        tableId: TableId,
-        options: Map<String, String>
-    ) : this(tableId, options, null)
+    constructor(tableId: TableId, options: Map<String, String>) : this(tableId, options, null)
 }
 
 data class UnCacheTable(val tableId: TableId) : Statement() {

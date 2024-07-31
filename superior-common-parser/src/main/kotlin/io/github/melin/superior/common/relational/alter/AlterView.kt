@@ -5,10 +5,7 @@ import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.abs.AbsTableStatement
 import kotlin.collections.ArrayList
 
-data class AlterView(
-    override val tableId: TableId,
-    private val action: AlterAction?
-) : AbsTableStatement() {
+data class AlterView(override val tableId: TableId, private val action: AlterAction?) : AbsTableStatement() {
     override val statementType = StatementType.ALTER_VIEW
     override val privilegeType = PrivilegeType.ALTER
     override val sqlType = SqlType.DDL

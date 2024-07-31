@@ -51,9 +51,7 @@ class AppJarParserTest {
         }
 
         var setCount = 0
-        statements
-            .filter { it.statementType == StatementType.SET }
-            .forEach { setCount = setCount + 1 }
+        statements.filter { it.statementType == StatementType.SET }.forEach { setCount = setCount + 1 }
 
         Assert.assertEquals(14, setCount)
 
@@ -68,10 +66,7 @@ class AppJarParserTest {
         statement = statements.get(15)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "tet_test-demo_1.23-sdfd.jar",
-                statement.resourceName
-            )
+            Assert.assertEquals("tet_test-demo_1.23-sdfd.jar", statement.resourceName)
             Assert.assertEquals("com.example.Demo1", statement.className)
             Assert.assertEquals(8, statement.params?.size)
             Assert.assertEquals("/user/jars/*", statement.params?.get(5))
@@ -82,8 +77,7 @@ class AppJarParserTest {
 
     @Test
     fun setConfigTest2() {
-        val sql =
-            "demo.jar com.example.Demo 'hello \"test\" world' param2 \n param3"
+        val sql = "demo.jar com.example.Demo 'hello \"test\" world' param2 \n param3"
 
         val statementDatas = AppJarHelper.parseStatement(sql)
         Assert.assertEquals(1, statementDatas.size)
@@ -95,10 +89,7 @@ class AppJarParserTest {
             Assert.assertEquals("com.example.Demo", statement.className)
             Assert.assertEquals(3, statement.params?.size)
 
-            Assert.assertEquals(
-                "hello \"test\" world",
-                statement.params?.get(0)
-            )
+            Assert.assertEquals("hello \"test\" world", statement.params?.get(0))
             Assert.assertEquals("param3", statement.params?.get(2))
         } else {
             Assert.fail()
@@ -135,10 +126,7 @@ class AppJarParserTest {
                 "psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar",
                 statement.resourceName
             )
-            Assert.assertEquals(
-                "com.example.dw.psi.StartDCJob",
-                statement.className
-            )
+            Assert.assertEquals("com.example.dw.psi.StartDCJob", statement.className)
             Assert.assertEquals("1,3,sd,qw", statement.params?.get(0))
         } else {
             Assert.fail()
@@ -173,14 +161,8 @@ new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar com.example.dw.inde
         val statement = statementDatas.get(15)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar",
-                statement.resourceName
-            )
-            Assert.assertEquals(
-                "com.example.dw.index.StartDCJob",
-                statement.className
-            )
+            Assert.assertEquals("new_calculate_metrics-100-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
+            Assert.assertEquals("com.example.dw.index.StartDCJob", statement.className)
             Assert.assertEquals("2018-03-18", statement.params?.get(1))
         } else {
             Assert.fail()
@@ -206,15 +188,9 @@ createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar imei_test.euSaveHBase gaea_of
         val statement = statementDatas.get(7)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar",
-                statement.resourceName
-            )
+            Assert.assertEquals("createHfile-1.2-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
             Assert.assertEquals("imei_test.euSaveHBase", statement.className)
-            Assert.assertEquals(
-                "/xiaoyong.fu/sh/mobile/loan",
-                statement.params?.get(5)
-            )
+            Assert.assertEquals("/xiaoyong.fu/sh/mobile/loan", statement.params?.get(5))
             Assert.assertEquals("400", statement.params?.get(6))
             Assert.assertEquals("%7B%22job_type%22=", statement.params?.get(7))
             Assert.assertEquals("--jar", statement.params?.get(8))
@@ -244,22 +220,10 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statement = statementDatas.get(9)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "province-1.0-SNAPSHOT-jar-with-dependencies.jar",
-                statement.resourceName
-            )
-            Assert.assertEquals(
-                "com.example.screen_dc.ScreenJob",
-                statement.className
-            )
-            Assert.assertEquals(
-                "/xiaoyong.fu/2017-22-03/sh/mobile/loan/",
-                statement.params?.get(0)
-            )
-            Assert.assertEquals(
-                "--write-private-test",
-                statement.params?.get(1)
-            )
+            Assert.assertEquals("province-1.0-SNAPSHOT-jar-with-dependencies.jar", statement.resourceName)
+            Assert.assertEquals("com.example.screen_dc.ScreenJob", statement.className)
+            Assert.assertEquals("/xiaoyong.fu/2017-22-03/sh/mobile/loan/", statement.params?.get(0))
+            Assert.assertEquals("--write-private-test", statement.params?.get(1))
         } else {
             Assert.fail()
         }
@@ -279,18 +243,9 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statement = statementDatas.get(0)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "raph.edgesSNAPSHOT.eventType.jar",
-                statement.resourceName
-            )
-            Assert.assertEquals(
-                "com.example.graph.PhoenixCSVWriterJob",
-                statement.className
-            )
-            Assert.assertEquals(
-                "hdfs://192.168.40.37,hdfs://192.168.39.130",
-                statement.params?.get(6)
-            )
+            Assert.assertEquals("raph.edgesSNAPSHOT.eventType.jar", statement.resourceName)
+            Assert.assertEquals("com.example.graph.PhoenixCSVWriterJob", statement.className)
+            Assert.assertEquals("hdfs://192.168.40.37,hdfs://192.168.39.130", statement.params?.get(6))
         } else {
             Assert.fail()
         }
@@ -314,14 +269,8 @@ province-1.0-SNAPSHOT-jar-with-dependencies.jar com.example.screen_dc.ScreenJob 
         val statement = statementDatas.get(5)
         if (statement is AppJarInfo) {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
-            Assert.assertEquals(
-                "/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar",
-                statement.resourceName
-            )
-            Assert.assertEquals(
-                "com.example.pontus.core.Engine",
-                statement.className
-            )
+            Assert.assertEquals("/user/pontus_2.1/pontus-core-2.1.0-SNAPSHOT-fat.jar", statement.resourceName)
+            Assert.assertEquals("com.example.pontus.core.Engine", statement.className)
             Assert.assertEquals(4, statement.params?.size)
             val config =
                 """

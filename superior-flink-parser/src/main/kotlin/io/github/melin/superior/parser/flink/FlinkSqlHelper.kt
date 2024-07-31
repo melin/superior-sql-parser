@@ -36,9 +36,7 @@ object FlinkSqlHelper {
     fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {
-            throw IllegalStateException(
-                "only parser one sql, sql count: " + statements.size
-            )
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
         } else {
             return statements.get(0)
         }
@@ -66,10 +64,7 @@ object FlinkSqlHelper {
         innerParseStatement(command, sqlVisitor)
     }
 
-    private fun innerParseStatement(
-        command: String,
-        sqlVisitor: FlinkSqlParserBaseVisitor<Statement>
-    ) {
+    private fun innerParseStatement(command: String, sqlVisitor: FlinkSqlParserBaseVisitor<Statement>) {
         val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = FlinkSqlLexer(charStream)
         lexer.removeErrorListeners()
@@ -102,8 +97,7 @@ object FlinkSqlHelper {
                 throw e.withCommand(command)
             }
         } finally {
-            val releaseAntlrCache =
-                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
             if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
                 AbstractSqlParser.refreshParserCaches()
             }

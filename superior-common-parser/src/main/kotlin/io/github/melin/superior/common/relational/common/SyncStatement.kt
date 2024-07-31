@@ -39,18 +39,13 @@ data class SyncDatabase(
     var excludingTables: String? = null
 }
 
-data class SyncDatabaseMetadata(
-    val catalogName: String?,
-    val databaseName: String,
-    val owner: String?
-) : Statement() {
+data class SyncDatabaseMetadata(val catalogName: String?, val databaseName: String, val owner: String?) : Statement() {
     override val statementType = StatementType.SYNC_META
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL
 }
 
-data class SyncTableMetadata(val tableId: TableId, val owner: String?) :
-    Statement() {
+data class SyncTableMetadata(val tableId: TableId, val owner: String?) : Statement() {
     override val statementType = StatementType.SYNC_META
     override val privilegeType = PrivilegeType.OTHER
     override val sqlType = SqlType.DDL

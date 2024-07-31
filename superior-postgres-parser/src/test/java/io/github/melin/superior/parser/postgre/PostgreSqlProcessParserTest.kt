@@ -322,4 +322,41 @@ class PostgreSqlProcessParserTest {
         }
 
     }
+
+    @Test
+    fun processTest6() {
+        val sql = """
+            create or replace procedure prac_transfer(
+               sender int,
+               receiver int, 
+               amount dec
+            )
+            LANGUAGE plpgsql
+            as ${'$'}${'$'}
+            BEGIN 
+               EXECUTE IMMEDIATE '
+                    CREATE TABLE schema1.test_table_s1 (
+                        id NUMBER PRIMARY KEY,
+                        name VARCHAR2(100)
+                    )
+                ';
+
+               EXECUTE IMMEDIATE 'INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, ''Alice'')';        
+             END ${'$'}${'$'};
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("prac_transfer"), statement.procedureId)
+            Assert.assertEquals(2, statement.childStatements.size)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.childStatements.get(0).statementType)
+            Assert.assertEquals(StatementType.INSERT, statement.childStatements.get(1).statementType)
+            Assert.assertEquals("INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, 'Alice')", statement.childStatements.get(1).getSql())
+        } else {
+            Assert.fail()
+        }
+
+    }
 }

@@ -28,15 +28,9 @@ class SparkStreamSqlParserTest {
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
 
         if (statement is CreateTable) {
-            Assert.assertEquals(
-                StatementType.CREATE_TABLE,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
             Assert.assertEquals("student_scores", statement.tableId.tableName)
-            Assert.assertEquals(
-                "cn-north-1",
-                statement.properties?.get("kafka.group.id")
-            )
+            Assert.assertEquals("cn-north-1", statement.properties?.get("kafka.group.id"))
         } else {
             Assert.fail()
         }
@@ -101,14 +95,8 @@ class SparkStreamSqlParserTest {
         val statement = SparkStreamSqlHelper.parseStatement(sql).get(0)
 
         if (statement is CreateTable) {
-            Assert.assertEquals(
-                StatementType.CREATE_TABLE,
-                statement.statementType
-            )
-            Assert.assertEquals(
-                "tdl_hudi_stream_json_dt",
-                statement.tableId.tableName
-            )
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
+            Assert.assertEquals("tdl_hudi_stream_json_dt", statement.tableId.tableName)
             Assert.assertEquals("hudi", statement.properties?.get("type"))
         } else {
             Assert.fail()
@@ -184,10 +172,7 @@ class SparkStreamSqlParserTest {
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test_result1", statement.tableId?.tableName)
-            Assert.assertEquals(
-                "select * from users",
-                statement.queryStmt.getSql()
-            )
+            Assert.assertEquals("select * from users", statement.queryStmt.getSql())
         } else {
             Assert.fail()
         }
@@ -209,10 +194,7 @@ class SparkStreamSqlParserTest {
 
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals(
-                "stat_orders_kafka",
-                statement.tableId?.tableName
-            )
+            Assert.assertEquals("stat_orders_kafka", statement.tableId?.tableName)
         } else {
             Assert.fail()
         }

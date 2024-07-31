@@ -20,10 +20,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/6/30 9:59 上午 */
-class StarRocksAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : StarRocksParserBaseVisitor<Statement>() {
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    StarRocksParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
@@ -47,10 +45,7 @@ class StarRocksAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
@@ -101,53 +96,35 @@ class StarRocksAntlr4Visitor(
         functionNames = hashSetOf()
     }
 
-    override fun visitCreateExternalCatalogStatement(
-        ctx: CreateExternalCatalogStatementContext
-    ): Statement {
+    override fun visitCreateExternalCatalogStatement(ctx: CreateExternalCatalogStatementContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.catalogName.text)
         val properties = parseOptions(ctx.properties())
         return CreateCatalog(catalogName, properties)
     }
 
-    override fun visitDropExternalCatalogStatement(
-        ctx: DropExternalCatalogStatementContext
-    ): Statement {
+    override fun visitDropExternalCatalogStatement(ctx: DropExternalCatalogStatementContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.catalogName.text)
         return DropCatalog(catalogName)
     }
 
-    override fun visitCreateDbStatement(
-        ctx: CreateDbStatementContext
-    ): Statement {
-        val catalogName: String? =
-            if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text)
-            else null
+    override fun visitCreateDbStatement(ctx: CreateDbStatementContext): Statement {
+        val catalogName: String? = if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text) else null
         val databaseName: String = CommonUtils.cleanQuote(ctx.database.text)
         val properties = parseOptions(ctx.properties())
         val ifNotExists = ctx.NOT() != null
 
-        return CreateDatabase(
-            catalogName,
-            databaseName,
-            properties,
-            ifNotExists
-        )
+        return CreateDatabase(catalogName, databaseName, properties, ifNotExists)
     }
 
     override fun visitDropDbStatement(ctx: DropDbStatementContext): Statement {
-        val catalogName: String? =
-            if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text)
-            else null
+        val catalogName: String? = if (ctx.catalog != null) CommonUtils.cleanQuote(ctx.catalog.text) else null
         val databaseName: String = CommonUtils.cleanQuote(ctx.database.text)
         val ifExists = ctx.EXISTS() != null
         return DropDatabase(catalogName, databaseName, ifExists)
     }
 
-    override fun visitAlterDbQuotaStatement(
-        ctx: AlterDbQuotaStatementContext
-    ): Statement {
-        val databaseName: String =
-            CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+    override fun visitAlterDbQuotaStatement(ctx: AlterDbQuotaStatementContext): Statement {
+        val databaseName: String = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
         val quota = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
 
         val action = AlterDbPropsAction()
@@ -155,57 +132,37 @@ class StarRocksAntlr4Visitor(
         return AlterDatabase(AlterActionType.SET_PROPS, databaseName, action)
     }
 
-    override fun visitAlterDatabaseRenameStatement(
-        ctx: AlterDatabaseRenameStatementContext
-    ): Statement {
-        val databaseName: String =
-            CommonUtils.cleanQuote(ctx.identifier().get(0).text)
-        val newDatabaseName =
-            CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+    override fun visitAlterDatabaseRenameStatement(ctx: AlterDatabaseRenameStatementContext): Statement {
+        val databaseName: String = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+        val newDatabaseName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
         val action = RenameDbAction(newDatabaseName)
         return AlterDatabase(AlterActionType.RENAME, databaseName, action)
     }
 
-    override fun visitAlterMaterializedViewStatement(
-        ctx: AlterMaterializedViewStatementContext
-    ): Statement {
+    override fun visitAlterMaterializedViewStatement(ctx: AlterMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         if (ctx.refreshSchemeDesc() != null) {
-            return AlterMaterializedView(
-                tableId,
-                AlterTableAction(AlterActionType.REFRESH_MV)
-            )
+            return AlterMaterializedView(tableId, AlterTableAction(AlterActionType.REFRESH_MV))
         } else if (ctx.tableRenameClause() != null) {
             val newName = ctx.tableRenameClause().identifier().text
-            return AlterMaterializedView(
-                tableId,
-                RenameAction(TableId(newName))
-            )
+            return AlterMaterializedView(tableId, RenameAction(TableId(newName)))
         } else {
-            val properties =
-                parseOptions(ctx.modifyPropertiesClause().propertyList())
+            val properties = parseOptions(ctx.modifyPropertiesClause().propertyList())
             val action = AlterPropsAction()
             action.properties.putAll(properties)
             return AlterMaterializedView(tableId, action)
         }
     }
 
-    override fun visitCreateTableStatement(
-        ctx: CreateTableStatementContext
-    ): Statement {
+    override fun visitCreateTableStatement(ctx: CreateTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment =
-            if (ctx.comment() != null)
-                CommonUtils.cleanQuote(ctx.comment().text)
-            else null
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
         val columnRels: List<ColumnRel> =
             ctx.columnDesc().map { column ->
                 val columnName = column.identifier().text
                 val dataType = column.type().text
                 val colComment =
-                    if (column.comment() != null)
-                        CommonUtils.cleanQuote(column.comment().string().text)
-                    else null
+                    if (column.comment() != null) CommonUtils.cleanQuote(column.comment().string().text) else null
                 ColumnRel(columnName, dataType, colComment)
             }
 
@@ -234,25 +191,18 @@ class StarRocksAntlr4Visitor(
             }
         }
 
-        val table =
-            CreateTable(tableId, TableType.STARROCKS, comment, columnRels)
+        val table = CreateTable(tableId, TableType.STARROCKS, comment, columnRels)
         table.modelType = modelType
         table.partitionType = partitionType
         return table
     }
 
-    override fun visitCreateTableAsSelectStatement(
-        ctx: CreateTableAsSelectStatementContext
-    ): Statement? {
+    override fun visitCreateTableAsSelectStatement(ctx: CreateTableAsSelectStatementContext): Statement? {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment =
-            if (ctx.comment() != null)
-                CommonUtils.cleanQuote(ctx.comment().text)
-            else null
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
         val ifNotExists = ctx.EXISTS() != null
 
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
         val createTable = CreateTableAsSelect(tableId, queryStmt, comment)
         createTable.ifNotExists = ifNotExists
         val properties = parseOptions(ctx.properties())
@@ -260,59 +210,35 @@ class StarRocksAntlr4Visitor(
         return createTable
     }
 
-    override fun visitCreateViewStatement(
-        ctx: CreateViewStatementContext
-    ): Statement {
+    override fun visitCreateViewStatement(ctx: CreateViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment: String? =
-            if (ctx.comment() != null)
-                CommonUtils.cleanQuote(ctx.comment().string().text)
-            else null
+        val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment())
         val ifNotExists = ctx.NOT() != null
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
-        val createView =
-            CreateView(tableId, queryStmt, comment, ifNotExists, columns)
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val createView = CreateView(tableId, queryStmt, comment, ifNotExists, columns)
 
         this.visitQueryStatement(ctx.queryStatement())
         return createView
     }
 
-    override fun visitCreateMaterializedViewStatement(
-        ctx: CreateMaterializedViewStatementContext
-    ): Statement {
+    override fun visitCreateMaterializedViewStatement(ctx: CreateMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val comment: String? =
-            if (ctx.comment() != null)
-                CommonUtils.cleanQuote(ctx.comment().string().text)
-            else null
+        val comment: String? = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().string().text) else null
         val columns = parseColumnNameWithComment(ctx.columnNameWithComment())
         val ifNotExists = ctx.NOT() != null
 
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
-        val createView =
-            CreateMaterializedView(
-                tableId,
-                queryStmt,
-                comment,
-                ifNotExists,
-                columns
-            )
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val createView = CreateMaterializedView(tableId, queryStmt, comment, ifNotExists, columns)
 
-        ctx.materializedViewDesc().forEach {
-            this.visitMaterializedViewDesc(it)
-        }
+        ctx.materializedViewDesc().forEach { this.visitMaterializedViewDesc(it) }
         createView.modelType = mvRefreshType
 
         this.visitQueryStatement(ctx.queryStatement())
         return createView
     }
 
-    override fun visitRefreshSchemeDesc(
-        ctx: RefreshSchemeDescContext
-    ): Statement? {
+    override fun visitRefreshSchemeDesc(ctx: RefreshSchemeDescContext): Statement? {
         if (ctx.ASYNC() != null) {
             mvRefreshType = "Async"
         } else if (ctx.MANUAL() != null) {
@@ -324,9 +250,7 @@ class StarRocksAntlr4Visitor(
         return null
     }
 
-    override fun visitRefreshMaterializedViewStatement(
-        ctx: RefreshMaterializedViewStatementContext
-    ): Statement {
+    override fun visitRefreshMaterializedViewStatement(ctx: RefreshMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val force: Boolean = ctx.FORCE() != null
         val mode: String = if (ctx.SYNC() != null) "Sync" else "Async"
@@ -339,13 +263,7 @@ class StarRocksAntlr4Visitor(
             partitionEnd = CommonUtils.cleanQuote(values.get(1).text)
         }
 
-        return RefreshMaterializedView(
-            tableId,
-            force,
-            mode,
-            partitionStart,
-            partitionEnd
-        )
+        return RefreshMaterializedView(tableId, force, mode, partitionStart, partitionEnd)
     }
 
     override fun visitCancelRefreshMaterializedViewStatement(
@@ -355,9 +273,7 @@ class StarRocksAntlr4Visitor(
         return CancelRefreshMaterializedView(tableId)
     }
 
-    override fun visitDropTableStatement(
-        ctx: DropTableStatementContext
-    ): Statement {
+    override fun visitDropTableStatement(ctx: DropTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val ifExists = ctx.EXISTS() != null
         val dropTable = DropTable(tableId, ifExists)
@@ -365,36 +281,24 @@ class StarRocksAntlr4Visitor(
         return dropTable
     }
 
-    override fun visitDropViewStatement(
-        ctx: DropViewStatementContext
-    ): Statement {
+    override fun visitDropViewStatement(ctx: DropViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val ifExists = ctx.EXISTS() != null
         return DropView(tableId, ifExists)
     }
 
-    override fun visitDropMaterializedViewStatement(
-        ctx: DropMaterializedViewStatementContext
-    ): Statement {
+    override fun visitDropMaterializedViewStatement(ctx: DropMaterializedViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val ifExists = ctx.EXISTS() != null
         return DropMaterializedView(tableId, ifExists)
     }
 
-    override fun visitCreateIndexStatement(
-        ctx: CreateIndexStatementContext
-    ): Statement {
+    override fun visitCreateIndexStatement(ctx: CreateIndexStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val indexName = ctx.indexName.text
-        val comment =
-            if (ctx.comment() != null)
-                CommonUtils.cleanQuote(ctx.comment().text)
-            else null
+        val comment = if (ctx.comment() != null) CommonUtils.cleanQuote(ctx.comment().text) else null
 
-        val columns =
-            ctx.identifierList().identifier().map { identifier ->
-                IndexColumnName(identifier.text)
-            }
+        val columns = ctx.identifierList().identifier().map { identifier -> IndexColumnName(identifier.text) }
 
         val createIndex = CreateIndex(indexName)
         createIndex.comment = comment
@@ -402,28 +306,21 @@ class StarRocksAntlr4Visitor(
         return AlterTable(tableId, createIndex)
     }
 
-    override fun visitDropIndexStatement(
-        ctx: DropIndexStatementContext
-    ): Statement {
+    override fun visitDropIndexStatement(ctx: DropIndexStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val indexName = ctx.indexName.text
         val dropIndex = DropIndex(indexName)
         return AlterTable(tableId, dropIndex)
     }
 
-    override fun visitAlterTableStatement(
-        ctx: AlterTableStatementContext
-    ): Statement {
+    override fun visitAlterTableStatement(ctx: AlterTableStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         return AlterTable(tableId)
     }
 
-    override fun visitAlterViewStatement(
-        ctx: AlterViewStatementContext
-    ): Statement {
+    override fun visitAlterViewStatement(ctx: AlterViewStatementContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
-        val queryStmt =
-            this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
         val action = AlterViewAction(queryStmt)
         return AlterTable(tableId, action)
     }
@@ -479,8 +376,7 @@ class StarRocksAntlr4Visitor(
             val tableId = parseTableName(ctx.qualifiedName())
             currentOptType = StatementType.INSERT
             val insertTable =
-                if (ctx.INTO() != null)
-                    InsertTable(InsertMode.INTO, queryStmt, tableId)
+                if (ctx.INTO() != null) InsertTable(InsertMode.INTO, queryStmt, tableId)
                 else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
 
             if (ctx.expressionsWithDefault().size > 0) {
@@ -497,53 +393,37 @@ class StarRocksAntlr4Visitor(
         } else {
             val filesProperties = parseOptions(ctx.propertyList())
             currentOptType = StatementType.INSERT
-            return if (ctx.INTO() != null)
-                InsertFiles(InsertMode.INTO, queryStmt, filesProperties)
+            return if (ctx.INTO() != null) InsertFiles(InsertMode.INTO, queryStmt, filesProperties)
             else InsertFiles(InsertMode.OVERWRITE, queryStmt, filesProperties)
         }
     }
 
-    override fun visitSubmitTaskStatement(
-        ctx: SubmitTaskStatementContext
-    ): Statement {
-        val taskName: String? =
-            if (ctx.qualifiedName() != null) ctx.qualifiedName().text else null
+    override fun visitSubmitTaskStatement(ctx: SubmitTaskStatementContext): Statement {
+        val taskName: String? = if (ctx.qualifiedName() != null) ctx.qualifiedName().text else null
         val taskExecSql = CommonUtils.subsql(command, ctx.taskExecSql())
         return SubmitTask(taskName, taskExecSql)
     }
 
-    override fun visitDropTaskStatement(
-        ctx: DropTaskStatementContext
-    ): Statement {
+    override fun visitDropTaskStatement(ctx: DropTaskStatementContext): Statement {
         val taskName = ctx.qualifiedName().text
         return DropTask(taskName)
     }
 
-    override fun visitCreateRoutineLoadStatement(
-        ctx: CreateRoutineLoadStatementContext
-    ): Statement {
+    override fun visitCreateRoutineLoadStatement(ctx: CreateRoutineLoadStatementContext): Statement {
         val catalogName: String? =
-            if (ctx.db != null && ctx.db.identifier().size == 2)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
+            if (ctx.db != null && ctx.db.identifier().size == 2) CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
             else null
         val schemaName: String? =
-            if (ctx.db != null && ctx.db.identifier().size > 0)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
+            if (ctx.db != null && ctx.db.identifier().size > 0) CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
             else null
 
         val jobName = ctx.name.text
         val tableId = parseTableName(ctx.table)
-        val jobProperties =
-            if (ctx.jobProperties() != null)
-                parseOptions(ctx.jobProperties().properties())
-            else null
-        val loadPropertiesExpr =
-            CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
+        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
         val source = ctx.source.text
         val sourceProperties =
-            if (ctx.dataSourceProperties() != null)
-                parseOptions(ctx.dataSourceProperties().propertyList())
-            else null
+            if (ctx.dataSourceProperties() != null) parseOptions(ctx.dataSourceProperties().propertyList()) else null
 
         return CreateRoutineLoad(
             catalogName,
@@ -557,33 +437,22 @@ class StarRocksAntlr4Visitor(
         )
     }
 
-    override fun visitAlterRoutineLoadStatement(
-        ctx: AlterRoutineLoadStatementContext
-    ): Statement {
+    override fun visitAlterRoutineLoadStatement(ctx: AlterRoutineLoadStatementContext): Statement {
         val catalogName: String? =
-            if (ctx.db != null && ctx.db.identifier().size == 2)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
+            if (ctx.db != null && ctx.db.identifier().size == 2) CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
             else null
         val schemaName: String? =
-            if (ctx.db != null && ctx.db.identifier().size > 0)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
+            if (ctx.db != null && ctx.db.identifier().size > 0) CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
             else null
 
         val jobName = ctx.name.text
-        val jobProperties =
-            if (ctx.jobProperties() != null)
-                parseOptions(ctx.jobProperties().properties())
-            else null
-        val loadPropertiesExpr =
-            CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
+        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
         var source: String? = null
         var sourceProperties: Map<String, String>? = null
         if (ctx.dataSource() != null) {
             source = ctx.dataSource().source.text
-            sourceProperties =
-                parseOptions(
-                    ctx.dataSource().dataSourceProperties().propertyList()
-                )
+            sourceProperties = parseOptions(ctx.dataSource().dataSourceProperties().propertyList())
         }
 
         return AlterRoutineLoad(
@@ -597,48 +466,36 @@ class StarRocksAntlr4Visitor(
         )
     }
 
-    override fun visitPauseRoutineLoadStatement(
-        ctx: PauseRoutineLoadStatementContext
-    ): Statement {
+    override fun visitPauseRoutineLoadStatement(ctx: PauseRoutineLoadStatementContext): Statement {
         val catalogName: String? =
-            if (ctx.db != null && ctx.db.identifier().size == 2)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
+            if (ctx.db != null && ctx.db.identifier().size == 2) CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
             else null
         val schemaName: String? =
-            if (ctx.db != null && ctx.db.identifier().size > 0)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
+            if (ctx.db != null && ctx.db.identifier().size > 0) CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
             else null
 
         val jobName = ctx.name.text
         return PauseRoutineLoad(catalogName, schemaName, jobName)
     }
 
-    override fun visitResumeRoutineLoadStatement(
-        ctx: ResumeRoutineLoadStatementContext
-    ): Statement {
+    override fun visitResumeRoutineLoadStatement(ctx: ResumeRoutineLoadStatementContext): Statement {
         val catalogName: String? =
-            if (ctx.db != null && ctx.db.identifier().size == 2)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
+            if (ctx.db != null && ctx.db.identifier().size == 2) CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
             else null
         val schemaName: String? =
-            if (ctx.db != null && ctx.db.identifier().size > 0)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
+            if (ctx.db != null && ctx.db.identifier().size > 0) CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
             else null
 
         val jobName = ctx.name.text
         return ResumeRoutineLoad(catalogName, schemaName, jobName)
     }
 
-    override fun visitStopRoutineLoadStatement(
-        ctx: StopRoutineLoadStatementContext
-    ): Statement {
+    override fun visitStopRoutineLoadStatement(ctx: StopRoutineLoadStatementContext): Statement {
         val catalogName: String? =
-            if (ctx.db != null && ctx.db.identifier().size == 2)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
+            if (ctx.db != null && ctx.db.identifier().size == 2) CommonUtils.cleanQuote(ctx.db.identifier().get(1).text)
             else null
         val schemaName: String? =
-            if (ctx.db != null && ctx.db.identifier().size > 0)
-                CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
+            if (ctx.db != null && ctx.db.identifier().size > 0) CommonUtils.cleanQuote(ctx.db.identifier().get(0).text)
             else null
 
         val jobName = ctx.name.text
@@ -646,9 +503,7 @@ class StarRocksAntlr4Visitor(
     }
 
     override fun visitLoadStatement(ctx: LoadStatementContext): Statement {
-        val schemaName: String? =
-            if (ctx.label.db != null) CommonUtils.cleanQuote(ctx.label.db.text)
-            else null
+        val schemaName: String? = if (ctx.label.db != null) CommonUtils.cleanQuote(ctx.label.db.text) else null
 
         val labelName = ctx.label.label.text
         val tableNames = arrayListOf<String>()
@@ -661,22 +516,16 @@ class StarRocksAntlr4Visitor(
         return LoadTable(schemaName, labelName, tableNames)
     }
 
-    override fun visitAlterLoadStatement(
-        ctx: AlterLoadStatementContext
-    ): Statement {
-        val schemaName: String? =
-            if (ctx.db != null) CommonUtils.cleanQuote(ctx.db.text) else null
+    override fun visitAlterLoadStatement(ctx: AlterLoadStatementContext): Statement {
+        val schemaName: String? = if (ctx.db != null) CommonUtils.cleanQuote(ctx.db.text) else null
 
         val labelName = ctx.identifier().text
 
         return AlterLoadTable(schemaName, labelName)
     }
 
-    override fun visitCancelLoadStatement(
-        ctx: CancelLoadStatementContext
-    ): Statement {
-        val schemaName: String? =
-            if (ctx.FROM() != null) ctx.identifier().text else null
+    override fun visitCancelLoadStatement(ctx: CancelLoadStatementContext): Statement {
+        val schemaName: String? = if (ctx.FROM() != null) ctx.identifier().text else null
         val expression: String = ctx.expression().text
         var labelName: String = StringUtils.substringAfter(expression, "=")
         labelName = CommonUtils.cleanQuote(labelName.trim())
@@ -690,11 +539,8 @@ class StarRocksAntlr4Visitor(
         return ExportTable(tableId, filePath, properties)
     }
 
-    override fun visitCancelExportStatement(
-        ctx: CancelExportStatementContext
-    ): Statement {
-        val database: String? =
-            if (ctx.catalog != null) ctx.catalog.text else null
+    override fun visitCancelExportStatement(ctx: CancelExportStatementContext): Statement {
+        val database: String? = if (ctx.catalog != null) ctx.catalog.text else null
         val expr = ctx.expression().text
         var queryId: String = StringUtils.substringBetween(expr, "\"", "\"")
         if (StringUtils.isBlank(queryId)) {
@@ -704,9 +550,7 @@ class StarRocksAntlr4Visitor(
         return CancelExport(database, queryId)
     }
 
-    override fun visitCreateFunctionStatement(
-        ctx: CreateFunctionStatementContext
-    ): Statement {
+    override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {
         val functionId = parseTableName(ctx.qualifiedName())
         val global = ctx.GLOBAL() != null
         val properties = parseOptions(ctx.properties())
@@ -723,16 +567,11 @@ class StarRocksAntlr4Visitor(
         return createFunction
     }
 
-    override fun visitDropFunctionStatement(
-        ctx: DropFunctionStatementContext
-    ): Statement {
+    override fun visitDropFunctionStatement(ctx: DropFunctionStatementContext): Statement {
         val functionId = parseTableName(ctx.qualifiedName())
         val argumentTypes = parseTypeList(ctx.typeList())
 
-        val dropFunction =
-            DropFunction(
-                FunctionId(functionId.schemaName, functionId.tableName)
-            )
+        val dropFunction = DropFunction(FunctionId(functionId.schemaName, functionId.tableName))
         dropFunction.argumentTypes = argumentTypes
         return dropFunction
     }
@@ -751,19 +590,14 @@ class StarRocksAntlr4Visitor(
         ) {
 
             val tableId = parseTableName(ctx)
-            if (
-                !inputTables.contains(tableId) &&
-                    !cteTempTables.contains(tableId)
-            ) {
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }
         return null
     }
 
-    override fun visitSimpleFunctionCall(
-        ctx: SimpleFunctionCallContext
-    ): Statement? {
+    override fun visitSimpleFunctionCall(ctx: SimpleFunctionCallContext): Statement? {
         if (
             StatementType.SELECT == currentOptType ||
                 StatementType.CREATE_VIEW == currentOptType ||
@@ -792,9 +626,7 @@ class StarRocksAntlr4Visitor(
     }
 
     override fun visitWithClause(ctx: WithClauseContext): Statement? {
-        ctx.commonTableExpression().forEach {
-            cteTempTables.add(TableId(it.name.text))
-        }
+        ctx.commonTableExpression().forEach { cteTempTables.add(TableId(it.name.text)) }
         return super.visitWithClause(ctx)
     }
 
@@ -811,24 +643,19 @@ class StarRocksAntlr4Visitor(
 
     fun parseTableName(ctx: QualifiedNameContext): TableId {
         return if (ctx.identifier().size == 3) {
-            val catalotName =
-                CommonUtils.cleanQuote(ctx.identifier().get(0).text)
-            val schemaName =
-                CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+            val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
             val tableName = CommonUtils.cleanQuote(ctx.identifier().get(2).text)
             TableId(catalotName, schemaName, tableName)
         } else if (ctx.identifier().size == 2) {
-            val schemaName =
-                CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
             val tableName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
             TableId(schemaName, tableName)
         } else if (ctx.identifier().size == 1) {
             val tableName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
             TableId(tableName)
         } else {
-            throw SQLParserException(
-                "parse qualifiedName error: " + ctx.identifier().size
-            )
+            throw SQLParserException("parse qualifiedName error: " + ctx.identifier().size)
         }
     }
 
@@ -846,9 +673,7 @@ class StarRocksAntlr4Visitor(
         return properties
     }
 
-    private fun parseColumnNameWithComment(
-        columns: List<ColumnNameWithCommentContext>
-    ): List<ColumnRel> {
+    private fun parseColumnNameWithComment(columns: List<ColumnNameWithCommentContext>): List<ColumnRel> {
         return columns.map { col ->
             val name = col.columnName.text
             val comment = CommonUtils.cleanQuote(col.comment().string().text)

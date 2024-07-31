@@ -37,9 +37,7 @@ object PrestoSqlHelper {
     fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {
-            throw IllegalStateException(
-                "only parser one sql, sql count: " + statements.size
-            )
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
         } else {
             return statements.get(0)
         }
@@ -67,10 +65,7 @@ object PrestoSqlHelper {
         innerParseStatement(command, sqlVisitor)
     }
 
-    private fun innerParseStatement(
-        command: String,
-        sqlVisitor: PrestoSqlBaseBaseVisitor<Statement>
-    ) {
+    private fun innerParseStatement(command: String, sqlVisitor: PrestoSqlBaseBaseVisitor<Statement>) {
         val charStream = CaseInsensitiveStream(CharStreams.fromString(command))
         val lexer = PrestoSqlBaseLexer(charStream)
         lexer.removeErrorListeners()
@@ -102,8 +97,7 @@ object PrestoSqlHelper {
                 throw e.withCommand(command)
             }
         } finally {
-            val releaseAntlrCache =
-                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
             if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
                 AbstractSqlParser.refreshParserCaches()
             }

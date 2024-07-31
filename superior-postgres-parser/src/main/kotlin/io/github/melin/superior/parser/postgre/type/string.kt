@@ -28,7 +28,6 @@ class ByteaType : AbsStringType() {
     override val name: String = "bytea"
 }
 
-data class EnumType(val typeName: String, val values: List<String>) :
-    AbsStringType() {
+data class EnumType(val typeName: String, val values: List<String>) : AbsStringType() {
     override val name: String = "enum"
 }

@@ -24,9 +24,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return jobStmt
     }
 
-    override fun visitJobStatement(
-        ctx: AppJarParser.JobStatementContext
-    ): Statement {
+    override fun visitJobStatement(ctx: AppJarParser.JobStatementContext): Statement {
         val resourceName = ctx.resourceNameExpr().text
         val className = ctx.classNameExpr().text
 
@@ -50,9 +48,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return AppJarInfo(resourceName, className, params)
     }
 
-    override fun visitSetStatement(
-        ctx: AppJarParser.SetStatementContext
-    ): Statement {
+    override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): Statement {
         val key = ctx.keyExpr().text
         var value = CommonUtils.subsql(command, ctx.value)
         value = CommonUtils.cleanQuote(value)
@@ -60,9 +56,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         return SetStatement(key, value)
     }
 
-    override fun visitResetStatement(
-        ctx: AppJarParser.ResetStatementContext
-    ): Statement {
+    override fun visitResetStatement(ctx: AppJarParser.ResetStatementContext): Statement {
         val key = ctx.keyExpr().text
         return ReSetStatement(key)
     }

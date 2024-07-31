@@ -30,10 +30,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateCatalog) {
             Assert.assertEquals(CREATE_CATALOG, statement.statementType)
-            Assert.assertEquals(
-                "iceberg_metastore_catalog",
-                statement.catalogName
-            )
+            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
         } else {
             Assert.fail()
         }
@@ -50,10 +47,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropCatalog) {
             Assert.assertEquals(DROP_CATALOG, statement.statementType)
-            Assert.assertEquals(
-                "iceberg_metastore_catalog",
-                statement.catalogName
-            )
+            Assert.assertEquals("iceberg_metastore_catalog", statement.catalogName)
         } else {
             Assert.fail()
         }
@@ -183,10 +177,7 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("site_access1", statement.tableId.tableName)
             Assert.assertEquals("duplicate", statement.modelType)
-            Assert.assertEquals(
-                PartitionType.EXPRESSION,
-                statement.partitionType
-            )
+            Assert.assertEquals(PartitionType.EXPRESSION, statement.partitionType)
         } else {
             Assert.fail()
         }
@@ -203,10 +194,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropTable) {
             Assert.assertEquals(DROP_TABLE, statement.statementType)
-            Assert.assertEquals(
-                TableId("example_db", "My_table"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("example_db", "My_table"), statement.tableId)
             Assert.assertTrue(statement.force)
         } else {
             Assert.fail()
@@ -235,14 +223,8 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals(CREATE_VIEW, statement.statementType)
             Assert.assertEquals("my first view", statement.comment)
             Assert.assertEquals(4, statement.columnRels?.size)
-            Assert.assertEquals(
-                TableId("example_db", "example_view"),
-                statement.tableId
-            )
-            Assert.assertEquals(
-                TableId("example_table"),
-                statement.queryStmt.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
+            Assert.assertEquals(TableId("example_table"), statement.queryStmt.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -259,10 +241,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropView) {
             Assert.assertEquals(DROP_VIEW, statement.statementType)
-            Assert.assertEquals(
-                TableId("example_db", "example_view"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("example_db", "example_view"), statement.tableId)
         } else {
             Assert.fail()
         }
@@ -290,19 +269,10 @@ class StarRocksSqlParserDdlTest {
 
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateMaterializedView) {
-            Assert.assertEquals(
-                CREATE_MATERIALIZED_VIEW,
-                statement.statementType
-            )
+            Assert.assertEquals(CREATE_MATERIALIZED_VIEW, statement.statementType)
             Assert.assertEquals("Async", statement.modelType)
-            Assert.assertEquals(
-                TableId("example_db", "lo_mv1"),
-                statement.tableId
-            )
-            Assert.assertEquals(
-                TableId("lineorder"),
-                statement.queryStmt.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
+            Assert.assertEquals(TableId("lineorder"), statement.queryStmt.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -431,10 +401,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is CreateFunction) {
             Assert.assertEquals(CREATE_FUNCTION, statement.statementType)
-            Assert.assertEquals(
-                FunctionId("MY_UDF_JSON_GET"),
-                statement.functionId
-            )
+            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
             Assert.assertEquals("string", statement.returnType)
             Assert.assertEquals(2, statement.argumentTypes?.size)
             Assert.assertEquals(3, statement.properties?.size)
@@ -454,10 +421,7 @@ class StarRocksSqlParserDdlTest {
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is DropFunction) {
             Assert.assertEquals(DROP_FUNCTION, statement.statementType)
-            Assert.assertEquals(
-                FunctionId("MY_UDF_JSON_GET"),
-                statement.functionId
-            )
+            Assert.assertEquals(FunctionId("MY_UDF_JSON_GET"), statement.functionId)
             Assert.assertEquals(2, statement.argumentTypes?.size)
         } else {
             Assert.fail()

@@ -82,8 +82,7 @@ object SparkStreamSqlHelper {
                 throw e.withCommand(trimCmd)
             }
         } finally {
-            val releaseAntlrCache =
-                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
             if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
                 AbstractSparkStreamSqlParser.refreshParserCaches()
             }

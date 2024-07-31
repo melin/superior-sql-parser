@@ -8,28 +8,20 @@ import io.github.melin.superior.common.relational.dml.QueryStmt
 import io.github.melin.superior.common.relational.table.ColumnRel
 import java.util.HashMap
 
-data class AlterTableAction(override var alterType: AlterActionType) :
-    AlterAction()
+data class AlterTableAction(override var alterType: AlterActionType) : AlterAction()
 
-data class AlterPropsAction(
-    var location: String? = null,
-    var properties: HashMap<String, String> = Maps.newHashMap()
-) : AlterAction() {
+data class AlterPropsAction(var location: String? = null, var properties: HashMap<String, String> = Maps.newHashMap()) :
+    AlterAction() {
     override var alterType: AlterActionType = AlterActionType.SET_PROPS
 
     constructor(properties: HashMap<String, String>) : this(null, properties)
 }
 
-data class AlterSerDeAction(
-    var properties: HashMap<String, String> = Maps.newHashMap()
-) : AlterAction() {
+data class AlterSerDeAction(var properties: HashMap<String, String> = Maps.newHashMap()) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.SET_SERDE
 }
 
-data class RenameAction(
-    var newTableId: TableId,
-    var ifExists: Boolean = false
-) : AlterAction() {
+data class RenameAction(var newTableId: TableId, var ifExists: Boolean = false) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.RENAME
 }
 
@@ -67,21 +59,14 @@ data class AlterColumnAction(
 
     fun getColumn(): ColumnRel? {
         return if (columName != null) {
-            ColumnRel(
-                columName!!,
-                dataType,
-                comment,
-                nullable,
-                defaultExpression
-            )
+            ColumnRel(columName!!, dataType, comment, nullable, defaultExpression)
         } else {
             null
         }
     }
 }
 
-data class DropColumnAction(var columNames: ArrayList<String> = arrayListOf()) :
-    AlterAction() {
+data class DropColumnAction(var columNames: ArrayList<String> = arrayListOf()) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.DROP_COLUMN
 
     fun firstColumn(): String {
@@ -91,10 +76,8 @@ data class DropColumnAction(var columNames: ArrayList<String> = arrayListOf()) :
     constructor(columName: String) : this(arrayListOf(columName))
 }
 
-data class AddPartitionAction(
-    var ifNotExists: Boolean = false,
-    var partitions: List<LinkedHashMap<String, String>>
-) : AlterAction() {
+data class AddPartitionAction(var ifNotExists: Boolean = false, var partitions: List<LinkedHashMap<String, String>>) :
+    AlterAction() {
     override var alterType: AlterActionType = AlterActionType.ADD_PARTITION
 }
 
@@ -112,10 +95,8 @@ data class RenamePartitionAction(
     override var alterType: AlterActionType = AlterActionType.RENAME_PARTITION
 }
 
-data class CreateIndex(
-    val indexName: String,
-    val indexColumnNames: ArrayList<IndexColumnName> = arrayListOf()
-) : AlterAction() {
+data class CreateIndex(val indexName: String, val indexColumnNames: ArrayList<IndexColumnName> = arrayListOf()) :
+    AlterAction() {
     override var alterType: AlterActionType = AlterActionType.ADD_INDEX
     var intimeAction: String = "ONLINE" // mysql ONLINE & OFFLINE
     var indexCategory: String? = null
@@ -128,7 +109,6 @@ data class IndexColumnName(
     val sortType: SortType = SortType.UNKOWN,
 )
 
-data class DropIndex(val indexName: String, var ifExists: Boolean = false) :
-    AlterAction() {
+data class DropIndex(val indexName: String, var ifExists: Boolean = false) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.DROP_INDEX
 }

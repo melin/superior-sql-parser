@@ -44,15 +44,5 @@ data class CreateTableAsSelect(
         comment: String? = null,
         ifNotExists: Boolean,
         properties: Map<String, String>? = null
-    ) : this(
-        tableId,
-        queryStmt,
-        comment,
-        null,
-        null,
-        null,
-        properties,
-        null,
-        ifNotExists
-    )
+    ) : this(tableId, queryStmt, comment, null, null, null, properties, null, ifNotExists)
 }

@@ -12,23 +12,18 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 
-class SparkStreamSqlAntlr4Visitor(val command: String?) :
-    SparkStreamSqlParserBaseVisitor<Statement>() {
+class SparkStreamSqlAntlr4Visitor(val command: String?) : SparkStreamSqlParserBaseVisitor<Statement>() {
 
     private val tableDatas = ArrayList<Statement>()
 
-    override fun visitSqlStatement(
-        ctx: SparkStreamSqlParser.SqlStatementContext?
-    ): Statement {
+    override fun visitSqlStatement(ctx: SparkStreamSqlParser.SqlStatementContext?): Statement {
         val tableData = super.visitSqlStatement(ctx)
         tableDatas.add(tableData)
 
         return tableData
     }
 
-    override fun visitCreateStreamTable(
-        ctx: SparkStreamSqlParser.CreateStreamTableContext
-    ): Statement {
+    override fun visitCreateStreamTable(ctx: SparkStreamSqlParser.CreateStreamTableContext): Statement {
         val tableName = ctx.tableName.table.ID().text
         val columns =
             if (ctx.columns != null) {
@@ -39,18 +34,13 @@ class SparkStreamSqlAntlr4Visitor(val command: String?) :
                         val colName = column.ID().text
                         val dataType = column.dataType().text
                         val colComment =
-                            if (column.comment != null)
-                                CommonUtils.cleanQuote(column.comment.text)
-                            else null
+                            if (column.comment != null) CommonUtils.cleanQuote(column.comment.text) else null
                         val jsonPath =
-                            if (column.jsonPath != null)
-                                CommonUtils.cleanQuote(column.jsonPath.text)
-                            else null
+                            if (column.jsonPath != null) CommonUtils.cleanQuote(column.jsonPath.text) else null
                         // val pattern = if (column.pattern != null)
                         // StringUtil.cleanQuote(column.pattern.text) else null
 
-                        val columnRel =
-                            ColumnRel(colName, dataType, colComment, true)
+                        val columnRel = ColumnRel(colName, dataType, colComment, true)
                         columnRel.jsonPath = jsonPath
                         columnRel
                     }
@@ -63,27 +53,17 @@ class SparkStreamSqlAntlr4Visitor(val command: String?) :
             ctx.tableProps.children
                 .filter { it is SparkStreamSqlParser.TablePropertyContext }
                 .map { item ->
-                    val property =
-                        item as SparkStreamSqlParser.TablePropertyContext
+                    val property = item as SparkStreamSqlParser.TablePropertyContext
                     val key = CommonUtils.cleanQuote(property.key.text)
                     val value = CommonUtils.cleanQuote(property.value.text)
                     properties.put(key, value)
                 }
         }
 
-        return CreateTable(
-            TableId(tableName),
-            TableType.SPARK_STREAM,
-            null,
-            columns,
-            false,
-            properties
-        )
+        return CreateTable(TableId(tableName), TableType.SPARK_STREAM, null, columns, false, properties)
     }
 
-    override fun visitSetStatement(
-        ctx: SparkStreamSqlParser.SetStatementContext
-    ): Statement {
+    override fun visitSetStatement(ctx: SparkStreamSqlParser.SetStatementContext): Statement {
         val key = ctx.setKeyExpr().text
         var value = CommonUtils.cleanQuote(ctx.valueKeyExpr().text)
         value = CommonUtils.cleanQuote(value)
@@ -91,11 +71,8 @@ class SparkStreamSqlAntlr4Visitor(val command: String?) :
         return SetStatement(key, value)
     }
 
-    override fun visitInsertStatement(
-        ctx: SparkStreamSqlParser.InsertStatementContext
-    ): Statement {
-        val schemaName =
-            if (ctx.tableName.db != null) ctx.tableName.db.ID().text else null
+    override fun visitInsertStatement(ctx: SparkStreamSqlParser.InsertStatementContext): Statement {
+        val schemaName = if (ctx.tableName.db != null) ctx.tableName.db.ID().text else null
         val tableName = ctx.tableName.table.ID().text
 
         val tableId = TableId(schemaName, tableName)

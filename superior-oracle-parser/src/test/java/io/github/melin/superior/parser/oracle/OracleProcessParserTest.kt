@@ -239,24 +239,28 @@ class OracleProcessParserTest {
     @Test
     fun processTest5() {
         val sql = """
-            CREATE FUNCTION get_bal(acc_no IN NUMBER) 
-                RETURN NUMBER 
-               IS acc_bal NUMBER(11,2);
-            BEGIN 
-               INSERT INTO widgets(map_id,widget_name)
-                SELECT mt.map_id, 'Bupo'
-                FROM map_tags mt
-                WHERE mt.map_license = '12345';
-             END;
+           CREATE OR REPLACE PROCEDURE create_and_manipulate_tables AS
+            BEGIN
+                EXECUTE IMMEDIATE '
+                    CREATE TABLE schema1.test_table_s1 (
+                        id NUMBER PRIMARY KEY,
+                        name VARCHAR2(100)
+                    )
+                ';
+
+                EXECUTE IMMEDIATE 'INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, ''Alice'')';                
+            END;
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)
 
-        if (statement is CreateFunction) {
-            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
-            Assert.assertEquals(FunctionId("get_bal"), statement.functionId)
-            Assert.assertEquals(1, statement.childStatements.size)
-            Assert.assertEquals(StatementType.INSERT, statement.childStatements.get(0).statementType)
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("create_and_manipulate_tables"), statement.procedureId)
+            Assert.assertEquals(2, statement.childStatements.size)
+            Assert.assertEquals(StatementType.CREATE_TABLE, statement.childStatements.get(0).statementType)
+            Assert.assertEquals(StatementType.INSERT, statement.childStatements.get(1).statementType)
+            Assert.assertEquals("INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, 'Alice')", statement.childStatements.get(1).getSql())
         } else {
             Assert.fail()
         }

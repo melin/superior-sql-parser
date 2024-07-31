@@ -2,16 +2,9 @@ package io.github.melin.superior.common.relational
 
 import org.apache.commons.lang3.StringUtils
 
-data class ProcedureId(
-    val catalogName: String?,
-    val schemaName: String?,
-    val procedureName: String
-) {
+data class ProcedureId(val catalogName: String?, val schemaName: String?, val procedureName: String) {
 
-    constructor(
-        schemaName: String?,
-        tableName: String
-    ) : this(null, schemaName, tableName)
+    constructor(schemaName: String?, tableName: String) : this(null, schemaName, tableName)
 
     constructor(tableName: String) : this(null, null, tableName)
 

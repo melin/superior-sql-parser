@@ -7,10 +7,8 @@ import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.ProcedureId
 import io.github.melin.superior.common.relational.Statement
 
-data class CallProcedure(
-    var procedureIds: HashSet<ProcedureId>,
-    var properties: Map<String, String> = mapOf()
-) : Statement() {
+data class CallProcedure(var procedureIds: HashSet<ProcedureId>, var properties: Map<String, String> = mapOf()) :
+    Statement() {
     override val statementType = StatementType.CALL
     override val privilegeType = PrivilegeType.ADMIN
     override val sqlType = SqlType.DML

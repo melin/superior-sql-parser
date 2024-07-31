@@ -30,8 +30,7 @@ class MySqlParserDmlTest {
 
     @Test
     fun selectTest1() {
-        val sql =
-            "select * from users a left outer join address b on a.address_id = b.id limit 10 offset 100"
+        val sql = "select * from users a left outer join address b on a.address_id = b.id limit 10 offset 100"
 
         val statement = MySqlHelper.parseStatement(sql)
 
@@ -189,8 +188,7 @@ class MySqlParserDmlTest {
     @Test
     fun replaceValuesTest() {
         // val sql = "insert into user values('name')"
-        val sql =
-            "REPLACE into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
+        val sql = "REPLACE into bigdata.user select * from users a left outer join address b on a.address_id = b.id"
 
         val statement = MySqlHelper.parseStatement(sql)
 
@@ -207,17 +205,13 @@ class MySqlParserDmlTest {
 
     @Test
     fun countCondTest() {
-        val sql =
-            "select count(type='mac' or null) From test_table where a=2 limit 50"
+        val sql = "select count(type='mac' or null) From test_table where a=2 limit 50"
 
         val statement = MySqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.SELECT, statement.statementType)
 
         if (statement is QueryStmt) {
-            Assert.assertEquals(
-                "test_table",
-                statement.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("test_table", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -239,10 +233,7 @@ class MySqlParserDmlTest {
         Assert.assertEquals(StatementType.SELECT, statement.statementType)
 
         if (statement is QueryStmt) {
-            Assert.assertEquals(
-                "table1",
-                statement.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
@@ -256,10 +247,7 @@ class MySqlParserDmlTest {
 
         val statement = MySqlHelper.parseStatement(sql)
         if (statement is CreateTableAsSelect) {
-            Assert.assertEquals(
-                StatementType.CREATE_TABLE_AS_SELECT,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.CREATE_TABLE_AS_SELECT, statement.statementType)
             Assert.assertEquals("demo1", statement.tableId.tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {

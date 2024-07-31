@@ -16,10 +16,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/6/30 9:59 上午 */
-class SqlServerAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : SqlServerParserBaseVisitor<Statement>() {
+class SqlServerAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    SqlServerParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -40,16 +38,11 @@ class SqlServerAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitTsql_file(
-        ctx: SqlServerParser.Tsql_fileContext
-    ): Statement? {
+    override fun visitTsql_file(ctx: SqlServerParser.Tsql_fileContext): Statement? {
         ctx.batch().forEach { this.visitBatch(it) }
         return null
     }
@@ -93,16 +86,12 @@ class SqlServerAntlr4Visitor(
         cteTempTables = arrayListOf()
     }
 
-    override fun visitCreate_database(
-        ctx: SqlServerParser.Create_databaseContext
-    ): Statement {
+    override fun visitCreate_database(ctx: SqlServerParser.Create_databaseContext): Statement {
         val databaseName = CommonUtils.cleanQuote(ctx.database.text)
         return CreateDatabase(databaseName)
     }
 
-    override fun visitDrop_database(
-        ctx: SqlServerParser.Drop_databaseContext
-    ): Statement {
+    override fun visitDrop_database(ctx: SqlServerParser.Drop_databaseContext): Statement {
         val ifExists = ctx.IF() != null
         val databases = ctx.id_().map { it.text }
         val dropDatabase = DropDatabase(databases.first(), ifExists)
@@ -110,9 +99,7 @@ class SqlServerAntlr4Visitor(
         return dropDatabase
     }
 
-    override fun visitSelect_statement_standalone(
-        ctx: SqlServerParser.Select_statement_standaloneContext
-    ): Statement {
+    override fun visitSelect_statement_standalone(ctx: SqlServerParser.Select_statement_standaloneContext): Statement {
         currentOptType = StatementType.SELECT
         if (ctx.with_expression() != null) {
             this.visitWith_expression(ctx.with_expression())
@@ -124,14 +111,9 @@ class SqlServerAntlr4Visitor(
         return queryStmt
     }
 
-    override fun visitDelete_statement(
-        ctx: SqlServerParser.Delete_statementContext
-    ): Statement {
+    override fun visitDelete_statement(ctx: SqlServerParser.Delete_statementContext): Statement {
         currentOptType = StatementType.DELETE
-        val tableId =
-            parseTableName(
-                ctx.delete_statement_from().ddl_object().full_table_name()
-            )
+        val tableId = parseTableName(ctx.delete_statement_from().ddl_object().full_table_name())
         if (ctx.with_expression() != null) {
             this.visitWith_expression(ctx.with_expression())
         }
@@ -142,9 +124,7 @@ class SqlServerAntlr4Visitor(
         return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitInsert_statement(
-        ctx: SqlServerParser.Insert_statementContext
-    ): Statement {
+    override fun visitInsert_statement(ctx: SqlServerParser.Insert_statementContext): Statement {
         currentOptType = StatementType.INSERT
         val tableId = parseTableName(ctx.ddl_object().full_table_name())
         if (ctx.with_expression() != null) {
@@ -155,16 +135,13 @@ class SqlServerAntlr4Visitor(
 
         val queryStmt = QueryStmt(inputTables)
         val insertTable =
-            if (ctx.INTO() != null)
-                InsertTable(InsertMode.INTO, queryStmt, tableId)
+            if (ctx.INTO() != null) InsertTable(InsertMode.INTO, queryStmt, tableId)
             else InsertTable(InsertMode.OVERWRITE, queryStmt, tableId)
 
         return insertTable
     }
 
-    override fun visitUpdate_statement(
-        ctx: SqlServerParser.Update_statementContext
-    ): Statement {
+    override fun visitUpdate_statement(ctx: SqlServerParser.Update_statementContext): Statement {
         currentOptType = StatementType.UPDATE
         val tableId = parseTableName(ctx.ddl_object().full_table_name())
         if (ctx.with_expression() != null) {
@@ -182,9 +159,7 @@ class SqlServerAntlr4Visitor(
         return UpdateTable(tableId, inputTables)
     }
 
-    override fun visitMerge_statement(
-        ctx: SqlServerParser.Merge_statementContext
-    ): Statement {
+    override fun visitMerge_statement(ctx: SqlServerParser.Merge_statementContext): Statement {
         currentOptType = StatementType.MERGE
 
         val tableId = parseTableName(ctx.ddl_object().full_table_name())
@@ -201,18 +176,12 @@ class SqlServerAntlr4Visitor(
         return mergeTable
     }
 
-    override fun visitWith_expression(
-        ctx: SqlServerParser.With_expressionContext
-    ): Statement? {
-        ctx.common_table_expression().forEach {
-            cteTempTables.add(TableId(it.id_().text))
-        }
+    override fun visitWith_expression(ctx: SqlServerParser.With_expressionContext): Statement? {
+        ctx.common_table_expression().forEach { cteTempTables.add(TableId(it.id_().text)) }
         return super.visitWith_expression(ctx)
     }
 
-    override fun visitSelect_order_by_clause(
-        ctx: SqlServerParser.Select_order_by_clauseContext
-    ): Statement? {
+    override fun visitSelect_order_by_clause(ctx: SqlServerParser.Select_order_by_clauseContext): Statement? {
         if (ctx.OFFSET() != null) {
             offset = ctx.offset_exp.text.toInt()
         }
@@ -224,9 +193,7 @@ class SqlServerAntlr4Visitor(
         return super.visitSelect_order_by_clause(ctx)
     }
 
-    override fun visitTable_source_item(
-        ctx: SqlServerParser.Table_source_itemContext
-    ): Statement? {
+    override fun visitTable_source_item(ctx: SqlServerParser.Table_source_itemContext): Statement? {
         if (
             currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.CREATE_VIEW ||
@@ -241,10 +208,7 @@ class SqlServerAntlr4Visitor(
             if (ctx.full_table_name() != null) {
                 val tableId = parseTableName(ctx.full_table_name())
 
-                if (
-                    !inputTables.contains(tableId) &&
-                        !cteTempTables.contains(tableId)
-                ) {
+                if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                     inputTables.add(tableId)
                 }
             } else {
@@ -254,9 +218,7 @@ class SqlServerAntlr4Visitor(
         return null
     }
 
-    override fun visitUse_statement(
-        ctx: SqlServerParser.Use_statementContext
-    ): Statement {
+    override fun visitUse_statement(ctx: SqlServerParser.Use_statementContext): Statement {
         return UseDatabase(ctx.database.text)
     }
 

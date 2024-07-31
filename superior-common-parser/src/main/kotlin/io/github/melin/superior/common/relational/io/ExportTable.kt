@@ -29,18 +29,7 @@ data class ExportTable(
         tableId: TableId,
         path: String,
         properties: Map<String, String>,
-    ) : this(
-        tableId,
-        path,
-        properties,
-        linkedMapOf(),
-        null,
-        null,
-        null,
-        false,
-        false,
-        arrayListOf()
-    )
+    ) : this(tableId, path, properties, linkedMapOf(), null, null, null, false, false, arrayListOf())
 
     constructor(
         tableId: TableId,

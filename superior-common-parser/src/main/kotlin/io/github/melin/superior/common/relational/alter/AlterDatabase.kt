@@ -22,10 +22,7 @@ data class AlterDatabase(
         }
     }
 
-    constructor(
-        alterActionType: AlterActionType,
-        databaseName: String
-    ) : this(alterActionType, databaseName, null)
+    constructor(alterActionType: AlterActionType, databaseName: String) : this(alterActionType, databaseName, null)
 
     fun addActions(list: List<AlterAction>) {
         actions.addAll(list)

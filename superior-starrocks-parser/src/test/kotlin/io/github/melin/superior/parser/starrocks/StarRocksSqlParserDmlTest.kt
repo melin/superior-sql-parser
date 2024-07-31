@@ -30,10 +30,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(1, statement.inputTables.size)
             Assert.assertEquals(10, statement.limit)
             Assert.assertEquals(20, statement.offset)
-            Assert.assertEquals(
-                TableId("hive1", "hive_db", "hive_table"),
-                statement.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("hive1", "hive_db", "hive_table"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -61,10 +58,7 @@ class StarRocksSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                TableId("bigdata", "users"),
-                statement.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("bigdata", "users"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -126,10 +120,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
             Assert.assertEquals("films", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                "producers",
-                statement.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("producers", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -152,10 +143,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                "accounts",
-                statement.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -180,10 +168,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                "accounts",
-                statement.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("accounts", statement.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -202,10 +187,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
-            Assert.assertEquals(
-                "test2",
-                statement.queryStmt.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -224,10 +206,7 @@ class StarRocksSqlParserDmlTest {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
             Assert.assertEquals("test", statement.tableId.tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
-            Assert.assertEquals(
-                "test2",
-                statement.queryStmt.inputTables.get(0).tableName
-            )
+            Assert.assertEquals("test2", statement.queryStmt.inputTables.get(0).tableName)
         } else {
             Assert.fail()
         }
@@ -334,9 +313,6 @@ class StarRocksSqlParserDmlTest {
         val statement = statements.get(0) as CreateTableAsSelect
 
         Assert.assertEquals("order_new", statement.tableId.tableName)
-        Assert.assertEquals(
-            "orders",
-            statement.queryStmt.inputTables.get(0).tableName
-        )
+        Assert.assertEquals("orders", statement.queryStmt.inputTables.get(0).tableName)
     }
 }

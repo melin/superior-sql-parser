@@ -69,23 +69,11 @@ class FlinkSqlParserDdlTest {
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
         val createTable = statements.get(0)
         if (createTable is CreateTable) {
-            Assert.assertEquals(
-                "RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT",
-                createTable.tableId.tableName
-            )
+            Assert.assertEquals("RETEK_XX_ITEM_ATTR_TRANSLATE_PRODUCT_ENRICHMENT", createTable.tableId.tableName)
             Assert.assertEquals(11, createTable.columnRels?.size)
-            Assert.assertEquals(
-                "PROCTIME()",
-                createTable.columnRels?.get(8)?.computedExpr
-            )
-            Assert.assertEquals(
-                "timestamp",
-                createTable.columnRels?.get(9)?.metadataKey
-            )
-            Assert.assertEquals(
-                "price * quantity",
-                createTable.columnRels?.get(10)?.computedExpr
-            )
+            Assert.assertEquals("PROCTIME()", createTable.columnRels?.get(8)?.computedExpr)
+            Assert.assertEquals("timestamp", createTable.columnRels?.get(9)?.metadataKey)
+            Assert.assertEquals("price * quantity", createTable.columnRels?.get(10)?.computedExpr)
 
             Assert.assertEquals(12, createTable.properties?.size)
         } else {
@@ -94,10 +82,7 @@ class FlinkSqlParserDdlTest {
 
         val createView = statements.get(1)
         if (createView is CreateView) {
-            Assert.assertEquals(
-                "MDM_VIEW_PRODUCT_ENRICHMENT",
-                createView.tableId.tableName
-            )
+            Assert.assertEquals("MDM_VIEW_PRODUCT_ENRICHMENT", createView.tableId.tableName)
             Assert.assertEquals(3, createView.queryStmt.inputTables.size)
         } else {
             Assert.fail()
@@ -105,10 +90,7 @@ class FlinkSqlParserDdlTest {
 
         val insertTable = statements.get(2)
         if (insertTable is InsertTable) {
-            Assert.assertEquals(
-                "PROCESSED_MDM_PRODUCT_ENRICHMENT",
-                insertTable.outputTables.get(0).tableName
-            )
+            Assert.assertEquals("PROCESSED_MDM_PRODUCT_ENRICHMENT", insertTable.outputTables.get(0).tableName)
             Assert.assertEquals(1, insertTable.queryStmt.inputTables.size)
             Assert.assertEquals(5, insertTable.columnRels?.size)
         } else {

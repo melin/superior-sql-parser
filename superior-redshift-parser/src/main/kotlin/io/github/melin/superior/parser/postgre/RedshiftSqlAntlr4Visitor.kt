@@ -26,10 +26,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/6/30 9:57 上午 */
-class RedshiftSqlAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : RedshiftParserBaseVisitor<Statement>() {
+class RedshiftSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    RedshiftParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -55,16 +53,11 @@ class RedshiftSqlAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitDecl_cursor_query(
-            ctx: RedshiftParser.Decl_cursor_queryContext
-    ): Statement? {
+    override fun visitDecl_cursor_query(ctx: RedshiftParser.Decl_cursor_queryContext): Statement? {
         val statement = visitSelectstmt(ctx.selectstmt())
         if (plsql != null) {
             statement.setSql(CommonUtils.subsql(plsql, ctx))
@@ -73,9 +66,7 @@ class RedshiftSqlAntlr4Visitor(
         return null
     }
 
-    override fun visitStmtmulti(
-        ctx: RedshiftParser.StmtmultiContext
-    ): Statement? {
+    override fun visitStmtmulti(ctx: RedshiftParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
             val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
@@ -107,10 +98,7 @@ class RedshiftSqlAntlr4Visitor(
     override fun visitStmt(ctx: RedshiftParser.StmtContext): Statement? {
         val stmt: Statement? = super.visitStmt(ctx)
         if (stmt != null) {
-            if (
-                currentOptType != CREATE_FUNCTION &&
-                    currentOptType != CREATE_PROCEDURE
-            ) {
+            if (currentOptType != CREATE_FUNCTION && currentOptType != CREATE_PROCEDURE) {
                 if (plsql != null) {
                     stmt.setSql(CommonUtils.subsql(plsql, ctx))
                 }
@@ -139,34 +127,26 @@ class RedshiftSqlAntlr4Visitor(
 
     // -----------------------------------database-------------------------------------------------
 
-    override fun visitCreatedbstmt(
-        ctx: RedshiftParser.CreatedbstmtContext
-    ): Statement {
+    override fun visitCreatedbstmt(ctx: RedshiftParser.CreatedbstmtContext): Statement {
         val databaseName = CommonUtils.cleanQuote(ctx.name().text)
         return CreateDatabase(databaseName)
     }
 
-    override fun visitDropdbstmt(
-        ctx: RedshiftParser.DropdbstmtContext
-    ): Statement {
+    override fun visitDropdbstmt(ctx: RedshiftParser.DropdbstmtContext): Statement {
         val databaseName = CommonUtils.cleanQuote(ctx.name().text)
         return DropDatabase(databaseName)
     }
 
     // -----------------------------------schema-------------------------------------------------
 
-    override fun visitCreateschemastmt(
-        ctx: RedshiftParser.CreateschemastmtContext
-    ): Statement {
+    override fun visitCreateschemastmt(ctx: RedshiftParser.CreateschemastmtContext): Statement {
         val schemaName = CommonUtils.cleanQuote(ctx.colid().text)
         return CreateSchema(schemaName)
     }
 
     // -----------------------------------table-------------------------------------------------
 
-    override fun visitCreatestmt(
-        ctx: RedshiftParser.CreatestmtContext
-    ): Statement {
+    override fun visitCreatestmt(ctx: RedshiftParser.CreatestmtContext): Statement {
         currentOptType = CREATE_TABLE
 
         if (ctx.PARTITION() != null) {
@@ -196,8 +176,7 @@ class RedshiftSqlAntlr4Visitor(
                 columnRel
             }
 
-        val createTable =
-            CreateTable(tableId, TableType.POSTGRES, columnRels = columns)
+        val createTable = CreateTable(tableId, TableType.POSTGRES, columnRels = columns)
         if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
             createTable.temporary = true
         }
@@ -206,8 +185,7 @@ class RedshiftSqlAntlr4Visitor(
         val tablePartition = ctx.gaussextension()?.tablePartition()
         if (partitionspec != null) {
             val partitionType = partitionspec.colid().text.uppercase()
-            val partitionColumns =
-                partitionspec.part_params().part_elem().map { it.text }
+            val partitionColumns = partitionspec.part_params().part_elem().map { it.text }
 
             createTable.partitionColumnNames.addAll(partitionColumns)
             if ("RANGE" == partitionType) {
@@ -223,19 +201,13 @@ class RedshiftSqlAntlr4Visitor(
             val ptSpec = tablePartition.partition_list()
             if (ptSpec.list_partition_stmt() != null) {
                 partitionType = PartitionType.LIST
-                partitionColumns.add(
-                    ptSpec.list_partition_stmt().partition_key().colid().text
-                )
+                partitionColumns.add(ptSpec.list_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.value_partition_stmt() != null) {
                 partitionType = PartitionType.VALUES
-                partitionColumns.add(
-                    ptSpec.value_partition_stmt().partition_key().colid().text
-                )
+                partitionColumns.add(ptSpec.value_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.range_partition_stmt() != null) {
                 partitionType = PartitionType.RANGE
-                partitionColumns.add(
-                    ptSpec.range_partition_stmt().partition_key().colid().text
-                )
+                partitionColumns.add(ptSpec.range_partition_stmt().partition_key().colid().text)
             } else if (ptSpec.normal_partition_stmt() != null) {
                 partitionType = PartitionType.NORMAL
             }
@@ -247,41 +219,29 @@ class RedshiftSqlAntlr4Visitor(
         return createTable
     }
 
-    override fun visitFunc_as(
-            ctx: RedshiftParser.Func_asContext
-    ): Statement? {
+    override fun visitFunc_as(ctx: RedshiftParser.Func_asContext): Statement? {
         if (ctx.Definition != null) {
             plsql = CommonUtils.subsql(command, ctx)
             plsql = StringUtils.substringBetween(plsql, "$$", "$$")
             plsql = StringUtils.trim(plsql)
             visitSqlroot(ctx.Definition as SqlrootContext)
-            plsql = null;
+            plsql = null
         }
         return super.visitFunc_as(ctx)
     }
 
-    override fun visitCreatefunctionstmt(
-        ctx: RedshiftParser.CreatefunctionstmtContext
-    ): Statement {
-        currentOptType =
-            if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
+    override fun visitCreatefunctionstmt(ctx: RedshiftParser.CreatefunctionstmtContext): Statement {
+        currentOptType = if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
         childStatements = arrayListOf()
 
         val optItems = ctx.createfunc_opt_list().createfunc_opt_item()
         if (optItems != null) {
             optItems
-                .filter {
-                    it.func_as() != null && it.func_as().Definition != null
-                }
-                .forEach {
-                    visitSqlroot(
-                        it.func_as().Definition as RedshiftParser.SqlrootContext
-                    )
-                }
+                .filter { it.func_as() != null && it.func_as().Definition != null }
+                .forEach { visitSqlroot(it.func_as().Definition as RedshiftParser.SqlrootContext) }
         }
 
-        val replace =
-            if (ctx.opt_or_replace().REPLACE() != null) true else false
+        val replace = if (ctx.opt_or_replace().REPLACE() != null) true else false
         val funcName = ctx.func_name()
 
         if (ctx.FUNCTION() != null) {
@@ -289,45 +249,25 @@ class RedshiftSqlAntlr4Visitor(
                 if (funcName.type_function_name() != null) {
                     FunctionId(funcName.text)
                 } else {
-                    FunctionId(
-                        funcName.colid().text,
-                        funcName
-                            .indirection()
-                            .indirection_el()[0]
-                            .attr_name()
-                            .text
-                    )
+                    FunctionId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
                 }
 
-            currentOptType =
-                if (ctx.FUNCTION() != null) CREATE_FUNCTION
-                else CREATE_PROCEDURE
+            currentOptType = if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
             return CreateFunction(functionId, childStatements, replace)
         } else {
             val procedureId =
                 if (funcName.type_function_name() != null) {
                     ProcedureId(funcName.text)
                 } else {
-                    ProcedureId(
-                        funcName.colid().text,
-                        funcName
-                            .indirection()
-                            .indirection_el()[0]
-                            .attr_name()
-                            .text
-                    )
+                    ProcedureId(funcName.colid().text, funcName.indirection().indirection_el()[0].attr_name().text)
                 }
 
-            currentOptType =
-                if (ctx.FUNCTION() != null) CREATE_FUNCTION
-                else CREATE_PROCEDURE
+            currentOptType = if (ctx.FUNCTION() != null) CREATE_FUNCTION else CREATE_PROCEDURE
             return CreateProcedure(procedureId, childStatements, replace)
         }
     }
 
-    override fun visitProc_stmt(
-        ctx: RedshiftParser.Proc_stmtContext
-    ): Statement? {
+    override fun visitProc_stmt(ctx: RedshiftParser.Proc_stmtContext): Statement? {
         super.visitProc_stmt(ctx)
         return null
     }
@@ -346,9 +286,7 @@ class RedshiftSqlAntlr4Visitor(
         return createView
     }
 
-    override fun visitCreatematviewstmt(
-        ctx: RedshiftParser.CreatematviewstmtContext
-    ): Statement {
+    override fun visitCreatematviewstmt(ctx: RedshiftParser.CreatematviewstmtContext): Statement {
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         val tableId = parseTableName(ctx.create_mv_target().qualified_name())
         val ifNotExists = if (ctx.IF_P() != null) true else false
@@ -358,16 +296,12 @@ class RedshiftSqlAntlr4Visitor(
         return createView
     }
 
-    override fun visitRefreshmatviewstmt(
-        ctx: RedshiftParser.RefreshmatviewstmtContext
-    ): Statement {
+    override fun visitRefreshmatviewstmt(ctx: RedshiftParser.RefreshmatviewstmtContext): Statement {
         val tableId = parseTableName(ctx.qualified_name())
         return RefreshMaterializedView(tableId)
     }
 
-    override fun visitRenamestmt(
-        ctx: RedshiftParser.RenamestmtContext
-    ): Statement? {
+    override fun visitRenamestmt(ctx: RedshiftParser.RenamestmtContext): Statement? {
         if (ctx.TABLE() != null) {
             val tableId = parseTableName(ctx.qualified_name())
             val newTable = ctx.name().get(0).text
@@ -394,18 +328,14 @@ class RedshiftSqlAntlr4Visitor(
         }
     }
 
-    override fun visitSelectstmt(
-        ctx: RedshiftParser.SelectstmtContext
-    ): Statement {
+    override fun visitSelectstmt(ctx: RedshiftParser.SelectstmtContext): Statement {
         currentOptType = StatementType.SELECT
         super.visitSelectstmt(ctx)
 
         return QueryStmt(inputTables, limit, offset)
     }
 
-    override fun visitCreateasstmt(
-        ctx: RedshiftParser.CreateasstmtContext
-    ): Statement {
+    override fun visitCreateasstmt(ctx: RedshiftParser.CreateasstmtContext): Statement {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.create_as_target().qualified_name())
         val queryStmt = this.visitSelectstmt(ctx.selectstmt()) as QueryStmt
@@ -413,12 +343,9 @@ class RedshiftSqlAntlr4Visitor(
         return createTable
     }
 
-    override fun visitUpdatestmt(
-        ctx: RedshiftParser.UpdatestmtContext
-    ): Statement {
+    override fun visitUpdatestmt(ctx: RedshiftParser.UpdatestmtContext): Statement {
         currentOptType = StatementType.UPDATE
-        val tableId =
-            parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
@@ -427,12 +354,9 @@ class RedshiftSqlAntlr4Visitor(
         return UpdateTable(tableId, inputTables)
     }
 
-    override fun visitDeletestmt(
-        ctx: RedshiftParser.DeletestmtContext
-    ): Statement {
+    override fun visitDeletestmt(ctx: RedshiftParser.DeletestmtContext): Statement {
         currentOptType = StatementType.DELETE
-        val tableId =
-            parseTableName(ctx.relation_expr_opt_alias().relation_expr())
+        val tableId = parseTableName(ctx.relation_expr_opt_alias().relation_expr())
         addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
@@ -441,9 +365,7 @@ class RedshiftSqlAntlr4Visitor(
         return DeleteTable(tableId, inputTables)
     }
 
-    override fun visitInsertstmt(
-        ctx: RedshiftParser.InsertstmtContext
-    ): Statement {
+    override fun visitInsertstmt(ctx: RedshiftParser.InsertstmtContext): Statement {
         currentOptType = StatementType.INSERT
         if (ctx.opt_with_clause() != null) {
             this.visitOpt_with_clause(ctx.opt_with_clause())
@@ -452,18 +374,13 @@ class RedshiftSqlAntlr4Visitor(
         val tableId = parseTableName(ctx.insert_target().qualified_name())
         addOutputTableId(tableId)
 
-        val queryStmt =
-            this.visitSelectstmt(ctx.insert_rest().selectstmt()) as QueryStmt
+        val queryStmt = this.visitSelectstmt(ctx.insert_rest().selectstmt()) as QueryStmt
         val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
-        insertTable.outputTables.addAll(
-            outputTables.subList(1, outputTables.size)
-        )
+        insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
         return insertTable
     }
 
-    override fun visitMergestmt(
-        ctx: RedshiftParser.MergestmtContext
-    ): Statement {
+    override fun visitMergestmt(ctx: RedshiftParser.MergestmtContext): Statement {
         currentOptType = StatementType.MERGE
 
         val mergeTableId = parseTableName(ctx.qualified_name(0))
@@ -480,15 +397,11 @@ class RedshiftSqlAntlr4Visitor(
     }
 
     override fun visitCte_list(ctx: RedshiftParser.Cte_listContext): Statement {
-        ctx.common_table_expr().forEach {
-            cteTempTables.add(TableId(it.name().text))
-        }
+        ctx.common_table_expr().forEach { cteTempTables.add(TableId(it.name().text)) }
         return super.visitCte_list(ctx)
     }
 
-    override fun visitQualified_name(
-        ctx: RedshiftParser.Qualified_nameContext
-    ): Statement? {
+    override fun visitQualified_name(ctx: RedshiftParser.Qualified_nameContext): Statement? {
         if (
             currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.CREATE_VIEW ||
@@ -508,10 +421,7 @@ class RedshiftSqlAntlr4Visitor(
 
             val tableId = parseTableName(ctx)
 
-            if (
-                !inputTables.contains(tableId) &&
-                    !cteTempTables.contains(tableId)
-            ) {
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
             return null
@@ -521,9 +431,7 @@ class RedshiftSqlAntlr4Visitor(
     }
 
     // create index
-    override fun visitIndexstmt(
-        ctx: RedshiftParser.IndexstmtContext
-    ): Statement {
+    override fun visitIndexstmt(ctx: RedshiftParser.IndexstmtContext): Statement {
         val tableId = parseTableName(ctx.relation_expr())
         val indexName =
             if (ctx.opt_index_name() != null) {
@@ -539,20 +447,14 @@ class RedshiftSqlAntlr4Visitor(
         if (ctx.object_type_any_name() != null) {
             val ifExists = ctx.IF_P() != null
             if (ctx.object_type_any_name().INDEX() != null) {
-                val actions =
-                    ctx.any_name_list().any_name().map { indexName ->
-                        DropIndex(indexName.text, ifExists)
-                    }
+                val actions = ctx.any_name_list().any_name().map { indexName -> DropIndex(indexName.text, ifExists) }
                 val tableId = TableId("")
                 val alterTable = AlterTable(tableId)
                 alterTable.ifExists = ifExists
                 alterTable.addActions(actions)
                 return alterTable
             } else if (ctx.object_type_any_name().TABLE() != null) {
-                val tableIds =
-                    ctx.any_name_list().any_name().map { tableName ->
-                        parseTableName(tableName)
-                    }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropTable = DropTable(tableIds.first(), ifExists)
                 dropTable.tableIds.addAll(tableIds)
                 return dropTable
@@ -563,13 +465,9 @@ class RedshiftSqlAntlr4Visitor(
                     } else {
                         false
                     }
-                val tableIds =
-                    ctx.any_name_list().any_name().map { tableName ->
-                        parseTableName(tableName)
-                    }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 if (isMaterialized) {
-                    val dropView =
-                        DropMaterializedView(tableIds.first(), ifExists)
+                    val dropView = DropMaterializedView(tableIds.first(), ifExists)
                     dropView.tableIds.addAll(tableIds)
                     return dropView
                 } else {
@@ -578,13 +476,9 @@ class RedshiftSqlAntlr4Visitor(
                     return dropView
                 }
             } else if (ctx.object_type_any_name().SEQUENCE() != null) {
-                val tableIds =
-                    ctx.any_name_list().any_name().map { tableName ->
-                        parseTableName(tableName)
-                    }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropSequence =
-                    io.github.melin.superior.common.relational.drop
-                        .DropSequence(tableIds.first(), ifExists)
+                    io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)
                 dropSequence.tableIds.addAll(tableIds)
                 return dropSequence
             }
@@ -593,17 +487,12 @@ class RedshiftSqlAntlr4Visitor(
         throw SQLParserException("not support")
     }
 
-    override fun visitTruncatestmt(
-        ctx: RedshiftParser.TruncatestmtContext
-    ): Statement {
-        val tableIds =
-            ctx.relation_expr_list().relation_expr().map { parseTableName(it) }
+    override fun visitTruncatestmt(ctx: RedshiftParser.TruncatestmtContext): Statement {
+        val tableIds = ctx.relation_expr_list().relation_expr().map { parseTableName(it) }
         return TruncateTable(Lists.newArrayList(tableIds))
     }
 
-    override fun visitAltertablestmt(
-        ctx: RedshiftParser.AltertablestmtContext
-    ): Statement? {
+    override fun visitAltertablestmt(ctx: RedshiftParser.AltertablestmtContext): Statement? {
         if (ctx.TABLE() != null) {
             if (ctx.relation_expr() != null) {
                 val tableId = parseTableName(ctx.relation_expr())
@@ -612,51 +501,25 @@ class RedshiftSqlAntlr4Visitor(
                     val alterTable = AlterTable(tableId)
                     val cmds = ctx.alter_table_cmds().alter_table_cmd()
                     for (cmdContext in cmds) {
-                        if (
-                            cmdContext.ADD_P() != null &&
-                                cmdContext.columnDef() != null
-                        ) {
+                        if (cmdContext.ADD_P() != null && cmdContext.columnDef() != null) {
                             val columnDef = cmdContext.columnDef()
                             val columnName = columnDef.colid().text
-                            val dataType =
-                                CommonUtils.subsql(
-                                    command,
-                                    columnDef.typename()
-                                )
-                            val action =
-                                AlterColumnAction(
-                                    ADD_COLUMN,
-                                    columnName,
-                                    dataType
-                                )
+                            val dataType = CommonUtils.subsql(command, columnDef.typename())
+                            val action = AlterColumnAction(ADD_COLUMN, columnName, dataType)
                             action.ifNotExists = cmdContext.EXISTS() != null
 
                             alterTable.actions.add(action)
                         } else if (cmdContext.alter_column_default() != null) {
-                            val columnDefaultDef =
-                                cmdContext.alter_column_default()
+                            val columnDefaultDef = cmdContext.alter_column_default()
                             val columnName = cmdContext.colid().get(0).text
 
                             if (columnDefaultDef.DROP() != null) {
-                                val action =
-                                    AlterColumnAction(
-                                        DROP_COLUMN_DRFAULT,
-                                        columnName
-                                    )
+                                val action = AlterColumnAction(DROP_COLUMN_DRFAULT, columnName)
                                 alterTable.actions.add(action)
                             } else {
-                                val value =
-                                    CommonUtils.subsql(
-                                        command,
-                                        columnDefaultDef.a_expr()
-                                    )
-                                val action =
-                                    AlterColumnAction(
-                                        SET_COLUMN_DEFAULT,
-                                        columnName
-                                    )
-                                action.defaultExpression =
-                                    CommonUtils.cleanQuote(value)
+                                val value = CommonUtils.subsql(command, columnDefaultDef.a_expr())
+                                val action = AlterColumnAction(SET_COLUMN_DEFAULT, columnName)
+                                action.defaultExpression = CommonUtils.cleanQuote(value)
                                 alterTable.actions.add(action)
                             }
                         }
@@ -667,17 +530,9 @@ class RedshiftSqlAntlr4Visitor(
                     var alterTable: AlterTable? = null
                     val partitionCmd = ctx.partition_cmd()
                     if (partitionCmd.ATTACH() != null) {
-                        alterTable =
-                            AlterTable(
-                                tableId,
-                                AlterTableAction(ATTACH_PARTITION)
-                            )
+                        alterTable = AlterTable(tableId, AlterTableAction(ATTACH_PARTITION))
                     } else {
-                        alterTable =
-                            AlterTable(
-                                tableId,
-                                AlterTableAction(DETACH_PARTITION)
-                            )
+                        alterTable = AlterTable(tableId, AlterTableAction(DETACH_PARTITION))
                     }
 
                     return alterTable
@@ -690,25 +545,14 @@ class RedshiftSqlAntlr4Visitor(
         return null
     }
 
-    override fun visitCommentstmt(
-        ctx: RedshiftParser.CommentstmtContext
-    ): Statement {
+    override fun visitCommentstmt(ctx: RedshiftParser.CommentstmtContext): Statement {
         val objType: String? =
             if (ctx.object_type_any_name() != null) {
-                ctx.object_type_any_name()
-                    .children
-                    .map { it.text }
-                    .joinToString(" ")
+                ctx.object_type_any_name().children.map { it.text }.joinToString(" ")
             } else if (ctx.object_type_name() != null) {
-                ctx.object_type_name()
-                    .children
-                    .map { it.text }
-                    .joinToString(" ")
+                ctx.object_type_name().children.map { it.text }.joinToString(" ")
             } else if (ctx.object_type_name_on_any_name() != null) {
-                ctx.object_type_name_on_any_name()
-                    .children
-                    .map { it.text }
-                    .joinToString(" ")
+                ctx.object_type_name_on_any_name().children.map { it.text }.joinToString(" ")
             } else if (ctx.COLUMN() != null) {
                 ctx.COLUMN().text
             } else if (ctx.FUNCTION() != null) {
@@ -721,43 +565,29 @@ class RedshiftSqlAntlr4Visitor(
 
         val isNull = if (ctx.comment_text().NULL_P() != null) true else false
         val text: String? =
-            if (ctx.comment_text().text != null)
-                CommonUtils.cleanQuote(ctx.comment_text().sconst().text)
-            else null
+            if (ctx.comment_text().text != null) CommonUtils.cleanQuote(ctx.comment_text().sconst().text) else null
         return CommentStatement(text, isNull, objType, objValue)
     }
 
     // ----------------------------------------private methods------------------------------------
 
-    override fun visitSelect_limit(
-        ctx: RedshiftParser.Select_limitContext
-    ): Statement? {
+    override fun visitSelect_limit(ctx: RedshiftParser.Select_limitContext): Statement? {
         val limitClause = ctx.limit_clause()
         val offsetClause = ctx.offset_clause()
         if (limitClause != null) {
             if (limitClause.LIMIT() != null) {
                 if (limitClause.select_limit_value().a_expr() != null) {
-                    limit =
-                        limitClause.select_limit_value().a_expr().text.toInt()
+                    limit = limitClause.select_limit_value().a_expr().text.toInt()
                 }
 
                 if (limitClause.select_offset_value() != null) {
-                    offset =
-                        limitClause.select_offset_value().a_expr().text.toInt()
+                    offset = limitClause.select_offset_value().a_expr().text.toInt()
                 }
             }
 
-            if (
-                limitClause.FETCH() != null &&
-                    limitClause.select_fetch_first_value() != null
-            ) {
+            if (limitClause.FETCH() != null && limitClause.select_fetch_first_value() != null) {
                 if (limitClause.select_fetch_first_value().c_expr() != null) {
-                    limit =
-                        limitClause
-                            .select_fetch_first_value()
-                            .c_expr()
-                            .text
-                            .toInt()
+                    limit = limitClause.select_fetch_first_value().c_expr().text.toInt()
                 }
             }
         }
@@ -769,12 +599,7 @@ class RedshiftSqlAntlr4Visitor(
 
             if (offsetClause.select_fetch_first_value() != null) {
                 if (offsetClause.select_fetch_first_value().c_expr() != null) {
-                    offset =
-                        offsetClause
-                            .select_fetch_first_value()
-                            .c_expr()
-                            .text
-                            .toInt()
+                    offset = offsetClause.select_fetch_first_value().c_expr().text.toInt()
                 }
             }
         }
@@ -788,11 +613,7 @@ class RedshiftSqlAntlr4Visitor(
         }
 
         if (attrNames.size == 2) {
-            return TableId(
-                ctx.colid().text,
-                attrNames.get(0).text,
-                attrNames.get(1).text
-            )
+            return TableId(ctx.colid().text, attrNames.get(0).text, attrNames.get(1).text)
         } else if (attrNames.size == 1) {
             return TableId(null, ctx.colid().text, attrNames.get(0).text)
         }
@@ -808,14 +629,9 @@ class RedshiftSqlAntlr4Visitor(
         if (ctx.childCount == 2) {
             val obj = ctx.getChild(1)
             if (obj.childCount == 2) {
-                return TableId(
-                    ctx.getChild(0).text,
-                    obj.getChild(0).getChild(1).text,
-                    obj.getChild(1).getChild(1).text
-                )
+                return TableId(ctx.getChild(0).text, obj.getChild(0).getChild(1).text, obj.getChild(1).getChild(1).text)
             } else if (obj.childCount == 1) {
-                val inEl =
-                    obj.getChild(0) as RedshiftParser.Indirection_elContext
+                val inEl = obj.getChild(0) as RedshiftParser.Indirection_elContext
                 return TableId(ctx.colid().text, inEl.attr_name().text)
             }
         } else if (ctx.childCount == 1) {

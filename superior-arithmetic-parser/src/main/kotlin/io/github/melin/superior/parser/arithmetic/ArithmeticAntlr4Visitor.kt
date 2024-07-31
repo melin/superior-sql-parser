@@ -9,8 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/7/28 9:49 上午 */
-class ArithmeticAntlr4Visitor(val bracketEnbled: Boolean) :
-    ArithmeticBaseVisitor<Statement>() {
+class ArithmeticAntlr4Visitor(val bracketEnbled: Boolean) : ArithmeticBaseVisitor<Statement>() {
 
     private var statement: Statement? = null
 
@@ -26,22 +25,16 @@ class ArithmeticAntlr4Visitor(val bracketEnbled: Boolean) :
         return statement
     }
 
-    override fun visitExpression(
-        ctx: ArithmeticParser.ExpressionContext
-    ): Statement? {
+    override fun visitExpression(ctx: ArithmeticParser.ExpressionContext): Statement? {
         statement = arithmetic
         return super.visitExpression(ctx)
     }
 
-    override fun visitIdentifier(
-        ctx: ArithmeticParser.IdentifierContext
-    ): Statement? {
+    override fun visitIdentifier(ctx: ArithmeticParser.IdentifierContext): Statement? {
         val name = ctx.text
         if (!arithmetic.functions.contains(name)) {
             if (bracketEnbled) {
-                arithmetic.variables.add(
-                    StringUtils.substringBetween(name, "[", "]")
-                )
+                arithmetic.variables.add(StringUtils.substringBetween(name, "[", "]"))
             } else {
                 arithmetic.variables.add(name)
             }
@@ -49,9 +42,7 @@ class ArithmeticAntlr4Visitor(val bracketEnbled: Boolean) :
         return super.visitIdentifier(ctx)
     }
 
-    override fun visitFunctionName(
-        ctx: ArithmeticParser.FunctionNameContext
-    ): Statement? {
+    override fun visitFunctionName(ctx: ArithmeticParser.FunctionNameContext): Statement? {
         val name = ctx.text
         arithmetic.functions.add(name)
         return super.visitFunctionName(ctx)

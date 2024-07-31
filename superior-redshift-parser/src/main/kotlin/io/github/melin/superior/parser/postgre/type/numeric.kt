@@ -28,19 +28,16 @@ data class BigIntType(val length: Int) : AbsNumericType() {
     override val alias: String = "int8"
 }
 
-data class NumericType(val precision: Int = 10, val scale: Int = 0) :
-    AbsNumericType() {
+data class NumericType(val precision: Int = 10, val scale: Int = 0) : AbsNumericType() {
     override val name: String = "numeric"
     override val alias: String = "decimal"
 }
 
-data class FloatType(val precision: Int, val scale: Int = 0) :
-    AbsNumericType() {
+data class FloatType(val precision: Int, val scale: Int = 0) : AbsNumericType() {
     override val name: String = "float"
 }
 
-data class DoubleType(val precision: Int, val scale: Int = 0) :
-    AbsNumericType() {
+data class DoubleType(val precision: Int, val scale: Int = 0) : AbsNumericType() {
     override val name: String = "double precision"
     override val alias: String = "float8"
 }

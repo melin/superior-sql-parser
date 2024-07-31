@@ -103,10 +103,7 @@ class SqlServerParserDmlTest {
         val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
-            Assert.assertEquals(
-                TableId("Production", "ProductCostHistory"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("Production", "ProductCostHistory"), statement.tableId)
         } else {
             Assert.fail()
         }
@@ -125,10 +122,7 @@ class SqlServerParserDmlTest {
         val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
-            Assert.assertEquals(
-                TableId("Purchasing", "PurchaseOrderDetail"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("Purchasing", "PurchaseOrderDetail"), statement.tableId)
         } else {
             Assert.fail()
         }
@@ -150,10 +144,7 @@ class SqlServerParserDmlTest {
         val statement = SqlServerHelper.parseStatement(sql)
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
-            Assert.assertEquals(
-                TableId("dbo", "FactInternetSales"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("dbo", "FactInternetSales"), statement.tableId)
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
@@ -173,10 +164,7 @@ class SqlServerParserDmlTest {
         val statement = SqlServerHelper.parseStatement(sql)
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals(
-                TableId("Production", "UnitMeasure"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("Production", "UnitMeasure"), statement.tableId)
         } else {
             Assert.fail()
         }
@@ -216,15 +204,9 @@ class SqlServerParserDmlTest {
         val statement = SqlServerHelper.parseStatement(sql)
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
-            Assert.assertEquals(
-                TableId("HumanResources", "Employee"),
-                statement.tableId
-            )
+            Assert.assertEquals(TableId("HumanResources", "Employee"), statement.tableId)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                TableId("HumanResources", "Employee1"),
-                statement.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("HumanResources", "Employee1"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -252,15 +234,9 @@ class SqlServerParserDmlTest {
 
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
-            Assert.assertEquals(
-                "TargetProducts",
-                statement.targetTable.tableName
-            )
+            Assert.assertEquals("TargetProducts", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(
-                TableId("SourceProducts"),
-                statement.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("SourceProducts"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -280,15 +256,9 @@ class SqlServerParserDmlTest {
 
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals(
-                "spt_fallback_dev",
-                statement.outputTables.get(0).tableName
-            )
+            Assert.assertEquals("spt_fallback_dev", statement.outputTables.get(0).tableName)
             Assert.assertEquals(1, statement.queryStmt.inputTables.size)
-            Assert.assertEquals(
-                TableId("dbo", "spt_fallback_usg"),
-                statement.queryStmt.inputTables.get(0)
-            )
+            Assert.assertEquals(TableId("dbo", "spt_fallback_usg"), statement.queryStmt.inputTables.get(0))
         } else {
             Assert.fail()
         }

@@ -75,14 +75,8 @@ class FlinkCdcSqlParserTest {
 
         val statement = FlinkSqlHelper.parseStatement(sql)
         if (statement is SyncDatabase) {
-            Assert.assertEquals(
-                "demo1, demo2, demo3, demo4",
-                statement.sourceDatabaseName
-            )
-            Assert.assertEquals(
-                "172.18.1.56:9093",
-                statement.sourceOptions?.get("brokers")
-            )
+            Assert.assertEquals("demo1, demo2, demo3, demo4", statement.sourceDatabaseName)
+            Assert.assertEquals("172.18.1.56:9093", statement.sourceOptions?.get("brokers"))
         } else {
             Assert.fail()
         }

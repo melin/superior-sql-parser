@@ -118,7 +118,7 @@
                     <kotlin>
                         <ktfmt>
                             <style>KOTLINLANG</style>
-                            <maxWidth>80</maxWidth>
+                            <maxWidth>120</maxWidth>
                             <blockIndent>4</blockIndent>
                             <continuationIndent>4</continuationIndent>
                         </ktfmt>

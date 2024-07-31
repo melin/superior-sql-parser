@@ -34,10 +34,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CreateRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_CREATE_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_CREATE_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertEquals("example_db", statement.schemaName)
             Assert.assertEquals("example_tbl1_ordertest1", statement.jobName)
@@ -66,10 +63,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is AlterRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_ALTER_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_ALTER_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -90,10 +84,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is PauseRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_PAUSE_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_PAUSE_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -113,10 +104,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is ResumeRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_RESUME_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_RESUME_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -136,10 +124,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is StopRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_STOP_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_STOP_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -171,15 +156,9 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is LoadTable) {
-            Assert.assertEquals(
-                StatementType.LOAD_TABLE,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.LOAD_TABLE, statement.statementType)
             Assert.assertEquals("test_db", statement.schemaName)
-            Assert.assertEquals(
-                "label_brokerload_multiplefile_multipletable",
-                statement.labelName
-            )
+            Assert.assertEquals("label_brokerload_multiplefile_multipletable", statement.labelName)
             Assert.assertEquals(2, statement.tableNames.size)
             Assert.assertEquals("table1", statement.tableNames.get(0))
         } else {
@@ -198,10 +177,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CancelLoadTable) {
-            Assert.assertEquals(
-                StatementType.CANCEL_LOAD_TABLE,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.CANCEL_LOAD_TABLE, statement.statementType)
             Assert.assertEquals("db1", statement.schemaName)
             Assert.assertEquals("label", statement.labelName)
         } else {
@@ -222,10 +198,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is AlterLoadTable) {
-            Assert.assertEquals(
-                StatementType.ALTER_LOAD_TABLE,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.ALTER_LOAD_TABLE, statement.statementType)
             Assert.assertEquals("test_db", statement.schemaName)
             Assert.assertEquals("label1", statement.labelName)
         } else {
@@ -251,10 +224,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is ExportTable) {
-            Assert.assertEquals(
-                StatementType.EXPORT_TABLE,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.EXPORT_TABLE, statement.statementType)
             Assert.assertEquals("testTbl", statement.tableId.tableName)
             Assert.assertEquals("s3a://s3-package/export/", statement.path)
         } else {
@@ -275,15 +245,9 @@ class StarRocksSqlParserLoadAndExportTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CancelExport) {
-            Assert.assertEquals(
-                StatementType.CANCEL_EXPORT,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.CANCEL_EXPORT, statement.statementType)
             Assert.assertEquals("example_db", statement.database)
-            Assert.assertEquals(
-                "921d8f80-7c9d-11eb-9342-acde48001121",
-                statement.queryId
-            )
+            Assert.assertEquals("921d8f80-7c9d-11eb-9342-acde48001121", statement.queryId)
         } else {
             Assert.fail()
         }

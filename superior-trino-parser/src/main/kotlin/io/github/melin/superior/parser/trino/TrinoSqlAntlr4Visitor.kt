@@ -16,10 +16,8 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2018/1/10. */
-class TrinoSqlAntlr4Visitor(
-    val splitSql: Boolean = false,
-    val command: String?
-) : TrinoSqlBaseBaseVisitor<Statement>() {
+class TrinoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+    TrinoSqlBaseBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
 
@@ -40,16 +38,11 @@ class TrinoSqlAntlr4Visitor(
         return sqls
     }
 
-    override fun shouldVisitNextChild(
-        node: RuleNode,
-        currentResult: Statement?
-    ): Boolean {
+    override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         return if (currentResult == null) true else false
     }
 
-    override fun visitSqlStatements(
-        ctx: TrinoSqlBaseParser.SqlStatementsContext
-    ): Statement? {
+    override fun visitSqlStatements(ctx: TrinoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
             val sql = CommonUtils.subsql(command, it)
             if (splitSql) {
@@ -87,24 +80,19 @@ class TrinoSqlAntlr4Visitor(
         cteTempTables = arrayListOf()
     }
 
-    override fun visitStatementDefault(
-        ctx: TrinoSqlBaseParser.StatementDefaultContext
-    ): Statement? {
+    override fun visitStatementDefault(ctx: TrinoSqlBaseParser.StatementDefaultContext): Statement? {
         if (StringUtils.equalsIgnoreCase("select", ctx.start.text)) {
             currentOptType = StatementType.SELECT
             super.visitRootQuery(ctx.rootQuery())
 
-            val limit =
-                ctx.rootQuery()?.query()?.queryNoWith()?.limit?.text?.toInt()
+            val limit = ctx.rootQuery()?.query()?.queryNoWith()?.limit?.text?.toInt()
             return QueryStmt(inputTables, limit)
         } else {
             return null
         }
     }
 
-    private fun parseRootQuery(
-        ctx: TrinoSqlBaseParser.RootQueryContext
-    ): QueryStmt {
+    private fun parseRootQuery(ctx: TrinoSqlBaseParser.RootQueryContext): QueryStmt {
         currentOptType = StatementType.SELECT
         this.visitRootQuery(ctx)
 
@@ -115,9 +103,7 @@ class TrinoSqlAntlr4Visitor(
         return queryStmt
     }
 
-    override fun visitCreateTableAsSelect(
-        ctx: TrinoSqlBaseParser.CreateTableAsSelectContext
-    ): Statement? {
+    override fun visitCreateTableAsSelect(ctx: TrinoSqlBaseParser.CreateTableAsSelectContext): Statement? {
         currentOptType = StatementType.CREATE_TABLE_AS_SELECT
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseRootQuery(ctx.rootQuery())
@@ -126,9 +112,7 @@ class TrinoSqlAntlr4Visitor(
         return createTable
     }
 
-    override fun visitDropTable(
-        ctx: TrinoSqlBaseParser.DropTableContext
-    ): Statement? {
+    override fun visitDropTable(ctx: TrinoSqlBaseParser.DropTableContext): Statement? {
         val tableId = parseTableName(ctx.qualifiedName())
 
         val dropTable = DropTable(tableId)
@@ -136,9 +120,7 @@ class TrinoSqlAntlr4Visitor(
         return dropTable
     }
 
-    override fun visitInsertInto(
-        ctx: TrinoSqlBaseParser.InsertIntoContext
-    ): Statement {
+    override fun visitInsertInto(ctx: TrinoSqlBaseParser.InsertIntoContext): Statement {
         val tableId = parseTableName(ctx.qualifiedName())
         val queryStmt = parseRootQuery(ctx.rootQuery())
         val stmt = InsertTable(InsertMode.INTO, queryStmt, tableId)
@@ -176,15 +158,11 @@ class TrinoSqlAntlr4Visitor(
         return mergeTable
     }
 
-    override fun visitExplain(
-        ctx: TrinoSqlBaseParser.ExplainContext
-    ): Statement? {
+    override fun visitExplain(ctx: TrinoSqlBaseParser.ExplainContext): Statement? {
         return DefaultStatement(StatementType.EXPLAIN)
     }
 
-    override fun visitQualifiedName(
-        ctx: TrinoSqlBaseParser.QualifiedNameContext
-    ): Statement? {
+    override fun visitQualifiedName(ctx: TrinoSqlBaseParser.QualifiedNameContext): Statement? {
         if (!(ctx.parent is TrinoSqlBaseParser.TableNameContext)) {
             return null
         }
@@ -204,9 +182,7 @@ class TrinoSqlAntlr4Visitor(
         return null
     }
 
-    private fun parseTableName(
-        ctx: TrinoSqlBaseParser.QualifiedNameContext
-    ): TableId {
+    private fun parseTableName(ctx: TrinoSqlBaseParser.QualifiedNameContext): TableId {
         val list = ctx.identifier()
 
         var catalogName: String? = null

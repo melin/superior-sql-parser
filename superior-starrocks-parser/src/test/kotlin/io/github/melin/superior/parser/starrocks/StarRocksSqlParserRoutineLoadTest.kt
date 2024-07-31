@@ -29,10 +29,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is CreateRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_CREATE_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_CREATE_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertEquals("example_db", statement.schemaName)
             Assert.assertEquals("example_tbl1_ordertest1", statement.jobName)
@@ -61,10 +58,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is AlterRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_ALTER_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_ALTER_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -85,10 +79,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is PauseRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_PAUSE_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_PAUSE_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -108,10 +99,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is ResumeRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_RESUME_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_RESUME_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)
@@ -131,10 +119,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val statement = StarRocksHelper.parseStatement(sql)
 
         if (statement is StopRoutineLoad) {
-            Assert.assertEquals(
-                StatementType.SR_STOP_ROUTINE_LOAD,
-                statement.statementType
-            )
+            Assert.assertEquals(StatementType.SR_STOP_ROUTINE_LOAD, statement.statementType)
             Assert.assertNull(statement.catalogName)
             Assert.assertNull(statement.schemaName)
             Assert.assertEquals("example_tbl2_ordertest2", statement.jobName)

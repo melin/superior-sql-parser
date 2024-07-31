@@ -40,9 +40,7 @@ object MySqlHelper {
     fun parseStatement(command: String): Statement {
         val statements = this.parseMultiStatement(command)
         if (statements.size != 1) {
-            throw IllegalStateException(
-                "only parser one sql, sql count: " + statements.size
-            )
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
         } else {
             return statements.get(0)
         }
@@ -70,10 +68,7 @@ object MySqlHelper {
         innerParseStatement(command, sqlVisitor)
     }
 
-    private fun innerParseStatement(
-        command: String,
-        sqlVisitor: MySqlParserBaseVisitor<Statement>
-    ) {
+    private fun innerParseStatement(command: String, sqlVisitor: MySqlParserBaseVisitor<Statement>) {
         val charStream = UpperCaseCharStream(CharStreams.fromString(command))
         val lexer = MySqlLexer(charStream)
         lexer.removeErrorListeners()
@@ -104,8 +99,7 @@ object MySqlHelper {
                 throw e.withCommand(command)
             }
         } finally {
-            val releaseAntlrCache =
-                System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
             if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
                 AbstractSqlParser.refreshParserCaches()
             }
