@@ -14,6 +14,9 @@ import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.AlterByAddIndexContext
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.AlterByAddPrimaryKeyContext
+import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.AlterByDropPrimaryKeyContext
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.AlterByTruncatePartitionContext
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionHashContext
 import io.github.melin.superior.parser.mysql.antlr4.MySqlParser.PartitionFunctionKeyContext
@@ -281,14 +284,17 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
                 val action = AlterColumnAction(ALTER_COLUMN, columnName, dataType)
                 alterTable.addAction(action)
-            } else if (statement is MySqlParser.AlterByAddIndexContext) {
+            } else if (statement is AlterByAddIndexContext) {
                 val createIndex = CreateIndex(statement.uid().text)
                 alterTable.addAction(createIndex)
             } else if (statement is MySqlParser.AlterByDropIndexContext) {
                 val dropIndex = DropIndex(statement.uid().text)
                 alterTable.addAction(dropIndex)
-            } else if (statement is MySqlParser.AlterByAddPrimaryKeyContext) {
+            } else if (statement is AlterByAddPrimaryKeyContext) {
                 val action = AlterTableAction(ADD_PRIMARY_KEY)
+                alterTable.addAction(action)
+            } else if (statement is AlterByDropPrimaryKeyContext) {
+                val action = AlterTableAction(DROP_PRIMARY_KEY)
                 alterTable.addAction(action)
             } else if (statement is MySqlParser.AlterByAddUniqueKeyContext) {
                 val action = AlterTableAction(ADD_UNIQUE_KEY)

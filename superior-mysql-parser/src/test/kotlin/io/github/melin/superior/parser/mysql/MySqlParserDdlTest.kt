@@ -518,4 +518,31 @@ class MySqlParserDdlTest {
             Assert.assertEquals(TableId("demo", "orders"), statement.tableId)
         }
     }
+
+    @Test
+    fun dropPrimarykeyTest() {
+        val sql = "alter table rd_orders drop primary key"
+
+        val statement = MySqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
+
+        if (statement is AlterTable) {
+            Assert.assertEquals(AlterActionType.DROP_PRIMARY_KEY, statement.firstAction().alterType)
+            Assert.assertEquals(TableId("rd_orders"), statement.tableId)
+        }
+    }
+
+    @Test
+    fun addPrimarykeyTest() {
+        val sql = "alter table rd_orders add primary key (name)"
+
+        val statement = MySqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.ALTER_TABLE, statement.statementType)
+
+        if (statement is AlterTable) {
+            Assert.assertEquals(AlterActionType.ADD_PRIMARY_KEY, statement.firstAction().alterType)
+            Assert.assertEquals(TableId("rd_orders"), statement.tableId)
+        }
+    }
+
 }
