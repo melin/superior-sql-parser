@@ -544,5 +544,4 @@ class MySqlParserDdlTest {
             Assert.assertEquals(TableId("rd_orders"), statement.tableId)
         }
     }
-
 }

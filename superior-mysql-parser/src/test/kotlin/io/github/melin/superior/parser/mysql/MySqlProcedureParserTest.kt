@@ -3,7 +3,6 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.mysql.MySqlHelper
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.create.CreateProcedure
-import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import org.junit.Assert
 import org.junit.Test
 
@@ -11,7 +10,8 @@ class MySqlProcedureParserTest {
 
     @Test
     fun procedureTest0() {
-        val sql = """
+        val sql =
+            """
             CREATE PROCEDURE UpdateEmployeeSalary(IN employeeId INT, IN newSalary DECIMAL(10, 2))
             BEGIN
                 -- Update the salary of an employee with the given ID
@@ -21,7 +21,8 @@ class MySqlProcedureParserTest {
                 
                 select * from demos;
             END;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
 
@@ -36,7 +37,8 @@ class MySqlProcedureParserTest {
 
     @Test
     fun procedureTest1() {
-        val sql = """
+        val sql =
+            """
             create procedure my_procedure()
             begin
                 declare my_id varchar(32);
@@ -58,7 +60,8 @@ class MySqlProcedureParserTest {
                 END LOOP myLoop;
                 CLOSE My_Cursor;
             END;
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
 

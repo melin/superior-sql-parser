@@ -83,9 +83,11 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     override fun visitSqlStatement(ctx: MySqlParser.SqlStatementContext): Statement? {
         val statement = super.visitSqlStatement(ctx)
 
-        if (statement != null
-                && statement.statementType != StatementType.CREATE_FUNCTION
-                && statement.statementType != StatementType.CREATE_PROCEDURE) {
+        if (
+            statement != null &&
+                statement.statementType != StatementType.CREATE_FUNCTION &&
+                statement.statementType != StatementType.CREATE_PROCEDURE
+        ) {
             childStatements.add(statement)
         }
 
@@ -94,12 +96,14 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
     override fun visitDeclareCursor(ctx: MySqlParser.DeclareCursorContext): Statement? {
         val statement = super.visitDeclareCursor(ctx)
-        if (statement != null
-                && statement.statementType != StatementType.CREATE_FUNCTION
-                && statement.statementType != StatementType.CREATE_PROCEDURE) {
+        if (
+            statement != null &&
+                statement.statementType != StatementType.CREATE_FUNCTION &&
+                statement.statementType != StatementType.CREATE_PROCEDURE
+        ) {
             childStatements.add(statement)
         }
-        return statement;
+        return statement
     }
 
     private fun clean() {
