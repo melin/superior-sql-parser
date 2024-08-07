@@ -37,7 +37,10 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
+    // 多语句解析结果
     private var statements: ArrayList<Statement> = arrayListOf()
+    // 存储过程和函数中包含的子语句
+    private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
     fun getSqlStatements(): List<Statement> {
@@ -75,6 +78,28 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
             }
         }
         return null
+    }
+
+    override fun visitSqlStatement(ctx: MySqlParser.SqlStatementContext): Statement? {
+        val statement = super.visitSqlStatement(ctx)
+
+        if (statement != null
+                && statement.statementType != StatementType.CREATE_FUNCTION
+                && statement.statementType != StatementType.CREATE_PROCEDURE) {
+            childStatements.add(statement)
+        }
+
+        return statement
+    }
+
+    override fun visitDeclareCursor(ctx: MySqlParser.DeclareCursorContext): Statement? {
+        val statement = super.visitDeclareCursor(ctx)
+        if (statement != null
+                && statement.statementType != StatementType.CREATE_FUNCTION
+                && statement.statementType != StatementType.CREATE_PROCEDURE) {
+            childStatements.add(statement)
+        }
+        return statement;
     }
 
     private fun clean() {
@@ -433,6 +458,20 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         val tableId = parseFullId(ctx.tableName().fullId())
         val dropIndex = DropIndex(ctx.uid().text)
         return AlterTable(tableId, dropIndex)
+    }
+
+    override fun visitCreateProcedure(ctx: MySqlParser.CreateProcedureContext): Statement {
+        super.visitCreateProcedure(ctx)
+        val tableId = parseFullId(ctx.fullId())
+        val procedureId = ProcedureId(tableId.schemaName, tableId.tableName)
+        return CreateProcedure(procedureId, childStatements, false)
+    }
+
+    override fun visitCreateFunction(ctx: MySqlParser.CreateFunctionContext): Statement {
+        super.visitCreateFunction(ctx)
+        val tableId = parseFullId(ctx.fullId())
+        val functionId = FunctionId(tableId.schemaName, tableId.tableName)
+        return CreateFunction(functionId, childStatements, false)
     }
 
     // -----------------------------------private
