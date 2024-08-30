@@ -861,6 +861,69 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val functionId = parseTableName(ctx.identifierReference())
         return DropFunction(FunctionId(functionId.schemaName, functionId.tableName))
     }
+
+    // -----------------------------------iceberg sql start -------------------------------------
+
+    override fun visitAddPartitionField(ctx: SparkSqlParser.AddPartitionFieldContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterTableAction(ADD_PARTITION_FIELD))
+    }
+
+    override fun visitDropPartitionField(ctx: SparkSqlParser.DropPartitionFieldContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterTableAction(DROP_PARTITION_FIELD))
+    }
+
+    override fun visitReplacePartitionField(ctx: SparkSqlParser.ReplacePartitionFieldContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterTableAction(REPLACE_PARTITION_FIELD))
+    }
+
+    override fun visitSetWriteDistributionAndOrdering(
+        ctx: SparkSqlParser.SetWriteDistributionAndOrderingContext
+    ): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterTableAction(SET_WRITE_DISTRIBUTION_AND_ORDERING))
+    }
+
+    override fun visitSetIdentifierFields(ctx: SparkSqlParser.SetIdentifierFieldsContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val fields = ctx.fieldList().fields.map { field -> field.text }.toList()
+        return AlterTable(tableId, AlterSetIdentifierFieldsAction(fields))
+    }
+
+    override fun visitDropIdentifierFields(ctx: SparkSqlParser.DropIdentifierFieldsContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val fields = ctx.fieldList().fields.map { field -> field.text }.toList()
+        return AlterTable(tableId, AlterDropIdentifierFieldsAction(fields))
+    }
+
+    override fun visitCreateOrReplaceTag(ctx: SparkSqlParser.CreateOrReplaceTagContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val tagName = CommonUtils.cleanQuote(ctx.createReplaceTagClause().identifier().text)
+        return AlterTable(tableId, AlterCreateTagAction(tagName))
+    }
+
+    override fun visitDropTag(ctx: SparkSqlParser.DropTagContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val tagName = CommonUtils.cleanQuote(ctx.identifier().text)
+        return AlterTable(tableId, AlterDropTagAction(tagName))
+    }
+
+    override fun visitCreateOrReplaceBranch(ctx: SparkSqlParser.CreateOrReplaceBranchContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val branchName = CommonUtils.cleanQuote(ctx.createReplaceBranchClause().identifier().text)
+        return AlterTable(tableId, AlterCreateBranchAction(branchName))
+    }
+
+    override fun visitDropBranch(ctx: SparkSqlParser.DropBranchContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        val branchName = CommonUtils.cleanQuote(ctx.identifier().text)
+        return AlterTable(tableId, AlterDropBranchAction(branchName))
+    }
+
+    // -----------------------------------iceberg sql end -------------------------------------
+
     // -----------------------------------cache-------------------------------------------------
 
     override fun visitCacheTable(ctx: SparkSqlParser.CacheTableContext): Statement {

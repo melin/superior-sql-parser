@@ -256,6 +256,18 @@ statement
     | SYNC dtType=(DATABASE|TABLE) FROM source=multipartIdentifier
       (SET OWNER principal=identifier)?                                #syncTableMeta
 
+    // iceberg sql extensions
+    | ALTER TABLE multipartIdentifier ADD PARTITION FIELD transform (AS name=identifier)?   #addPartitionField
+    | ALTER TABLE multipartIdentifier DROP PARTITION FIELD transform                        #dropPartitionField
+    | ALTER TABLE multipartIdentifier REPLACE PARTITION FIELD transform WITH transform (AS name=identifier)? #replacePartitionField
+    | ALTER TABLE multipartIdentifier WRITE writeSpec                                       #setWriteDistributionAndOrdering
+    | ALTER TABLE multipartIdentifier SET IDENTIFIER_KW FIELDS fieldList                    #setIdentifierFields
+    | ALTER TABLE multipartIdentifier DROP IDENTIFIER_KW FIELDS fieldList                   #dropIdentifierFields
+    | ALTER TABLE multipartIdentifier createReplaceBranchClause                             #createOrReplaceBranch
+    | ALTER TABLE multipartIdentifier createReplaceTagClause                                #createOrReplaceTag
+    | ALTER TABLE multipartIdentifier DROP BRANCH (IF EXISTS)? identifier                   #dropBranch
+    | ALTER TABLE multipartIdentifier DROP TAG (IF EXISTS)? identifier                      #dropTag
+
     | unsupportedHiveNativeCommands .*?                                #failNativeCommand
     ;
 
@@ -333,6 +345,78 @@ exportTableClauses
       (OVERWRITE overwrite = booleanValue) |
       (MAX_FILE_SIZE maxfilesize = identifier) |
       (SINGLE single = booleanValue))*
+    ;
+
+createReplaceTagClause
+    : (CREATE OR)? REPLACE TAG identifier tagOptions
+    | CREATE TAG (IF NOT EXISTS)? identifier tagOptions
+    ;
+
+createReplaceBranchClause
+    : (CREATE OR)? REPLACE BRANCH identifier branchOptions
+    | CREATE BRANCH (IF NOT EXISTS)? identifier branchOptions
+    ;
+
+tagOptions
+    : (AS OF VERSION snapshotId)? (refRetain)?
+    ;
+
+branchOptions
+    : (AS OF VERSION snapshotId)? (refRetain)? (snapshotRetention)?
+    ;
+
+snapshotId
+    : number
+    ;
+
+timeUnit
+    : DAYS
+    | HOURS
+    | MINUTES
+    ;
+
+snapshotRetention
+    : WITH SNAPSHOT RETENTION minSnapshotsToKeep
+    | WITH SNAPSHOT RETENTION maxSnapshotAge
+    | WITH SNAPSHOT RETENTION minSnapshotsToKeep maxSnapshotAge
+    ;
+
+refRetain
+    : RETAIN number timeUnit
+    ;
+
+maxSnapshotAge
+    : number timeUnit
+    ;
+
+minSnapshotsToKeep
+    : number SNAPSHOTS
+    ;
+
+writeSpec
+    : (writeDistributionSpec | writeOrderingSpec)*
+    ;
+
+writeDistributionSpec
+    : DISTRIBUTED BY PARTITION
+    ;
+
+writeOrderingSpec
+    : LOCALLY? ORDERED BY orderExpr
+    | UNORDERED
+    ;
+
+orderExpr
+    : fields+=orderField (',' fields+=orderField)*
+    | '(' fields+=orderField (',' fields+=orderField)* ')'
+    ;
+
+orderField
+    : transform direction=(ASC | DESC)? (NULLS nullOrder=(FIRST | LAST))?
+    ;
+
+fieldList
+    : fields+=multipartIdentifier (',' fields+=multipartIdentifier)*
     ;
 
 unsupportedHiveNativeCommands
@@ -1454,6 +1538,7 @@ ansiNonReserved
     | EXTENDED
     | EXTERNAL
     | EXTRACT
+    | FIELD
     | FIELDS
     | FILEFORMAT
     | FIRST
@@ -1700,6 +1785,7 @@ nonReserved
     | BINARY_HEX
     | BOOLEAN
     | BOTH
+    | BRANCH
     | BUCKET
     | BUCKETS
     | BY
@@ -1762,6 +1848,7 @@ nonReserved
     | DIRECTORY
     | DISTINCT
     | DISTRIBUTE
+    | DISTRIBUTED
     | DIV
     | DOUBLE
     | DROP
@@ -1780,6 +1867,7 @@ nonReserved
     | FALSE
     | FETCH
     | FILTER
+    | FIELD
     | FIELDS
     | FILEFORMAT
     | FIRST
@@ -1834,6 +1922,7 @@ nonReserved
     | LOCKS
     | LOGICAL
     | LONG
+    | LOCALLY
     | MACRO
     | MAP
     | MATCHED
@@ -1864,6 +1953,7 @@ nonReserved
     | OPTIONS
     | OR
     | ORDER
+    | ORDERED
     | OUT
     | OUTER
     | OUTPUTFORMAT
@@ -1902,6 +1992,8 @@ nonReserved
     | RESET
     | RESPECT
     | RESTRICT
+    | RETAIN
+    | RETENTION
     | REVOKE
     | RLIKE
     | ROLE
@@ -1910,6 +2002,8 @@ nonReserved
     | ROLLUP
     | ROW
     | ROWS
+    | SNAPSHOT
+    | SNAPSHOTS
     | SCHEMA
     | SCHEMAS
     | SECOND
@@ -1943,6 +2037,7 @@ nonReserved
     | TABLE
     | TABLES
     | TABLESAMPLE
+    | TAG
     | TARGET
     | TBLPROPERTIES
     | TEMPORARY
@@ -1977,6 +2072,7 @@ nonReserved
     | UPDATE
     | USE
     | USER
+    | UNORDERED
     | VALUES
     | VARCHAR
     | VERSION
@@ -1990,6 +2086,7 @@ nonReserved
     | WINDOW
     | WITH
     | WITHIN
+    | WRITE
     | YEAR
     | YEARS
     | ZONE
