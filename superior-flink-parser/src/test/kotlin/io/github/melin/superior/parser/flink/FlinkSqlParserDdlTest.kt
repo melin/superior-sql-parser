@@ -99,7 +99,7 @@ class FlinkSqlParserDdlTest {
     }
 
     @Test
-    fun createTablesTest() {
+    fun createTableTest0() {
         val sql =
             """
             CREATE TABLE Orders (
@@ -119,6 +119,56 @@ class FlinkSqlParserDdlTest {
             Assert.assertEquals("Orders", createTable.tableId.tableName)
             Assert.assertEquals(3, createTable.columnRels?.size)
             Assert.assertEquals(1, createTable.properties?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTableTest1() {
+        val sql =
+            """
+            CREATE TABLE `Orders` (product STRING PRIMARY KEY NOT ENFORCED, `a.b.c` INT)
+            WITH ('type'='source', 'foo'='bar')
+        """
+                .trimIndent()
+
+        val createTable = FlinkSqlHelper.parseStatement(sql)
+        if (createTable is CreateTable) {
+            Assert.assertEquals("Orders", createTable.tableId.tableName)
+            Assert.assertEquals(2, createTable.columnRels?.size)
+            createTable.columnRels?.get(0)?.primaryKey?.let { Assert.assertTrue(it) }
+            Assert.assertEquals(2, createTable.properties?.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createTableTest2() {
+        val sql =
+            """
+            CREATE TABLE flink_meta_role (
+                id INT,
+                name STRING,
+                code STRING,
+                PRIMARY KEY (id) NOT ENFORCED
+                ) WITH (
+                'connector' = 'jdbc',
+                'url' = 'jdbc:mysql://172.18.5.44:3306/superior',
+                'table-name' = 'meta_role',
+                'username' = 'root',
+                'password' = 'root2023'
+            );
+        """
+                .trimIndent()
+
+        val createTable = FlinkSqlHelper.parseStatement(sql)
+        if (createTable is CreateTable) {
+            Assert.assertEquals("flink_meta_role", createTable.tableId.tableName)
+            Assert.assertEquals(3, createTable.columnRels?.size)
+            createTable.columnRels?.get(0)?.primaryKey?.let { Assert.assertTrue(it) }
+            Assert.assertEquals(5, createTable.properties?.size)
         } else {
             Assert.fail()
         }

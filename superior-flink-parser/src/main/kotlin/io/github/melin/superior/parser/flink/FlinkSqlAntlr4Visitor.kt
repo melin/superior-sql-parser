@@ -120,15 +120,23 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val properties = parseTableOptions(ctx.withOption().tablePropertyList())
         val ifNotExists: Boolean = if (ctx.ifNotExists() != null) true else false
 
+        val primayKeys =
+            if (ctx.tableConstraint() != null) {
+                ctx.tableConstraint().columnNameList().columnName().map { col -> col.uid().text }
+            } else {
+                listOf()
+            }
+
         val columnRels =
             ctx.columnOptionDefinition().map {
                 val column = it.getChild(0)
                 if (column is PhysicalColumnDefinitionContext) {
                     val colName = column.columnName().text
                     val dataType = column.columnType().text
+                    val primaryKey = if (column.columnConstraint() != null) true else primayKeys.contains(colName)
                     val colComment: String? =
                         if (column.commentSpec() != null) column.commentSpec().STRING_LITERAL().text else null
-                    ColumnRel(colName, dataType, colComment, ColumnDefType.PHYSICAL)
+                    ColumnRel(colName, dataType, colComment, primaryKey, ColumnDefType.PHYSICAL)
                 } else if (column is MetadataColumnDefinitionContext) {
                     val colName = column.columnName().text
                     val dataType = column.columnType().text

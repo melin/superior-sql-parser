@@ -31,6 +31,14 @@ data class ColumnRel(
         columnName: String,
         typeName: String?,
         comment: String?,
+        primaryKey: Boolean = false,
+        columnDefType: ColumnDefType
+    ) : this(columnName, typeName, comment, true, null, primaryKey, columnDefType)
+
+    constructor(
+        columnName: String,
+        typeName: String?,
+        comment: String?,
         columnDefType: ColumnDefType
     ) : this(columnName, typeName, comment, true, null, false, columnDefType)
 }
