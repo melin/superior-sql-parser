@@ -11,6 +11,8 @@ import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.*
 import io.github.melin.superior.common.relational.create.*
+import io.github.melin.superior.common.relational.delta.OptimizeTable
+import io.github.melin.superior.common.relational.delta.VacuumTable
 import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropFunction
@@ -90,13 +92,6 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                         val keyWords: ArrayList<String> = arrayListOf()
                         CommonUtils.findShowStatementKeyWord(keyWords, it)
                         ShowStatement(*keyWords.toTypedArray())
-                    } else if (
-                        StringUtils.equalsIgnoreCase("DESC", startNode) ||
-                            StringUtils.equalsIgnoreCase("DESCRIBE", startNode)
-                    ) {
-                        val keyWords: ArrayList<String> = arrayListOf()
-                        CommonUtils.findShowStatementKeyWord(keyWords, it)
-                        DescStatement(*keyWords.toTypedArray())
                     } else {
                         var statement = this.visitSingleStatement(it)
                         if (statement == null) {
@@ -175,6 +170,18 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             TableId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
         } else if (ctx.parts.size == 1) {
             TableId(null, null, ctx.parts.get(0).text)
+        } else {
+            throw SQLParserException("parse multipart error: " + ctx.parts.size)
+        }
+    }
+
+    fun parseFunctionName(ctx: SparkSqlParser.MultipartIdentifierContext): FunctionId {
+        return if (ctx.parts.size == 3) {
+            FunctionId(ctx.parts.get(0).text, ctx.parts.get(1).text, ctx.parts.get(2).text)
+        } else if (ctx.parts.size == 2) {
+            FunctionId(null, ctx.parts.get(0).text, ctx.parts.get(1).text)
+        } else if (ctx.parts.size == 1) {
+            FunctionId(null, null, ctx.parts.get(0).text)
         } else {
             throw SQLParserException("parse multipart error: " + ctx.parts.size)
         }
@@ -835,7 +842,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     // -----------------------------------function-------------------------------------------------
 
     override fun visitCreateFunction(ctx: SparkSqlParser.CreateFunctionContext): Statement {
-        val functionId = parseTableName(ctx.identifierReference())
+        val functionId = parseFunctionName(ctx.identifierReference().multipartIdentifier())
         val classNmae = ctx.className.text
 
         var temporary = false
@@ -847,19 +854,36 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         }
 
         val replace = if (ctx.REPLACE() != null) true else false
-        return CreateFunction(
-            FunctionId(functionId.schemaName, functionId.tableName),
-            arrayListOf(),
-            replace,
-            temporary,
-            classNmae,
-            file
-        )
+        return CreateFunction(functionId, arrayListOf(), replace, temporary, classNmae, file)
     }
 
     override fun visitDropFunction(ctx: SparkSqlParser.DropFunctionContext): Statement {
-        val functionId = parseTableName(ctx.identifierReference())
-        return DropFunction(FunctionId(functionId.schemaName, functionId.tableName))
+        val functionId = parseFunctionName(ctx.identifierReference().multipartIdentifier())
+        return DropFunction(functionId)
+    }
+
+    override fun visitDescribeNamespace(ctx: SparkSqlParser.DescribeNamespaceContext): Statement {
+        if (ctx.namespace().NAMESPACE() != null) {
+            return DescCatalog(ctx.identifierReference().multipartIdentifier().text)
+        } else {
+            val (catalogName, schemaName) = parseNamespace(ctx.identifierReference())
+            return DescSchema(SchemaId(catalogName, schemaName))
+        }
+    }
+
+    override fun visitDescribeFuncName(ctx: SparkSqlParser.DescribeFuncNameContext): Statement {
+        val functionId = parseFunctionName(ctx.identifierReference().multipartIdentifier())
+        return DescFunction(functionId)
+    }
+
+    override fun visitDescribeQuery(ctx: SparkSqlParser.DescribeQueryContext): Statement {
+        val query = parseQuery(ctx.query())
+        return DescQuery(query)
+    }
+
+    override fun visitDescribeRelation(ctx: SparkSqlParser.DescribeRelationContext): Statement {
+        val tableId = parseTableName(ctx.identifierReference().multipartIdentifier())
+        return DescTable(tableId)
     }
 
     // -----------------------------------iceberg sql start -------------------------------------
@@ -923,6 +947,60 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     // -----------------------------------iceberg sql end -------------------------------------
+
+    // -----------------------------------delta sql start -------------------------------------
+
+    override fun visitVacuumTable(ctx: SparkSqlParser.VacuumTableContext): Statement {
+        val tableId = parseTableName(ctx.table)
+        return VacuumTable(tableId)
+    }
+
+    override fun visitOptimizeTable(ctx: SparkSqlParser.OptimizeTableContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return OptimizeTable(tableId)
+    }
+
+    override fun visitDescribeDeltaDetail(ctx: SparkSqlParser.DescribeDeltaDetailContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return DescDeltaDetail(tableId)
+    }
+
+    override fun visitDescribeDeltaHistory(ctx: SparkSqlParser.DescribeDeltaHistoryContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+
+        if (ctx.limit != null) {
+            return DescDeltaHistory(tableId, ctx.limit.text.toInt())
+        } else {
+            return DescDeltaHistory(tableId)
+        }
+    }
+
+    override fun visitAddTableConstraint(ctx: SparkSqlParser.AddTableConstraintContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterAddConstraintAction())
+    }
+
+    override fun visitDropTableConstraint(ctx: SparkSqlParser.DropTableConstraintContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterDropConstraintAction())
+    }
+
+    override fun visitAlterTableDropFeature(ctx: SparkSqlParser.AlterTableDropFeatureContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterDropFeatureAction())
+    }
+
+    override fun visitAlterTableClusterBy(ctx: SparkSqlParser.AlterTableClusterByContext): Statement {
+        val tableId = parseTableName(ctx.multipartIdentifier())
+        return AlterTable(tableId, AlterClusterByAction())
+    }
+
+    override fun visitAlterTableSyncIdentity(ctx: SparkSqlParser.AlterTableSyncIdentityContext): Statement {
+        val tableId = parseTableName(ctx.table)
+        return AlterTable(tableId, AlterSyncIdentityAction())
+    }
+
+    // -----------------------------------delta sql start -------------------------------------
 
     // -----------------------------------cache-------------------------------------------------
 

@@ -52,6 +52,20 @@ enum class StatementType : Serializable {
     UNCACHE,
     CLEAR_CACHE,
 
+    // spark delta
+    VACUUM_TABLE,
+    OPTIMIZE_TABLE,
+    DESC_DELTA_DETAIL,
+    DESC_DELTA_HISTORY,
+
+    // spark
+    DESC_FUNCTION,
+    DESC_CATALOG,
+    DESC_DATABASE,
+    DESC_SCHEMA,
+    DESC_TABLE,
+    DESC_QUERY,
+
     //
     REFRESH_MV,
     CANCEL_REFRESH_MV,

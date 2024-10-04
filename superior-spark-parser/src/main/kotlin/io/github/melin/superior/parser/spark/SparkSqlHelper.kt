@@ -47,7 +47,6 @@ object SparkSqlHelper {
             DROP_TABLE,
             DROP_FUNCTION,
             SHOW,
-            DESC,
             CACHE,
             UNCACHE,
             CLEAR_CACHE,
@@ -60,6 +59,15 @@ object SparkSqlHelper {
             SYNC_DATABASE,
             DELETE,
             UPDATE,
+            VACUUM_TABLE,
+            OPTIMIZE_TABLE,
+            DESC_DELTA_DETAIL,
+            DESC_DELTA_HISTORY,
+            DESC_FUNCTION,
+            DESC_CATALOG,
+            DESC_SCHEMA,
+            DESC_TABLE,
+            DESC_QUERY,
             SET,
             EXPLAIN -> true
             else -> false

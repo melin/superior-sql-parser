@@ -194,6 +194,8 @@ statement
     | (DESC | DESCRIBE) FUNCTION EXTENDED? describeFuncName            #describeFunction
     | (DESC | DESCRIBE) namespace EXTENDED?
         identifierReference                                            #describeNamespace
+    | (DESC | DESCRIBE) DETAIL multipartIdentifier                                          #describeDeltaDetail
+    | (DESC | DESCRIBE) HISTORY multipartIdentifier (LIMIT limit=INTEGER_VALUE)?            #describeDeltaHistory
     | (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)?
         identifierReference partitionSpec? describeColName?            #describeRelation
     | (DESC | DESCRIBE) QUERY? query                                   #describeQuery
@@ -259,7 +261,8 @@ statement
     // iceberg sql extensions
     | ALTER TABLE multipartIdentifier ADD PARTITION FIELD transform (AS name=identifier)?   #addPartitionField
     | ALTER TABLE multipartIdentifier DROP PARTITION FIELD transform                        #dropPartitionField
-    | ALTER TABLE multipartIdentifier REPLACE PARTITION FIELD transform WITH transform (AS name=identifier)? #replacePartitionField
+    | ALTER TABLE multipartIdentifier REPLACE PARTITION FIELD transform
+        WITH transform (AS name=identifier)?                                                #replacePartitionField
     | ALTER TABLE multipartIdentifier WRITE writeSpec                                       #setWriteDistributionAndOrdering
     | ALTER TABLE multipartIdentifier SET IDENTIFIER_KW FIELDS fieldList                    #setIdentifierFields
     | ALTER TABLE multipartIdentifier DROP IDENTIFIER_KW FIELDS fieldList                   #dropIdentifierFields
@@ -268,7 +271,21 @@ statement
     | ALTER TABLE multipartIdentifier DROP BRANCH (IF EXISTS)? identifier                   #dropBranch
     | ALTER TABLE multipartIdentifier DROP TAG (IF EXISTS)? identifier                      #dropTag
 
-    | unsupportedHiveNativeCommands .*?                                #failNativeCommand
+    // delta sql extensions
+    | VACUUM table=multipartIdentifier
+            (USING INVENTORY (inventoryTable=multipartIdentifier | LEFT_PAREN inventoryQuery=query RIGHT_PAREN))?
+            (RETAIN number HOURS)? (DRY RUN)?                                               #vacuumTable
+    | ALTER TABLE multipartIdentifier ADD CONSTRAINT name=identifier constraint             #addTableConstraint
+    | ALTER TABLE multipartIdentifier
+            DROP CONSTRAINT (IF EXISTS)? name=identifier                                    #dropTableConstraint
+    | ALTER TABLE multipartIdentifier
+            DROP FEATURE featureName=featureNameValue (TRUNCATE HISTORY)?                   #alterTableDropFeature
+    | ALTER TABLE multipartIdentifier (clusterBySpec | CLUSTER BY NONE)                     #alterTableClusterBy
+    | ALTER TABLE table=multipartIdentifier
+            (ALTER | CHANGE) COLUMN? column=multipartIdentifier SYNC IDENTITY               #alterTableSyncIdentity
+    | OPTIMIZE multipartIdentifier whereClause? (zorderSpec)?                               #optimizeTable
+
+    | unsupportedHiveNativeCommands .*?                                                     #failNativeCommand
     ;
 
 setKey
@@ -417,6 +434,28 @@ orderField
 
 fieldList
     : fields+=multipartIdentifier (',' fields+=multipartIdentifier)*
+    ;
+
+zorderSpec
+    : ZORDER BY LEFT_PAREN interleave+=qualifiedName (COMMA interleave+=qualifiedName)* RIGHT_PAREN
+    | ZORDER BY interleave+=qualifiedName (COMMA interleave+=qualifiedName)*
+    ;
+
+clusterBySpec
+    : CLUSTER BY LEFT_PAREN interleave+=qualifiedName (COMMA interleave+=qualifiedName)* RIGHT_PAREN
+    ;
+
+constraint
+    : CHECK '(' exprToken+ ')'                                 #checkConstraint
+    ;
+
+exprToken
+    :  .+?
+    ;
+
+featureNameValue
+    : identifier
+    | stringLit
     ;
 
 unsupportedHiveNativeCommands
@@ -1730,8 +1769,7 @@ ansiNonReserved
     | SINGLE
     | MAX_FILE_SIZE
     | INCLUDING
-    | EXCLUDING
-//--ANSI-NON-RESERVED-END
+                                                                                                                                                                                                            //--ANSI-NON-RESERVED-END
     ;
 
 // When `SQL_standard_keyword_behavior=false`, there are 2 kinds of keywords in Spark SQL.
@@ -2105,5 +2143,17 @@ nonReserved
     | MAX_FILE_SIZE
     | INCLUDING
     | EXCLUDING
+
+    | VACUUM
+    | INVENTORY
+    | DRY
+    | RUN
+    | OPTIMIZE
+    | ZORDER
+    | DETAIL
+    | HISTORY
+    | FEATURE
+    | NONE
+    | IDENTITY
 //--DEFAULT-NON-RESERVED-END
     ;

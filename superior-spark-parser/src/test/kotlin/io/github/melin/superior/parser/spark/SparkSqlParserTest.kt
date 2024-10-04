@@ -546,7 +546,7 @@ class SparkSqlParserTest {
     fun descTableTest0() {
         val sql = "desc table users"
         val statement = SparkSqlHelper.parseStatement(sql)
-        Assert.assertEquals(StatementType.DESC, statement.statementType)
+        Assert.assertEquals(StatementType.DESC_TABLE, statement.statementType)
     }
 
     @Test

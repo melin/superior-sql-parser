@@ -37,5 +37,12 @@ enum class AlterActionType : Serializable {
     SET_WRITE_DISTRIBUTION_AND_ORDERING,
     SET_IDENTIFIER_FIELDS,
     DROP_IDENTIFIER_FIELDS,
+
+    // delta
+    ADD_CONSTRAINT,
+    DROP_CONSTRAINT,
+    DROP_FEATURE,
+    CLUSTER_BY,
+    SYNC_IDENTITY,
     UNKOWN
 }
