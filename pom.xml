@@ -24,6 +24,7 @@
         <module>superior-sqlserver-parser</module>
         <module>superior-flink-parser</module>
         <module>superior-oracle-parser</module>
+        <module>superior-dameng-parser</module>
         <module>superior-starrocks-parser</module>
         <module>superior-redshift-parser</module>
     </modules>

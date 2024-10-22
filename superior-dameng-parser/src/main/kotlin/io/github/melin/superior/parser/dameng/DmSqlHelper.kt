@@ -1,0 +1,108 @@
+package com.github.melin.superior.sql.parser.mysql
+
+import com.github.melin.superior.sql.parser.util.CommonUtils
+import io.github.melin.superior.common.antlr4.AntlrCaches
+import io.github.melin.superior.common.antlr4.ParseErrorListener
+import io.github.melin.superior.common.antlr4.ParseException
+import io.github.melin.superior.common.antlr4.UpperCaseCharStream
+import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.parser.dameng.AbstractSqlParser
+import io.github.melin.superior.parser.dameng.DmSqlAntlr4Visitor
+import io.github.melin.superior.parser.dameng.antlr4.DmSqlLexer
+import io.github.melin.superior.parser.dameng.antlr4.DmSqlParser
+import io.github.melin.superior.parser.dameng.antlr4.DmSqlParserBaseVisitor
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.atn.PredictionMode
+import org.antlr.v4.runtime.misc.ParseCancellationException
+import org.apache.commons.lang3.StringUtils
+
+/** Created by libinsong on 2018/1/10. */
+object DmSqlHelper {
+
+    @JvmStatic
+    fun sqlKeywords(): List<String> {
+        val keywords = hashSetOf<String>()
+        (0 until DmSqlLexer.VOCABULARY.maxTokenType).forEach { idx ->
+            val name = DmSqlLexer.VOCABULARY.getLiteralName(idx)
+            if (name != null) {
+                val matchResult = CommonUtils.KEYWORD_REGEX.find(name)
+                if (matchResult != null) {
+                    keywords.add(matchResult.groupValues.get(1))
+                }
+            }
+        }
+
+        return keywords.sorted()
+    }
+
+    @JvmStatic
+    fun parseStatement(command: String): Statement {
+        val statements = this.parseMultiStatement(command)
+        if (statements.size != 1) {
+            throw IllegalStateException("only parser one sql, sql count: " + statements.size)
+        } else {
+            return statements.get(0)
+        }
+    }
+
+    @JvmStatic
+    fun parseMultiStatement(command: String): List<Statement> {
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = DmSqlAntlr4Visitor(false, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
+        return sqlVisitor.getSqlStatements()
+    }
+
+    @JvmStatic
+    fun splitSql(command: String): List<String> {
+        val trimCmd = StringUtils.trim(command)
+        val sqlVisitor = DmSqlAntlr4Visitor(true, trimCmd)
+        innerParseStatement(trimCmd, sqlVisitor)
+        return sqlVisitor.getSplitSqls()
+    }
+
+    @JvmStatic
+    fun checkSqlSyntax(command: String) {
+        val sqlVisitor = DmSqlParserBaseVisitor<Statement>()
+        innerParseStatement(command, sqlVisitor)
+    }
+
+    private fun innerParseStatement(command: String, sqlVisitor: DmSqlParserBaseVisitor<Statement>) {
+        val charStream = UpperCaseCharStream(CharStreams.fromString(command))
+        val lexer = DmSqlLexer(charStream)
+        lexer.removeErrorListeners()
+        lexer.addErrorListener(ParseErrorListener())
+
+        val tokenStream = CommonTokenStream(lexer)
+        val parser = DmSqlParser(tokenStream)
+        AbstractSqlParser.installCaches(parser)
+        parser.removeErrorListeners()
+        parser.addErrorListener(ParseErrorListener())
+
+        try {
+            try {
+                // first, try parsing with potentially faster SLL mode
+                sqlVisitor.visitDmprogram(parser.dmprogram())
+            } catch (e: ParseCancellationException) {
+                tokenStream.seek(0) // rewind input stream
+                parser.reset()
+
+                // Try Again.
+                parser.interpreter.predictionMode = PredictionMode.LL
+                sqlVisitor.visitDmprogram(parser.dmprogram())
+            }
+        } catch (e: ParseException) {
+            if (StringUtils.isNotBlank(e.command)) {
+                throw e
+            } else {
+                throw e.withCommand(command)
+            }
+        } finally {
+            val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)
+            if (releaseAntlrCache == null || "true".equals(releaseAntlrCache)) {
+                AbstractSqlParser.refreshParserCaches()
+            }
+        }
+    }
+}
