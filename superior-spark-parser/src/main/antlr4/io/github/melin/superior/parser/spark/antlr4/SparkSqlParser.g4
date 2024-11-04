@@ -289,7 +289,7 @@ statement
     ;
 
 setKey
-    : (identifier | '.' | MINUS)+
+    : (identifier | DECIMAL_VALUE | '.' | MINUS)+
     | DOUBLEQUOTED_STRING
     ;
 

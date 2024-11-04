@@ -2463,11 +2463,15 @@ class SparkSqlParserTest {
             """
             SET SPARK.HADOOP.FS.OSS.ENDPOINT = OSS-CN-HANGZHOU.ALIYUNCS.COM;
             set spark.hadoop.fs.oss.accessKeyId = xxx;
-            set spark.hadoop.fs.oss.accessKeySecret = "172.158.1.2";
+            set spark.hadoop.fs.oss.accessKeySecret = xxxx;
             set spark.hadoop.fs.oss.attempts.maximum = 3;
             set spark.hadoop.fs.oss.connection.timeout = 10000;
             set spark.hadoop.fs.oss.connection.establish.timeout = 10000;
             set spark.hadoop.fs.oss.impl = org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem;
+            set spark.hadoop.fs.sftp.host = "172.24.5.213"
+            set spark.hadoop.fs.sftp.host.port = 22
+            set spark.hadoop.fs.sftp.user.172.24.5.213 = root
+            set "spark.hadoop.fs.sftp.password.172.24.5.213.root" = 123caoqwe
             DISTCP OPTIONS (
               srcPaths = ['oss://melin1204/users'],
               destPath = "hdfs://cdh1:8020/temp",
@@ -2477,6 +2481,6 @@ class SparkSqlParserTest {
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
-        Assert.assertEquals(8, statements.size)
+        Assert.assertEquals(12, statements.size)
     }
 }

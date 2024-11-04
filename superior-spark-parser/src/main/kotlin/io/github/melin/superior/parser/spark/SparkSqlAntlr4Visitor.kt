@@ -1157,7 +1157,9 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     override fun visitSetQuotedConfiguration(ctx: SparkSqlParser.SetQuotedConfigurationContext): Statement {
         assert(ctx.configValue() != null)
         if (ctx.setKey() != null) {
-            return SetStatement(ctx.setKey().getText(), ctx.configValue().getText())
+            val key = CommonUtils.cleanQuote(ctx.setKey().getText())
+            val value = CommonUtils.cleanQuote(ctx.configValue().getText())
+            return SetStatement(key, value)
         } else {
             throw SQLParserException("not support" + CommonUtils.subsql(command, ctx))
         }
