@@ -28,5 +28,4 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     fun getSplitSqls(): List<String> {
         return sqls
     }
-
 }

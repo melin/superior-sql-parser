@@ -2187,27 +2187,6 @@ class SparkSqlParserTest {
     }
 
     @Test
-    fun distcpTest() {
-        val sql = """
-            DISTCP OPTIONS (
-              srcPaths = ['sftp://root@172.24.5.213/root'],
-              destPath = "s3a://logs/",
-              overwrite = true,
-              delete = true,
-              excludeHiddenFile = true
-            )
-        """.trimIndent()
-        val statement = SparkSqlHelper.parseStatement(sql)
-
-        if (statement is DistCpExpr) {
-            Assert.assertEquals(StatementType.SPARK_DIST_CP, statement.statementType)
-
-        } else {
-            Assert.fail()
-        }
-    }
-
-    @Test
     fun callTest0() {
         val sql =
             "CALL catalog_name.system.create_savepoint(table => 'test_hudi_table', instant_time => '20220109225319449')"
@@ -2484,19 +2463,17 @@ class SparkSqlParserTest {
             """
             SET SPARK.HADOOP.FS.OSS.ENDPOINT = OSS-CN-HANGZHOU.ALIYUNCS.COM;
             set spark.hadoop.fs.oss.accessKeyId = xxx;
-            set spark.hadoop.fs.oss.accessKeySecret = xxx;
+            set spark.hadoop.fs.oss.accessKeySecret = "172.158.1.2";
             set spark.hadoop.fs.oss.attempts.maximum = 3;
             set spark.hadoop.fs.oss.connection.timeout = 10000;
             set spark.hadoop.fs.oss.connection.establish.timeout = 10000;
             set spark.hadoop.fs.oss.impl = org.apache.hadoop.fs.aliyun.oss.AliyunOSSFileSystem;
             DISTCP OPTIONS (
-  srcPaths = ['oss://melin1204/users'],
-  destPath = "hdfs://cdh1:8020/temp",
-  overwrite = true
-)
-
-        """
-                .trimIndent()
+              srcPaths = ['oss://melin1204/users'],
+              destPath = "hdfs://cdh1:8020/temp",
+              overwrite = true
+            )
+        """.trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
         Assert.assertEquals(8, statements.size)
