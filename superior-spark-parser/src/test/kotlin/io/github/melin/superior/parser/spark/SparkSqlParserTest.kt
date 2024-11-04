@@ -2187,6 +2187,27 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun distcpTest() {
+        val sql = """
+            DISTCP OPTIONS (
+              srcPaths = ['sftp://root@172.24.5.213/root'],
+              destPath = "s3a://logs/",
+              overwrite = true,
+              delete = true,
+              excludeHiddenFile = true
+            )
+        """.trimIndent()
+        val statement = SparkSqlHelper.parseStatement(sql)
+
+        if (statement is DistCpExpr) {
+            Assert.assertEquals(StatementType.SPARK_DIST_CP, statement.statementType)
+
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun callTest0() {
         val sql =
             "CALL catalog_name.system.create_savepoint(table => 'test_hudi_table', instant_time => '20220109225319449')"
