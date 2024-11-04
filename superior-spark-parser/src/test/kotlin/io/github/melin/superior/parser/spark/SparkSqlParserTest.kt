@@ -2473,7 +2473,8 @@ class SparkSqlParserTest {
               destPath = "hdfs://cdh1:8020/temp",
               overwrite = true
             )
-        """.trimIndent()
+        """
+                .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
         Assert.assertEquals(8, statements.size)
