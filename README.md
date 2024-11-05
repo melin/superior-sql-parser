@@ -10,10 +10,10 @@
 ```
 
 ## Build
-
-> export GPG_TTY=$(tty)
-
-> mvn clean deploy -Prelease
+```
+export GPG_TTY=$(tty)
+mvn clean deploy -Prelease
+```
 
 ### API
 
