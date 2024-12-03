@@ -14,6 +14,7 @@ import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
+import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Cursor_declarationContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Function_nameContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Multi_table_elementContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Procedure_nameContext
@@ -53,15 +54,17 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         if (currentResult != null) {
-            if (StringUtils.isBlank(currentResult.getSql()) && node is ParserRuleContext) {
-                val sql = CommonUtils.subsql(command, node)
-                currentResult.setSql(sql)
+            if (node is Cursor_declarationContext
+                || node is Seq_of_statementsContext) {
+
+                childStatements.add(currentResult)
+                clean()
             }
-            childStatements.add(currentResult)
-            clean()
         }
 
-        return if (currentResult == null || node is Seq_of_statementsContext) true else false
+        return if (currentResult == null
+            || node is Cursor_declarationContext
+            || node is Seq_of_statementsContext) true else false
     }
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {

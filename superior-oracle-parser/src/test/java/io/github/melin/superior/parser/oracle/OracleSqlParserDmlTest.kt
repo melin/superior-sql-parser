@@ -3,8 +3,10 @@ package io.github.melin.superior.parser.oracle
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.dml.*
+import org.apache.commons.io.FileUtils
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class OracleSqlParserDmlTest {
     @Test
@@ -14,14 +16,13 @@ class OracleSqlParserDmlTest {
             OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY
         """.trimIndent()
 
-        val statement = OracleSqlHelper.parseStatement(sql)
+        val sql1 = FileUtils.readFileToString(File("./src/test/resources/insert.sql"), "UTF-8")
+        val statement = OracleSqlHelper.parseStatement(sql1)
         
-        if (statement is QueryStmt) {
-            Assert.assertEquals(StatementType.SELECT, statement.statementType)
-            Assert.assertEquals(1, statement.inputTables.size)
-            Assert.assertEquals(10, statement.limit)
-            Assert.assertEquals(10, statement.offset)
-            Assert.assertEquals(TableId("FLINKUSER", "ORDERS"), statement.inputTables.get(0))
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals(7, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(TableId("dwd", "dwd_d03_contract_det_s"), statement.outputTables.get(0))
         } else {
             Assert.fail()
         }
