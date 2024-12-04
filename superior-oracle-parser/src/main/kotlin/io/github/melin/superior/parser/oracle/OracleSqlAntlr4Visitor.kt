@@ -32,7 +32,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     private var limit: Int? = null
     private var offset: Int? = null
 
-    private var queryStmts: ArrayList<QueryStmt> = arrayListOf()
+    private var queryStmt: QueryStmt? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
@@ -60,8 +60,11 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             }
         }
 
-        return if (currentResult == null || node is Cursor_declarationContext || node is Seq_of_statementsContext) true
-        else false
+        if (node is OracleParser.Unit_statementContext) {
+            clean()
+        }
+
+        return true
     }
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
@@ -120,7 +123,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     private fun clean() {
         limit = null
         offset = null
-        queryStmts = arrayListOf()
+        queryStmt = null
         inputTables = arrayListOf()
         outputTables = arrayListOf()
         cteTempTables = arrayListOf()
@@ -257,21 +260,24 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         return AlterTable(tableId, action)
     }
 
-    override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement {
+    override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement? {
         currentOptType = StatementType.SELECT
         super.visitSelect_statement(ctx)
-        val queryStmt = QueryStmt(inputTables, limit, offset)
-        queryStmt.setSql(CommonUtils.subsql(command, ctx))
+        if (queryStmt == null) {
+            queryStmt = QueryStmt(inputTables, limit, offset)
+        }
 
-        queryStmts.add(queryStmt)
+        queryStmt?.setSql(CommonUtils.subsql(command, ctx))
+
         return queryStmt
     }
 
-    private fun parseSelect_only_statement(ctx: OracleParser.Select_only_statementContext): Statement {
+    private fun parseSelect_only_statement(ctx: OracleParser.Select_only_statementContext): Statement? {
         currentOptType = StatementType.SELECT
         super.visitSelect_only_statement(ctx)
-        val queryStmt = QueryStmt(inputTables, limit, offset)
-        queryStmts.add(queryStmt)
+        if (queryStmt == null) {
+            queryStmt = QueryStmt(inputTables, limit, offset)
+        }
         return queryStmt
     }
 
@@ -434,6 +440,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): Statement? {
+        println("====" + ctx.text + " " + currentOptType)
         if (
             currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.CREATE_VIEW ||

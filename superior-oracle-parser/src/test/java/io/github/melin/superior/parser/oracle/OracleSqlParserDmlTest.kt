@@ -12,8 +12,8 @@ class OracleSqlParserDmlTest {
     @Test
     fun querySqlTest0() {
         val sql = """
-            SELECT CUSTOMER_NAME, PRICE FROM FLINKUSER.ORDERS
-            OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY
+            select * from test1;
+            select * from test2;
         """.trimIndent()
 
         val sql1 = FileUtils.readFileToString(File("./src/test/resources/insert.sql"), "UTF-8")
@@ -21,7 +21,7 @@ class OracleSqlParserDmlTest {
         
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-            Assert.assertEquals(7, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(27, statement.queryStmt.inputTables.size)
             Assert.assertEquals(TableId("dwd", "dwd_d03_contract_det_s"), statement.outputTables.get(0))
         } else {
             Assert.fail()
