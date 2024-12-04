@@ -21,7 +21,6 @@ import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Procedure_name
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Select_list_elementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Seq_of_statementsContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParserBaseVisitor
-import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
@@ -54,17 +53,15 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun shouldVisitNextChild(node: RuleNode, currentResult: Statement?): Boolean {
         if (currentResult != null) {
-            if (node is Cursor_declarationContext
-                || node is Seq_of_statementsContext) {
+            if (node is Cursor_declarationContext || node is Seq_of_statementsContext) {
 
                 childStatements.add(currentResult)
                 clean()
             }
         }
 
-        return if (currentResult == null
-            || node is Cursor_declarationContext
-            || node is Seq_of_statementsContext) true else false
+        return if (currentResult == null || node is Cursor_declarationContext || node is Seq_of_statementsContext) true
+        else false
     }
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
