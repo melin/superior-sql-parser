@@ -11,8 +11,10 @@ import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.common.relational.io.ExportTable
 import io.github.melin.superior.common.relational.table.*
 import io.github.melin.superior.parser.spark.relational.*
+import org.apache.commons.io.FileUtils
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 /** Created by libinsong on 2018/1/10. */
 class SparkSqlParserTest {
@@ -2482,5 +2484,19 @@ class SparkSqlParserTest {
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
         Assert.assertEquals(12, statements.size)
+    }
+
+    @Test
+    fun querySqlTest0() {
+        val sql1 = FileUtils.readFileToString(File("./src/test/resources/demo.sql"), "UTF-8")
+        val statement = SparkSqlHelper.parseStatement(sql1)
+
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals(10, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(TableId("DWB", "DWB_FOREX_TRADE_A_D"), statement.outputTables.get(0))
+        } else {
+            Assert.fail()
+        }
     }
 }
