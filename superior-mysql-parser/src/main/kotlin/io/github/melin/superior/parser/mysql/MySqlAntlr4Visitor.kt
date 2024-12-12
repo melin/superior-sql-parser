@@ -436,7 +436,9 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         val updateTable =
             if (ctx.multipleUpdateStatement() != null) {
                 val intputTableIds = inputTables.toMutableList()
-                this.visit(ctx.multipleUpdateStatement().expression())
+                if (ctx.multipleUpdateStatement().expression() != null) {
+                    this.visit(ctx.multipleUpdateStatement().expression())
+                }
                 inputTables.clear()
                 super.visitTableSources(ctx.multipleUpdateStatement().tableSources())
                 UpdateTable(inputTables.first(), inputTables.toMutableList())
