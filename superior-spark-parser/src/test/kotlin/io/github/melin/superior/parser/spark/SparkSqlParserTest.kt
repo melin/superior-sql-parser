@@ -11,10 +11,10 @@ import io.github.melin.superior.common.relational.drop.*
 import io.github.melin.superior.common.relational.io.ExportTable
 import io.github.melin.superior.common.relational.table.*
 import io.github.melin.superior.parser.spark.relational.*
+import java.io.File
 import org.apache.commons.io.FileUtils
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 
 /** Created by libinsong on 2018/1/10. */
 class SparkSqlParserTest {
