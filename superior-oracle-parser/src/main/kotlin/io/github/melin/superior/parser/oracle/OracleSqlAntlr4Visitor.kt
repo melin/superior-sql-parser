@@ -440,7 +440,6 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitTableview_name(ctx: OracleParser.Tableview_nameContext): Statement? {
-        println("====" + ctx.text + " " + currentOptType)
         if (
             currentOptType == StatementType.SELECT ||
                 currentOptType == StatementType.CREATE_VIEW ||
