@@ -21,7 +21,7 @@ mvn clean deploy -Prelease
 ```agsl
 1. parseStatement(String sql) // 解析单个完整sql
     a. ddl: 获取ddl 详细信息。例如：数据库执行完ddl以后，解析ddl，获取到相关信息，同步到元数据信息。
-    b. dml: 主要sql中使用到的表。构建表级血缘，以及校验表权限使用。
+    b. dml: 获取sql中使用到的表，用于构建表级血缘，或者校验表权限。
 2. parseMultiStatement(String sql) // 解析多个完整sql，支持空格、换行、分号分隔
 3. splitSql(String sql) // sql 文本包含多个完整sql，方法用于分隔sql语句，支持空格、换行、分号分隔
 4. checkSqlSyntax(String sql) // 验证单个完整sql语法是否正确
