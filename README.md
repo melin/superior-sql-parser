@@ -112,10 +112,9 @@ if (statement is QueryStmt) {
 
 ## 相关项目
 1. https://gitee.com/melin/bee
-2. https://github.com/melin/superior-sql-parser
-3. https://github.com/melin/superior-sql-formatter
-4. https://github.com/melin/superior-sql-autocomplete
-5. https://github.com/melin/datatunnel
-6. https://github.com/melin/flink-jobserver
+2. https://github.com/melin/sqlflow/ 字段血缘解析
+3. https://github.com/melin/superior-sql-formatter spark sql 代码格式化
+4. https://github.com/melin/datatunnel spark 数据同步工具
+5. https://github.com/melin/flink-jobserver 
 6. https://github.com/melin/spark-jobserver
 
