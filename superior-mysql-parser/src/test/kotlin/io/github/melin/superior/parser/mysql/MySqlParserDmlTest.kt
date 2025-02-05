@@ -223,10 +223,10 @@ class MySqlParserDmlTest {
         val sql =
             """
             WITH
-              cte1 AS (SELECT a, b FROM table1),
-              cte2 AS (SELECT c, d FROM table2)
-            SELECT b, d FROM cte1 JOIN cte2
-            WHERE cte1.a = cte2.c;
+              CTE1 AS (SELECT A, B FROM TABLE1),
+              CTE2 AS (SELECT C, D FROM TABLE2)
+            SELECT B, D FROM CTE1 JOIN CTE2
+            WHERE CTE1.A = CTE2.C;
         """
                 .trimIndent()
 
@@ -234,7 +234,7 @@ class MySqlParserDmlTest {
         Assert.assertEquals(StatementType.SELECT, statement.statementType)
 
         if (statement is QueryStmt) {
-            Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
+            Assert.assertEquals("TABLE1", statement.inputTables.get(0).tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
         } else {
@@ -246,30 +246,30 @@ class MySqlParserDmlTest {
     fun cteTest1() {
         val sql =
             """
-            INSERT INTO dates (date)
-            SELECT date
+            INSERT INTO DATES (DATE)
+            SELECT DATE
             FROM (
-                WITH RECURSIVE date_range AS (
-                    SELECT DATE('2023-01-01') AS date
+                WITH RECURSIVE DATE_RANGE AS (
+                    SELECT DATE('2023-01-01') AS DATE
                     UNION ALL
-                    SELECT date + INTERVAL 1 DAY
-                    FROM date_range
-                    WHERE date < '2024-12-31'
+                    SELECT DATE + INTERVAL 1 DAY
+                    FROM DATE_RANGE
+                    WHERE DATE < '2024-12-31'
                 ),
-                date_range2 AS (
-                    SELECT DATE('2025-01-01') AS date
+                DATE_RANGE2 AS (
+                    SELECT DATE('2025-01-01') AS DATE
                     UNION ALL
-                    SELECT date + INTERVAL 1 DAY
-                    FROM date_range2
-                    WHERE date < '2025-12-31'
+                    SELECT DATE + INTERVAL 1 DAY
+                    FROM DATE_RANGE2
+                    WHERE DATE < '2025-12-31'
                 )
-                SELECT date
-                FROM date_range
+                SELECT DATE
+                FROM DATE_RANGE
                 UNION ALL
-                SELECT date
-                FROM date_range2
-            ) AS derived_table
-            ON DUPLICATE KEY UPDATE date = VALUES(date);
+                SELECT DATE
+                FROM DATE_RANGE2
+            ) AS DERIVED_TABLE
+            ON DUPLICATE KEY UPDATE DATE = VALUES(DATE);
         """
                 .trimIndent()
 
@@ -278,7 +278,7 @@ class MySqlParserDmlTest {
 
         if (statement is InsertTable) {
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)
-            Assert.assertEquals(TableId("dates"), statement.tableId)
+            Assert.assertEquals(TableId("DATES"), statement.tableId)
         } else {
             Assert.fail()
         }

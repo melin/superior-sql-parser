@@ -1894,7 +1894,7 @@ class SparkSqlParserTest {
 
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is QueryStmt) {
-            Assert.assertEquals("test", statement.inputTables.get(0).tableName)
+            Assert.assertEquals(2, statement.inputTables.size)
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
         } else {
             Assert.fail()

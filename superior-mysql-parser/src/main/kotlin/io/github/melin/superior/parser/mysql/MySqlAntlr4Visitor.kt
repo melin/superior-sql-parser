@@ -35,6 +35,8 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     private val primaryKeys = ArrayList<String>()
 
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var inCte = false
+
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     // 多语句解析结果
@@ -112,6 +114,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         limit = null
         offset = null
         inputTables = arrayListOf()
+        inCte = false
         cteTempTables = arrayListOf()
     }
 
@@ -362,17 +365,6 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
     // -----------------------------------DML-------------------------------------------------
 
-    override fun visitDmlStatement(ctx: MySqlParser.DmlStatementContext): Statement {
-        if (ctx.withStatement() != null) {
-            super.visitWithStatement(ctx.withStatement())
-            if (ctx.withStatement().selectStatement() != null) {
-                return this.visitSelectStatement(ctx.withStatement().selectStatement())
-            }
-        }
-
-        return super.visitDmlStatement(ctx)
-    }
-
     override fun visitSelectStatement(ctx: MySqlParser.SelectStatementContext): Statement {
         if (currentOptType == StatementType.UNKOWN) {
             currentOptType = StatementType.SELECT
@@ -447,8 +439,13 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
                 updateTable
             } else {
                 this.visit(ctx.singleUpdateStatement().expression())
-                val tableId = parseFullId(ctx.singleUpdateStatement().tableName().fullId())
-                UpdateTable(tableId, inputTables)
+                val intputTableIds = inputTables.toMutableList()
+                inputTables.clear()
+                super.visitTableSources(ctx.singleUpdateStatement().tableSources())
+                UpdateTable(inputTables.first(), inputTables.toMutableList())
+                val updateTable = UpdateTable(inputTables.first(), intputTableIds)
+                updateTable.outputTables.addAll(inputTables.subList(1, inputTables.size))
+                updateTable
             }
 
         return updateTable
@@ -483,11 +480,14 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     // -----------------------------------private
     // method-------------------------------------------------
 
-    override fun visitCommonTableExpressions(ctx: MySqlParser.CommonTableExpressionsContext): Statement? {
-        val tableId = TableId(ctx.cteName().text)
-        cteTempTables.add(tableId)
-
-        super.visitCommonTableExpressions(ctx)
+    override fun visitWithStatement(ctx: MySqlParser.WithStatementContext): Statement? {
+        inCte = true
+        ctx.commonTableExpressions().forEach {
+            val tableId = TableId(it.cteName().text)
+            cteTempTables.add(tableId)
+            super.visitDmlStatement(it.dmlStatement())
+        }
+        inCte = false
         return null
     }
 
@@ -503,11 +503,11 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
             val tableId = parseFullId(ctx.fullId())
 
             // 别名和表名一样的场景
-            if (cteTempTables.contains(tableId)) {
+            if (inCte && cteTempTables.last() == tableId) {
                 cteTempTables.remove(tableId)
             }
 
-            if (!inputTables.contains(tableId)) {
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }

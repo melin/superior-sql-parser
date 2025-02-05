@@ -58,6 +58,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     private var offset: Int? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
     private var outputTables: ArrayList<TableId> = arrayListOf()
+    private var inCte = false
+
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
     private var functionNames: HashSet<FunctionId> = hashSetOf()
 
@@ -118,6 +120,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         offset = null
         inputTables = arrayListOf()
         outputTables = arrayListOf()
+        inCte = false
         cteTempTables = arrayListOf()
         functionNames = hashSetOf()
 
@@ -1387,8 +1390,13 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     }
 
     override fun visitCtes(ctx: SparkSqlParser.CtesContext): Statement? {
-        ctx.namedQuery().forEach { cteTempTables.add(TableId(it.name.text)) }
-        return super.visitCtes(ctx)
+        inCte = true
+        ctx.namedQuery().forEach {
+            cteTempTables.add(TableId(it.name.text))
+            this.visitQuery(it.query())
+        }
+        inCte = false
+        return null
     }
 
     override fun visitMultipartIdentifier(ctx: SparkSqlParser.MultipartIdentifierContext): Statement? {
@@ -1405,6 +1413,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 currentOptType == StatementType.DELETE ||
                 currentAlterActionType == ALTER_VIEW_QUERY
         ) {
+
+            // 别名和表名一样的场景
+            if (inCte && cteTempTables.last() == tableId) {
+                cteTempTables.remove(tableId)
+            }
 
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
