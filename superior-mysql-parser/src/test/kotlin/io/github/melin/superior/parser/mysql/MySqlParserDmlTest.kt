@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.mysql
 
 import com.github.melin.superior.sql.parser.mysql.MySqlHelper
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.create.CreateTableAsSelect
 import io.github.melin.superior.common.relational.dml.DeleteTable
 import io.github.melin.superior.common.relational.dml.InsertTable
@@ -236,6 +237,48 @@ class MySqlParserDmlTest {
             Assert.assertEquals("table1", statement.inputTables.get(0).tableName)
 
             Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun cteTest1() {
+        val sql =
+            """
+            INSERT INTO dates (date)
+            SELECT date
+            FROM (
+                WITH RECURSIVE date_range AS (
+                    SELECT DATE('2023-01-01') AS date
+                    UNION ALL
+                    SELECT date + INTERVAL 1 DAY
+                    FROM date_range
+                    WHERE date < '2024-12-31'
+                ),
+                date_range2 AS (
+                    SELECT DATE('2025-01-01') AS date
+                    UNION ALL
+                    SELECT date + INTERVAL 1 DAY
+                    FROM date_range2
+                    WHERE date < '2025-12-31'
+                )
+                SELECT date
+                FROM date_range
+                UNION ALL
+                SELECT date
+                FROM date_range2
+            ) AS derived_table
+            ON DUPLICATE KEY UPDATE date = VALUES(date);
+        """
+                .trimIndent()
+
+        val statement = MySqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.INSERT, statement.statementType)
+
+        if (statement is InsertTable) {
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(TableId("dates"), statement.tableId)
         } else {
             Assert.fail()
         }

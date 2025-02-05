@@ -502,7 +502,12 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
             val tableId = parseFullId(ctx.fullId())
 
-            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+            // 别名和表名一样的场景
+            if (cteTempTables.contains(tableId)) {
+                cteTempTables.remove(tableId)
+            }
+
+            if (!inputTables.contains(tableId)) {
                 inputTables.add(tableId)
             }
         }

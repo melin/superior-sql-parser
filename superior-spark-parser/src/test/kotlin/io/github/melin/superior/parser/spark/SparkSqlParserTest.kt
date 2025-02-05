@@ -2220,6 +2220,28 @@ class SparkSqlParserTest {
     }
 
     @Test
+    fun callTest2() {
+        val sql =
+            """
+            CALL system.remove_orphan_files(
+              table => 'bigdata.ods_iceberg_01',
+              older_than => CURRENT_TIMESTAMP - INTERVAL '5' DAYS,
+              dry_run => true
+            )
+        """
+                .trimIndent()
+        val statement = SparkSqlHelper.parseStatement(sql)
+
+        if (statement is CallProcedure) {
+            Assert.assertEquals(StatementType.CALL, statement.statementType)
+            Assert.assertEquals("remove_orphan_files", statement.procedureIds.first().procedureName)
+            Assert.assertEquals(3, statement.properties.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun callHelpTest1() {
         val sql = "CALL help"
         val statement = SparkSqlHelper.parseStatement(sql)

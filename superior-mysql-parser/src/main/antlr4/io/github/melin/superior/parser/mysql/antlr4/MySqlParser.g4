@@ -1040,6 +1040,7 @@ tableSourceItem
     | (
       selectStatement
       | '(' parenthesisSubquery=selectStatement ')'
+      | '(' withStatement ')'
       )
       AS? alias=uid                                                 #subqueryTableItem
     | '(' tableSources ')'                                          #tableSourcesItem
