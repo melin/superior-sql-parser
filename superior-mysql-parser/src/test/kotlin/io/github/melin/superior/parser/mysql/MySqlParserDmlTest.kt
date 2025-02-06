@@ -285,6 +285,25 @@ class MySqlParserDmlTest {
     }
 
     @Test
+    fun cteTest2() {
+        val sql =
+            """
+            WITH cte1 AS (SELECT 1)
+            SELECT * FROM (WITH cte2 AS (SELECT 2) SELECT * FROM cte2 JOIN cte1) AS dt;
+        """
+                .trimIndent()
+
+        val statement = MySqlHelper.parseStatement(sql)
+        Assert.assertEquals(StatementType.SELECT, statement.statementType)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(0, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun ctasTest0() {
         val sql = "create table demo1 as select * from demo"
 
