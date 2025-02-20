@@ -5,9 +5,11 @@
 <dependency>
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-[spark|presto|mysql|oracle|...]-parser</artifactId>
-    <version>4.0.17</version>
+    <version>4.1.0-SNAPSHOT</version>
 </dependency>
 ```
+
+> 4.0.x 支持jdk8, antlr 4.9.3, 4.1.x 支持 jdk11, antlr 4.13.1
 
 ## Build
 ```
