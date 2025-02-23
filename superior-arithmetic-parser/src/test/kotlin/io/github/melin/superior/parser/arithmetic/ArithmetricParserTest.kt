@@ -10,7 +10,8 @@ class ArithmetricParserTest {
 
     @Test
     fun test0() {
-        val sql = """
+        val sql =
+            """
             特征1 / (特征_dd_2
                 - (log2(feature_12) + 特征3))
             """
@@ -47,7 +48,8 @@ class ArithmetricParserTest {
 
     @Test
     fun test2() {
-        val sql = """
+        val sql =
+            """
             [特征1] / ([特征_dd_2]
                 - (log2([feature_12]) + [特征3]))
             """

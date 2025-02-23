@@ -8,5 +8,5 @@ enum class TableType {
     POSTGRES,
     SQLSERVER,
     FLINK,
-    SPARK_STREAM
+    SPARK_STREAM,
 }

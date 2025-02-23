@@ -3,7 +3,7 @@ package io.github.melin.superior.common.relational
 enum class SortType {
     ASC,
     DESC,
-    UNKOWN
+    UNKOWN,
 }
 
 enum class PartitionType {
@@ -13,5 +13,5 @@ enum class PartitionType {
     KEY,
     VALUES,
     NORMAL,
-    EXPRESSION
+    EXPRESSION,
 }

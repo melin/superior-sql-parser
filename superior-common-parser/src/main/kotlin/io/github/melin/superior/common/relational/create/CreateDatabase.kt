@@ -22,6 +22,6 @@ class CreateDatabase(
         catalogName: String?,
         databaseName: String,
         properties: Map<String, String>? = null,
-        ifNotExists: Boolean = false
+        ifNotExists: Boolean = false,
     ) : this(catalogName, databaseName, null, properties, ifNotExists)
 }

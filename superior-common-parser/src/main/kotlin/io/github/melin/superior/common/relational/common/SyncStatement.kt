@@ -6,10 +6,7 @@ import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.table.ColumnRel
 
-data class SyncTable(
-    var sinkTableId: TableId,
-    var sourceTableId: TableId,
-) : Statement() {
+data class SyncTable(var sinkTableId: TableId, var sourceTableId: TableId) : Statement() {
     override val statementType = StatementType.SYNC_TABLE
     override val privilegeType = PrivilegeType.CREATE
     override val sqlType = SqlType.DML
@@ -26,7 +23,7 @@ data class SyncDatabase(
     var sinkDatabaseName: String,
     var sourceCatalogName: String?,
     var sourceDatabaseName: String,
-    var includingTables: String = ".*"
+    var includingTables: String = ".*",
 ) : Statement() {
     override val statementType = StatementType.SYNC_DATABASE
     override val privilegeType = PrivilegeType.CREATE

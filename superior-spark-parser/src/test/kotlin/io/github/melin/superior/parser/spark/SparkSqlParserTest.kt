@@ -578,7 +578,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("tdl_users_1", statement.tableId.tableName)
             Assert.assertEquals(
                 "select *, bigdata.TEST(name) from bigdata.users a left outer join address b on a.addr_id = b.id",
-                statement.queryStmt.getSql()
+                statement.queryStmt.getSql(),
             )
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)
             Assert.assertEquals("users", statement.queryStmt.inputTables.get(0).tableName)
@@ -629,7 +629,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("tdl_users_1", tableName)
             Assert.assertEquals(
                 "select * from users a left outer join address b on a.addr_id = b.id",
-                statement.queryStmt.getSql()
+                statement.queryStmt.getSql(),
             )
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)
             Assert.assertEquals("parquet", statement.fileFormat)
@@ -694,7 +694,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("tdl_users_1", tableName)
             Assert.assertEquals(
                 "select * from bigdata.users a left outer join address b on a.addr_id = b.id",
-                statement.queryStmt.getSql()
+                statement.queryStmt.getSql(),
             )
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)
             Assert.assertEquals("users", statement.queryStmt.inputTables.get(0).tableName)
@@ -1577,7 +1577,7 @@ class SparkSqlParserTest {
             Assert.assertEquals(0, statement.partitionVals?.size)
             Assert.assertEquals(
                 statement.queryStmt.getSql(),
-                "select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id"
+                "select *, bigdata.Test(id) from account a join address b on a.addr_id=b.id",
             )
 
             Assert.assertEquals(2, statement.queryStmt.inputTables.size)

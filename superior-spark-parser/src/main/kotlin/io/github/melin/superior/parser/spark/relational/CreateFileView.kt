@@ -12,7 +12,7 @@ data class CreateFileView(
     var properties: Map<String, String>,
     var fileFormat: String? = null,
     val compression: String? = null,
-    val sizeLimit: String? = null
+    val sizeLimit: String? = null,
 ) : AbsTableStatement() {
     override val statementType = StatementType.CREATE_FILE_VIEW
     override val privilegeType = PrivilegeType.OTHER

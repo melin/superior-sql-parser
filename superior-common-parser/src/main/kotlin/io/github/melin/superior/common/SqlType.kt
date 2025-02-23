@@ -5,5 +5,5 @@ enum class SqlType(val desc: String) {
     DDL("Data Definition Language"),
     DQL("Data Query Language"),
     DCL("Data Control Language"),
-    TCL("Transaction Control Language")
+    TCL("Transaction Control Language"),
 }

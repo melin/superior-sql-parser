@@ -9,7 +9,7 @@ data class CommentStatement(
     val comment: String? = null,
     val isNull: Boolean = false,
     val objType: String? = null,
-    val objValue: String? = null
+    val objValue: String? = null,
 ) : Statement() {
     override val statementType = StatementType.COMMENT
     override val privilegeType = PrivilegeType.ALTER

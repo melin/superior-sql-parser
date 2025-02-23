@@ -51,6 +51,6 @@ data class ExportTable(
         maxFileSize,
         overwrite,
         single,
-        arrayListOf()
+        arrayListOf(),
     )
 }

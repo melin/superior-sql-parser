@@ -16,7 +16,7 @@ data class TableId(val catalogName: String?, val schemaName: String?, val tableN
     constructor(
         catalogName: String?,
         schemaName: String?,
-        tableName: String
+        tableName: String,
     ) : this(catalogName, schemaName, tableName, null)
 
     constructor(schemaName: String?, tableName: String) : this(null, schemaName, tableName, null)

@@ -44,5 +44,5 @@ enum class AlterActionType : Serializable {
     DROP_FEATURE,
     CLUSTER_BY,
     SYNC_IDENTITY,
-    UNKOWN
+    UNKOWN,
 }

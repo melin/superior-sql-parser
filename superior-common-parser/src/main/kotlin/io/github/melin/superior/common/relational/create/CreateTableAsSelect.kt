@@ -20,7 +20,7 @@ data class CreateTableAsSelect(
     var fileFormat: String? = null,
     var ifNotExists: Boolean = false, // 是否存在 if not exists 关键字
     var locationPath: String? = null,
-    val partitionColumnNames: ArrayList<String> = arrayListOf()
+    val partitionColumnNames: ArrayList<String> = arrayListOf(),
 ) : AbsTableStatement() { // 是否存在 if exists 关键字
     override val statementType = StatementType.CREATE_TABLE_AS_SELECT
     override val privilegeType = PrivilegeType.CREATE
@@ -35,7 +35,7 @@ data class CreateTableAsSelect(
 
     constructor(
         tableId: TableId,
-        queryStmt: QueryStmt
+        queryStmt: QueryStmt,
     ) : this(tableId, queryStmt, null, null, null, null, null, null, false)
 
     constructor(
@@ -43,6 +43,6 @@ data class CreateTableAsSelect(
         queryStmt: QueryStmt,
         comment: String? = null,
         ifNotExists: Boolean,
-        properties: Map<String, String>? = null
+        properties: Map<String, String>? = null,
     ) : this(tableId, queryStmt, comment, null, null, null, properties, null, ifNotExists)
 }

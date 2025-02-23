@@ -98,5 +98,5 @@ enum class StatementType : Serializable {
     SYNC_META,
     SYNC_TABLE,
     SYNC_DATABASE,
-    UNKOWN
+    UNKOWN,
 }

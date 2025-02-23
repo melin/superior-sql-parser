@@ -236,7 +236,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             ctx.createOrReplaceTableColTypeList(),
             ctx.createTableClauses(),
             ctx.tableProvider(),
-            ctx.query()
+            ctx.query(),
         )
     }
 
@@ -251,7 +251,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             ctx.createOrReplaceTableColTypeList(),
             ctx.createTableClauses(),
             ctx.tableProvider(),
-            ctx.query()
+            ctx.query(),
         )
     }
 
@@ -264,7 +264,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         createOrReplaceTableColTypeList: CreateOrReplaceTableColTypeListContext?,
         createTableClauses: CreateTableClausesContext,
         tableProvider: TableProviderContext?,
-        query: QueryContext?
+        query: QueryContext?,
     ): Statement {
 
         val comment =
@@ -382,7 +382,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     columnRels,
                     properties,
                     fileFormat,
-                    ifNotExists
+                    ifNotExists,
                 )
             createTable.modelType = modelType
             createTable.replace = replace
@@ -406,7 +406,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     columnRels,
                     properties,
                     fileFormat,
-                    ifNotExists
+                    ifNotExists,
                 )
             createTable.modelType = modelType
             createTable.options = options
@@ -1127,7 +1127,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 maxFileSize,
                 overwrite,
                 single,
-                inputTables
+                inputTables,
             )
 
         exportTable.functionNames.addAll(functionNames)
@@ -1517,7 +1517,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                         StringUtils.substring(
                             command,
                             col.defaultExpression().start.startIndex,
-                            col.defaultExpression().stop.stopIndex + 1
+                            col.defaultExpression().stop.stopIndex + 1,
                         )
 
                     if (defaultExpr != null) {

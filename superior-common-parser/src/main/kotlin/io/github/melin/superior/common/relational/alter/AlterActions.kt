@@ -27,7 +27,7 @@ data class RenameAction(var newTableId: TableId, var ifExists: Boolean = false) 
 
 data class AlterTouchPartitionAction(
     val newTableId: TableId, // 修改表，新列名称
-    val partitionVals: LinkedHashMap<String, String>?
+    val partitionVals: LinkedHashMap<String, String>?,
 ) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.TOUCH_TABLE
 }
@@ -53,7 +53,7 @@ data class AlterColumnAction(
     var nullable: Boolean = true,
     var defaultExpression: String? = null,
     var dropDefault: Boolean = false,
-    var ifNotExists: Boolean = false
+    var ifNotExists: Boolean = false,
 ) : AlterAction() {
     var newColumName: String? = null // 修改列名，新列名称
 
@@ -83,14 +83,14 @@ data class AddPartitionAction(var ifNotExists: Boolean = false, var partitions: 
 
 data class DropPartitionAction(
     var ifExists: Boolean = false,
-    var partitions: List<LinkedHashMap<String, String>> = listOf()
+    var partitions: List<LinkedHashMap<String, String>> = listOf(),
 ) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.DROP_PARTITION
 }
 
 data class RenamePartitionAction(
     var fromPartitionVals: LinkedHashMap<String, String>,
-    var toPartitionVals: LinkedHashMap<String, String>
+    var toPartitionVals: LinkedHashMap<String, String>,
 ) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.RENAME_PARTITION
 }
@@ -104,10 +104,7 @@ data class CreateIndex(val indexName: String, val indexColumnNames: ArrayList<In
     var comment: String? = null
 }
 
-data class IndexColumnName(
-    val columnName: String,
-    val sortType: SortType = SortType.UNKOWN,
-)
+data class IndexColumnName(val columnName: String, val sortType: SortType = SortType.UNKOWN)
 
 data class DropIndex(val indexName: String, var ifExists: Boolean = false) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.DROP_INDEX

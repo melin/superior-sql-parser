@@ -433,7 +433,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             loadPropertiesExpr,
             jobProperties,
             source,
-            sourceProperties
+            sourceProperties,
         )
     }
 
@@ -462,7 +462,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             loadPropertiesExpr,
             jobProperties,
             source,
-            sourceProperties
+            sourceProperties,
         )
     }
 
@@ -555,11 +555,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val global = ctx.GLOBAL() != null
         val properties = parseOptions(ctx.properties())
         val argumentTypes = parseTypeList(ctx.typeList())
-        val createFunction =
-            CreateFunction(
-                FunctionId(functionId.schemaName, functionId.tableName),
-                arrayListOf(),
-            )
+        val createFunction = CreateFunction(FunctionId(functionId.schemaName, functionId.tableName), arrayListOf())
         createFunction.global = global
         createFunction.properties = properties
         createFunction.argumentTypes = argumentTypes

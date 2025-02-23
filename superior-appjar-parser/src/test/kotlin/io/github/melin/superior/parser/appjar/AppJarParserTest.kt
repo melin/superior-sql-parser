@@ -124,7 +124,7 @@ class AppJarParserTest {
             Assert.assertEquals(StatementType.APP_JAR, statement.statementType)
             Assert.assertEquals(
                 "psi_new_calculate_metrics-1.1-SNAPSHOT-jar-with-dependencies.jar",
-                statement.resourceName
+                statement.resourceName,
             )
             Assert.assertEquals("com.example.dw.psi.StartDCJob", statement.className)
             Assert.assertEquals("1,3,sd,qw", statement.params?.get(0))

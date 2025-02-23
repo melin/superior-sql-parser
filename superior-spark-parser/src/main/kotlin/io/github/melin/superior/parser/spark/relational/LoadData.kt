@@ -12,7 +12,7 @@ data class LoadData(
     val inPath: String,
     val local: Boolean,
     var partitionVals: LinkedHashMap<String, String>,
-    val mode: InsertMode = InsertMode.INTO
+    val mode: InsertMode = InsertMode.INTO,
 ) : AbsTableStatement() {
     override val statementType = StatementType.LOAD_DATA
     override val privilegeType = PrivilegeType.WRITE

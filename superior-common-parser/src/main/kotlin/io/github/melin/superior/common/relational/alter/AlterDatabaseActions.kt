@@ -6,7 +6,7 @@ import java.util.HashMap
 
 data class AlterDbPropsAction(
     var location: String? = null,
-    var properties: HashMap<String, String> = Maps.newHashMap()
+    var properties: HashMap<String, String> = Maps.newHashMap(),
 ) : AlterAction() {
     override var alterType: AlterActionType = AlterActionType.SET_PROPS
 }

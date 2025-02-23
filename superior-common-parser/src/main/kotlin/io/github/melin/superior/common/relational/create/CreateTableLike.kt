@@ -11,7 +11,7 @@ data class CreateTableLike(
     override val tableId: TableId,
     var ifNotExists: Boolean = false,
     var external: Boolean = false,
-    var temporary: Boolean = false
+    var temporary: Boolean = false,
 ) : AbsTableStatement() {
     override val statementType = StatementType.CREATE_TABLE_AS_LIKE
     override val privilegeType = PrivilegeType.CREATE

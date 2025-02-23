@@ -12,7 +12,7 @@ data class AlterRoutineLoad(
     val loadPropertiesExpr: String,
     val jobProperties: Map<String, String>?,
     val source: String?,
-    val sourceProperties: Map<String, String>?
+    val sourceProperties: Map<String, String>?,
 ) : Statement() {
     override val statementType = StatementType.SR_ALTER_ROUTINE_LOAD
     override val privilegeType = PrivilegeType.CREATE

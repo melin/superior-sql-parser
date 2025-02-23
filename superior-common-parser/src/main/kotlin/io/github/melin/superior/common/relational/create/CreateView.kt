@@ -13,7 +13,7 @@ data class CreateView(
     var queryStmt: QueryStmt,
     val comment: String? = null,
     var ifNotExists: Boolean = false, // 是否存在 if not exists 关键字
-    var columnRels: List<ColumnRel>? = null
+    var columnRels: List<ColumnRel>? = null,
 ) : AbsTableStatement() {
     override val statementType = StatementType.CREATE_VIEW
     override val privilegeType = PrivilegeType.CREATE

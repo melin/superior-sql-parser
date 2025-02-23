@@ -27,6 +27,6 @@ data class DataTunnelExpr(
         sourceOptions: Map<String, Any>,
         transformSql: String?,
         sinkType: String,
-        sinkOptions: Map<String, Any>
+        sinkOptions: Map<String, Any>,
     ) : this(sourceType, sourceOptions, transformSql, sinkType, sinkOptions, mapOf())
 }

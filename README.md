@@ -9,12 +9,12 @@
 </dependency>
 ```
 
-> 4.0.x 支持jdk8, antlr 4.9.3, 4.1.x 支持 jdk11, antlr 4.13.1
+> 4.0.x 支持jdk8, antlr 4.9.3, 4.1.x 支持 jdk17(保持spark 4.0 相同版本), antlr 4.13.1
 
 ## Build
 ```
 export GPG_TTY=$(tty)
-mvn clean deploy -Prelease
+mvn spotless:apply clean deploy -Prelease
 ```
 
 ### API

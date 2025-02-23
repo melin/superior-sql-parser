@@ -24,7 +24,7 @@ data class CreateTable(
     var temporary: Boolean = false,
     var location: String? = null,
     var querySql: String? = null,
-    val partitionColumnNames: ArrayList<String> = arrayListOf()
+    val partitionColumnNames: ArrayList<String> = arrayListOf(),
 ) : AbsTableStatement() { // 是否存在 if exists 关键字
     override val statementType = StatementType.CREATE_TABLE
     override val privilegeType = PrivilegeType.CREATE
@@ -43,7 +43,7 @@ data class CreateTable(
         tableId: TableId,
         tableType: TableType,
         comment: String?,
-        columnRels: List<ColumnRel>?
+        columnRels: List<ColumnRel>?,
     ) : this(tableId, tableType, comment, null, null, columnRels, null, null, false)
 
     constructor(
@@ -51,7 +51,7 @@ data class CreateTable(
         tableType: TableType,
         comment: String?,
         lifeCycle: Int?,
-        columnRels: List<ColumnRel>?
+        columnRels: List<ColumnRel>?,
     ) : this(tableId, tableType, comment, lifeCycle, null, columnRels, null, null, false)
 
     constructor(
@@ -60,6 +60,6 @@ data class CreateTable(
         comment: String? = null,
         columnRels: List<ColumnRel>? = null,
         ifNotExists: Boolean,
-        properties: Map<String, String>? = null
+        properties: Map<String, String>? = null,
     ) : this(tableId, tableType, comment, null, null, columnRels, properties, null, ifNotExists)
 }

@@ -9,7 +9,7 @@ import io.github.melin.superior.common.relational.abs.AbsTableStatement
 data class MergeFileData(
     override val tableId: TableId,
     var properties: Map<String, String>,
-    var partitionVals: LinkedHashMap<String, String>
+    var partitionVals: LinkedHashMap<String, String>,
 ) : AbsTableStatement() {
     override val statementType = StatementType.MERGE_FILE
     override val privilegeType = PrivilegeType.WRITE

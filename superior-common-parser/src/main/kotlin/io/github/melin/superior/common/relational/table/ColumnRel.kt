@@ -7,7 +7,7 @@ data class ColumnRel(
     var nullable: Boolean = true,
     var defaultExpr: String? = null,
     var primaryKey: Boolean = false,
-    val columnDefType: ColumnDefType = ColumnDefType.COMPUTED
+    val columnDefType: ColumnDefType = ColumnDefType.COMPUTED,
 ) {
     var columnLength = 0
     var precision = 0
@@ -24,7 +24,7 @@ data class ColumnRel(
     constructor(
         columnName: String,
         typeName: String?,
-        comment: String?
+        comment: String?,
     ) : this(columnName, typeName, comment, true, null)
 
     constructor(
@@ -32,19 +32,19 @@ data class ColumnRel(
         typeName: String?,
         comment: String?,
         primaryKey: Boolean = false,
-        columnDefType: ColumnDefType
+        columnDefType: ColumnDefType,
     ) : this(columnName, typeName, comment, true, null, primaryKey, columnDefType)
 
     constructor(
         columnName: String,
         typeName: String?,
         comment: String?,
-        columnDefType: ColumnDefType
+        columnDefType: ColumnDefType,
     ) : this(columnName, typeName, comment, true, null, false, columnDefType)
 }
 
 enum class ColumnDefType {
     PHYSICAL,
     METADATA,
-    COMPUTED
+    COMPUTED,
 }

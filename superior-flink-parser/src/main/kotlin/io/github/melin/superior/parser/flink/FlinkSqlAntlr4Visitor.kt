@@ -296,7 +296,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     sinkDatabase.second,
                     sourceDatabase.first,
                     sourceDatabase.second,
-                    CommonUtils.cleanQuote(ctx.includeTable.text)
+                    CommonUtils.cleanQuote(ctx.includeTable.text),
                 )
             }
 

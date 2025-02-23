@@ -3,11 +3,7 @@ package io.github.melin.superior.common.relational
 import com.google.common.collect.Lists
 import org.apache.commons.lang3.StringUtils
 
-data class FunctionId(
-    val catalogName: String?,
-    val schemaName: String?,
-    val functionName: String,
-) {
+data class FunctionId(val catalogName: String?, val schemaName: String?, val functionName: String) {
 
     companion object {
         @JvmStatic fun of(functionName: String) = TableId(functionName)

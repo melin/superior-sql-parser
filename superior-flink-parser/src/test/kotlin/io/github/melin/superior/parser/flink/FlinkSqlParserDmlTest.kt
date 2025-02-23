@@ -294,7 +294,7 @@ class FlinkSqlParserDmlTest {
 
             Assert.assertEquals(
                 "INSERT INTO pageview\n" + " SELECT page_id, count(1)\n" + " FROM pageviews\n" + " GROUP BY page_id",
-                insertTable.getSql()
+                insertTable.getSql(),
             )
         } else {
             Assert.fail()

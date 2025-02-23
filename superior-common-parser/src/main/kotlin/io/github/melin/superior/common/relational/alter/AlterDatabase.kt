@@ -7,7 +7,7 @@ import kotlin.collections.ArrayList
 data class AlterDatabase(
     val alterActionType: AlterActionType,
     override val databaseName: String,
-    private val action: AlterAction?
+    private val action: AlterAction?,
 ) : AbsDatabaseStatement() {
     override val statementType = StatementType.ALTER_DATABASE
     override val privilegeType = PrivilegeType.ALTER

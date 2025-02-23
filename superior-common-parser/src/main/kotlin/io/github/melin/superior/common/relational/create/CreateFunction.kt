@@ -12,7 +12,7 @@ data class CreateFunction(
     var replace: Boolean = false,
     var temporary: Boolean = false,
     val className: String? = null,
-    val file: String? = null
+    val file: String? = null,
 ) : Statement() {
     override val statementType = StatementType.CREATE_FUNCTION
     override val privilegeType = PrivilegeType.CREATE
@@ -26,11 +26,11 @@ data class CreateFunction(
     constructor(
         functionId: FunctionId,
         childStatements: ArrayList<Statement>,
-        replace: Boolean
+        replace: Boolean,
     ) : this(functionId, childStatements, replace, false)
 
     constructor(
         functionId: FunctionId,
-        childStatements: ArrayList<Statement>
+        childStatements: ArrayList<Statement>,
     ) : this(functionId, childStatements, false, false)
 }

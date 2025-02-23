@@ -17,7 +17,7 @@ data class CallProcedure(var procedureIds: HashSet<ProcedureId>, var properties:
 
     constructor(
         procedureId: ProcedureId,
-        properties: Map<String, String>
+        properties: Map<String, String>,
     ) : this(Sets.newHashSet(procedureId), properties)
 
     fun first(): ProcedureId {

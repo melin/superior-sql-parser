@@ -12,7 +12,7 @@ data class CreateProcedure(
     var replace: Boolean = false,
     var temporary: Boolean = false,
     val className: String? = null,
-    val file: String? = null
+    val file: String? = null,
 ) : Statement() {
     override val statementType = StatementType.CREATE_PROCEDURE
     override val privilegeType = PrivilegeType.CREATE
@@ -21,7 +21,7 @@ data class CreateProcedure(
     constructor(
         procedureId: ProcedureId,
         childStatements: ArrayList<Statement>,
-        replace: Boolean
+        replace: Boolean,
     ) : this(procedureId, childStatements, replace, false)
 
     constructor(childStatements: ArrayList<Statement>) : this(null, childStatements)
