@@ -25,7 +25,6 @@ data class InsertTable(
     var partitionVals: LinkedHashMap<String, String>? = null
     var rows: ArrayList<List<String>>? = null
     val outputTables: ArrayList<TableId> = arrayListOf()
-    var hints: LinkedHashMap<String, LinkedList<String>>? = null
 
     var mysqlReplace: Boolean = false
 
