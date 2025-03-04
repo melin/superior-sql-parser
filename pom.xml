@@ -38,7 +38,7 @@
 
         <kotlin.version>2.1.10</kotlin.version>
         <antlr4.version>4.9.3</antlr4.version>
-        <slf4j.version>2.0.16</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.24.3</log4j.version>
     </properties>
 
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.2.0-jre</version>
+            <version>33.4.0-jre</version>
             <scope>provided</scope>
         </dependency>
 
