@@ -427,24 +427,22 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         currentOptType = StatementType.UPDATE
         val updateTable =
             if (ctx.multipleUpdateStatement() != null) {
-                val intputTableIds = inputTables.toMutableList()
-                if (ctx.multipleUpdateStatement().expression() != null) {
-                    this.visit(ctx.multipleUpdateStatement().expression())
-                }
-                inputTables.clear()
                 super.visitTableSources(ctx.multipleUpdateStatement().tableSources())
-                UpdateTable(inputTables.first(), inputTables.toMutableList())
-                val updateTable = UpdateTable(inputTables.first(), intputTableIds)
-                updateTable.outputTables.addAll(inputTables.subList(1, inputTables.size))
+
+                val expression = ctx.singleUpdateStatement().expression()
+                if (expression != null) {
+                    this.visit(expression)
+                }
+                val updateTable = UpdateTable(inputTables.first(), inputTables.toMutableList())
                 updateTable
             } else {
-                this.visit(ctx.singleUpdateStatement().expression())
-                val intputTableIds = inputTables.toMutableList()
-                inputTables.clear()
                 super.visitTableSources(ctx.singleUpdateStatement().tableSources())
-                UpdateTable(inputTables.first(), inputTables.toMutableList())
-                val updateTable = UpdateTable(inputTables.first(), intputTableIds)
-                updateTable.outputTables.addAll(inputTables.subList(1, inputTables.size))
+                val expression = ctx.singleUpdateStatement().expression()
+                if (expression != null) {
+                    this.visit(expression)
+                }
+
+                val updateTable = UpdateTable(inputTables.first(), inputTables.toMutableList())
                 updateTable
             }
 

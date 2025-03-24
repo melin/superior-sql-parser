@@ -139,7 +139,7 @@ class MySqlParserDmlTest {
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("employees", statement.tableId?.tableName)
-            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -159,8 +159,54 @@ class MySqlParserDmlTest {
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
             Assert.assertEquals("product", statement.tableId.tableName)
-            Assert.assertEquals(2, statement.outputTables.size)
-            Assert.assertEquals(0, statement.inputTables.size)
+            Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest2() {
+        val sql =
+            """
+            update resource_screen_node b join (
+              select 
+                concat(region_name,'区域测点') name
+                ,sum(access_station_num) as snum
+                ,sum(access_point_num) as pnum 
+              from ads_dmap_datasource_indicator 
+              group by region_name
+            ) as a on a.name=b.name
+            set b.access_station=a.snum,b.access_point=pnum;
+        """
+                .trimIndent()
+
+        val statement = MySqlHelper.parseStatement(sql)
+
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
+            Assert.assertEquals("resource_screen_node", statement.tableId.tableName)
+            Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateTest3() {
+        val sql =
+            """
+            UPDATE items,month SET items.price=month.price
+            WHERE items.id=month.id;
+        """
+                .trimIndent()
+
+        val statement = MySqlHelper.parseStatement(sql)
+
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
+            Assert.assertEquals("items", statement.tableId.tableName)
+            Assert.assertEquals(2, statement.inputTables.size)
         } else {
             Assert.fail()
         }
