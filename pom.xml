@@ -34,9 +34,8 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <spotless.version>2.43.0</spotless.version>
 
-        <kotlin.version>2.1.10</kotlin.version>
+        <kotlin.version>2.1.20</kotlin.version>
         <antlr4.version>4.9.3</antlr4.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.24.3</log4j.version>
@@ -111,53 +110,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>${spotless.version}</version>
-                <configuration>
-                    <java>
-                        <palantirJavaFormat>
-                            <style>PALANTIR</style>
-                            <formatJavadoc>false</formatJavadoc>
-                        </palantirJavaFormat>
-                        <removeUnusedImports />
-                    </java>
-                    <kotlin>
-                        <ktfmt>
-                            <style>KOTLINLANG</style>
-                            <maxWidth>120</maxWidth>
-                            <blockIndent>4</blockIndent>
-                            <continuationIndent>4</continuationIndent>
-                        </ktfmt>
-                    </kotlin>
-                    <pom>
-                        <sortPom>
-                            <encoding>UTF-8</encoding>
-                            <nrOfIndentSpace>4</nrOfIndentSpace>
-                            <keepBlankLines>true</keepBlankLines>
-                            <indentBlankLines>false</indentBlankLines>
-                            <indentSchemaLocation>true</indentSchemaLocation>
-                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
-                            <sortModules>false</sortModules>
-                            <sortExecutions>false</sortExecutions>
-                            <predefinedSortOrder>custom_1</predefinedSortOrder>
-                            <expandEmptyElements>false</expandEmptyElements>
-                            <sortProperties>false</sortProperties>
-                        </sortPom>
-                    </pom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>spotless-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
