@@ -1,6 +1,7 @@
 package io.github.melin.superior.parser.appjar
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.common.ReSetStatement
 import io.github.melin.superior.common.relational.common.SetStatement
@@ -17,7 +18,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     override fun visitJobTask(ctx: AppJarParser.JobTaskContext): Statement {
         val jobStmt = super.visitJobTask(ctx)
-        val sql = CommonUtils.subsql(command, ctx)
+        val sql = source(ctx)
         jobStmt.setSql(sql)
 
         jobStmts.add(jobStmt)
@@ -33,7 +34,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
         if (ctx.paramsExpr() != null) {
             ctx.paramsExpr().children.forEach { item ->
                 val param = item as AppJarParser.ParamExprContext
-                var value = CommonUtils.subsql(command, param)
+                var value = source(param)
                 if (StringUtils.startsWith(value, "/")) { // 解决连续多个文件路径，不能正确解析
                     value = replaceWhitespace(value)
 
@@ -50,8 +51,7 @@ class AppJarAntlr4Visitor : AppJarParserBaseVisitor<Statement>() {
 
     override fun visitSetStatement(ctx: AppJarParser.SetStatementContext): Statement {
         val key = ctx.keyExpr().text
-        var value = CommonUtils.subsql(command, ctx.value)
-        value = CommonUtils.cleanQuote(value)
+        val value = CommonUtils.cleanQuote(source(ctx.value))
 
         return SetStatement(key, value)
     }

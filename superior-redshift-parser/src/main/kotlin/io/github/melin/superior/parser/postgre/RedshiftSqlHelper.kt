@@ -47,7 +47,7 @@ object RedshiftSqlHelper {
     @JvmStatic
     fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = RedshiftSqlAntlr4Visitor(false, trimCmd)
+        val sqlVisitor = RedshiftSqlAntlr4Visitor(false)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
@@ -55,7 +55,7 @@ object RedshiftSqlHelper {
     @JvmStatic
     fun splitSql(command: String): List<String> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = RedshiftSqlAntlr4Visitor(true, trimCmd)
+        val sqlVisitor = RedshiftSqlAntlr4Visitor(true)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }

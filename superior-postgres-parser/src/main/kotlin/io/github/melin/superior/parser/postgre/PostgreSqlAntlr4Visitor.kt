@@ -5,6 +5,7 @@ import com.google.common.collect.Lists
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.StatementType.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.CommentStatement
@@ -46,8 +47,6 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
     private var childStatements: ArrayList<Statement> = arrayListOf()
     private val sqls: ArrayList<String> = arrayListOf()
 
-    private var plsql: String? = null
-
     fun getSqlStatements(): List<Statement> {
         return statements
     }
@@ -62,16 +61,14 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
     override fun visitDecl_cursor_query(ctx: PostgreSqlParser.Decl_cursor_queryContext): Statement? {
         val statement = visitSelectstmt(ctx.selectstmt())
-        if (plsql != null) {
-            statement.setSql(CommonUtils.subsql(plsql, ctx))
-        }
+        statement.setSql(source(ctx))
         childStatements.add(statement)
         return null
     }
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -103,9 +100,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val stmt: Statement? = super.visitStmt(ctx)
         if (stmt != null) {
             if (currentOptType != CREATE_FUNCTION && currentOptType != CREATE_PROCEDURE) {
-                if (plsql != null) {
-                    stmt.setSql(CommonUtils.subsql(plsql, ctx))
-                }
+                stmt.setSql(source(ctx))
                 childStatements.add(stmt)
             }
         }
@@ -222,11 +217,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
     override fun visitFunc_as(ctx: PostgreSqlParser.Func_asContext): Statement? {
         if (ctx.Definition != null) {
-            plsql = CommonUtils.subsql(command, ctx)
-            plsql = StringUtils.substringBetween(plsql, "$$", "$$")
-            plsql = StringUtils.trim(plsql)
             visitPlsqlroot(ctx.Definition as PlsqlrootContext)
-            plsql = null
         }
         return super.visitFunc_as(ctx)
     }
@@ -500,7 +491,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                         if (cmdContext.ADD_P() != null && cmdContext.columnDef() != null) {
                             val columnDef = cmdContext.columnDef()
                             val columnName = columnDef.colid().text
-                            val dataType = CommonUtils.subsql(command, columnDef.typename())
+                            val dataType = source(columnDef.typename())
                             val action = AlterColumnAction(ADD_COLUMN, columnName, dataType)
                             action.ifNotExists = cmdContext.EXISTS() != null
 
@@ -513,7 +504,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                                 val action = AlterColumnAction(DROP_COLUMN_DRFAULT, columnName)
                                 alterTable.actions.add(action)
                             } else {
-                                val value = CommonUtils.subsql(command, columnDefaultDef.a_expr())
+                                val value = source(columnDefaultDef.a_expr())
                                 val action = AlterColumnAction(SET_COLUMN_DEFAULT, columnName)
                                 action.defaultExpression = CommonUtils.cleanQuote(value)
                                 alterTable.actions.add(action)

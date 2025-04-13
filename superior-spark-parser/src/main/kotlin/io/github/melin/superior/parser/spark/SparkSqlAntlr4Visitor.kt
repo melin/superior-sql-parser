@@ -70,7 +70,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         ctx.compoundOrSingleStatement().forEach {
             if (it is CompoundOrSingleStatementContext && it.singleStatement() != null) {
                 val singleStatement = it.singleStatement()
-                val sql = CommonUtils.subsql(command, singleStatement)
+                val sql = source(singleStatement)
                 if (splitSql) {
                     sqls.add(sql)
                 } else {
@@ -127,7 +127,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     fun parseNamespace(ctx: IdentifierReferenceContext): Pair<String?, String> {
         if (ctx.multipartIdentifier() == null) {
-            throw IllegalAccessException("not support: " + CommonUtils.subsql(command, ctx))
+            throw IllegalAccessException("not support: " + source(ctx))
         } else {
             return parseNamespace(ctx.multipartIdentifier())
         }
@@ -145,7 +145,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     fun parseTableName(ctx: IdentifierReferenceContext): TableId {
         if (ctx.multipartIdentifier() == null) {
-            throw IllegalAccessException("not support: " + CommonUtils.subsql(command, ctx))
+            throw IllegalAccessException("not support: " + source(ctx))
         } else {
             return parseTableName(ctx.multipartIdentifier())
         }
@@ -1043,7 +1043,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
-        var querySql = CommonUtils.subsql(command, ctx)
+        var querySql = source(ctx)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
             querySql = StringUtils.substring(querySql, 1, -1)
         }
@@ -1057,7 +1057,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
-        var querySql = CommonUtils.subsql(command, ctx)
+        var querySql = source(ctx)
         if (StringUtils.startsWith(querySql, "(") && StringUtils.endsWith(querySql, ")")) {
             querySql = StringUtils.substring(querySql, 1, -1)
         }
@@ -1199,7 +1199,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             val value = CommonUtils.cleanQuote(ctx.configValue().getText())
             return SetStatement(key, value)
         } else {
-            throw SQLParserException("not support" + CommonUtils.subsql(command, ctx))
+            throw SQLParserException("not support" + source(ctx))
         }
     }
 
@@ -1560,7 +1560,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     private fun parseAlterColumnAction(context: AlterColumnActionContext): AlterColumnAction {
         val action = AlterColumnAction(ALTER_COLUMN)
         if (context.dataType() != null) {
-            action.dataType = CommonUtils.subsql(command, context.dataType())
+            action.dataType = source(context.dataType())
         }
 
         if (context.commentSpec() != null) {
@@ -1590,7 +1590,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         if (context.defaultExpression() != null) {
             val expr = context.defaultExpression().expression()
-            action.defaultExpression = CommonUtils.cleanQuote(CommonUtils.subsql(command, expr))
+            action.defaultExpression = CommonUtils.cleanQuote(source(expr))
         }
 
         if (context.dropDefault != null) {
@@ -1668,7 +1668,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     partitions.put(it.hintName.text, Lists.newLinkedList())
                 } else {
                     val parameters = Lists.newLinkedList<String>()
-                    it.parameters.forEach { parameters.add(CommonUtils.subsql(command, it)) }
+                    it.parameters.forEach { parameters.add(source(it)) }
                     partitions.put(it.hintName.text, parameters)
                 }
             }

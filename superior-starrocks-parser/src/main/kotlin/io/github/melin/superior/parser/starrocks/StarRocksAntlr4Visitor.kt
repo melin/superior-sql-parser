@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.starrocks
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.*
@@ -51,7 +52,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSqlStatements(ctx: SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -331,7 +332,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
 
-        val querySql = CommonUtils.subsql(command, ctx)
+        val querySql = source(ctx)
         queryStmt.setSql(querySql)
 
         queryStmts.add(queryStmt)
@@ -400,7 +401,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSubmitTaskStatement(ctx: SubmitTaskStatementContext): Statement {
         val taskName: String? = if (ctx.qualifiedName() != null) ctx.qualifiedName().text else null
-        val taskExecSql = CommonUtils.subsql(command, ctx.taskExecSql())
+        val taskExecSql = source(ctx.taskExecSql())
         return SubmitTask(taskName, taskExecSql)
     }
 
@@ -420,7 +421,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val jobName = ctx.name.text
         val tableId = parseTableName(ctx.table)
         val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
-        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        val loadPropertiesExpr = source(ctx.loadPropertiesExpr())
         val source = ctx.source.text
         val sourceProperties =
             if (ctx.dataSourceProperties() != null) parseOptions(ctx.dataSourceProperties().propertyList()) else null
@@ -447,7 +448,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         val jobName = ctx.name.text
         val jobProperties = if (ctx.jobProperties() != null) parseOptions(ctx.jobProperties().properties()) else null
-        val loadPropertiesExpr = CommonUtils.subsql(command, ctx.loadPropertiesExpr())
+        val loadPropertiesExpr = source(ctx.loadPropertiesExpr())
         var source: String? = null
         var sourceProperties: Map<String, String>? = null
         if (ctx.dataSource() != null) {
