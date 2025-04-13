@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.spark
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.TableType
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.common.SetStatement
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -12,7 +13,7 @@ import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParser
 import io.github.melin.superior.parser.spark.antlr4.SparkStreamSqlParserBaseVisitor
 
-class SparkStreamSqlAntlr4Visitor(val command: String?) : SparkStreamSqlParserBaseVisitor<Statement>() {
+class SparkStreamSqlAntlr4Visitor() : SparkStreamSqlParserBaseVisitor<Statement>() {
 
     private val tableDatas = ArrayList<Statement>()
 
@@ -77,7 +78,7 @@ class SparkStreamSqlAntlr4Visitor(val command: String?) : SparkStreamSqlParserBa
 
         val tableId = TableId(schemaName, tableName)
         val queryStmt = QueryStmt()
-        val querySql = CommonUtils.subsql(command, ctx.select)
+        val querySql = source(ctx.select)
         queryStmt.setSql(querySql)
         val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
         return insertTable

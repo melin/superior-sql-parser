@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.sqlserver
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
@@ -49,7 +50,7 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitBatch(ctx: SqlServerParser.BatchContext): Statement? {
         ctx.sql_clauses().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {

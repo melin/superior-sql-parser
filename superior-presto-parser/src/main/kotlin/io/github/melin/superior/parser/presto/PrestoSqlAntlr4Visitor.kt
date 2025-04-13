@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.presto
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
@@ -47,7 +48,7 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -101,7 +102,7 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
         val queryStmt = QueryStmt(inputTables, limit, offset)
         queryStmt.functionNames.addAll(functionNames)
-        val querySql = CommonUtils.subsql(command, ctx)
+        val querySql = source(ctx)
         queryStmt.setSql(querySql)
         return queryStmt
     }

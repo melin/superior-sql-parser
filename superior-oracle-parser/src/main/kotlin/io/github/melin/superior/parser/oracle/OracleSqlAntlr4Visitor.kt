@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.oracle
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.alter.AlterTableAction
@@ -69,7 +70,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -94,7 +95,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         ctx.unit_statement().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -245,7 +246,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     override fun visitCall_statement(ctx: OracleParser.Call_statementContext): Statement {
         val procedureId = ProcedureId(ctx.routine_name().get(0).text)
         val callProcedure = CallProcedure(procedureId)
-        callProcedure.setSql(CommonUtils.subsql(command, ctx))
+        callProcedure.setSql(source(ctx))
         return callProcedure
     }
 
@@ -267,7 +268,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             queryStmt = QueryStmt(inputTables, limit, offset)
         }
 
-        queryStmt?.setSql(CommonUtils.subsql(command, ctx))
+        queryStmt?.setSql(source(ctx))
 
         return queryStmt
     }

@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.flink
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.FunctionId
 import io.github.melin.superior.common.relational.Statement
@@ -61,7 +62,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
     override fun visitSqlStatements(ctx: FlinkSqlParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -107,7 +108,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             if ("desc".equals(startToken) || "describe".equals(startToken)) {
                 return DefaultStatement(StatementType.DESC)
             } else {
-                val sql = CommonUtils.subsql(command, ctx)
+                val sql = source(ctx)
                 throw SQLParserException("不支持的SQL: " + sql)
             }
         }
@@ -153,8 +154,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     val colComment: String? =
                         if (computedColumn.commentSpec() != null) computedColumn.commentSpec().STRING_LITERAL().text
                         else null
-                    val computedExpr =
-                        CommonUtils.subsql(command, computedColumn.computedColumnExpression().expression())
+                    val computedExpr = source(computedColumn.computedColumnExpression().expression())
                     val columnRel = ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
                     columnRel.computedExpr = computedExpr
                     columnRel
@@ -224,7 +224,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
 
         insertTable.outputTables.add(tableId)
 
-        var sql = CommonUtils.subsql(command, ctx)
+        var sql = source(ctx)
         insertTable.setSql(sql)
         return insertTable
     }

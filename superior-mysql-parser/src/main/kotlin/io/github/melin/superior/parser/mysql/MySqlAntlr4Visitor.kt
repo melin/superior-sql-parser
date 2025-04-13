@@ -3,6 +3,7 @@ package io.github.melin.superior.parser.mysql
 import com.github.melin.superior.sql.parser.util.CommonUtils
 import io.github.melin.superior.common.*
 import io.github.melin.superior.common.AlterActionType.*
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.ShowStatement
@@ -27,7 +28,7 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2018/2/8. */
-class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : MySqlParserBaseVisitor<Statement>() {
+class MySqlAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
@@ -55,7 +56,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            val sql = CommonUtils.subsql(command, it)
+            val sql = source(it)
             if (splitSql) {
                 sqls.add(sql)
             } else {
@@ -266,7 +267,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
             if (statement is MySqlParser.AlterByChangeColumnContext) {
                 val columnName = CommonUtils.cleanQuote(statement.oldColumn.text)
                 val newColumnName = CommonUtils.cleanQuote(statement.newColumn.text)
-                val dataType = CommonUtils.subsql(command, statement.columnDefinition().dataType())
+                val dataType = source(statement.columnDefinition().dataType())
                 var comment: String? = null
                 var nullable: Boolean = true
                 var defaultExpr: String? = null
@@ -277,7 +278,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
                     } else if (it is MySqlParser.NullColumnConstraintContext) {
                         nullable = it.nullNotnull().NOT() == null
                     } else if (it is MySqlParser.DefaultColumnConstraintContext) {
-                        defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                        defaultExpr = source(it.defaultValue())
                     }
                 }
 
@@ -298,7 +299,7 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
                     } else if (it is MySqlParser.NullColumnConstraintContext) {
                         nullable = it.nullNotnull().NOT() == null
                     } else if (it is MySqlParser.DefaultColumnConstraintContext) {
-                        defaultExpr = CommonUtils.subsql(command, it.defaultValue())
+                        defaultExpr = source(it.defaultValue())
                     }
                 }
 

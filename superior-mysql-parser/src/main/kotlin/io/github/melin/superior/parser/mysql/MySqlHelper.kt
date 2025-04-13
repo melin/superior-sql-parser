@@ -49,7 +49,7 @@ object MySqlHelper {
     @JvmStatic
     fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = MySqlAntlr4Visitor(false, trimCmd)
+        val sqlVisitor = MySqlAntlr4Visitor(false)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
@@ -57,7 +57,7 @@ object MySqlHelper {
     @JvmStatic
     fun splitSql(command: String): List<String> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = MySqlAntlr4Visitor(true, trimCmd)
+        val sqlVisitor = MySqlAntlr4Visitor(true)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
