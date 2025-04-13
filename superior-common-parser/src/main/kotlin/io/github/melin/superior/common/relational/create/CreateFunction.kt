@@ -15,7 +15,7 @@ data class CreateFunction(
     val file: String? = null,
 ) : Statement() {
     override val statementType = StatementType.CREATE_FUNCTION
-    override val privilegeType = PrivilegeType.CREATE
+    override val privilegeType = PrivilegeType.FUNCTION
     override val sqlType = SqlType.DML
 
     var global: Boolean = false // starrocks

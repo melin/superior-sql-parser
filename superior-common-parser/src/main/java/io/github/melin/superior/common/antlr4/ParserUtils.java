@@ -8,6 +8,13 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ParserUtils {
 
+    /** Get the code that creates the given node. */
+    public static String source(ParserRuleContext ctx) {
+        CharStream stream = ctx.getStart().getInputStream();
+        return stream.getText(
+                Interval.of(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex()));
+    }
+
     public static String getString(Token token) {
         return unescapeSQLString(token.getText());
     }

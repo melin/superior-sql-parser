@@ -7,6 +7,7 @@ import io.github.melin.superior.common.AlterActionType.*
 import io.github.melin.superior.common.SQLParserException
 import io.github.melin.superior.common.StatementType
 import io.github.melin.superior.common.TableType
+import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.*
 import io.github.melin.superior.common.relational.alter.*
 import io.github.melin.superior.common.relational.common.*
@@ -645,6 +646,44 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         val type = if (ctx.SOURCE() != null) "source" else "sink"
         val value = CommonUtils.cleanQuote(ctx.value.text)
         return DataTunnelHelp(type, value)
+    }
+
+    override fun visitCreateUserDefinedFunction(ctx: CreateUserDefinedFunctionContext): Statement {
+        val exprText = source(ctx.expression())
+        val queryText: String? =
+            if (ctx.query() != null) {
+                source(ctx.query())
+            } else {
+                null
+            }
+
+        val returnTypeText: String =
+            if (ctx.RETURNS() != null) {
+                if (ctx.dataType() != null) {
+                    source(ctx.dataType())
+                } else if (ctx.returnParams != null) {
+                    source(ctx.returnParams)
+                } else {
+                    ""
+                }
+            } else {
+                ""
+            }
+
+        val isTableFunc = ctx.TABLE() != null || StringUtils.equalsIgnoreCase(returnTypeText, "table")
+        val routine = ctx.routineCharacteristics()
+        val comment: String? =
+            if (routine.commentSpec().isNotEmpty()) {
+                CommonUtils.cleanQuote(routine.commentSpec(0).stringLit().text)
+            } else {
+                null
+            }
+
+        val deterministic: Boolean = routine.deterministic().isNotEmpty()
+        val containsSQL = false
+
+        val functionId = parseFunctionName(ctx.identifierReference().multipartIdentifier())
+        return SQLFunction(functionId, exprText, queryText, comment, deterministic, containsSQL, isTableFunc)
     }
 
     private fun parseDtOptions(ctx: DtPropertyListContext?): HashMap<String, Any> {
