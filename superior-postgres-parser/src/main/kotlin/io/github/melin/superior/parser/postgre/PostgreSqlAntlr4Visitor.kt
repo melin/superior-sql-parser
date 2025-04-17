@@ -68,8 +68,11 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text

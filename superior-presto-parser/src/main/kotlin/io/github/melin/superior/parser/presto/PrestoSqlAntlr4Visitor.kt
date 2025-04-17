@@ -48,8 +48,11 @@ class PrestoSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSqlStatements(ctx: PrestoSqlBaseParser.SqlStatementsContext): Statement? {
         ctx.singleStatement().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text

@@ -50,8 +50,11 @@ class SqlServerAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitBatch(ctx: SqlServerParser.BatchContext): Statement? {
         ctx.sql_clauses().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text
