@@ -56,8 +56,11 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
 
     override fun visitSqlStatements(ctx: MySqlParser.SqlStatementsContext): Statement? {
         ctx.sqlStatement().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text

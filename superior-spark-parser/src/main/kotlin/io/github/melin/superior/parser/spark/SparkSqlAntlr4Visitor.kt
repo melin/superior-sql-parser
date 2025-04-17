@@ -70,8 +70,11 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
         ctx.compoundOrSingleStatement().forEach {
             if (it is CompoundOrSingleStatementContext && it.singleStatement() != null) {
                 val singleStatement = it.singleStatement()
-                val sql = source(singleStatement)
+                var sql = source(singleStatement)
                 if (splitSql) {
+                    if (StringUtils.endsWith(sql, ";")) {
+                        sql = StringUtils.substringBeforeLast(sql, ";")
+                    }
                     sqls.add(sql)
                 } else {
                     val startNode = singleStatement.start.text

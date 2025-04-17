@@ -64,8 +64,11 @@ class RedshiftSqlAntlr4Visitor(val splitSql: Boolean = false) : RedshiftParserBa
 
     override fun visitStmtmulti(ctx: RedshiftParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text

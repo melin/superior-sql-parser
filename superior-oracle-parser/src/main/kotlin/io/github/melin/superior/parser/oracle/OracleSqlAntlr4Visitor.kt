@@ -70,8 +70,11 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSql_script(ctx: OracleParser.Sql_scriptContext): Statement? {
         ctx.sql_plus_command().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text
@@ -95,8 +98,11 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         }
 
         ctx.unit_statement().forEach {
-            val sql = source(it)
+            var sql = source(it)
             if (splitSql) {
+                if (StringUtils.endsWith(sql, ";")) {
+                    sql = StringUtils.substringBeforeLast(sql, ";")
+                }
                 sqls.add(sql)
             } else {
                 val startNode = it.start.text
