@@ -2438,7 +2438,7 @@ aggregateWindowedFunction
     ;
 
 nonAggregateWindowedFunction
-    : (LAG | LEAD) '(' expression (',' decimalLiteral)? (',' decimalLiteral)? ')' overClause
+    : (LAG | LEAD) '(' expression (',' decimalLiteral)? (',' (decimalLiteral | NULL_LITERAL))? ')' overClause
     | (FIRST_VALUE | LAST_VALUE) '(' expression ')' overClause
     | (CUME_DIST | DENSE_RANK | PERCENT_RANK | RANK | ROW_NUMBER) '(' ')' overClause
     | NTH_VALUE '(' expression ',' decimalLiteral ')' overClause
