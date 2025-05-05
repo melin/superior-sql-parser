@@ -220,6 +220,7 @@ class SparkSqlParserTest {
             `collect_time` TIMESTAMP COMMENT '',
             `ds` STRING COMMENT '')
             USING orc
+            LOCATION 's3a://superior2025/iceberg/warehouse/aws_iceberg.db/iceberg_demo_1'
             PARTITIONED BY (ds)
             TBLPROPERTIES (
             'transient_lastDdlTime' = '1627281671')
@@ -236,6 +237,7 @@ class SparkSqlParserTest {
             Assert.assertEquals("spark", statement.modelType)
             Assert.assertEquals(1, statement.partitionColumnNames.size)
             Assert.assertEquals("ds", statement.partitionColumnNames.get(0))
+            Assert.assertEquals(statement.location, "s3a://superior2025/iceberg/warehouse/aws_iceberg.db/iceberg_demo_1")
         } else {
             Assert.fail()
         }
