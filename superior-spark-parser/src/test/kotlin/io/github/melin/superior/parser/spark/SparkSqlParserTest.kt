@@ -1961,7 +1961,7 @@ class SparkSqlParserTest {
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is CreateTable) {
             val schemaName = statement.tableId.schemaName
-            Assert.assertEquals(statement.location, "LOCATION's3a://hive/test/'")
+            Assert.assertEquals(statement.location, "s3a://hive/test/")
             Assert.assertEquals("s3Db", schemaName)
         } else {
             Assert.fail()
