@@ -420,7 +420,8 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             createTable.storageHandler = storageHandler
 
             if (createTableClauses.locationSpec().size > 0) {
-                createTable.location = createTableClauses.locationSpec().get(0).text
+                var location = createTableClauses.locationSpec().get(0).stringLit().text
+                createTable.location = CommonUtils.cleanQuote(location);
             }
 
             if (partitionColumnNames.size > 0) {
