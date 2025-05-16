@@ -8,9 +8,9 @@ class FlinkCheckSql {
     fun selectSqlTest() {
         val sql =
             """
-            create TABLE test (
+            CREATE TABLE test (
               name VARCHAR(12)
-            ) 
+            ) with(key = 'name')
         """
                 .trimIndent()
 
