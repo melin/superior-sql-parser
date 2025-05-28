@@ -367,6 +367,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val queryStmt = this.visitSelectstmt(ctx.insert_rest().selectstmt()) as QueryStmt
         val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
         insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
+        insertTable?.setSql(source(ctx))
         return insertTable
     }
 

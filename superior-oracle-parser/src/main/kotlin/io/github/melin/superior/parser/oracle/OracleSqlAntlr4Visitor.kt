@@ -352,6 +352,8 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
             }
 
         insertTable.outputTables.addAll(outputTables.subList(1, outputTables.size))
+        //insertTable?.setSql(CommonUtils.subsql(command, ctx))
+        insertTable?.setSql(source(ctx))
         return insertTable
     }
 

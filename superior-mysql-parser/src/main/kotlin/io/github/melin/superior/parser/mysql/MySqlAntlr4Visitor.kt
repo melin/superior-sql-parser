@@ -383,9 +383,13 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         currentOptType = StatementType.INSERT
         if (ctx.insertStatementValue().selectStatement() != null) {
             val queryStmt = this.visitSelectStatement(ctx.insertStatementValue().selectStatement()) as QueryStmt
-            return InsertTable(InsertMode.INTO, queryStmt, tableId)
+            val insertTable = InsertTable(InsertMode.INTO, queryStmt, tableId)
+            insertTable?.setSql(source(ctx))
+            return insertTable
         } else {
-            return InsertTable(InsertMode.INTO, QueryStmt(), tableId)
+            val insertTable = InsertTable(InsertMode.INTO, QueryStmt(), tableId)
+            insertTable?.setSql(source(ctx))
+            return insertTable
         }
     }
 
