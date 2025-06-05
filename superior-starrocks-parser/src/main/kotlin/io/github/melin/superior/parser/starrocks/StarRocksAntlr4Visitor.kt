@@ -21,7 +21,7 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/6/30 9:59 上午 */
-class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?) :
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
     StarRocksParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
@@ -404,8 +404,16 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false, val command: String?
 
     override fun visitSubmitTaskStatement(ctx: SubmitTaskStatementContext): Statement {
         val taskName: String? = if (ctx.qualifiedName() != null) ctx.qualifiedName().text else null
-        val taskExecSql = source(ctx.taskExecSql())
-        return SubmitTask(taskName, taskExecSql)
+        if (ctx.insertStatement() != null) {
+            val taskExecSql = source(ctx.insertStatement())
+            return SubmitTask(taskName, taskExecSql)
+        } else if (ctx.insertStatement() != null) {
+            val taskExecSql = source(ctx.insertStatement())
+            return SubmitTask(taskName, taskExecSql)
+        } else {
+            val taskExecSql = source(ctx.dataCacheSelectStatement())
+            return SubmitTask(taskName, taskExecSql)
+        }
     }
 
     override fun visitDropTaskStatement(ctx: DropTaskStatementContext): Statement {
