@@ -46,7 +46,7 @@ object StarRocksHelper {
     @JvmStatic
     fun parseMultiStatement(command: String): List<Statement> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = StarRocksAntlr4Visitor(false, trimCmd)
+        val sqlVisitor = StarRocksAntlr4Visitor(false)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSqlStatements()
     }
@@ -54,7 +54,7 @@ object StarRocksHelper {
     @JvmStatic
     fun splitSql(command: String): List<String> {
         val trimCmd = StringUtils.trim(command)
-        val sqlVisitor = StarRocksAntlr4Visitor(true, trimCmd)
+        val sqlVisitor = StarRocksAntlr4Visitor(true)
         innerParseStatement(trimCmd, sqlVisitor)
         return sqlVisitor.getSplitSqls()
     }
