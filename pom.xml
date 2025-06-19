@@ -38,7 +38,7 @@
         <kotlin.version>2.1.20</kotlin.version>
         <antlr4.version>4.9.3</antlr4.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j.version>2.24.3</log4j.version>
+        <log4j.version>2.25.0</log4j.version>
     </properties>
 
     <dependencies>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
+            <version>2.19.0</version>
             <scope>test</scope>
         </dependency>
 
