@@ -220,6 +220,15 @@ class MySqlAntlr4Visitor(val splitSql: Boolean = false) : MySqlParserBaseVisitor
         return createTable
     }
 
+    override fun visitCopyCreateTable(ctx: MySqlParser.CopyCreateTableContext): Statement? {
+        currentOptType = StatementType.CREATE_TABLE_AS_LIKE
+        val tableId = parseFullId(ctx.tableName().get(0).fullId())
+        var likeTableId = parseFullId(ctx.tableName().get(1).fullId())
+        var createTableLike = CreateTableLike(likeTableId, tableId, false, false, false);
+        return createTableLike;
+    }
+
+
     override fun visitPrimaryKeyTableConstraint(ctx: MySqlParser.PrimaryKeyTableConstraintContext): Statement? {
         val count = ctx.indexColumnNames().childCount
 
