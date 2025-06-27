@@ -1603,6 +1603,7 @@ class SparkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             "int",
             "bigint",
             "varchar",
+            "date",
             "char" -> true
             else -> throw IllegalStateException("不支持数据类型：" + dataType)
         }
