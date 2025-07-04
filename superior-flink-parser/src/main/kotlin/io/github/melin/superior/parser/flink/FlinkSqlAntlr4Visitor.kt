@@ -138,8 +138,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                     val colName = column.columnNameCreate().text
                     val dataType = column.columnType().text
                     val primaryKey = if (column.columnConstraint() != null) true else primayKeys.contains(colName)
-                    val colComment: String? =
-                        if (column.comment != null) column.comment.text else null
+                    val colComment: String? = if (column.comment != null) column.comment.text else null
                     ColumnRel(colName, dataType, colComment, primaryKey, ColumnDefType.PHYSICAL)
                 } else if (column is MetadataColumnDefinitionContext) {
                     val colName = column.columnNameCreate().text
@@ -154,9 +153,7 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
                 } else {
                     val computedColumn = column as ComputedColumnDefinitionContext
                     val colName = computedColumn.computedColumnExpression().text
-                    val colComment: String? =
-                        if (computedColumn.comment != null) computedColumn.comment.text
-                        else null
+                    val colComment: String? = if (computedColumn.comment != null) computedColumn.comment.text else null
                     val computedExpr = source(computedColumn.computedColumnExpression().expression())
                     val columnRel = ColumnRel(colName, null, colComment, ColumnDefType.COMPUTED)
                     columnRel.computedExpr = computedExpr
@@ -267,49 +264,6 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
     override fun visitUseStatement(ctx: FlinkSqlParser.UseStatementContext): Statement {
         val catalogName: String = CommonUtils.cleanQuote(ctx.catalogPath().text)
         return UseCatalog(catalogName)
-    }
-
-    override fun visitSyncTableExpr(ctx: FlinkSqlParser.SyncTableExprContext): Statement {
-        val sinkTable = parseSourceTable(ctx.sink.uid())
-        val sourceTable = parseSourceTable(ctx.source.uid())
-
-        val sinkOptions = parseTableOptions(ctx.sinkOptions)
-        val sourceOptions = parseTableOptions(ctx.sourceOptions)
-
-        val createTable = SyncTable(sinkTable, sourceTable)
-        createTable.sinkOptions.putAll(sinkOptions)
-        createTable.sourceOptions.putAll(sourceOptions)
-
-        return createTable
-    }
-
-    override fun visitSyncDatabaseExpr(ctx: FlinkSqlParser.SyncDatabaseExprContext): Statement {
-        val sinkDatabase = parseDatabase(ctx.sink.uid())
-        val sourceDatabase = parseDatabase(ctx.source.uid())
-
-        val sinkOptions = parseTableOptions(ctx.sinkOptions)
-        val sourceOptions = parseTableOptions(ctx.sourceOptions)
-
-        val createDatabase =
-            if (ctx.includeTable == null) {
-                SyncDatabase(sinkDatabase.first, sinkDatabase.second, sourceDatabase.first, sourceDatabase.second)
-            } else {
-                SyncDatabase(
-                    sinkDatabase.first,
-                    sinkDatabase.second,
-                    sourceDatabase.first,
-                    sourceDatabase.second,
-                    CommonUtils.cleanQuote(ctx.includeTable.text),
-                )
-            }
-
-        if (ctx.excludeTable != null) {
-            createDatabase.excludingTables = CommonUtils.cleanQuote(ctx.excludeTable.text)
-        }
-
-        createDatabase.sinkOptions.putAll(sinkOptions)
-        createDatabase.sourceOptions.putAll(sourceOptions)
-        return createDatabase
     }
 
     override fun visitWindowTVFParam(ctx: FlinkSqlParser.WindowTVFParamContext): Statement? {

@@ -21,8 +21,7 @@ import org.antlr.v4.runtime.tree.RuleNode
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2020/6/30 9:59 上午 */
-class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
-    StarRocksParserBaseVisitor<Statement>() {
+class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBaseVisitor<Statement>() {
 
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
