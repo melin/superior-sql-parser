@@ -13,8 +13,7 @@
 
 ## Build
 ```
-export GPG_TTY=$(tty)
-mvn spotless:apply clean deploy -Prelease
+mvn clean deploy
 ```
 
 ### API
