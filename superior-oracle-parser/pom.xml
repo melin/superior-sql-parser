@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-oracle-parser</artifactId>
+    <name>superior-sql-parser</name>
 
     <dependencies>
         <dependency>

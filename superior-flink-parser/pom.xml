@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-flink-parser</artifactId>
+    <name>superior-flink-parser</name>
 
     <dependencies>
         <dependency>

@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-starrocks-parser</artifactId>
+    <name>superior-starrocks-parser</name>
 
     <dependencies>
         <dependency>

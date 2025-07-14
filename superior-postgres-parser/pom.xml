@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-postgres-parser</artifactId>
+    <name>superior-postgres-parser</name>
 
     <dependencies>
         <dependency>

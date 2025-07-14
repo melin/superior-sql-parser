@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-arithmetic-parser</artifactId>
+    <name>superior-arithmetic-parser</name>
 
     <dependencies>
         <dependency>

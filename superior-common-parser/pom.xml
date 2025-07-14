@@ -9,5 +9,6 @@
     </parent>
 
     <artifactId>superior-common-parser</artifactId>
+    <name>superior-common-parser</name>
 
 </project>
