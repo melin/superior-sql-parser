@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-trino-parser</artifactId>
+    <name>superior-trino-parser</name>
 
     <dependencies>
         <dependency>

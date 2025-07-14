@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-appjar-parser</artifactId>
+    <name>superior-appjar-parser</name>
 
     <dependencies>
         <dependency>

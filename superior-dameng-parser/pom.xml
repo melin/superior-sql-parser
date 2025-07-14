@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-dameng-parser</artifactId>
+    <name>superior-dameng-parser</name>
 
     <dependencies>
         <dependency>

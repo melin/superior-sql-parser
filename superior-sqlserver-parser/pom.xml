@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-sqlserver-parser</artifactId>
+    <name>superior-sqlserver-parser</name>
 
     <dependencies>
         <dependency>

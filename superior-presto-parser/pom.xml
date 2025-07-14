@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-presto-parser</artifactId>
+    <name>superior-presto-parser</name>
 
     <dependencies>
         <dependency>

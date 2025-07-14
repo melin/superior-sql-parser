@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-mysql-parser</artifactId>
+    <name>superior-mysql-parser</name>
 
     <dependencies>
         <dependency>

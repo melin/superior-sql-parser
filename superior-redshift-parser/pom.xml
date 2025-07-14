@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-redshift-parser</artifactId>
+    <name>superior-redshift-parser</name>
 
     <dependencies>
         <dependency>

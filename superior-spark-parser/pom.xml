@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>superior-spark-parser</artifactId>
+    <name>superior-spark-parser</name>
 
     <dependencies>
         <dependency>
