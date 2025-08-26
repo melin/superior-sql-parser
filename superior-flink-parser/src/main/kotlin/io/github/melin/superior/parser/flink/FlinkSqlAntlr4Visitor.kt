@@ -219,7 +219,10 @@ class FlinkSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?)
             columnNameList = ctx.columnNameList().columnName().map { ColumnRel(CommonUtils.cleanQuote(it.uid().text)) }
         }
 
-        val queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        var queryStmt = QueryStmt()
+        if (ctx.queryStatement() != null) {
+            queryStmt = this.visitQueryStatement(ctx.queryStatement()) as QueryStmt
+        }
         val insertTable = InsertTable(insertMode, queryStmt, tableId, columnNameList)
 
         insertTable.outputTables.add(tableId)
