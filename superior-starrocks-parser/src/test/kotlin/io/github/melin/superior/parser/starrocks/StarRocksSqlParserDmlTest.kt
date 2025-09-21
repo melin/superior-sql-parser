@@ -259,6 +259,29 @@ class StarRocksSqlParserDmlTest {
     }
 
     @Test
+    fun insertTest5() {
+        val sql =
+            """
+            INSERT INTO target_table (id, cnt)
+            SELECT u.id, COUNT(o.order_id)
+            FROM users u
+            JOIN orders o ON u.id = o.user_id
+            WHERE o.amount > 100
+            GROUP BY u.id
+        """
+                .trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(1, statement.queryStmt.functionNames.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
     fun showTest() {
         val sql =
             """

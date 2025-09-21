@@ -637,6 +637,21 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
         return null
     }
 
+    override fun visitAggregationFunctionCall(ctx: AggregationFunctionCallContext): Statement? {
+        if (
+            StatementType.SELECT == currentOptType ||
+            StatementType.CREATE_VIEW == currentOptType ||
+            StatementType.CREATE_MATERIALIZED_VIEW == currentOptType ||
+            StatementType.INSERT == currentOptType ||
+            StatementType.CREATE_TABLE_AS_SELECT == currentOptType
+        ) {
+            val funcName = ctx.aggregationFunction().getChild(0).text.lowercase()
+            functionNames.add(FunctionId(funcName))
+        }
+
+        return null
+    }
+
     override fun visitWithClause(ctx: WithClauseContext): Statement? {
         ctx.commonTableExpression().forEach { cteTempTables.add(TableId(it.name.text)) }
         return super.visitWithClause(ctx)
