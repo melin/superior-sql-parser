@@ -635,10 +635,10 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
     override fun visitAggregationFunctionCall(ctx: AggregationFunctionCallContext): Statement? {
         if (
             StatementType.SELECT == currentOptType ||
-            StatementType.CREATE_VIEW == currentOptType ||
-            StatementType.CREATE_MATERIALIZED_VIEW == currentOptType ||
-            StatementType.INSERT == currentOptType ||
-            StatementType.CREATE_TABLE_AS_SELECT == currentOptType
+                StatementType.CREATE_VIEW == currentOptType ||
+                StatementType.CREATE_MATERIALIZED_VIEW == currentOptType ||
+                StatementType.INSERT == currentOptType ||
+                StatementType.CREATE_TABLE_AS_SELECT == currentOptType
         ) {
             val funcName = ctx.aggregationFunction().getChild(0).text.lowercase()
             functionNames.add(FunctionId(funcName))
@@ -652,7 +652,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
     }
 
     override fun visitSelectAll(ctx: SelectAllContext): Statement? {
-        return null;
+        return null
     }
 
     override fun visitWithClause(ctx: WithClauseContext): Statement? {
