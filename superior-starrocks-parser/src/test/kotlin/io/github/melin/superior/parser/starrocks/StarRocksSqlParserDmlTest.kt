@@ -338,4 +338,23 @@ class StarRocksSqlParserDmlTest {
         Assert.assertEquals("order_new", statement.tableId.tableName)
         Assert.assertEquals("orders", statement.queryStmt.inputTables.get(0).tableName)
     }
+
+    @Test
+    fun selectTest() {
+        val sql =
+            """
+            select t1.* from (
+                select * from `default`.person
+            ) t1
+        """
+                .trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
 }

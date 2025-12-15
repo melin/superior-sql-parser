@@ -647,6 +647,14 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
         return null
     }
 
+    override fun visitSubqueryWithAlias(ctx: SubqueryWithAliasContext): Statement? {
+        return this.visitSubquery(ctx.subquery())
+    }
+
+    override fun visitSelectAll(ctx: SelectAllContext): Statement? {
+        return null;
+    }
+
     override fun visitWithClause(ctx: WithClauseContext): Statement? {
         ctx.commonTableExpression().forEach { cteTempTables.add(TableId(it.name.text)) }
         return super.visitWithClause(ctx)
