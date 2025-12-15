@@ -310,6 +310,35 @@
         </plugins>
     </build>
 
+    <url>https://github.com/melin/superior-sql-parser</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>melin</name>
+            <email>libinsong1204@gmail.com</email>
+            <url>https://github.com/melin/superior-sql-parser</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/melin/superior-sql-parser.git</connection>
+        <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
+        <url>https://github.com/melin/superior-sql-parser</url>
+    </scm>
+
+    <issueManagement>
+        <system>gitee</system>
+        <url>https://github.com/melin/superior-sql-parser/issues</url>
+    </issueManagement>
+
     <profiles>
         <profile>
             <id>deploy</id>
@@ -344,34 +373,5 @@
             </build>
         </profile>
     </profiles>
-
-    <url>https://github.com/melin/superior-sql-parser</url>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>melin</name>
-            <email>libinsong1204@gmail.com</email>
-            <url>https://github.com/melin/superior-sql-parser</url>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:https://github.com/melin/superior-sql-parser.git</connection>
-        <developerConnection>scm:git:https://github.com/melin/superior-sql-parser.git</developerConnection>
-        <url>https://github.com/melin/superior-sql-parser</url>
-    </scm>
-
-    <issueManagement>
-        <system>gitee</system>
-        <url>https://github.com/melin/superior-sql-parser/issues</url>
-    </issueManagement>
 
 </project>
