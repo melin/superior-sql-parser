@@ -14,7 +14,7 @@
 ## Build
 ```
 export GPG_TTY=$(tty)
-mvn clean deploy
+mvn clean deploy -Pdeploy
 ```
 
 ### API
