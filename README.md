@@ -5,8 +5,8 @@
 <dependency>
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-[spark|presto|mysql|oracle|...]-parser</artifactId>
-    <version>4.0.19</version>
-    <!-- <version>4.0.20-SNAPSHOT</version> -->
+    <version>4.0.20</version>
+    <!-- <version>4.0.21-SNAPSHOT</version> -->
 </dependency>
 ```
 
