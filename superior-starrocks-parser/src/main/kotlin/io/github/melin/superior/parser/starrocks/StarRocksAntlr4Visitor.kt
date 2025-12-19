@@ -672,15 +672,30 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
     }
 
     fun parseTableName(ctx: QualifiedNameContext): TableId {
-        return if (ctx.identifier().size == 3) {
-            val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
-            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
-            val tableName = CommonUtils.cleanQuote(ctx.identifier().get(2).text)
-            TableId(catalotName, schemaName, tableName)
-        } else if (ctx.identifier().size == 2) {
-            val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
-            val tableName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
-            TableId(schemaName, tableName)
+        return if (ctx.identifier().size == 3 || ctx.children.size == 4) {
+            if (ctx.identifier().size == 3) {
+                val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+                val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+                val tableName = CommonUtils.cleanQuote(ctx.identifier().get(3).text)
+                TableId(catalotName, schemaName, tableName)
+            } else {
+                // hive.bigdata.1v1_users 表名数字开头场景
+                val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+                val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+                val tableName = ctx.getChild(3).text.substring(1)
+                TableId(catalotName, schemaName, tableName)
+            }
+        } else if (ctx.identifier().size == 2 || ctx.children.size == 2) {
+            if (ctx.identifier().size == 2) {
+                val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+                val tableName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
+                TableId(schemaName, tableName)
+            } else {
+                // bigdata.1v1_users 表名数字开头场景
+                val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
+                val tableName = ctx.getChild(1).text.substring(1)
+                TableId(schemaName, tableName)
+            }
         } else if (ctx.identifier().size == 1) {
             val tableName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
             TableId(tableName)
