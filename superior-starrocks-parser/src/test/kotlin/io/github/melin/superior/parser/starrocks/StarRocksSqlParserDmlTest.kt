@@ -339,6 +339,7 @@ class StarRocksSqlParserDmlTest {
         Assert.assertEquals("orders", statement.queryStmt.inputTables.get(0).tableName)
     }
 
+    // 排除表别名
     @Test
     fun selectTest() {
         val sql =
@@ -353,6 +354,46 @@ class StarRocksSqlParserDmlTest {
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    // 校验数字开头表
+    @Test
+    fun select1Test() {
+        val sql =
+            """
+            SELECT * FROM users.1v1_user
+        """
+                .trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+
+            Assert.assertEquals(TableId("users", "1v1_user"), statement.inputTables.get(0))
+        } else {
+            Assert.fail()
+        }
+    }
+
+    // 校验数字开头表
+    @Test
+    fun select2Test() {
+        val sql =
+            """
+            SELECT * FROM hive.users.1v1_user
+        """
+                .trimIndent()
+
+        val statement = StarRocksHelper.parseStatement(sql)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+
+            Assert.assertEquals(TableId("hive", "users", "1v1_user"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
