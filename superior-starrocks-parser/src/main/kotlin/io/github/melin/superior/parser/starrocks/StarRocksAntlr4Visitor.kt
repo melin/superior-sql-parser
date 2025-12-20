@@ -676,7 +676,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
             if (ctx.identifier().size == 3) {
                 val catalotName = CommonUtils.cleanQuote(ctx.identifier().get(0).text)
                 val schemaName = CommonUtils.cleanQuote(ctx.identifier().get(1).text)
-                val tableName = CommonUtils.cleanQuote(ctx.identifier().get(3).text)
+                val tableName = CommonUtils.cleanQuote(ctx.identifier().get(2).text)
                 TableId(catalotName, schemaName, tableName)
             } else {
                 // hive.bigdata.1v1_users 表名数字开头场景
