@@ -726,6 +726,15 @@ predicate
     | KW_IS KW_JSON (KW_VALUE | KW_ARRAY | identifier)?
     ;
 
+jsonFunctionBranch
+    : KW_NULL
+    | KW_EMPTY KW_ARRAY
+    | KW_EMPTY uid
+    | KW_TRUE
+    | KW_FALSE
+    | KW_UNKNOWN
+    ;
+
 likePredicate
     : KW_NOT? kind=KW_LIKE quantifier=(KW_ANY | KW_ALL) (
         LR_BRACKET RR_BRACKET
@@ -813,6 +822,36 @@ functionParam
     | timeIntervalUnit
     | timePointUnit
     | expression
+    | jsonValueParams
+    | jsonQueryParams
+    | jsonObjectParams
+    | jsonArrayParams
+    ;
+
+jsonValueParams
+    : columnNamePath (uid columnType)? (
+        (uid | KW_NULL | KW_DEFAULT valueExpression) KW_ON KW_EMPTY
+    )? ((uid | KW_NULL | KW_DEFAULT valueExpression) KW_ON uid)?
+    ;
+
+jsonQueryParams
+    : columnNamePath ((KW_WITHOUT | KW_WITH uid?) KW_ARRAY? uid)? (
+        jsonFunctionBranch KW_ON KW_EMPTY
+    )? (jsonFunctionBranch KW_ON uid)?
+    ;
+
+// JSON 函数只能在 JSON_OBJECT 函数中使用
+jsonObjectParams
+    : (
+        KW_KEY? columnNamePath KW_VALUE? (
+            valueExpression
+            | KW_JSON LR_BRACKET (valueExpression)* RR_BRACKET
+        )
+    )* ((KW_NULL | uid) KW_ON KW_NULL)?
+    ;
+
+jsonArrayParams
+    : valueExpression* ((KW_NULL | uid) KW_ON KW_NULL)?
     ;
 
 dereferenceDefinition
