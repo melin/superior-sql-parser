@@ -475,4 +475,58 @@ class PostgreSqlProcessParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun refCursorTypeDeclarationTest() {
+        val sql = """
+            CREATE FUNCTION test_ref_cursor()
+            RETURNS SETOF record
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+              v_schema        varchar(30);
+              v_table         VARCHAR(60);
+              TYPE V_CURTYPE IS REF CURSOR;
+              v_open_cur      V_CURTYPE;
+            BEGIN
+              SELECT * FROM users INTO v_open_cur;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("test_ref_cursor"), statement.functionId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun refCursorTypeWithReturnTest() {
+        val sql = """
+            CREATE FUNCTION test_ref_cursor_return()
+            RETURNS SETOF record
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+              TYPE emp_cursor_type IS REF CURSOR RETURN employees%ROWTYPE;
+              v_cursor emp_cursor_type;
+            BEGIN
+              OPEN v_cursor FOR SELECT * FROM employees;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("test_ref_cursor_return"), statement.functionId)
+        } else {
+            Assert.fail()
+        }
+    }
 }

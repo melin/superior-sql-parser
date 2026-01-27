@@ -4970,6 +4970,7 @@ label_decl
 
 decl_stmt
    : oracle_cursor_declaration
+   | ref_cursor_type_declaration
    | decl_statement
    | DECLARE
    | label_decl
@@ -5019,6 +5020,15 @@ oracle_cursor_declaration
 
 cursor_return_clause
    : RETURN decl_datatype
+   ;
+
+// Oracle-style REF CURSOR type declaration: TYPE typename IS REF CURSOR [RETURN type] ;
+ref_cursor_type_declaration
+   : TYPE_P decl_varname IS ref_cursor_type_def SEMI
+   ;
+
+ref_cursor_type_def
+   : REF CURSOR cursor_return_clause?
    ;
 
 decl_aliasitem
