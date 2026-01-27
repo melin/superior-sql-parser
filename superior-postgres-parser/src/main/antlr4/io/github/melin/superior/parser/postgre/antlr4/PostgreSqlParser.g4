@@ -4969,7 +4969,8 @@ label_decl
    ;
 
 decl_stmt
-   : decl_statement
+   : oracle_cursor_declaration
+   | decl_statement
    | DECLARE
    | label_decl
    ;
@@ -5003,12 +5004,21 @@ decl_cursor_arglist
    ;
 
 decl_cursor_arg
-   : decl_varname decl_datatype
+   : decl_varname IN_P? decl_datatype decl_defval
    ;
 
 decl_is_for
    : IS
    | FOR
+   ;
+
+// Oracle-style cursor declaration: CURSOR name [(params)] [RETURN type] [IS select] ;
+oracle_cursor_declaration
+   : CURSOR decl_varname decl_cursor_args cursor_return_clause? (decl_is_for decl_cursor_query)? SEMI
+   ;
+
+cursor_return_clause
+   : RETURN decl_datatype
    ;
 
 decl_aliasitem
@@ -5532,7 +5542,7 @@ plsql_unreserved_keyword
    //| CONSTRAINT_NAME
    | CONTINUE_P
    | CURRENT_P
-   | CURSOR
+   //| CURSOR  // removed to avoid conflict with oracle_cursor_declaration
    //| DATATYPE
    | DEBUG
    | DEFAULT

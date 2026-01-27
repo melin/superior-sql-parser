@@ -66,6 +66,14 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         return null
     }
 
+    // Oracle-style cursor declaration: CURSOR name [(params)] [RETURN type] [IS select] ;
+    override fun visitOracle_cursor_declaration(ctx: PostgreSqlParser.Oracle_cursor_declarationContext): Statement? {
+        if (ctx.decl_cursor_query() != null) {
+            visitDecl_cursor_query(ctx.decl_cursor_query())
+        }
+        return null
+    }
+
     override fun visitStmtmulti(ctx: PostgreSqlParser.StmtmultiContext): Statement? {
         ctx.stmt().forEach {
             var sql = source(it)

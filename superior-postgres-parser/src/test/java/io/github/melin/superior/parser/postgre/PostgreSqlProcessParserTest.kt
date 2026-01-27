@@ -359,4 +359,120 @@ class PostgreSqlProcessParserTest {
         }
 
     }
+
+    @Test
+    fun oracleCursorDeclarationTest() {
+        val sql = """
+            CREATE OR REPLACE FUNCTION mart_rpt.TEST_PROC(v_indate numeric, OUT v_retcode character varying, OUT v_err character varying)
+             RETURNS record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            AS ${'$'}${'$'} DECLARE
+            ----------------------------------------------------------------------------------------
+            -- 程序名称:    TEST_PROC
+            -- 功能描述:
+            -- 输入参数:
+            ----------------------------------------------------------------------------------------
+
+              -- 变量定义
+              v_txdate    NUMBER(8);
+              begin
+                SELECT clock_timestamp() INTO v_starttime FROM DUAL;
+                DECLARE CURSOR INDEX_BASE_CUR IS
+                        SELECT a.EXESQL,a.INDI_NO FROM tmp.table_test a, tmp.d_new_index_code b
+                        WHERE  a.indi_code=b.indi_code
+                        ORDER BY INDI_NO ASC;
+                        V_EXESQL table_test.EXESQL%TYPE;
+                        V_INDI_NO table_test.INDI_NO%TYPE;
+                        V_TYPERCD INDEX_BASE_CUR%ROWTYPE ;
+                BEGIN
+                OPEN INDEX_BASE_CUR;
+                LOOP
+                  FETCH INDEX_BASE_CUR INTO V_EXESQL,V_INDI_NO;
+                  SELECT REPLACE(V_EXESQL,':C1',v_lastmhlsdate) INTO v_sql FROM DUAL;
+                  EXIT WHEN INDEX_BASE_CUR%NOTFOUND;
+                  EXECUTE IMMEDIATE v_sql;
+                END LOOP;
+                CLOSE INDEX_BASE_CUR;
+                END;
+              EXCEPTION
+                WHEN OTHERS THEN
+                v_stepnum := 2;
+                v_retcode := SQLCODE;
+                v_errcode :=SQLCODE;
+                v_err     :=SUBSTR(SQLERRM,1,1000);
+                v_retcode :=v_errcode;
+                PUB.P_PRC_DBG_LOG(v_seqno,v_dealprc,v_txdate,v_stepnum,v_errcode,'',v_err,v_sql);
+              end;
+
+            END${'$'}${'$'}
+            ;
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("mart_rpt", "TEST_PROC"), statement.functionId)
+            // Should have child statements including the cursor query and other SELECTs
+            Assert.assertTrue(statement.childStatements.size >= 1)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun oracleCursorWithParamsTest() {
+        val sql = """
+            CREATE FUNCTION test_cursor_params()
+            RETURNS SETOF record
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+              CURSOR emp_cursor(dept_id IN NUMBER DEFAULT 10) IS
+                SELECT employee_id, first_name FROM employees WHERE department_id = dept_id;
+              CURSOR simple_cur IS SELECT * FROM users;
+            BEGIN
+              NULL;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("test_cursor_params"), statement.functionId)
+            // Should have 2 child statements (two cursor SELECT queries)
+            Assert.assertEquals(2, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun oracleCursorWithReturnTest() {
+        val sql = """
+            CREATE FUNCTION test_cursor_return()
+            RETURNS SETOF record
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+              CURSOR dept_cursor RETURN departments%ROWTYPE IS
+                SELECT * FROM departments;
+            BEGIN
+              NULL;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = PostgreSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(1, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
 }
