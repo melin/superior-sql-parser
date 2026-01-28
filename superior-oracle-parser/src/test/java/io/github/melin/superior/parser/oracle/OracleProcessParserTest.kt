@@ -266,4 +266,45 @@ class OracleProcessParserTest {
         }
 
     }
+
+    @Test
+    fun executeImmediateTruncatePartitionTest() {
+        val sql = """
+            CREATE OR REPLACE PROCEDURE truncate_partition_proc AS
+                VN_MON VARCHAR2(10) := '202301';
+            BEGIN
+                EXECUTE IMMEDIATE 'ALTER TABLE TABLE_1 TRUNCATE PARTITION PY_' ||
+                                  VN_MON || '  ';
+            END;
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("truncate_partition_proc"), statement.procedureId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun executeImmediateTruncatePartitionAnonymousBlockTest() {
+        val sql = """
+            DECLARE
+                VN_MON VARCHAR2(10) := '202301';
+            BEGIN
+                EXECUTE IMMEDIATE 'ALTER TABLE TABLE_1 TRUNCATE PARTITION PY_' ||
+                                  VN_MON || '  ';
+            END;
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+        } else {
+            Assert.fail()
+        }
+    }
 }

@@ -358,12 +358,67 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitExecute_immediate(ctx: OracleParser.Execute_immediateContext): Statement? {
-        var execSql = CommonUtils.cleanQuote(ctx.expression().text)
-        execSql = StringUtils.replace(execSql, "''", "'")
+        val exprText = ctx.expression().text
 
-        val statements = OracleSqlHelper.parseMultiStatement(execSql)
-        childStatements.addAll(statements)
+        // Check if expression contains || concatenation (dynamic SQL)
+        if (exprText.contains("||")) {
+            // Extract string literals from the concatenated expression
+            val stringLiterals = extractStringLiterals(exprText)
+            if (stringLiterals.isNotEmpty()) {
+                // Join all string literals to form the SQL template
+                var execSql = stringLiterals.joinToString("")
+                execSql = StringUtils.replace(execSql, "''", "'")
+
+                try {
+                    val statements = OracleSqlHelper.parseMultiStatement(execSql)
+                    childStatements.addAll(statements)
+                } catch (e: Exception) {
+                    // Dynamic SQL may not be fully parseable, ignore parse errors
+                }
+            }
+        } else {
+            var execSql = CommonUtils.cleanQuote(exprText)
+            execSql = StringUtils.replace(execSql, "''", "'")
+
+            val statements = OracleSqlHelper.parseMultiStatement(execSql)
+            childStatements.addAll(statements)
+        }
         return null
+    }
+
+    /**
+     * Extract string literals from an expression containing || concatenation
+     * For example: 'ALTER TABLE T1 TRUNCATE PARTITION PY_' || VN_MON || '  '
+     * Returns: ["ALTER TABLE T1 TRUNCATE PARTITION PY_", "  "]
+     */
+    private fun extractStringLiterals(expr: String): List<String> {
+        val literals = mutableListOf<String>()
+        var i = 0
+        while (i < expr.length) {
+            if (expr[i] == '\'') {
+                // Found start of string literal
+                val sb = StringBuilder()
+                i++ // skip opening quote
+                while (i < expr.length) {
+                    if (expr[i] == '\'' && i + 1 < expr.length && expr[i + 1] == '\'') {
+                        // Escaped quote ''
+                        sb.append("'")
+                        i += 2
+                    } else if (expr[i] == '\'') {
+                        // End of string literal
+                        i++ // skip closing quote
+                        break
+                    } else {
+                        sb.append(expr[i])
+                        i++
+                    }
+                }
+                literals.add(sb.toString())
+            } else {
+                i++
+            }
+        }
+        return literals
     }
 
     private fun parseFunctionName(funcName: Function_nameContext): FunctionId {

@@ -8,7 +8,7 @@ Superior SQL Parser is a multi-database SQL parsing library based on ANTLR4. It 
 
 **Current Version:** 4.0.22
 **License:** Apache License 2.0
-**Primary Language:** Kotlin (with Java support)
+**Primary Language:** Kotlin 2.3 (with Java support)
 **Build System:** Maven
 **Java Target:** Java 8
 
