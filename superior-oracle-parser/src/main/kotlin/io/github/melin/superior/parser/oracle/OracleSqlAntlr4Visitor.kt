@@ -14,6 +14,7 @@ import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
 import io.github.melin.superior.common.relational.table.ColumnRel
+import io.github.melin.superior.common.relational.table.TruncateTable
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Cursor_declarationContext
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Function_nameContext
@@ -265,6 +266,11 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val tableId = parseTableViewName(ctx.tableview_name())
         val action = AlterTableAction(AlterActionType.ALTER_VIEW_QUERY)
         return AlterTable(tableId, action)
+    }
+
+    override fun visitTruncate_table(ctx: OracleParser.Truncate_tableContext): Statement {
+        val tableId = parseTableViewName(ctx.tableview_name())
+        return TruncateTable(tableId)
     }
 
     override fun visitSelect_statement(ctx: OracleParser.Select_statementContext): Statement? {

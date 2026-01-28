@@ -9,6 +9,7 @@ import io.github.melin.superior.common.relational.create.CreateFunction
 import io.github.melin.superior.common.relational.create.CreateProcedure
 import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
+import io.github.melin.superior.common.relational.table.TruncateTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -486,6 +487,64 @@ class OracleProcessParserTest {
         // Test ANALYZE with option value
         val sql3 = "ANALYZE (VERBOSE true, BUFFER_USAGE_LIMIT 512) my_table"
         OracleSqlHelper.parseStatement(sql3)
+    }
+
+    @Test
+    fun truncateTableWithoutExecuteImmediateTest() {
+        // Test TRUNCATE TABLE statement inside procedure without EXECUTE IMMEDIATE
+        val sql = """
+           CREATE OR REPLACE PROCEDURE create_and_manipulate_tables AS
+            BEGIN
+                truncate table schema1.test_table_s1;
+            END;
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("create_and_manipulate_tables"), statement.procedureId)
+            Assert.assertEquals(1, statement.childStatements.size)
+
+            val childStatement = statement.childStatements.get(0)
+            Assert.assertEquals(StatementType.TRUNCATE_TABLE, childStatement.statementType)
+
+            if (childStatement is TruncateTable) {
+                Assert.assertEquals("schema1", childStatement.tableId.schemaName)
+                Assert.assertEquals("test_table_s1", childStatement.tableId.tableName)
+            } else {
+                Assert.fail("Expected TruncateTable statement")
+            }
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun multipleDmlStatementsWithoutExecuteImmediateTest() {
+        // Test multiple DML statements inside procedure without EXECUTE IMMEDIATE
+        val sql = """
+           CREATE OR REPLACE PROCEDURE test_multiple_dml AS
+            BEGIN
+                truncate table schema1.table1;
+                DELETE FROM schema2.table2 WHERE id > 100;
+                UPDATE schema3.table3 SET status = 'active';
+            END;
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("test_multiple_dml"), statement.procedureId)
+            Assert.assertEquals(3, statement.childStatements.size)
+
+            Assert.assertEquals(StatementType.TRUNCATE_TABLE, statement.childStatements.get(0).statementType)
+            Assert.assertEquals(StatementType.DELETE, statement.childStatements.get(1).statementType)
+            Assert.assertEquals(StatementType.UPDATE, statement.childStatements.get(2).statementType)
+        } else {
+            Assert.fail()
+        }
     }
 
 }

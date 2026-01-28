@@ -5772,6 +5772,7 @@ sql_statement
     | cursor_manipulation_statements
     | transaction_control_statements
     | collection_method_call
+    | truncate_table
     ;
 
 execute_immediate
