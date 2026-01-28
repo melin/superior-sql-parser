@@ -69,6 +69,7 @@ ALTERNATE                      : 'ALTERNATE';
 ALWAYS                         : 'ALWAYS';
 ANALYTIC                       : 'ANALYTIC';
 ANALYZE                        : 'ANALYZE';
+ANALYSE                        : 'ANALYSE';
 ANCESTOR                       : 'ANCESTOR';
 ANCILLARY                      : 'ANCILLARY';
 AND                            : 'AND';
@@ -571,6 +572,7 @@ FEATURE_DETAILS                : 'FEATURE_DETAILS';
 FEATURE_ID                     : 'FEATURE_ID';
 FEATURE_SET                    : 'FEATURE_SET';
 FEATURE_VALUE                  : 'FEATURE_VALUE';
+FENCED                         : 'FENCED';
 FETCH                          : 'FETCH';
 FILE                           : 'FILE';
 FILE_NAME_CONVERT              : 'FILE_NAME_CONVERT';
@@ -610,6 +612,7 @@ FREELIST                       : 'FREELIST';
 FREELISTS                      : 'FREELISTS';
 FREEPOOLS                      : 'FREEPOOLS';
 FRESH                          : 'FRESH';
+FREEZE                         : 'FREEZE';
 FROM                           : 'FROM';
 FROM_TZ                        : 'FROM_TZ';
 FULL                           : 'FULL';
@@ -715,6 +718,7 @@ INDEXTYPE                      : 'INDEXTYPE';
 INDEXTYPES                     : 'INDEXTYPES';
 INDICATOR                      : 'INDICATOR';
 INDICES                        : 'INDICES';
+INFO                           : 'INFO';
 INFINITE                       : 'INFINITE';
 INFORMATIONAL                  : 'INFORMATIONAL';
 INHERIT                        : 'INHERIT';
@@ -1160,6 +1164,7 @@ NO_TABLE_LOOKUP_BY_NL          : 'NO_TABLE_LOOKUP_BY_NL';
 NO_TEMP_TABLE                  : 'NO_TEMP_TABLE';
 NOTHING                        : 'NOTHING';
 NOTIFICATION                   : 'NOTIFICATION';
+NOTICE                         : 'NOTICE';
 NOT                            : 'NOT';
 NO_TRANSFORM_DISTINCT_AGG      : 'NO_TRANSFORM_DISTINCT_AGG';
 NO_UNNEST                      : 'NO_UNNEST';
@@ -1530,6 +1535,7 @@ RESUME                         : 'RESUME';
 RETENTION                      : 'RETENTION';
 RETRY_ON_ROW_CHANGE            : 'RETRY_ON_ROW_CHANGE';
 RETURNING                      : 'RETURNING';
+RETURNS                        : 'RETURNS';
 RETURN                         : 'RETURN';
 REUSE                          : 'REUSE';
 REVERSE                        : 'REVERSE';
@@ -1623,6 +1629,7 @@ SHARED                         : 'SHARED';
 SHARE                          : 'SHARE';
 SHARING                        : 'SHARING';
 SHELFLIFE                      : 'SHELFLIFE';
+SHIPPABLE                      : 'SHIPPABLE';
 SHOW                           : 'SHOW';
 SHRINK                         : 'SHRINK';
 SHUTDOWN                       : 'SHUTDOWN';
@@ -1661,6 +1668,7 @@ SPREADSHEET                    : 'SPREADSHEET';
 SQLDATA                        : 'SQLDATA';
 SQLERROR                       : 'SQLERROR';
 SQLLDR                         : 'SQLLDR';
+SQLSTATE                       : 'SQLSTATE';
 SQL                            : 'SQL';
 FILE_EXT                       : 'PKB' | 'PKS';
 SQL_MACRO                      : 'SQL_MACRO';
@@ -2212,6 +2220,7 @@ VERSIONS_STARTTIME             : 'VERSIONS_STARTTIME';
 VERSIONS                       : 'VERSIONS';
 VERSIONS_XID                   : 'VERSIONS_XID';
 VERSION                        : 'VERSION';
+VERBOSE                        : 'VERBOSE';
 VIEW                           : 'VIEW';
 VIOLATION                      : 'VIOLATION';
 VIRTUAL                        : 'VIRTUAL';
@@ -2404,6 +2413,12 @@ APPROXIMATE_NUM_LIT : FLOAT_FRAGMENT ('E' ('+' | '-')? (FLOAT_FRAGMENT | [0-9]+)
 // and a superfluous subtoken typecasting of the "QUOTE"
 CHAR_STRING: '\'' (~('\'' | '\r' | '\n') | '\'' '\'' | NEWLINE)* '\'';
 
+// Dollar-quoted string delimiter for PL/pgSQL compatibility
+// This is used as a delimiter, content between $$ will be parsed as statements
+DOUBLE_DOLLAR
+    : '$$'
+    ;
+
 // See https://livesql.oracle.com/apex/livesql/file/content_CIREYU9EA54EOKQ7LAMZKRF6P.html
 // TODO: context sensitive string quotes (any characted after quote)
 CHAR_STRING_PERL:
@@ -2492,7 +2507,9 @@ START_CMD: // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12002.htm
     '@' '@'?
 ; // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12003.htm
 
-REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
+// Modified to prevent $$ from being part of identifiers (for DOUBLE_DOLLAR token support)
+REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | SINGLE_DOLLAR | '_' | '#' | [0-9])*;
+fragment SINGLE_DOLLAR: '$' { _input.LA(1) != '$' }? ;
 
 INQUIRY_DIRECTIVE: '$$' (SIMPLE_LETTER | '_')+;
 

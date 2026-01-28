@@ -292,7 +292,9 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         currentOptType = StatementType.DELETE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
         addOutputTableId(tableId)
-        super.visitWhere_clause(ctx.where_clause())
+        if (ctx.where_clause() != null) {
+            super.visitWhere_clause(ctx.where_clause())
+        }
 
         return DeleteTable(tableId, inputTables)
     }
@@ -301,7 +303,9 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         currentOptType = StatementType.UPDATE
         val tableId = parseTableViewName(ctx.general_table_ref().dml_table_expression_clause().tableview_name())
         addOutputTableId(tableId)
-        super.visitWhere_clause(ctx.where_clause())
+        if (ctx.where_clause() != null) {
+            super.visitWhere_clause(ctx.where_clause())
+        }
 
         return UpdateTable(tableId, inputTables)
     }

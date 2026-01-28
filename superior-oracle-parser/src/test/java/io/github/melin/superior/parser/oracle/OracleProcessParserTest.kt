@@ -248,7 +248,7 @@ class OracleProcessParserTest {
                     )
                 ';
 
-                EXECUTE IMMEDIATE 'INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, ''Alice'')';                
+                EXECUTE IMMEDIATE 'INSERT INTO schema1.test_table_s1 (id, name) VALUES (1, ''Alice'')';
             END;
         """.trimIndent()
 
@@ -307,4 +307,185 @@ class OracleProcessParserTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun createPlpgsqlFunctionTest() {
+        // Test PL/pgSQL style function syntax
+        val sql = """
+            CREATE OR REPLACE FUNCTION mart_rpt.TEST_PROC(v_indate numeric, OUT v_retcode character varying, OUT v_err character varying)
+             RETURNS record
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            AS ${'$'}${'$'} DECLARE
+                v_temp VARCHAR2(100);
+            BEGIN
+                v_retcode := '0';
+                v_err := 'SUCCESS';
+            END${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("mart_rpt", "TEST_PROC"), statement.functionId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun createPlpgsqlProcedureTest() {
+        // Test PL/pgSQL style procedure syntax
+        val sql = """
+            CREATE OR REPLACE PROCEDURE mart_rpt.TEST_PROC2(v_indate numeric)
+             RETURNS void
+             LANGUAGE plpgsql
+             NOT FENCED NOT SHIPPABLE
+            AS ${'$'}${'$'}
+            BEGIN
+                UPDATE test_table SET col1 = v_indate;
+            END${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(1, statement.childStatements.size)
+            Assert.assertEquals(ProcedureId("mart_rpt", "TEST_PROC2"), statement.procedureId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun oracleCursorWithParamsTest() {
+        val sql = """
+            CREATE FUNCTION test_cursor_params
+            RETURNS record
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            DECLARE
+              CURSOR emp_cursor(dept_id IN NUMBER DEFAULT 10) IS
+                SELECT employee_id, first_name FROM employees WHERE department_id = dept_id;
+              CURSOR simple_cur IS SELECT * FROM users;
+            BEGIN
+              NULL;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("test_cursor_params"), statement.functionId)
+            // Should have 2 child statements (two cursor SELECT queries)
+            Assert.assertEquals(2, statement.childStatements.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun plpgsqlRaiseStatementTest() {
+        // Test PL/pgSQL RAISE statement with various forms
+        val sql = """
+            CREATE OR REPLACE FUNCTION test_raise_func
+            RETURNS void
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            BEGIN
+                RAISE NOTICE 'This is a notice message';
+                RAISE WARNING 'Warning: value is %', v_value;
+                RAISE EXCEPTION 'Error occurred: %', error_msg USING ERRCODE = 'P0001';
+                RAISE DEBUG 'Debug info';
+                RAISE INFO 'Information message';
+                RAISE LOG 'Log entry';
+                RAISE SQLSTATE '22012';
+                RAISE;
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateFunction) {
+            Assert.assertEquals(StatementType.CREATE_FUNCTION, statement.statementType)
+            Assert.assertEquals(FunctionId("test_raise_func"), statement.functionId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun plpgsqlRaiseWithUsingClauseTest() {
+        // Test RAISE with USING clause
+        val sql = """
+            CREATE OR REPLACE PROCEDURE test_raise_using
+            RETURNS void
+            LANGUAGE plpgsql
+            AS ${'$'}${'$'}
+            BEGIN
+                RAISE EXCEPTION 'Division by zero'
+                    USING ERRCODE = '22012',
+                          HINT = 'Check the denominator value',
+                          DETAIL = 'Cannot divide by zero';
+            END;
+            ${'$'}${'$'}
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is CreateProcedure) {
+            Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
+            Assert.assertEquals(ProcedureId("test_raise_using"), statement.procedureId)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun plpgsqlAnalyzeStatementTest() {
+        // Test PostgreSQL ANALYZE statement - simple form
+        val sql1 = "ANALYZE"
+        OracleSqlHelper.parseStatement(sql1)
+
+        // Test ANALYZE with table name
+        val sql2 = "ANALYZE my_table"
+        OracleSqlHelper.parseStatement(sql2)
+
+        // Test ANALYZE VERBOSE
+        val sql3 = "ANALYZE VERBOSE my_schema.my_table"
+        OracleSqlHelper.parseStatement(sql3)
+
+        // Test ANALYSE (British spelling)
+        val sql4 = "ANALYSE my_table"
+        OracleSqlHelper.parseStatement(sql4)
+
+        // Test ANALYZE with multiple tables
+        val sql5 = "ANALYZE table1, table2, table3"
+        OracleSqlHelper.parseStatement(sql5)
+
+        // Test ANALYZE with column list
+        val sql6 = "ANALYZE my_table (col1, col2, col3)"
+        OracleSqlHelper.parseStatement(sql6)
+    }
+
+    @Test
+    fun plpgsqlAnalyzeWithOptionsTest() {
+        // Test ANALYZE with options
+        val sql1 = "ANALYZE (VERBOSE true) my_table"
+        OracleSqlHelper.parseStatement(sql1)
+
+        // Test ANALYZE with multiple options
+        val sql2 = "ANALYZE (VERBOSE, SKIP_LOCKED) my_table"
+        OracleSqlHelper.parseStatement(sql2)
+
+        // Test ANALYZE with option value
+        val sql3 = "ANALYZE (VERBOSE true, BUFFER_USAGE_LIMIT 512) my_table"
+        OracleSqlHelper.parseStatement(sql3)
+    }
+
 }

@@ -105,9 +105,9 @@ object OracleSqlHelper {
             }
         } catch (e: ParseException) {
             if (StringUtils.isNotBlank(e.command)) {
-                throw e
-            } else {
                 throw e.withCommand(command)
+            } else {
+                throw e
             }
         } finally {
             val releaseAntlrCache = System.getenv(AntlrCaches.RELEASE_ANTLR_CACHE_AFTER_PARSING)

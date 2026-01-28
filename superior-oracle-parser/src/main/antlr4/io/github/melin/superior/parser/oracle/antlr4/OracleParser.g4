@@ -507,7 +507,7 @@ match_string
 create_function_body
     : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? FUNCTION function_name (
         '(' parameter (',' parameter)* ')'
-    )? RETURN type_spec (SHARING '=' (METADATA | NONE))? (
+    )? (RETURN | RETURNS) type_spec (SHARING '=' (METADATA | NONE))? (
         invoker_rights_clause
         | accessible_by_clause
         | default_collation_clause
@@ -515,12 +515,26 @@ create_function_body
         | result_cache_clause
         | PIPELINED
         | DETERMINISTIC
+        | plpgsql_function_option
     )* (
-        ((IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec))
+        ((IS | AS) (DECLARE? seq_of_declare_specs? body | call_spec | dollar_string))
         | aggregate_clause
         | pipelined_using_clause
         | sql_macro_body
     )
+    ;
+
+// PL/pgSQL compatibility options
+plpgsql_function_option
+    : LANGUAGE identifier
+    | NOT? FENCED
+    | NOT? SHIPPABLE
+    ;
+
+// Dollar-quoted block for PL/pgSQL compatibility (e.g., $$ DECLARE ... BEGIN ... END; $$)
+// Content between $$ is parsed as actual statements
+dollar_string
+    : DOUBLE_DOLLAR (DECLARE declare_spec*)? body SEMICOLON? DOUBLE_DOLLAR
     ;
 
 sql_macro_body
@@ -760,10 +774,12 @@ procedure_body
     ;
 
 create_procedure_body
-    : CREATE (OR REPLACE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')? invoker_rights_clause? PARALLEL_ENABLE? (
+    : CREATE (OR REPLACE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')?
+        (RETURNS type_spec)?
+        (invoker_rights_clause | plpgsql_function_option | PARALLEL_ENABLE)* (
         IS
         | AS
-    ) (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL)
+    ) (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL | dollar_string)
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/ALTER-RESOURCE-COST.html
@@ -2168,6 +2184,52 @@ analyze
         ANALYZE (TABLE tableview_name | INDEX index_name) partition_extention_clause?
         | ANALYZE CLUSTER cluster_name
     ) (validation_clauses | LIST CHAINED ROWS into_clause1? | DELETE SYSTEM? STATISTICS)
+    | analyze_statement
+    ;
+
+// PostgreSQL ANALYZE/ANALYSE statement
+analyze_statement
+    : analyze_keyword VERBOSE? vacuum_relation_list?
+    | analyze_keyword '(' vac_analyze_option_list ')' vacuum_relation_list?
+    ;
+
+analyze_keyword
+    : ANALYZE
+    | ANALYSE
+    ;
+
+vacuum_relation_list
+    : vacuum_relation (',' vacuum_relation)*
+    ;
+
+vacuum_relation
+    : tableview_name opt_name_list?
+    ;
+
+opt_name_list
+    : '(' column_name (',' column_name)* ')'
+    ;
+
+vac_analyze_option_list
+    : vac_analyze_option_elem (',' vac_analyze_option_elem)*
+    ;
+
+vac_analyze_option_elem
+    : vac_analyze_option_name vac_analyze_option_arg?
+    ;
+
+vac_analyze_option_name
+    : identifier
+    | analyze_keyword
+    | VERBOSE
+    | FULL
+    | FREEZE
+    ;
+
+vac_analyze_option_arg
+    : quoted_string
+    | identifier
+    | numeric
     ;
 
 partition_extention_clause
@@ -5420,7 +5482,8 @@ c_property
     ;
 
 parameter
-    : parameter_name (IN | OUT | INOUT | NOCOPY)* type_spec? default_value_part?
+    : (parameter_name (IN | OUT | INOUT | NOCOPY)* type_spec? default_value_part?
+    | (IN | OUT | INOUT | NOCOPY)* parameter_name type_spec? default_value_part?)
     ;
 
 default_value_part
@@ -5617,6 +5680,32 @@ null_statement
 
 raise_statement
     : RAISE exception_name?
+    | RAISE raise_level? quoted_string raise_param_list? raise_using_clause?
+    | RAISE raise_level? identifier raise_using_clause?
+    | RAISE raise_level? SQLSTATE quoted_string raise_using_clause?
+    | RAISE raise_level? raise_using_clause?
+    ;
+
+// PL/pgSQL RAISE statement support
+raise_level
+    : DEBUG
+    | LOG
+    | INFO
+    | NOTICE
+    | WARNING
+    | EXCEPTION
+    ;
+
+raise_param_list
+    : (',' expression)+
+    ;
+
+raise_using_clause
+    : USING raise_using_elem (',' raise_using_elem)*
+    ;
+
+raise_using_elem
+    : identifier '=' expression
     ;
 
 return_statement
@@ -7203,7 +7292,7 @@ native_datatype_element
     | NCHAR
     | LONG RAW?
     | CHAR
-    | CHARACTER
+    | CHARACTER VARYING?
     | VARCHAR2
     | VARCHAR
     | STRING
