@@ -1533,6 +1533,7 @@ def_arg
    | qual_all_op
    | numericonly
    | sconst
+   | nonreservedword
    | NONE
    ;
 

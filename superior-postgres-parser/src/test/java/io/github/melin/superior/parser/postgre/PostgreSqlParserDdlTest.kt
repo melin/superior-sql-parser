@@ -342,7 +342,7 @@ class PostgreSqlParserDdlTest {
         Assert.assertEquals("current", action.defaultExpression)
     }
 
-    // @Test
+    @Test
     fun create_table_with() {
         val sql = """
             create table test(id int) WITH (orientation=row, compression=no);
@@ -350,9 +350,8 @@ class PostgreSqlParserDdlTest {
         val statement = PostgreSqlHelper.parseStatement(sql)
         Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
 
-        if (statement is CreatePartitionTable) {
-            Assert.assertEquals("pkslow_person_r", statement.tableId.tableName)
-            Assert.assertEquals("pkslow_person_r1", statement.partitionTableId.tableName)
+        if (statement is CreateTable) {
+            Assert.assertEquals("test", statement.tableId.tableName)
         } else {
             Assert.fail()
         }
