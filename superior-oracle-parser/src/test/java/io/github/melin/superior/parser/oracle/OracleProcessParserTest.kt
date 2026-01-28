@@ -31,7 +31,7 @@ class OracleProcessParserTest {
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)
-        
+
         if (statement is CreateProcedure) {
             Assert.assertEquals(StatementType.CREATE_PROCEDURE, statement.statementType)
             Assert.assertEquals(4, statement.childStatements.size)
@@ -363,7 +363,7 @@ class OracleProcessParserTest {
     @Test
     fun oracleCursorWithParamsTest() {
         val sql = """
-            CREATE FUNCTION test_cursor_params
+            CREATE FUNCTION test_cursor_params()
             RETURNS record
             LANGUAGE plpgsql
             AS ${'$'}${'$'}
@@ -429,6 +429,7 @@ class OracleProcessParserTest {
             LANGUAGE plpgsql
             AS ${'$'}${'$'}
             BEGIN
+                analyze  mart_s.ax01;
                 RAISE EXCEPTION 'Division by zero'
                     USING ERRCODE = '22012',
                           HINT = 'Check the denominator value',
@@ -454,7 +455,7 @@ class OracleProcessParserTest {
         OracleSqlHelper.parseStatement(sql1)
 
         // Test ANALYZE with table name
-        val sql2 = "ANALYZE my_table"
+        val sql2 = "analyze my_table"
         OracleSqlHelper.parseStatement(sql2)
 
         // Test ANALYZE VERBOSE

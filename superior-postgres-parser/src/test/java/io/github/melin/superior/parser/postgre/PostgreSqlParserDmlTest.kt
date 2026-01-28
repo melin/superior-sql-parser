@@ -313,4 +313,18 @@ class PostgreSqlParserDmlTest {
             Assert.fail()
         }
     }
+
+    @Test
+    fun insertWith(){
+        var sql = "with x as (select 1 AS id) select * from x join table2 on x.id=table2.id"
+        sql = "select * from x join table2 on x.id=table2.id"
+        val statement = PostgreSqlHelper.parseStatement(sql)
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            println(statement.inputTables)
+            Assert.assertEquals(2, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
 }

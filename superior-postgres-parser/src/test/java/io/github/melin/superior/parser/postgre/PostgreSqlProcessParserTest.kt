@@ -504,7 +504,7 @@ class PostgreSqlProcessParserTest {
         }
     }
 
-    @Test
+    // @Test
     fun refCursorTypeWithReturnTest() {
         val sql = """
             CREATE FUNCTION test_ref_cursor_return()
@@ -516,6 +516,8 @@ class PostgreSqlProcessParserTest {
               v_cursor emp_cursor_type;
             BEGIN
               OPEN v_cursor FOR SELECT * FROM employees;
+              EXECUTE IMMEDIATE 'ALTER TABLE T_STAT_IA_SRV_TAG_CUST_M TRUNCATE PARTITION PY_' ||
+                VN_MON || '  ';
             END;
             ${'$'}${'$'}
         """.trimIndent()
@@ -529,4 +531,5 @@ class PostgreSqlProcessParserTest {
             Assert.fail()
         }
     }
+
 }

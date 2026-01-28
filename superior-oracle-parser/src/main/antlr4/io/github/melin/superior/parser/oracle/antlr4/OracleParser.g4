@@ -506,7 +506,7 @@ match_string
 
 create_function_body
     : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? FUNCTION function_name (
-        '(' parameter (',' parameter)* ')'
+        '(' parameter? (',' parameter)* ')'
     )? (RETURN | RETURNS) type_spec (SHARING '=' (METADATA | NONE))? (
         invoker_rights_clause
         | accessible_by_clause
@@ -5606,6 +5606,7 @@ statement
     | sql_statement
     | call_statement
     | pipe_row_statement
+    | analyze
     ;
 
 swallow_to_semi

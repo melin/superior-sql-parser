@@ -5,7 +5,7 @@
 
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>4.0.22</version>
+    <version>4.0.22.2</version>
     <packaging>pom</packaging>
     <name>Superior SQL Parser</name>
 
@@ -109,6 +109,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>release</id>
+            <url>http://bkrepo.chinastock.com.cn/maven/n614c6/maven-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>Snapshots</id>
+            <url>http://bkrepo.chinastock.com.cn/maven/n614c6/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <repositories>
         <repository>
             <id>spring-repo</id>
@@ -186,6 +196,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

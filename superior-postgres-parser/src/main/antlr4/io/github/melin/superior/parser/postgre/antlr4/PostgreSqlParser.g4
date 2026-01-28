@@ -159,7 +159,7 @@ plsqlconsolecommand
    ;
 
 callstmt
-   : CALL func_application
+   : CALL? func_application
    ;
 
 createrolestmt
@@ -2861,7 +2861,7 @@ preparablestmt
    ;
 
 executestmt
-   : EXECUTE name execute_param_clause
+   : EXECUTE IMMEDIATE? name execute_param_clause?
    | CREATE opttemp TABLE create_as_target AS EXECUTE name execute_param_clause opt_with_data
    | CREATE opttemp TABLE IF_P NOT EXISTS create_as_target AS EXECUTE name execute_param_clause opt_with_data
    ;
@@ -2926,6 +2926,7 @@ returning_clause
 mergestmt
    : MERGE INTO? qualified_name alias_clause? USING (select_with_parens|qualified_name) alias_clause? ON a_expr
         (merge_insert_clause merge_update_clause? | merge_update_clause merge_insert_clause?) merge_delete_clause?
+        where_clause?
    ;
 
 merge_insert_clause
@@ -2941,7 +2942,7 @@ merge_delete_clause
    ;
 
 deletestmt
-   : opt_with_clause DELETE_P FROM relation_expr_opt_alias using_clause where_or_current_clause returning_clause
+   : opt_with_clause DELETE_P FROM? relation_expr_opt_alias using_clause where_or_current_clause returning_clause
    ;
 
 using_clause
@@ -3463,6 +3464,7 @@ numeric
    | DECIMAL_P opt_type_modifiers
    | DEC opt_type_modifiers
    | NUMERIC opt_type_modifiers
+   | NUMBER opt_type_modifiers
    | BOOLEAN_P
    ;
 
@@ -4969,9 +4971,9 @@ label_decl
    ;
 
 decl_stmt
-   : oracle_cursor_declaration
-   | ref_cursor_type_declaration
-   | decl_statement
+   : decl_statement
+   | oracle_cursor_declaration
+   | ref_cursor_type_decl
    | DECLARE
    | label_decl
    ;
@@ -4981,7 +4983,7 @@ decl_statement
      (
           ALIAS FOR decl_aliasitem
         | decl_const decl_datatype decl_collate decl_notnull decl_defval
-        | opt_scrollable CURSOR decl_cursor_args decl_is_for decl_cursor_query
+        | opt_scrollable CURSOR decl_cursor_args? decl_is_for decl_cursor_query
      ) SEMI
    ;
 
@@ -5005,7 +5007,7 @@ decl_cursor_arglist
    ;
 
 decl_cursor_arg
-   : decl_varname IN_P? decl_datatype decl_defval
+   : decl_varname IN_P? decl_datatype decl_defval?
    ;
 
 decl_is_for
@@ -5023,7 +5025,7 @@ cursor_return_clause
    ;
 
 // Oracle-style REF CURSOR type declaration: TYPE typename IS REF CURSOR [RETURN type] ;
-ref_cursor_type_declaration
+ref_cursor_type_decl
    : TYPE_P decl_varname IS ref_cursor_type_def SEMI
    ;
 
@@ -5104,6 +5106,7 @@ proc_stmt
    | stmt_commit
    | stmt_rollback
    | stmt_set
+   | mergestmt
    ;
 
 stmt_perform
@@ -5377,7 +5380,7 @@ opt_execute_into
 stmt_open
    : OPEN
      (
-          cursor_variable opt_scroll_option FOR (selectstmt | EXECUTE sql_expression opt_open_using)
+          cursor_variable opt_scroll_option FOR (selectstmt | EXECUTE sql_expression opt_open_using | sql_expression opt_open_using)
         | colid (OPEN_PAREN opt_open_bound_list CLOSE_PAREN)?
      ) SEMI
    ;
@@ -5552,7 +5555,7 @@ plsql_unreserved_keyword
    //| CONSTRAINT_NAME
    | CONTINUE_P
    | CURRENT_P
-   //| CURSOR  // removed to avoid conflict with oracle_cursor_declaration
+   | CURSOR
    //| DATATYPE
    | DEBUG
    | DEFAULT

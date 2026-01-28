@@ -1758,6 +1758,10 @@ NUMERIC
    : 'NUMERIC'
    ;
 
+NUMBER
+   : 'NUMBER'
+   ;
+
 OVERLAY
    : 'OVERLAY'
    ;
