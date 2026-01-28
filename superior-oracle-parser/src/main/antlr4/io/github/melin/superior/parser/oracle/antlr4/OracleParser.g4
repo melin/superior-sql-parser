@@ -7169,7 +7169,7 @@ column_name
     ;
 
 tableview_name
-    : identifier ('.' id_expression)? (
+    : identifier ('.' id_expression ('.' id_expression)?)? (
         AT_SIGN link_name
         | /*TODO{!(input.LA(2) == BY)}?*/ partition_extension_clause
     )?

@@ -218,11 +218,193 @@ class OracleSqlParserDmlTest {
         """.trimIndent()
 
         val statement = OracleSqlHelper.parseStatement(sql)
-        
+
         if (statement is MergeTable) {
             Assert.assertEquals(StatementType.MERGE, statement.statementType)
             Assert.assertEquals("bonuses", statement.targetTable.tableName)
             Assert.assertEquals(1, statement.inputTables.size)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryWithThreePartTableNameTest() {
+        // Test database.schema.table naming (compatible with PostgreSQL style)
+        val sql = """
+            SELECT * FROM mydb.myschema.users WHERE id = 1
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            val tableId = statement.inputTables[0]
+            Assert.assertEquals("mydb", tableId.catalogName)
+            Assert.assertEquals("myschema", tableId.schemaName)
+            Assert.assertEquals("users", tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryWithDbLinkTest() {
+        // Test table@dblink naming
+        val sql = """
+            SELECT * FROM employees@remote_db
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            val tableId = statement.inputTables[0]
+            Assert.assertNull(tableId.catalogName)
+            Assert.assertNull(tableId.schemaName)
+            Assert.assertEquals("employees", tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryWithSchemaAndDbLinkTest() {
+        // Test schema.table@dblink naming
+        val sql = """
+            SELECT * FROM hr.employees@remote_db
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            val tableId = statement.inputTables[0]
+            Assert.assertNull(tableId.catalogName)
+            Assert.assertEquals("hr", tableId.schemaName)
+            Assert.assertEquals("employees", tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun queryWithThreePartTableNameAndDbLinkTest() {
+        // Test database.schema.table@dblink naming
+        val sql = """
+            SELECT * FROM mydb.hr.employees@remote_db
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(1, statement.inputTables.size)
+            val tableId = statement.inputTables[0]
+            Assert.assertEquals("mydb", tableId.catalogName)
+            Assert.assertEquals("hr", tableId.schemaName)
+            Assert.assertEquals("employees", tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun insertWithThreePartTableNameTest() {
+        // Test INSERT with database.schema.table naming
+        val sql = """
+            INSERT INTO mydb.myschema.users (id, name) VALUES (1, 'test')
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is InsertTable) {
+            Assert.assertEquals(StatementType.INSERT, statement.statementType)
+            val tableId = statement.tableId
+            Assert.assertEquals("mydb", tableId?.catalogName)
+            Assert.assertEquals("myschema", tableId?.schemaName)
+            Assert.assertEquals("users", tableId?.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun updateWithThreePartTableNameTest() {
+        // Test UPDATE with database.schema.table naming
+        val sql = """
+            UPDATE mydb.myschema.users SET name = 'updated' WHERE id = 1
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is UpdateTable) {
+            Assert.assertEquals(StatementType.UPDATE, statement.statementType)
+            val tableId = statement.tableId
+            Assert.assertEquals("mydb", tableId?.catalogName)
+            Assert.assertEquals("myschema", tableId?.schemaName)
+            Assert.assertEquals("users", tableId?.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun deleteWithThreePartTableNameTest() {
+        // Test DELETE with database.schema.table naming
+        val sql = """
+            DELETE FROM mydb.myschema.users WHERE id = 1
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is DeleteTable) {
+            Assert.assertEquals(StatementType.DELETE, statement.statementType)
+            val tableId = statement.tableId
+            Assert.assertEquals("mydb", tableId?.catalogName)
+            Assert.assertEquals("myschema", tableId?.schemaName)
+            Assert.assertEquals("users", tableId?.tableName)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun joinWithMixedTableNamingTest() {
+        // Test JOIN with mixed table naming styles
+        val sql = """
+            SELECT a.id, b.name, c.dept
+            FROM users a
+            JOIN myschema.orders b ON a.id = b.user_id
+            JOIN mydb.hr.employees c ON a.emp_id = c.id
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is QueryStmt) {
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(3, statement.inputTables.size)
+
+            // First table: simple name
+            val table1 = statement.inputTables[0]
+            Assert.assertNull(table1.catalogName)
+            Assert.assertNull(table1.schemaName)
+            Assert.assertEquals("users", table1.tableName)
+
+            // Second table: schema.table
+            val table2 = statement.inputTables[1]
+            Assert.assertNull(table2.catalogName)
+            Assert.assertEquals("myschema", table2.schemaName)
+            Assert.assertEquals("orders", table2.tableName)
+
+            // Third table: database.schema.table
+            val table3 = statement.inputTables[2]
+            Assert.assertEquals("mydb", table3.catalogName)
+            Assert.assertEquals("hr", table3.schemaName)
+            Assert.assertEquals("employees", table3.tableName)
         } else {
             Assert.fail()
         }

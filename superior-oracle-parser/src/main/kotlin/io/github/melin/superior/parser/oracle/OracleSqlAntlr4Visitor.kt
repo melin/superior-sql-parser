@@ -540,12 +540,29 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     private fun parseTableViewName(ctx: OracleParser.Tableview_nameContext): TableId {
-        if (ctx.childCount == 1) {
-            return TableId(null, null, ctx.getChild(0).text)
-        } else if (ctx.childCount == 3) {
-            return TableId(null, ctx.getChild(0).text, ctx.getChild(2).text)
-        } else {
-            throw SQLParserException("not suuport tablename")
+        val identifier = ctx.identifier()
+        if (identifier == null) {
+            // Handle xmltable case
+            throw SQLParserException("not support tablename: ${ctx.text}")
+        }
+
+        val idExpressions = ctx.id_expression()
+        return when (idExpressions.size) {
+            0 -> {
+                // table only: identifier
+                TableId(null, null, identifier.text)
+            }
+            1 -> {
+                // schema.table: identifier.id_expression
+                TableId(null, identifier.text, idExpressions[0].text)
+            }
+            2 -> {
+                // database.schema.table: identifier.id_expression.id_expression
+                TableId(identifier.text, idExpressions[0].text, idExpressions[1].text)
+            }
+            else -> {
+                throw SQLParserException("not support tablename: ${ctx.text}")
+            }
         }
     }
 }
