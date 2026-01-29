@@ -4,6 +4,7 @@ import java.util.BitSet;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.*;
+import org.antlr.v4.runtime.misc.*;
 
 public class LexerDispatchingErrorListener implements ANTLRErrorListener {
     Lexer _parent;

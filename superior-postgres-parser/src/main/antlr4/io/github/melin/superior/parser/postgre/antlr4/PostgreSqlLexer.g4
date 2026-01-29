@@ -1,192 +1,94 @@
-/*
-based on
-https://github.com/tunnelvisionlabs/antlr4-grammar-postgresql/blob/master/src/com/tunnelvisionlabs/postgresql/PostgreSqlLexer.g4
-*/
-
-/*
- * [The "MIT license"]
- * Copyright (C) 2014 Sam Harwell, Tunnel Vision Laboratories, LLC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * 1. The above copyright notice and this permission notice shall be included in
- *    all copies or substantial portions of the Software.
- * 2. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- *    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- *    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- *    DEALINGS IN THE SOFTWARE.
- * 3. Except as contained in this notice, the name of Tunnel Vision
- *    Laboratories, LLC. shall not be used in advertising or otherwise to
- *    promote the sale, use or other dealings in this Software without prior
- *    written authorization from Tunnel Vision Laboratories, LLC.
- */
 lexer grammar PostgreSqlLexer;
 /* Reference:
  * http://www.postgresql.org/docs/9.3/static/sql-syntax-lexical.html
  */
 
 options {
-   superClass = PostgreSqlLexerBase;
+    superClass = PostgreSqlLexerBase;
+    caseInsensitive = true;
 }
 
-@ header
-{
-}
-@ members
-{
-/* This field stores the tags which are used to detect the end of a dollar-quoted string literal.
- */
-}
+
+// Insert here @header for C++ lexer.
+
+
+Dollar: '$';
+
+OPEN_PAREN: '(';
+
+CLOSE_PAREN: ')';
+
+OPEN_BRACKET: '[';
+
+CLOSE_BRACKET: ']';
+
+COMMA: ',';
+
+SEMI: ';';
+
+COLON: ':';
+
+STAR: '*';
+
+EQUAL: '=';
+
+DOT: '.';
+//NamedArgument	: ':=';
+
+PLUS: '+';
+
+MINUS: '-';
+
+SLASH: '/';
+
+CARET: '^';
+
+LT: '<';
+
+GT: '>';
+
+LESS_LESS: '<<';
+
+GREATER_GREATER: '>>';
+
+COLON_EQUALS: ':=';
+
+LESS_EQUALS: '<=';
+
+EQUALS_GREATER: '=>';
+
+GREATER_EQUALS: '>=';
+
+DOT_DOT: '..';
+
+NOT_EQUALS: '<>';
+
+TYPECAST: '::';
+
+PERCENT: '%';
+
+PARAM: '$' ([0-9])+;
 //
 
-// SPECIAL CHARACTERS (4.1.4)
+// OPERATORS (4.1.3)
 
 //
 
-// Note that Asterisk is a valid operator, but does not have the type Operator due to its syntactic use in locations
+// this rule does not allow + or - at the end of a multi-character operator
 
-// that are not expressions.
-
-Dollar
-   : '$'
-   ;
-
-OPEN_PAREN
-   : '('
-   ;
-
-CLOSE_PAREN
-   : ')'
-   ;
-
-OPEN_BRACKET
-   : '['
-   ;
-
-CLOSE_BRACKET
-   : ']'
-   ;
-
-COMMA
-   : ','
-   ;
-
-SEMI
-   : ';'
-   ;
-
-COLON
-   : ':'
-   ;
-
-STAR
-   : '*'
-   ;
-
-EQUAL
-   : '='
-   ;
-
-DOT
-   : '.'
-   ;
-   //NamedArgument	: ':=';
-
-PLUS
-   : '+'
-   ;
-
-MINUS
-   : '-'
-   ;
-
-SLASH
-   : '/'
-   ;
-
-CARET
-   : '^'
-   ;
-
-LT
-   : '<'
-   ;
-
-GT
-   : '>'
-   ;
-
-LESS_LESS
-   : '<<'
-   ;
-
-GREATER_GREATER
-   : '>>'
-   ;
-
-COLON_EQUALS
-   : ':='
-   ;
-
-LESS_EQUALS
-   : '<='
-   ;
-
-EQUALS_GREATER
-   : '=>'
-   ;
-
-GREATER_EQUALS
-   : '>='
-   ;
-
-DOT_DOT
-   : '..'
-   ;
-
-NOT_EQUALS
-   : '<>'
-   ;
-
-TYPECAST
-   : '::'
-   ;
-
-PERCENT
-   : '%'
-   ;
-
-PARAM
-   : '$' ([0-9])+
-   ;
-   //
-
-   // OPERATORS (4.1.3)
-
-   //
-
-   // this rule does not allow + or - at the end of a multi-character operator
-
-Operator
-   : ((OperatorCharacter | ('+' | '-'
-   {checkLA('-')}?)+ (OperatorCharacter | '/'
-   {checkLA('*')}?) | '/'
-   {checkLA('*')}?)+ | // special handling for the single-character operators + and -
-   [+-])
-   //TODO somehow rewrite this part without using Actions
-
-   {
-    HandleLessLessGreaterGreater();
-   }
-   ;
+Operator:
+    (
+        (
+            OperatorCharacter
+            | ('+' | '-' {this.CheckLaMinus()}? )+ (OperatorCharacter | '/' {this.CheckLaStar()}? )
+            | '/'        {this.CheckLaStar()}?
+        )+
+        | // special handling for the single-character operators + and -
+        [+-]
+    )
+    //TODO somehow rewrite this part without using Actions
+    {this.HandleLessLessGreaterGreater();}
+;
 /* This rule handles operators which end with + or -, and sets the token type to Operator. It is comprised of four
  * parts, in order:
  *
@@ -198,2664 +100,1110 @@ Operator
  *   4. A suffix sequence of + and - characters.
  */
 
+OperatorEndingWithPlusMinus:
+    (OperatorCharacterNotAllowPlusMinusAtEnd | '-' {this.CheckLaMinus()}? | '/' {this.CheckLaStar()}? )* OperatorCharacterAllowPlusMinusAtEnd Operator? (
+        '+'
+        | '-' {this.CheckLaMinus()}?
+    )+        -> type (Operator)
+;
+// Each of the following fragment rules omits the +, -, and / characters, which must always be handled in a special way
 
-OperatorEndingWithPlusMinus
-   : (OperatorCharacterNotAllowPlusMinusAtEnd | '-'
-   {checkLA('-')}? | '/'
-   {checkLA('*')}?)* OperatorCharacterAllowPlusMinusAtEnd Operator? ('+' | '-'
-   {checkLA('-')}?)+ -> type (Operator)
-   ;
-   // Each of the following fragment rules omits the +, -, and / characters, which must always be handled in a special way
+// by the operator rules above.
 
-   // by the operator rules above.
+fragment OperatorCharacter: [*<>=~!@%^&|`?#];
+// these are the operator characters that don't count towards one ending with + or -
 
-fragment OperatorCharacter
-   : [*<>=~!@%^&|`?#]
-   ;
-   // these are the operator characters that don't count towards one ending with + or -
+fragment OperatorCharacterNotAllowPlusMinusAtEnd: [*<>=+];
+// an operator may end with + or - if it contains one of these characters
 
-fragment OperatorCharacterNotAllowPlusMinusAtEnd
-   : [*<>=+]
-   ;
-   // an operator may end with + or - if it contains one of these characters
+fragment OperatorCharacterAllowPlusMinusAtEnd: [~!@%^&|`?#];
+//
 
-fragment OperatorCharacterAllowPlusMinusAtEnd
-   : [~!@%^&|`?#]
-   ;
-   //
+// KEYWORDS (Appendix C)
 
-   // KEYWORDS (Appendix C)
 
-   //
 
-   //
+JSON: 'JSON';
+JSON_ARRAY: 'JSON_ARRAY';
+JSON_ARRAYAGG: 'JSON_ARRAYAGG';
+JSON_EXISTS: 'JSON_EXISTS';
+JSON_OBJECT: 'JSON_OBJECT';
+JSON_OBJECTAGG: 'JSON_OBJECTAGG';
+JSON_QUERY: 'JSON_QUERY';
+JSON_SCALAR: 'JSON_SCALAR';
+JSON_SERIALIZE: 'JSON_SERIALIZE';
+JSON_TABLE: 'JSON_TABLE';
+JSON_VALUE: 'JSON_VALUE';
+MERGE_ACTION: 'MERGE_ACTION';
 
-   // reserved keywords
+SYSTEM_USER: 'SYSTEM_USER';
 
-   //
+ABSENT: 'ABSENT';
+ASENSITIVE: 'ASENSITIVE';
+ATOMIC: 'ATOMIC';
+BREADTH: 'BREATH';
+COMPRESSION: 'COMPRESSION';
+CONDITIONAL: 'CONDITIONAL';
+DEPTH: 'DEPTH';
+EMPTY_P: 'EMPTY';
+FINALIZE: 'FINALIZE';
+INDENT: 'INDENT';
+KEEP: 'KEEP';
+KEYS: 'KEYS';
+NESTED: 'NESTED';
+OMIT: 'OMIT';
+PARAMETER: 'PARAMETER';
+PATH: 'PATH';
+PLAN: 'PLAN';
+QUOTES: 'QUOTES';
+SCALAR: 'SCALAR';
+SOURCE: 'SOURCE';
+STRING_P: 'STRING';
+TARGET: 'TARGET';
+UNCONDITIONAL: 'UNCONDITIONAL';
 
-ALL
-   : 'ALL'
-   ;
+PERIOD: 'PERIOD';
 
-ANALYSE
-   : 'ANALYSE'
-   ;
+FORMAT_LA: 'FORMAT_LA';
 
-ANALYZE
-   : 'ANALYZE'
-   ;
+//
 
-AND
-   : 'AND'
-   ;
+//
 
-ANY
-   : 'ANY'
-   ;
+// reserved keywords
 
-ARRAY
-   : 'ARRAY'
-   ;
+//
 
-AS
-   : 'AS'
-   ;
+ALL: 'ALL';
 
-ASC
-   : 'ASC'
-   ;
+ANALYSE: 'ANALYSE';
 
-ASYMMETRIC
-   : 'ASYMMETRIC'
-   ;
+ANALYZE: 'ANALYZE';
 
-BOTH
-   : 'BOTH'
-   ;
+AND: 'AND';
 
-CASE
-   : 'CASE'
-   ;
+ANY: 'ANY';
 
-CAST
-   : 'CAST'
-   ;
+ARRAY: 'ARRAY';
 
-CHECK
-   : 'CHECK'
-   ;
+AS: 'AS';
 
-COLLATE
-   : 'COLLATE'
-   ;
+ASC: 'ASC';
 
-COLUMN
-   : 'COLUMN'
-   ;
+ASYMMETRIC: 'ASYMMETRIC';
 
- CONSTRAINT
-   : 'CONSTRAINT'
-   ;
+BOTH: 'BOTH';
 
-CREATE
-   : 'CREATE'
-   ;
-
-CURRENT_CATALOG
-   : 'CURRENT_CATALOG'
-   ;
-
-CURRENT_DATE
-   : 'CURRENT_DATE'
-   ;
-
-CURRENT_ROLE
-   : 'CURRENT_ROLE'
-   ;
-
-CURRENT_TIME
-   : 'CURRENT_TIME'
-   ;
-
-CURRENT_TIMESTAMP
-   : 'CURRENT_TIMESTAMP'
-   ;
-
-CURRENT_USER
-   : 'CURRENT_USER'
-   ;
-
-DEFAULT
-   : 'DEFAULT'
-   ;
-
-DEFERRABLE
-   : 'DEFERRABLE'
-   ;
-
-DESC
-   : 'DESC'
-   ;
-
-DISTINCT
-   : 'DISTINCT'
-   ;
-
-DO
-   : 'DO'
-   ;
-
-ELSE
-   : 'ELSE'
-   ;
-
-EXCEPT
-   : 'EXCEPT'
-   ;
-
-FALSE_P
-   : 'FALSE'
-   ;
-
-FETCH
-   : 'FETCH'
-   ;
-
-FOR
-   : 'FOR'
-   ;
-
-FOREIGN
-   : 'FOREIGN'
-   ;
-
-FROM
-   : 'FROM'
-   ;
-
-GRANT
-   : 'GRANT'
-   ;
-
-GROUP_P
-   : 'GROUP'
-   ;
-
-HAVING
-   : 'HAVING'
-   ;
-
-IN_P
-   : 'IN'
-   ;
-
-INITIALLY
-   : 'INITIALLY'
-   ;
-
-INTERSECT
-   : 'INTERSECT'
-   ;
-
-INTO
-   : 'INTO'
-   ;
-
-LATERAL_P
-   : 'LATERAL'
-   ;
-
-LEADING
-   : 'LEADING'
-   ;
-
-LIMIT
-   : 'LIMIT'
-   ;
-
-LOCALTIME
-   : 'LOCALTIME'
-   ;
-
-LOCALTIMESTAMP
-   : 'LOCALTIMESTAMP'
-   ;
-
-NOT
-   : 'NOT'
-   ;
-
-NULL_P
-   : 'NULL'
-   ;
-
-OFFSET
-   : 'OFFSET'
-   ;
-
-ON
-   : 'ON'
-   ;
-
-ONLY
-   : 'ONLY'
-   ;
+CASE: 'CASE';
 
-OR
-   : 'OR'
-   ;
+CAST: 'CAST';
 
-ORDER
-   : 'ORDER'
-   ;
+CHECK: 'CHECK';
 
-PLACING
-   : 'PLACING'
-   ;
+COLLATE: 'COLLATE';
 
-PRIMARY
-   : 'PRIMARY'
-   ;
+COLUMN: 'COLUMN';
 
-REFERENCES
-   : 'REFERENCES'
-   ;
+CONSTRAINT: 'CONSTRAINT';
 
-RETURNING
-   : 'RETURNING'
-   ;
+CREATE: 'CREATE';
 
-SELECT
-   : 'SELECT'
-   ;
+CURRENT_CATALOG: 'CURRENT_CATALOG';
 
-SESSION_USER
-   : 'SESSION_USER'
-   ;
+CURRENT_DATE: 'CURRENT_DATE';
 
-SOME
-   : 'SOME'
-   ;
+CURRENT_ROLE: 'CURRENT_ROLE';
 
-SYMMETRIC
-   : 'SYMMETRIC'
-   ;
+CURRENT_TIME: 'CURRENT_TIME';
 
-TABLE
-   : 'TABLE'
-   ;
+CURRENT_TIMESTAMP: 'CURRENT_TIMESTAMP';
 
-THEN
-   : 'THEN'
-   ;
+CURRENT_USER: 'CURRENT_USER';
 
-TO
-   : 'TO'
-   ;
+DEFAULT: 'DEFAULT';
 
-TRAILING
-   : 'TRAILING'
-   ;
+DEFERRABLE: 'DEFERRABLE';
 
-TRUE_P
-   : 'TRUE'
-   ;
+DESC: 'DESC';
 
-UNION
-   : 'UNION'
-   ;
+DISTINCT: 'DISTINCT';
 
-UNIQUE
-   : 'UNIQUE'
-   ;
+DO: 'DO';
 
-USER
-   : 'USER'
-   ;
+ELSE: 'ELSE';
 
-USING
-   : 'USING'
-   ;
+EXCEPT: 'EXCEPT';
 
-VARIADIC
-   : 'VARIADIC'
-   ;
+FALSE_P: 'FALSE';
 
-WHEN
-   : 'WHEN'
-   ;
+FETCH: 'FETCH';
 
-WHERE
-   : 'WHERE'
-   ;
+FOR: 'FOR';
 
-WINDOW
-   : 'WINDOW'
-   ;
+FOREIGN: 'FOREIGN';
 
-WITH
-   : 'WITH'
-   ;
+FROM: 'FROM';
 
-   //
+GRANT: 'GRANT';
 
-   // reserved keywords (can be function or type)
+GROUP_P: 'GROUP';
 
-   //
+HAVING: 'HAVING';
 
-AUTHORIZATION
-   : 'AUTHORIZATION'
-   ;
+IN_P: 'IN';
 
-BINARY
-   : 'BINARY'
-   ;
+INITIALLY: 'INITIALLY';
 
-COLLATION
-   : 'COLLATION'
-   ;
+INTERSECT: 'INTERSECT';
 
-CONCURRENTLY
-   : 'CONCURRENTLY'
-   ;
+INTO: 'INTO';
 
-CROSS
-   : 'CROSS'
-   ;
+LATERAL_P: 'LATERAL';
 
-CURRENT_SCHEMA
-   : 'CURRENT_SCHEMA'
-   ;
+LEADING: 'LEADING';
 
-FREEZE
-   : 'FREEZE'
-   ;
+LIMIT: 'LIMIT';
 
-FULL
-   : 'FULL'
-   ;
+LOCALTIME: 'LOCALTIME';
 
-ILIKE
-   : 'ILIKE'
-   ;
+LOCALTIMESTAMP: 'LOCALTIMESTAMP';
 
-INNER_P
-   : 'INNER'
-   ;
+NOT: 'NOT';
 
-IS
-   : 'IS'
-   ;
+NULL_P: 'NULL';
 
-ISNULL
-   : 'ISNULL'
-   ;
+OFFSET: 'OFFSET';
 
-JOIN
-   : 'JOIN'
-   ;
+ON: 'ON';
 
-LEFT
-   : 'LEFT'
-   ;
+ONLY: 'ONLY';
 
-LIKE
-   : 'LIKE'
-   ;
+OR: 'OR';
 
-NATURAL
-   : 'NATURAL'
-   ;
+ORDER: 'ORDER';
 
-NOTNULL
-   : 'NOTNULL'
-   ;
+PLACING: 'PLACING';
 
-OUTER_P
-   : 'OUTER'
-   ;
+PRIMARY: 'PRIMARY';
 
-OVER
-   : 'OVER'
-   ;
+REFERENCES: 'REFERENCES';
 
-OVERLAPS
-   : 'OVERLAPS'
-   ;
+RETURNING: 'RETURNING';
 
-RIGHT
-   : 'RIGHT'
-   ;
+SELECT: 'SELECT';
 
-SIMILAR
-   : 'SIMILAR'
-   ;
+SESSION_USER: 'SESSION_USER';
 
-VERBOSE
-   : 'VERBOSE'
-   ;
-   //
+SOME: 'SOME';
 
-   // non-reserved keywords
+SYMMETRIC: 'SYMMETRIC';
 
-   //
+TABLE: 'TABLE';
 
-ABORT_P
-   : 'ABORT'
-   ;
+THEN: 'THEN';
 
-ABSOLUTE_P
-   : 'ABSOLUTE'
-   ;
+TO: 'TO';
 
-ACCESS
-   : 'ACCESS'
-   ;
+TRAILING: 'TRAILING';
 
-ACTION
-   : 'ACTION'
-   ;
+TRUE_P: 'TRUE';
 
-ADD_P
-   : 'ADD'
-   ;
+UNION: 'UNION';
 
-ADMIN
-   : 'ADMIN'
-   ;
+UNIQUE: 'UNIQUE';
 
-AFTER
-   : 'AFTER'
-   ;
+USER: 'USER';
 
-AGGREGATE
-   : 'AGGREGATE'
-   ;
+USING: 'USING';
 
-ALSO
-   : 'ALSO'
-   ;
+VARIADIC: 'VARIADIC';
 
-ALTER
-   : 'ALTER'
-   ;
+WHEN: 'WHEN';
 
-ALWAYS
-   : 'ALWAYS'
-   ;
+WHERE: 'WHERE';
 
-ASSERTION
-   : 'ASSERTION'
-   ;
+WINDOW: 'WINDOW';
 
-ASSIGNMENT
-   : 'ASSIGNMENT'
-   ;
+WITH: 'WITH';
 
-AT
-   : 'AT'
-   ;
+//
 
-ATTRIBUTE
-   : 'ATTRIBUTE'
-   ;
+// reserved keywords (can be function or type)
 
-BACKWARD
-   : 'BACKWARD'
-   ;
+//
 
-BEFORE
-   : 'BEFORE'
-   ;
+AUTHORIZATION: 'AUTHORIZATION';
 
-BEGIN_P
-   : 'BEGIN'
-   ;
+BINARY: 'BINARY';
 
-BY
-   : 'BY'
-   ;
+COLLATION: 'COLLATION';
 
-CACHE
-   : 'CACHE'
-   ;
+CONCURRENTLY: 'CONCURRENTLY';
 
-CALLED
-   : 'CALLED'
-   ;
+CROSS: 'CROSS';
 
-CASCADE
-   : 'CASCADE'
-   ;
+CURRENT_SCHEMA: 'CURRENT_SCHEMA';
 
-CASCADED
-   : 'CASCADED'
-   ;
+FREEZE: 'FREEZE';
 
-CATALOG
-   : 'CATALOG'
-   ;
+FULL: 'FULL';
 
-CHAIN
-   : 'CHAIN'
-   ;
+ILIKE: 'ILIKE';
 
-CHARACTERISTICS
-   : 'CHARACTERISTICS'
-   ;
+INNER_P: 'INNER';
 
-CHECKPOINT
-   : 'CHECKPOINT'
-   ;
+IS: 'IS';
 
-CLASS
-   : 'CLASS'
-   ;
+ISNULL: 'ISNULL';
 
-CLOSE
-   : 'CLOSE'
-   ;
+JOIN: 'JOIN';
 
-CLUSTER
-   : 'CLUSTER'
-   ;
+LEFT: 'LEFT';
 
-COMMENT
-   : 'COMMENT'
-   ;
+LIKE: 'LIKE';
 
-COMMENTS
-   : 'COMMENTS'
-   ;
+NATURAL: 'NATURAL';
 
-COMMIT
-   : 'COMMIT'
-   ;
+NOTNULL: 'NOTNULL';
 
-COMMITTED
-   : 'COMMITTED'
-   ;
+OUTER_P: 'OUTER';
 
-CONFIGURATION
-   : 'CONFIGURATION'
-   ;
+OVER: 'OVER';
 
-CONNECTION
-   : 'CONNECTION'
-   ;
+OVERLAPS: 'OVERLAPS';
 
-CONSTRAINTS
-   : 'CONSTRAINTS'
-   ;
+RIGHT: 'RIGHT';
 
-CONTENT_P
-   : 'CONTENT'
-   ;
+SIMILAR: 'SIMILAR';
 
-CONTINUE_P
-   : 'CONTINUE'
-   ;
+VERBOSE: 'VERBOSE';
+//
 
-CONVERSION_P
-   : 'CONVERSION'
-   ;
+// non-reserved keywords
 
-COPY
-   : 'COPY'
-   ;
+//
 
-COST
-   : 'COST'
-   ;
+ABORT_P: 'ABORT';
 
-CSV
-   : 'CSV'
-   ;
+ABSOLUTE_P: 'ABSOLUTE';
 
-CURSOR
-   : 'CURSOR'
-   ;
+ACCESS: 'ACCESS';
 
-CYCLE
-   : 'CYCLE'
-   ;
+ACTION: 'ACTION';
 
-DATA_P
-   : 'DATA'
-   ;
+ADD_P: 'ADD';
 
-DATABASE
-   : 'DATABASE'
-   ;
+ADMIN: 'ADMIN';
 
-DAY_P
-   : 'DAY'
-   ;
+AFTER: 'AFTER';
 
-DEALLOCATE
-   : 'DEALLOCATE'
-   ;
+AGGREGATE: 'AGGREGATE';
 
-DECLARE
-   : 'DECLARE'
-   ;
+ALSO: 'ALSO';
 
-DEFAULTS
-   : 'DEFAULTS'
-   ;
+ALTER: 'ALTER';
 
-DEFERRED
-   : 'DEFERRED'
-   ;
+ALWAYS: 'ALWAYS';
 
-DEFINER
-   : 'DEFINER'
-   ;
+ASSERTION: 'ASSERTION';
 
-DELETE_P
-   : 'DELETE'
-   ;
+ASSIGNMENT: 'ASSIGNMENT';
 
-DELIMITER
-   : 'DELIMITER'
-   ;
+AT: 'AT';
 
-DELIMITERS
-   : 'DELIMITERS'
-   ;
+ATTRIBUTE: 'ATTRIBUTE';
 
-DICTIONARY
-   : 'DICTIONARY'
-   ;
+BACKWARD: 'BACKWARD';
 
-DISABLE_P
-   : 'DISABLE'
-   ;
+BEFORE: 'BEFORE';
 
-DISCARD
-   : 'DISCARD'
-   ;
+BEGIN_P: 'BEGIN';
 
-DOCUMENT_P
-   : 'DOCUMENT'
-   ;
+BY: 'BY';
 
-DOMAIN_P
-   : 'DOMAIN'
-   ;
+CACHE: 'CACHE';
 
-DOUBLE_P
-   : 'DOUBLE'
-   ;
+CALLED: 'CALLED';
 
-DROP
-   : 'DROP'
-   ;
+CASCADE: 'CASCADE';
 
-EACH
-   : 'EACH'
-   ;
+CASCADED: 'CASCADED';
 
-ENABLE_P
-   : 'ENABLE'
-   ;
+CATALOG: 'CATALOG';
 
-ENCODING
-   : 'ENCODING'
-   ;
+CHAIN: 'CHAIN';
 
-ENCRYPTED
-   : 'ENCRYPTED'
-   ;
+CHARACTERISTICS: 'CHARACTERISTICS';
 
-ENUM_P
-   : 'ENUM'
-   ;
+CHECKPOINT: 'CHECKPOINT';
 
-ESCAPE
-   : 'ESCAPE'
-   ;
+CLASS: 'CLASS';
 
-EVENT
-   : 'EVENT'
-   ;
+CLOSE: 'CLOSE';
 
-EXCLUDE
-   : 'EXCLUDE'
-   ;
+CLUSTER: 'CLUSTER';
 
-EXCLUDING
-   : 'EXCLUDING'
-   ;
+COMMENT: 'COMMENT';
 
-EXCLUSIVE
-   : 'EXCLUSIVE'
-   ;
+COMMENTS: 'COMMENTS';
 
-EXECUTE
-   : 'EXECUTE'
-   ;
+COMMIT: 'COMMIT';
 
-EXPLAIN
-   : 'EXPLAIN'
-   ;
+COMMITTED: 'COMMITTED';
 
-EXTENSION
-   : 'EXTENSION'
-   ;
+CONFIGURATION: 'CONFIGURATION';
 
-EXTERNAL
-   : 'EXTERNAL'
-   ;
+CONNECTION: 'CONNECTION';
 
-FAMILY
-   : 'FAMILY'
-   ;
+CONSTRAINTS: 'CONSTRAINTS';
 
-FIRST_P
-   : 'FIRST'
-   ;
+CONTENT_P: 'CONTENT';
 
-FOLLOWING
-   : 'FOLLOWING'
-   ;
+CONTINUE_P: 'CONTINUE';
 
-FORCE
-   : 'FORCE'
-   ;
+CONVERSION_P: 'CONVERSION';
 
-FORWARD
-   : 'FORWARD'
-   ;
+COPY: 'COPY';
 
-FUNCTION
-   : 'FUNCTION'
-   ;
+COST: 'COST';
 
-FUNCTIONS
-   : 'FUNCTIONS'
-   ;
+CSV: 'CSV';
 
-GLOBAL
-   : 'GLOBAL'
-   ;
+CURSOR: 'CURSOR';
 
-GRANTED
-   : 'GRANTED'
-   ;
+CYCLE: 'CYCLE';
 
-HANDLER
-   : 'HANDLER'
-   ;
+DATA_P: 'DATA';
 
-HEADER_P
-   : 'HEADER'
-   ;
+DATABASE: 'DATABASE';
 
-HOLD
-   : 'HOLD'
-   ;
+DAY_P: 'DAY';
 
-HOUR_P
-   : 'HOUR'
-   ;
+DEALLOCATE: 'DEALLOCATE';
 
-IDENTITY_P
-   : 'IDENTITY'
-   ;
+DECLARE: 'DECLARE';
 
-IF_P
-   : 'IF'
-   ;
+DEFAULTS: 'DEFAULTS';
 
-IMMEDIATE
-   : 'IMMEDIATE'
-   ;
+DEFERRED: 'DEFERRED';
 
-IMMUTABLE
-   : 'IMMUTABLE'
-   ;
+DEFINER: 'DEFINER';
 
-IMPLICIT_P
-   : 'IMPLICIT'
-   ;
+DELETE_P: 'DELETE';
 
-INCLUDING
-   : 'INCLUDING'
-   ;
+DELIMITER: 'DELIMITER';
 
-INCREMENT
-   : 'INCREMENT'
-   ;
+DELIMITERS: 'DELIMITERS';
 
-INDEX
-   : 'INDEX'
-   ;
+DICTIONARY: 'DICTIONARY';
 
-INDEXES
-   : 'INDEXES'
-   ;
+DISABLE_P: 'DISABLE';
 
-INHERIT
-   : 'INHERIT'
-   ;
+DISCARD: 'DISCARD';
 
-INHERITS
-   : 'INHERITS'
-   ;
+DOCUMENT_P: 'DOCUMENT';
 
-INLINE_P
-   : 'INLINE'
-   ;
+DOMAIN_P: 'DOMAIN';
 
-INSENSITIVE
-   : 'INSENSITIVE'
-   ;
+DOUBLE_P: 'DOUBLE';
 
-INSERT
-   : 'INSERT'
-   ;
+DROP: 'DROP';
 
-INSTEAD
-   : 'INSTEAD'
-   ;
+EACH: 'EACH';
 
-INVOKER
-   : 'INVOKER'
-   ;
+ENABLE_P: 'ENABLE';
 
-ISOLATION
-   : 'ISOLATION'
-   ;
+ENCODING: 'ENCODING';
 
-KEY
-   : 'KEY'
-   ;
+ENCRYPTED: 'ENCRYPTED';
 
-LABEL
-   : 'LABEL'
-   ;
+ENUM_P: 'ENUM';
 
-LANGUAGE
-   : 'LANGUAGE'
-   ;
+ESCAPE: 'ESCAPE';
 
-LARGE_P
-   : 'LARGE'
-   ;
+EVENT: 'EVENT';
 
-LAST_P
-   : 'LAST'
-   ;
-   //LC_COLLATE			: 'LC'_'COLLATE;
+EXCLUDE: 'EXCLUDE';
 
-   //LC_CTYPE			: 'LC'_'CTYPE;
+EXCLUDING: 'EXCLUDING';
 
-LEAKPROOF
-   : 'LEAKPROOF'
-   ;
+EXCLUSIVE: 'EXCLUSIVE';
 
-SHIPPABLE
-   : 'SHIPPABLE'
-   ;
+EXECUTE: 'EXECUTE';
 
-FENCED
-   : 'FENCED'
-   ;
+EXPLAIN: 'EXPLAIN';
 
-PACKAGE
-   : 'PACKAGE'
-   ;
+EXTENSION: 'EXTENSION';
 
-LEVEL
-   : 'LEVEL'
-   ;
+EXTERNAL: 'EXTERNAL';
 
-LISTEN
-   : 'LISTEN'
-   ;
+FAMILY: 'FAMILY';
 
-LOAD
-   : 'LOAD'
-   ;
+FIRST_P: 'FIRST';
 
-LOCAL
-   : 'LOCAL'
-   ;
+FOLLOWING: 'FOLLOWING';
 
-LOCATION
-   : 'LOCATION'
-   ;
+FORCE: 'FORCE';
 
-LOCK_P
-   : 'LOCK'
-   ;
+FORWARD: 'FORWARD';
 
-MAPPING
-   : 'MAPPING'
-   ;
+FUNCTION: 'FUNCTION';
 
-MATCH
-   : 'MATCH'
-   ;
+FUNCTIONS: 'FUNCTIONS';
 
-MATCHED
-   : 'MATCHED'
-   ;
+GLOBAL: 'GLOBAL';
 
-MATERIALIZED
-   : 'MATERIALIZED'
-   ;
+GRANTED: 'GRANTED';
 
-MAXVALUE
-   : 'MAXVALUE'
-   ;
+HANDLER: 'HANDLER';
 
-MERGE
-   : 'MERGE'
-   ;
+HEADER_P: 'HEADER';
 
-MINUTE_P
-   : 'MINUTE'
-   ;
+HOLD: 'HOLD';
 
-MINVALUE
-   : 'MINVALUE'
-   ;
+HOUR_P: 'HOUR';
 
-MODE
-   : 'MODE'
-   ;
+IDENTITY_P: 'IDENTITY';
 
-MONTH_P
-   : 'MONTH'
-   ;
+IF_P: 'IF';
 
-MOVE
-   : 'MOVE'
-   ;
+IMMEDIATE: 'IMMEDIATE';
 
-NAME_P
-   : 'NAME'
-   ;
+IMMUTABLE: 'IMMUTABLE';
 
-NAMES
-   : 'NAMES'
-   ;
+IMPLICIT_P: 'IMPLICIT';
 
-NEXT
-   : 'NEXT'
-   ;
+INCLUDING: 'INCLUDING';
 
-NO
-   : 'NO'
-   ;
+INCREMENT: 'INCREMENT';
 
-NOTHING
-   : 'NOTHING'
-   ;
+INDEX: 'INDEX';
 
-NOTIFY
-   : 'NOTIFY'
-   ;
+INDEXES: 'INDEXES';
 
-NOWAIT
-   : 'NOWAIT'
-   ;
+INHERIT: 'INHERIT';
 
-NULLS_P
-   : 'NULLS'
-   ;
+INHERITS: 'INHERITS';
 
-OBJECT_P
-   : 'OBJECT'
-   ;
+INLINE_P: 'INLINE';
 
-OF
-   : 'OF'
-   ;
+INSENSITIVE: 'INSENSITIVE';
 
-OFF
-   : 'OFF'
-   ;
+INSERT: 'INSERT';
 
-OIDS
-   : 'OIDS'
-   ;
+INSTEAD: 'INSTEAD';
 
-OPERATOR
-   : 'OPERATOR'
-   ;
+INVOKER: 'INVOKER';
 
-OPTION
-   : 'OPTION'
-   ;
+ISOLATION: 'ISOLATION';
 
-OPTIONS
-   : 'OPTIONS'
-   ;
+KEY: 'KEY';
 
-OWNED
-   : 'OWNED'
-   ;
+LABEL: 'LABEL';
 
-OWNER
-   : 'OWNER'
-   ;
+LANGUAGE: 'LANGUAGE';
 
-PARSER
-   : 'PARSER'
-   ;
+LARGE_P: 'LARGE';
 
-PARTIAL
-   : 'PARTIAL'
-   ;
+LAST_P: 'LAST';
+//LC_COLLATE			: 'LC'_'COLLATE;
 
-PARTITION
-   : 'PARTITION'
-   ;
+//LC_CTYPE			: 'LC'_'CTYPE;
 
-PASSING
-   : 'PASSING'
-   ;
+LEAKPROOF: 'LEAKPROOF';
 
-PASSWORD
-   : 'PASSWORD'
-   ;
+LEVEL: 'LEVEL';
 
-PLANS
-   : 'PLANS'
-   ;
+LISTEN: 'LISTEN';
 
-PRECEDING
-   : 'PRECEDING'
-   ;
+LOAD: 'LOAD';
 
-PREPARE
-   : 'PREPARE'
-   ;
+LOCAL: 'LOCAL';
 
-PREPARED
-   : 'PREPARED'
-   ;
+LOCATION: 'LOCATION';
 
-PRESERVE
-   : 'PRESERVE'
-   ;
+LOCK_P: 'LOCK';
 
-PRIOR
-   : 'PRIOR'
-   ;
+MAPPING: 'MAPPING';
 
-PRIVILEGES
-   : 'PRIVILEGES'
-   ;
+MATCH: 'MATCH';
 
-PROCEDURAL
-   : 'PROCEDURAL'
-   ;
+MATCHED: 'MATCHED';
 
-PROCEDURE
-   : 'PROCEDURE'
-   ;
+MATERIALIZED: 'MATERIALIZED';
 
-PROGRAM
-   : 'PROGRAM'
-   ;
+MAXVALUE: 'MAXVALUE';
 
-QUOTE
-   : 'QUOTE'
-   ;
+MERGE: 'MERGE';
 
-RANGE
-   : 'RANGE'
-   ;
+MINUTE_P: 'MINUTE';
 
-READ
-   : 'READ'
-   ;
+MINVALUE: 'MINVALUE';
 
-REASSIGN
-   : 'REASSIGN'
-   ;
+MODE: 'MODE';
 
-RECHECK
-   : 'RECHECK'
-   ;
+MONTH_P: 'MONTH';
 
-RECURSIVE
-   : 'RECURSIVE'
-   ;
+MOVE: 'MOVE';
 
-REF
-   : 'REF'
-   ;
+NAME_P: 'NAME';
 
-REFRESH
-   : 'REFRESH'
-   ;
+NAMES: 'NAMES';
 
-REINDEX
-   : 'REINDEX'
-   ;
+NEXT: 'NEXT';
 
-RELATIVE_P
-   : 'RELATIVE'
-   ;
+NO: 'NO';
 
-RELEASE
-   : 'RELEASE'
-   ;
+NOTHING: 'NOTHING';
 
-RENAME
-   : 'RENAME'
-   ;
+NOTIFY: 'NOTIFY';
 
-REPEATABLE
-   : 'REPEATABLE'
-   ;
+NOWAIT: 'NOWAIT';
 
-REPLACE
-   : 'REPLACE'
-   ;
+NULLS_P: 'NULLS';
 
-REPLICA
-   : 'REPLICA'
-   ;
+OBJECT_P: 'OBJECT';
 
-RESET
-   : 'RESET'
-   ;
+OF: 'OF';
 
-RESTART
-   : 'RESTART'
-   ;
+OFF: 'OFF';
 
-RESTRICT
-   : 'RESTRICT'
-   ;
+OIDS: 'OIDS';
 
-RETURNS
-   : 'RETURNS'
-   ;
+OPERATOR: 'OPERATOR';
 
-REVOKE
-   : 'REVOKE'
-   ;
+OPTION: 'OPTION';
 
-ROLE
-   : 'ROLE'
-   ;
+OPTIONS: 'OPTIONS';
 
-ROLLBACK
-   : 'ROLLBACK'
-   ;
+OWNED: 'OWNED';
 
-ROWS
-   : 'ROWS'
-   ;
+OWNER: 'OWNER';
 
-RULE
-   : 'RULE'
-   ;
+PARSER: 'PARSER';
 
-SAVEPOINT
-   : 'SAVEPOINT'
-   ;
+PARTIAL: 'PARTIAL';
 
-SCHEMA
-   : 'SCHEMA'
-   ;
+PARTITION: 'PARTITION';
 
-SCROLL
-   : 'SCROLL'
-   ;
+PASSING: 'PASSING';
 
-SEARCH
-   : 'SEARCH'
-   ;
+PASSWORD: 'PASSWORD';
 
-SECOND_P
-   : 'SECOND'
-   ;
+PLANS: 'PLANS';
 
-SECURITY
-   : 'SECURITY'
-   ;
+PRECEDING: 'PRECEDING';
 
-SEQUENCE
-   : 'SEQUENCE'
-   ;
+PREPARE: 'PREPARE';
 
-SEQUENCES
-   : 'SEQUENCES'
-   ;
+PREPARED: 'PREPARED';
 
-SERIALIZABLE
-   : 'SERIALIZABLE'
-   ;
+PRESERVE: 'PRESERVE';
 
-SERVER
-   : 'SERVER'
-   ;
+PRIOR: 'PRIOR';
 
-SESSION
-   : 'SESSION'
-   ;
+PRIVILEGES: 'PRIVILEGES';
 
-SET
-   : 'SET'
-   ;
+PROCEDURAL: 'PROCEDURAL';
 
-SHARE
-   : 'SHARE'
-   ;
+PROCEDURE: 'PROCEDURE';
 
-SHOW
-   : 'SHOW'
-   ;
+PROGRAM: 'PROGRAM';
 
-SIMPLE
-   : 'SIMPLE'
-   ;
+QUOTE: 'QUOTE';
 
-SNAPSHOT
-   : 'SNAPSHOT'
-   ;
+RANGE: 'RANGE';
 
-STABLE
-   : 'STABLE'
-   ;
+READ: 'READ';
 
-STANDALONE_P
-   : 'STANDALONE'
-   ;
+REASSIGN: 'REASSIGN';
 
-START
-   : 'START'
-   ;
+RECHECK: 'RECHECK';
 
-STATEMENT
-   : 'STATEMENT'
-   ;
+RECURSIVE: 'RECURSIVE';
 
-STATISTICS
-   : 'STATISTICS'
-   ;
+REF: 'REF';
 
-STDIN
-   : 'STDIN'
-   ;
+REFRESH: 'REFRESH';
 
-STDOUT
-   : 'STDOUT'
-   ;
+REINDEX: 'REINDEX';
 
-STORAGE
-   : 'STORAGE'
-   ;
+RELATIVE_P: 'RELATIVE';
 
-STRICT_P
-   : 'STRICT'
-   ;
+RELEASE: 'RELEASE';
 
-STRIP_P
-   : 'STRIP'
-   ;
+RENAME: 'RENAME';
 
-SYSID
-   : 'SYSID'
-   ;
+REPEATABLE: 'REPEATABLE';
 
-SYSTEM_P
-   : 'SYSTEM'
-   ;
+REPLACE: 'REPLACE';
 
-TABLES
-   : 'TABLES'
-   ;
+REPLICA: 'REPLICA';
 
-TABLESPACE
-   : 'TABLESPACE'
-   ;
+RESET: 'RESET';
 
-TEMP
-   : 'TEMP'
-   ;
+RESTART: 'RESTART';
 
-TEMPLATE
-   : 'TEMPLATE'
-   ;
+RESTRICT: 'RESTRICT';
 
-TEMPORARY
-   : 'TEMPORARY'
-   ;
+RETURNS: 'RETURNS';
 
-TEXT_P
-   : 'TEXT'
-   ;
+REVOKE: 'REVOKE';
 
-TRANSACTION
-   : 'TRANSACTION'
-   ;
+ROLE: 'ROLE';
 
-TRIGGER
-   : 'TRIGGER'
-   ;
+ROLLBACK: 'ROLLBACK';
 
-TRUNCATE
-   : 'TRUNCATE'
-   ;
+ROWS: 'ROWS';
 
-TRUSTED
-   : 'TRUSTED'
-   ;
+RULE: 'RULE';
 
-TYPE_P
-   : 'TYPE'
-   ;
+SAVEPOINT: 'SAVEPOINT';
 
-TYPES_P
-   : 'TYPES'
-   ;
+SCHEMA: 'SCHEMA';
 
-UNBOUNDED
-   : 'UNBOUNDED'
-   ;
+SCROLL: 'SCROLL';
 
-UNCOMMITTED
-   : 'UNCOMMITTED'
-   ;
+SEARCH: 'SEARCH';
 
-UNENCRYPTED
-   : 'UNENCRYPTED'
-   ;
+SECOND_P: 'SECOND';
 
-UNKNOWN
-   : 'UNKNOWN'
-   ;
+SECURITY: 'SECURITY';
 
-UNLISTEN
-   : 'UNLISTEN'
-   ;
+SEQUENCE: 'SEQUENCE';
 
-UNLOGGED
-   : 'UNLOGGED'
-   ;
+SEQUENCES: 'SEQUENCES';
 
-UNTIL
-   : 'UNTIL'
-   ;
+SERIALIZABLE: 'SERIALIZABLE';
 
-UPDATE
-   : 'UPDATE'
-   ;
+SERVER: 'SERVER';
 
-VACUUM
-   : 'VACUUM'
-   ;
+SESSION: 'SESSION';
 
-VALID
-   : 'VALID'
-   ;
+SET: 'SET';
 
-VALIDATE
-   : 'VALIDATE'
-   ;
+SHARE: 'SHARE';
 
-VALIDATOR
-   : 'VALIDATOR'
-   ;
-   //VALUE				: 'VALUE;
+SHOW: 'SHOW';
 
-VARYING
-   : 'VARYING'
-   ;
+SIMPLE: 'SIMPLE';
 
-VERSION_P
-   : 'VERSION'
-   ;
+SNAPSHOT: 'SNAPSHOT';
 
-VIEW
-   : 'VIEW'
-   ;
+STABLE: 'STABLE';
 
-VOLATILE
-   : 'VOLATILE'
-   ;
+STANDALONE_P: 'STANDALONE';
 
-WHITESPACE_P
-   : 'WHITESPACE'
-   ;
+START: 'START';
 
-WITHOUT
-   : 'WITHOUT'
-   ;
+STATEMENT: 'STATEMENT';
 
-WORK
-   : 'WORK'
-   ;
+STATISTICS: 'STATISTICS';
 
-WRAPPER
-   : 'WRAPPER'
-   ;
+STDIN: 'STDIN';
 
-WRITE
-   : 'WRITE'
-   ;
+STDOUT: 'STDOUT';
 
-XML_P
-   : 'XML'
-   ;
+STORAGE: 'STORAGE';
 
-YEAR_P
-   : 'YEAR'
-   ;
+STRICT_P: 'STRICT';
 
-YES_P
-   : 'YES'
-   ;
+STRIP_P: 'STRIP';
 
-ZONE
-   : 'ZONE'
-   ;
-   //
+SYSID: 'SYSID';
 
-   // non-reserved keywords (can not be function or type)
+SYSTEM_P: 'SYSTEM';
 
-   //
+TABLES: 'TABLES';
 
-BETWEEN
-   : 'BETWEEN'
-   ;
+TABLESPACE: 'TABLESPACE';
 
-BIGINT
-   : 'BIGINT'
-   ;
+TEMP: 'TEMP';
 
-BIT
-   : 'BIT'
-   ;
+TEMPLATE: 'TEMPLATE';
 
-BOOLEAN_P
-   : 'BOOLEAN'
-   ;
+TEMPORARY: 'TEMPORARY';
 
-CHAR_P
-   : 'CHAR'
-   ;
+TEXT_P: 'TEXT';
 
-CHARACTER
-   : 'CHARACTER'
-   ;
+TRANSACTION: 'TRANSACTION';
 
-COALESCE
-   : 'COALESCE'
-   ;
+TRIGGER: 'TRIGGER';
 
-DEC
-   : 'DEC'
-   ;
+TRUNCATE: 'TRUNCATE';
 
-DECIMAL_P
-   : 'DECIMAL'
-   ;
+TRUSTED: 'TRUSTED';
 
-EXISTS
-   : 'EXISTS'
-   ;
+TYPE_P: 'TYPE';
 
-EXTRACT
-   : 'EXTRACT'
-   ;
+TYPES_P: 'TYPES';
 
-FLOAT_P
-   : 'FLOAT'
-   ;
+UNBOUNDED: 'UNBOUNDED';
 
-GREATEST
-   : 'GREATEST'
-   ;
+UNCOMMITTED: 'UNCOMMITTED';
 
-INOUT
-   : 'INOUT'
-   ;
+UNENCRYPTED: 'UNENCRYPTED';
 
-INT_P
-   : 'INT'
-   ;
+UNKNOWN: 'UNKNOWN';
 
-INTEGER
-   : 'INTEGER'
-   ;
+UNLISTEN: 'UNLISTEN';
 
-INTERVAL
-   : 'INTERVAL'
-   ;
+UNLOGGED: 'UNLOGGED';
 
-LEAST
-   : 'LEAST'
-   ;
+UNTIL: 'UNTIL';
 
-NATIONAL
-   : 'NATIONAL'
-   ;
+UPDATE: 'UPDATE';
 
-NCHAR
-   : 'NCHAR'
-   ;
+VACUUM: 'VACUUM';
 
-NONE
-   : 'NONE'
-   ;
+VALID: 'VALID';
 
-NULLIF
-   : 'NULLIF'
-   ;
+VALIDATE: 'VALIDATE';
 
-NUMERIC
-   : 'NUMERIC'
-   ;
+VALIDATOR: 'VALIDATOR';
+//VALUE				: 'VALUE;
 
-OVERLAY
-   : 'OVERLAY'
-   ;
+VARYING: 'VARYING';
 
-POSITION
-   : 'POSITION'
-   ;
+VERSION_P: 'VERSION';
 
-PRECISION
-   : 'PRECISION'
-   ;
+VIEW: 'VIEW';
 
-REAL
-   : 'REAL'
-   ;
+VOLATILE: 'VOLATILE';
 
-ROW
-   : 'ROW'
-   ;
+WHITESPACE_P: 'WHITESPACE';
 
-SETOF
-   : 'SETOF'
-   ;
+WITHOUT: 'WITHOUT';
 
-SMALLINT
-   : 'SMALLINT'
-   ;
+WORK: 'WORK';
 
-SUBSTRING
-   : 'SUBSTRING'
-   ;
+WRAPPER: 'WRAPPER';
 
-TIME
-   : 'TIME'
-   ;
+WRITE: 'WRITE';
 
-TIMESTAMP
-   : 'TIMESTAMP'
-   ;
+XML_P: 'XML';
 
-TREAT
-   : 'TREAT'
-   ;
+YEAR_P: 'YEAR';
 
-TRIM
-   : 'TRIM'
-   ;
+YES_P: 'YES';
 
-VALUES
-   : 'VALUES'
-   ;
+ZONE: 'ZONE';
+//
 
-VARCHAR
-   : 'VARCHAR'
-   ;
+// non-reserved keywords (can not be function or type)
 
-XMLATTRIBUTES
-   : 'XMLATTRIBUTES'
-   ;
+//
 
-XMLCOMMENT
-   : 'XMLCOMMENT'
-   ;
+BETWEEN: 'BETWEEN';
 
-XMLAGG
-   : 'XMLAGG'
-   ;
+BIGINT: 'BIGINT';
 
-XML_IS_WELL_FORMED
-   : 'XML_IS_WELL_FORMED'
-   ;
+BIT: 'BIT';
 
-XML_IS_WELL_FORMED_DOCUMENT
-   : 'XML_IS_WELL_FORMED_DOCUMENT'
-   ;
+BOOLEAN_P: 'BOOLEAN';
 
-XML_IS_WELL_FORMED_CONTENT
-   : 'XML_IS_WELL_FORMED_CONTENT'
-   ;
+CHAR_P: 'CHAR';
 
-XPATH
-   : 'XPATH'
-   ;
+CHARACTER: 'CHARACTER';
 
-XPATH_EXISTS
-   : 'XPATH_EXISTS'
-   ;
+COALESCE: 'COALESCE';
 
-XMLCONCAT
-   : 'XMLCONCAT'
-   ;
+DEC: 'DEC';
 
-XMLELEMENT
-   : 'XMLELEMENT'
-   ;
+DECIMAL_P: 'DECIMAL';
 
-XMLEXISTS
-   : 'XMLEXISTS'
-   ;
+EXISTS: 'EXISTS';
 
-XMLFOREST
-   : 'XMLFOREST'
-   ;
+EXTRACT: 'EXTRACT';
 
-XMLPARSE
-   : 'XMLPARSE'
-   ;
+FLOAT_P: 'FLOAT';
 
-XMLPI
-   : 'XMLPI'
-   ;
+GREATEST: 'GREATEST';
 
-XMLROOT
-   : 'XMLROOT'
-   ;
+INOUT: 'INOUT';
 
-XMLSERIALIZE
-   : 'XMLSERIALIZE'
-   ;
-   //MISSED
+INT_P: 'INT';
 
-CALL
-   : 'CALL'
-   ;
+INTEGER: 'INTEGER';
 
-CURRENT_P
-   : 'CURRENT'
-   ;
+INTERVAL: 'INTERVAL';
 
-ATTACH
-   : 'ATTACH'
-   ;
+LEAST: 'LEAST';
 
-DETACH
-   : 'DETACH'
-   ;
+NATIONAL: 'NATIONAL';
 
-EXPRESSION
-   : 'EXPRESSION'
-   ;
+NCHAR: 'NCHAR';
 
-GENERATED
-   : 'GENERATED'
-   ;
+NONE: 'NONE';
 
-LOGGED
-   : 'LOGGED'
-   ;
+NULLIF: 'NULLIF';
 
-STORED
-   : 'STORED'
-   ;
+NUMERIC: 'NUMERIC';
 
-INCLUDE
-   : 'INCLUDE'
-   ;
+OVERLAY: 'OVERLAY';
 
-ROUTINE
-   : 'ROUTINE'
-   ;
-
-TRANSFORM
-   : 'TRANSFORM'
-   ;
-
-IMPORT_P
-   : 'IMPORT'
-   ;
-
-POLICY
-   : 'POLICY'
-   ;
-
-METHOD
-   : 'METHOD'
-   ;
-
-REFERENCING
-   : 'REFERENCING'
-   ;
-
-NEW
-   : 'NEW'
-   ;
-
-OLD
-   : 'OLD'
-   ;
-
-VALUE_P
-   : 'VALUE'
-   ;
-
-SUBSCRIPTION
-   : 'SUBSCRIPTION'
-   ;
-
-PUBLICATION
-   : 'PUBLICATION'
-   ;
-
-OUT_P
-   : 'OUT'
-   ;
-
-END_P
-   : 'END'
-   ;
-
-ROUTINES
-   : 'ROUTINES'
-   ;
-
-SCHEMAS
-   : 'SCHEMAS'
-   ;
-
-PROCEDURES
-   : 'PROCEDURES'
-   ;
-
-INPUT_P
-   : 'INPUT'
-   ;
-
-SUPPORT
-   : 'SUPPORT'
-   ;
-
-PARALLEL
-   : 'PARALLEL'
-   ;
-
-SQL_P
-   : 'SQL'
-   ;
-
-DEPENDS
-   : 'DEPENDS'
-   ;
-
-OVERRIDING
-   : 'OVERRIDING'
-   ;
-
-// support gauss start--------------------------------
-AUTOMAPPED
-   : 'AUTOMAPPED'
-   ;
-SAMPLE
-   : 'SAMPLE'
-   ;
-PERCENT_P
-   : 'PERCENT'
-   ;
-STAT
-   : 'STAT'
-   ;
-COLLECT
-   : 'COLLECT'
-   ;
-
-MULTISET
-   : 'MULTISET'
-   ;
-
-MINUS_P
-   : 'MINUS'
-   ;
-
-GROUPCONCAT
-   : 'GROUP_CONCAT'
-   ;
-
-SEPARATOR
-   : 'SEPARATOR'
-   ;
-
-IGNORE
-   : 'IGNORE'
-   ;
-OPEN_BRACE
-   : '{'
-   ;
-CLOSE_BRACE
-   : '}'
-   ;
-OVERWRITE
-   : 'OVERWRITE'
-   ;
-DISTRIBUTE
-   : 'DISTRIBUTE'
-   ;
-DISTRIBUTED
-   : 'DISTRIBUTED'
-   ;
-DISTRIBUTION
-   : 'DISTRIBUTION'
-   ;
-REPLICATION
-   : 'REPLICATION'
-   ;
-ROUNDROBIN
-   : 'ROUNDROBIN'
-   ;
-HASH
-   : 'HASH'
-   ;
-RANDOMLY
-   : 'RANDOMLY'
-   ;
-NODE_P
-   : 'NODE'
-   ;
-
-LIST_P
-   : 'LIST'
-   ;
-
-LESS
-   : 'LESS'
-   ;
-
-THAN
-   : 'THAN'
-   ;
-
-EVERY
-   : 'EVERY'
-   ;
-
-MOVEMENT
-   : 'MOVEMENT'
-   ;
-
-TSTag
-   : 'TSTag'
-   ;
-
-TSTime
-   : 'TSTime'
-   ;
-
-TSField
-   : 'TSField'
-   ;
-
-REPLICATED
-   : 'REPLICATED'
-   ;
-
-// support gauss end --------------------------------
-
-CONFLICT
-   : 'CONFLICT'
-   ;
-
-SKIP_P
-   : 'SKIP'
-   ;
-
-LOCKED
-   : 'LOCKED'
-   ;
-
-TIES
-   : 'TIES'
-   ;
-
-ROLLUP
-   : 'ROLLUP'
-   ;
-
-CUBE
-   : 'CUBE'
-   ;
-
-GROUPING
-   : 'GROUPING'
-   ;
-
-SETS
-   : 'SETS'
-   ;
-
-TABLESAMPLE
-   : 'TABLESAMPLE'
-   ;
-
-ORDINALITY
-   : 'ORDINALITY'
-   ;
-
-XMLTABLE
-   : 'XMLTABLE'
-   ;
-
-COLUMNS
-   : 'COLUMNS'
-   ;
-
-XMLNAMESPACES
-   : 'XMLNAMESPACES'
-   ;
-
-ROWTYPE
-   : 'ROWTYPE'
-   ;
-
-NORMALIZED
-   : 'NORMALIZED'
-   ;
-
-WITHIN
-   : 'WITHIN'
-   ;
-
-FILTER
-   : 'FILTER'
-   ;
-
-GROUPS
-   : 'GROUPS'
-   ;
-
-OTHERS
-   : 'OTHERS'
-   ;
-
-NFC
-   : 'NFC'
-   ;
-
-NFD
-   : 'NFD'
-   ;
-
-NFKC
-   : 'NFKC'
-   ;
-
-NFKD
-   : 'NFKD'
-   ;
-
-UESCAPE
-   : 'UESCAPE'
-   ;
-
-VIEWS
-   : 'VIEWS'
-   ;
-
-NORMALIZE
-   : 'NORMALIZE'
-   ;
-
-DUMP
-   : 'DUMP'
-   ;
-
-PRINT_STRICT_PARAMS
-   : 'PRINT_STRICT_PARAMS'
-   ;
-
-VARIABLE_CONFLICT
-   : 'VARIABLE_CONFLICT'
-   ;
-
-ERROR
-   : 'ERROR'
-   ;
-
-USE_VARIABLE
-   : 'USE_VARIABLE'
-   ;
-
-USE_COLUMN
-   : 'USE_COLUMN'
-   ;
-
-ALIAS
-   : 'ALIAS'
-   ;
-
-CONSTANT
-   : 'CONSTANT'
-   ;
-
-PERFORM
-   : 'PERFORM'
-   ;
-
-GET
-   : 'GET'
-   ;
-
-DIAGNOSTICS
-   : 'DIAGNOSTICS'
-   ;
-
-STACKED
-   : 'STACKED'
-   ;
-
-ELSIF
-   : 'ELSIF'
-   ;
-
-WHILE
-   : 'WHILE'
-   ;
-
-REVERSE
-   : 'REVERSE'
-   ;
-
-FOREACH
-   : 'FOREACH'
-   ;
-
-SLICE
-   : 'SLICE'
-   ;
-
-EXIT
-   : 'EXIT'
-   ;
-
-RETURN
-   : 'RETURN'
-   ;
-
-QUERY
-   : 'QUERY'
-   ;
-
-RAISE
-   : 'RAISE'
-   ;
-
-SQLSTATE
-   : 'SQLSTATE'
-   ;
-
-DEBUG
-   : 'DEBUG'
-   ;
-
-LOG
-   : 'LOG'
-   ;
-
-INFO
-   : 'INFO'
-   ;
-
-NOTICE
-   : 'NOTICE'
-   ;
-
-WARNING
-   : 'WARNING'
-   ;
-
-EXCEPTION
-   : 'EXCEPTION'
-   ;
-
-ASSERT
-   : 'ASSERT'
-   ;
-
-LOOP
-   : 'LOOP'
-   ;
-
-OPEN
-   : 'OPEN'
-   ;
-   //
-
-   // IDENTIFIERS (4.1.1)
-
-   //
-
-ABS
-   : 'ABS'
-   ;
-
-CBRT
-   : 'CBRT'
-   ;
-
-CEIL
-   : 'CEIL'
-   ;
-
-CEILING
-   : 'CEILING'
-   ;
-
-DEGREES
-   : 'DEGREES'
-   ;
-
-DIV
-   : 'DIV'
-   ;
-
-EXP
-   : 'EXP'
-   ;
-
-FACTORIAL
-   : 'FACTORIAL'
-   ;
-
-FLOOR
-   : 'FLOOR'
-   ;
-
-GCD
-   : 'GCD'
-   ;
-
-LCM
-   : 'LCM'
-   ;
-
-LN
-   : 'LN'
-   ;
-
-LOG10
-   : 'LOG10'
-   ;
-
-MIN_SCALE
-   : 'MIN_SCALE'
-   ;
-
-MOD
-   : 'MOD'
-   ;
-
-PI
-   : 'PI'
-   ;
-
-POWER
-   : 'POWER'
-   ;
-
-RADIANS
-   : 'RADIANS'
-   ;
-
-ROUND
-   : 'ROUND'
-   ;
-
-SCALE
-   : 'SCALE'
-   ;
-
-SIGN
-   : 'SIGN'
-   ;
-
-SQRT
-   : 'SQRT'
-   ;
-
-TRIM_SCALE
-   : 'TRIM_SCALE'
-   ;
-
-TRUNC
-   : 'TRUNC'
-   ;
-
-WIDTH_BUCKET
-   : 'WIDTH_BUCKET'
-   ;
-
-RANDOM
-   : 'RANDOM'
-   ;
-
-SETSEED
-   : 'SETSEED'
-   ;
-
-ACOS
-   : 'ACOS'
-   ;
-
-ACOSD
-   : 'ACOSD'
-   ;
-
-ASIN
-   : 'ASIN'
-   ;
-
-ASIND
-   : 'ASIND'
-   ;
-
-ATAN
-   : 'ATAN'
-   ;
-
-ATAND
-   : 'ATAND'
-   ;
-
-ATAN2
-   : 'ATAN2'
-   ;
-
-ATAN2D
-   : 'ATAN2D'
-   ;
-
-COS
-   : 'COS'
-   ;
-
-COSD
-   : 'COSD'
-   ;
-
-COT
-   : 'COT'
-   ;
-
-COTD
-   : 'COTD'
-   ;
-
-SIN
-   : 'SIN'
-   ;
-
-SIND
-   : 'SIND'
-   ;
-
-TAN
-   : 'TAN'
-   ;
-
-TAND
-   : 'TAND'
-   ;
-
-SINH
-   : 'SINH'
-   ;
-
-COSH
-   : 'COSH'
-   ;
-
-TANH
-   : 'TANH'
-   ;
-
-ASINH
-   : 'ASINH'
-   ;
-
-ACOSH
-   : 'ACOSH'
-   ;
-
-ATANH
-   : 'ATANH'
-   ;
-
-BIT_LENGTH
-   : 'BIT_LENGTH'
-   ;
-
-CHAR_LENGTH
-   : 'CHAR_LENGTH'
-   ;
-
-CHARACTER_LENGTH
-   : 'CHARACTER_LENGTH'
-   ;
-
-LOWER
-   : 'LOWER'
-   ;
-
-OCTET_LENGTH
-   : 'OCTET_LENGTH'
-   ;
-
-UPPER
-   : 'UPPER'
-   ;
-
-ASCII
-   : 'ASCII'
-   ;
-
-BTRIM
-   : 'BTRIM'
-   ;
-
-CHR
-   : 'CHR'
-   ;
-
-CONCAT
-   : 'CONCAT'
-   ;
-
-CONCAT_WS
-   : 'CONCAT_WS'
-   ;
-
-FORMAT
-   : 'FORMAT'
-   ;
-
-INITCAP
-   : 'INITCAP'
-   ;
-
-LENGTH
-   : 'LENGTH'
-   ;
-
-LPAD
-   : 'LPAD'
-   ;
-
-LTRIM
-   : 'LTRIM'
-   ;
-
-MD5
-   : 'MD5'
-   ;
-
-PARSE_IDENT
-   : 'PARSE_IDENT'
-   ;
-
-PG_CLIENT_ENCODING
-   : 'PG_CLIENT_ENCODING'
-   ;
-
-QUOTE_IDENT
-   : 'QUOTE_IDENT'
-   ;
-
-QUOTE_LITERAL
-   : 'QUOTE_LITERAL'
-   ;
-
-QUOTE_NULLABLE
-   : 'QUOTE_NULLABLE'
-   ;
-
-REGEXP_COUNT
-   : 'REGEXP_COUNT'
-   ;
-
-REGEXP_INSTR
-   : 'REGEXP_INSTR'
-   ;
-
-REGEXP_LIKE
-   : 'REGEXP_LIKE'
-   ;
-
-REGEXP_MATCH
-   : 'REGEXP_MATCH'
-   ;
-
-REGEXP_MATCHES
-   : 'REGEXP_MATCHES'
-   ;
-
-REGEXP_REPLACE
-   : 'REGEXP_REPLACE'
-   ;
-
-REGEXP_SPLIT_TO_ARRAY
-   : 'REGEXP_SPLIT_TO_ARRAY'
-   ;
-
-REGEXP_SPLIT_TO_TABLE
-   : 'REGEXP_SPLIT_TO_TABLE'
-   ;
-
-REGEXP_SUBSTR
-   : 'REGEXP_SUBSTR'
-   ;
-
-REPEAT
-   : 'REPEAT'
-   ;
-
-RPAD
-   : 'RPAD'
-   ;
-
-RTRIM
-   : 'RTRIM'
-   ;
-
-SPLIT_PART
-   : 'SPLIT_PART'
-   ;
-
-STARTS_WITH
-   : 'STARTS_WITH'
-   ;
-
-STRING_TO_ARRAY
-   : 'STRING_TO_ARRAY'
-   ;
-
-STRING_TO_TABLE
-   : 'STRING_TO_TABLE'
-   ;
-
-STRPOS
-   : 'STRPOS'
-   ;
-
-SUBSTR
-   : 'SUBSTR'
-   ;
-
-TO_ASCII
-   : 'TO_ASCII'
-   ;
-
-TO_HEX
-   : 'TO_HEX'
-   ;
-
-TRANSLATE
-   : 'TRANSLATE'
-   ;
-
-UNISTR
-   : 'UNISTR'
-   ;
-
-AGE
-   : 'AGE'
-   ;
-
-CLOCK_TIMESTAMP
-   : 'CLOCK_TIMESTAMP'
-   ;
-
-DATE_BIN
-   : 'DATE_BIN'
-   ;
-
-DATE_PART
-   : 'DATE_PART'
-   ;
-
-DATE_TRUNC
-   : 'DATE_TRUNC'
-   ;
-
-ISFINITE
-   : 'ISFINITE'
-   ;
-
-JUSTIFY_DAYS
-   : 'JUSTIFY_DAYS'
-   ;
-
-JUSTIFY_HOURS
-   : 'JUSTIFY_HOURS'
-   ;
-
-JUSTIFY_INTERVAL
-   : 'JUSTIFY_INTERVAL'
-   ;
-
-MAKE_DATE
-   : 'MAKE_DATE'
-   ;
-
-MAKE_INTERVAL
-   : 'MAKE_INTERVAL'
-   ;
-
-MAKE_TIME
-   : 'MAKE_TIME'
-   ;
-
-MAKE_TIMESTAMP
-   : 'MAKE_TIMESTAMP'
-   ;
-
-MAKE_TIMESTAMPTZ
-   : 'MAKE_TIMESTAMPTZ'
-   ;
-
-NOW
-   : 'NOW'
-   ;
-
-STATEMENT_TIMESTAMP
-   : 'STATEMENT_TIMESTAMP'
-   ;
-
-TIMEOFDAY
-   : 'TIMEOFDAY'
-   ;
-
-TRANSACTION_TIMESTAMP
-   : 'TRANSACTION_TIMESTAMP'
-   ;
-
-TO_TIMESTAMP
-   : 'TO_TIMESTAMP'
-   ;
-
-TO_CHAR
-   : 'TO_CHAR'
-   ;
-
-TO_DATE
-   : 'TO_DATE'
-   ;
-
-TO_NUMBER
-   : 'TO_NUMBER'
-   ;
-
-Identifier
-   : IdentifierStartChar IdentifierChar*
-   ;
-
-fragment IdentifierStartChar
-   : // these are the valid identifier start characters below 0x7F
-   [a-zA-Z_]
-   | // these are the valid characters from 0x80 to 0xFF
-   [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]
-   | // these are the letters above 0xFF which only need a single UTF-16 code unit
-   [\u0100-\uD7FF\uE000-\uFFFF]
-   {charIsLetter()}?
-   | // letters which require multiple UTF-16 code units
-   [\uD800-\uDBFF] [\uDC00-\uDFFF]
-   {
-    CheckIfUtf32Letter()
-   }?
-
-   ;
-
-fragment IdentifierChar
-   : StrictIdentifierChar
-   | '$'
-   ;
-
-fragment StrictIdentifierChar
-   : IdentifierStartChar
-   | [0-9]
-   ;
+POSITION: 'POSITION';
+
+PRECISION: 'PRECISION';
+
+REAL: 'REAL';
+
+ROW: 'ROW';
+
+SETOF: 'SETOF';
+
+SMALLINT: 'SMALLINT';
+
+SUBSTRING: 'SUBSTRING';
+
+TIME: 'TIME';
+
+TIMESTAMP: 'TIMESTAMP';
+
+TREAT: 'TREAT';
+
+TRIM: 'TRIM';
+
+VALUES: 'VALUES';
+
+VARCHAR: 'VARCHAR';
+
+XMLATTRIBUTES: 'XMLATTRIBUTES';
+
+XMLCOMMENT: 'XMLCOMMENT';
+
+XMLAGG: 'XMLAGG';
+
+XML_IS_WELL_FORMED: 'XML_IS_WELL_FORMED';
+
+XML_IS_WELL_FORMED_DOCUMENT: 'XML_IS_WELL_FORMED_DOCUMENT';
+
+XML_IS_WELL_FORMED_CONTENT: 'XML_IS_WELL_FORMED_CONTENT';
+
+XPATH: 'XPATH';
+
+XPATH_EXISTS: 'XPATH_EXISTS';
+
+XMLCONCAT: 'XMLCONCAT';
+
+XMLELEMENT: 'XMLELEMENT';
+
+XMLEXISTS: 'XMLEXISTS';
+
+XMLFOREST: 'XMLFOREST';
+
+XMLPARSE: 'XMLPARSE';
+
+XMLPI: 'XMLPI';
+
+XMLROOT: 'XMLROOT';
+
+XMLSERIALIZE: 'XMLSERIALIZE';
+//MISSED
+
+CALL: 'CALL';
+
+CURRENT_P: 'CURRENT';
+
+ATTACH: 'ATTACH';
+
+DETACH: 'DETACH';
+
+EXPRESSION: 'EXPRESSION';
+
+GENERATED: 'GENERATED';
+
+LOGGED: 'LOGGED';
+
+STORED: 'STORED';
+
+INCLUDE: 'INCLUDE';
+
+ROUTINE: 'ROUTINE';
+
+TRANSFORM: 'TRANSFORM';
+
+IMPORT_P: 'IMPORT';
+
+POLICY: 'POLICY';
+
+METHOD: 'METHOD';
+
+REFERENCING: 'REFERENCING';
+
+NEW: 'NEW';
+
+OLD: 'OLD';
+
+VALUE_P: 'VALUE';
+
+SUBSCRIPTION: 'SUBSCRIPTION';
+
+PUBLICATION: 'PUBLICATION';
+
+OUT_P: 'OUT';
+
+END_P: 'END';
+
+ROUTINES: 'ROUTINES';
+
+SCHEMAS: 'SCHEMAS';
+
+PROCEDURES: 'PROCEDURES';
+
+INPUT_P: 'INPUT';
+
+SUPPORT: 'SUPPORT';
+
+PARALLEL: 'PARALLEL';
+
+SQL_P: 'SQL';
+
+DEPENDS: 'DEPENDS';
+
+OVERRIDING: 'OVERRIDING';
+
+CONFLICT: 'CONFLICT';
+
+SKIP_P: 'SKIP';
+
+LOCKED: 'LOCKED';
+
+TIES: 'TIES';
+
+ROLLUP: 'ROLLUP';
+
+CUBE: 'CUBE';
+
+GROUPING: 'GROUPING';
+
+SETS: 'SETS';
+
+TABLESAMPLE: 'TABLESAMPLE';
+
+ORDINALITY: 'ORDINALITY';
+
+XMLTABLE: 'XMLTABLE';
+
+COLUMNS: 'COLUMNS';
+
+XMLNAMESPACES: 'XMLNAMESPACES';
+
+ROWTYPE: 'ROWTYPE';
+
+NORMALIZED: 'NORMALIZED';
+
+WITHIN: 'WITHIN';
+
+FILTER: 'FILTER';
+
+GROUPS: 'GROUPS';
+
+OTHERS: 'OTHERS';
+
+NFC: 'NFC';
+
+NFD: 'NFD';
+
+NFKC: 'NFKC';
+
+NFKD: 'NFKD';
+
+UESCAPE: 'UESCAPE';
+
+VIEWS: 'VIEWS';
+
+NORMALIZE: 'NORMALIZE';
+
+DUMP: 'DUMP';
+
+ERROR: 'ERROR';
+
+USE_VARIABLE: 'USE_VARIABLE';
+
+USE_COLUMN: 'USE_COLUMN';
+
+CONSTANT: 'CONSTANT';
+
+PERFORM: 'PERFORM';
+
+GET: 'GET';
+
+DIAGNOSTICS: 'DIAGNOSTICS';
+
+STACKED: 'STACKED';
+
+ELSIF: 'ELSIF';
+
+WHILE: 'WHILE';
+
+FOREACH: 'FOREACH';
+
+SLICE: 'SLICE';
+
+EXIT: 'EXIT';
+
+RETURN: 'RETURN';
+
+RAISE: 'RAISE';
+
+SQLSTATE: 'SQLSTATE';
+
+DEBUG: 'DEBUG';
+
+INFO: 'INFO';
+
+NOTICE: 'NOTICE';
+
+WARNING: 'WARNING';
+
+EXCEPTION: 'EXCEPTION';
+
+ASSERT: 'ASSERT';
+
+LOOP: 'LOOP';
+
+OPEN: 'OPEN';
+
+FORMAT: 'FORMAT';
+
+
+
+
+
+Identifier: IdentifierStartChar IdentifierChar*;
+
+fragment IdentifierStartChar options {
+    caseInsensitive = false;
+}: // these are the valid identifier start characters below 0x7F
+    [a-zA-Z_]
+    | // these are the valid characters from 0x80 to 0xFF
+    [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]
+    |                               // these are the letters above 0xFF which only need a single UTF-16 code unit
+    [\u0100-\uD7FF\uE000-\uFFFF]    {this.CharIsLetter()}?
+    |                               // letters which require multiple UTF-16 code units
+    [\uD800-\uDBFF] [\uDC00-\uDFFF] {this.CheckIfUtf32Letter()}?
+;
+
+fragment IdentifierChar: StrictIdentifierChar | '$';
+
+fragment StrictIdentifierChar: IdentifierStartChar | [0-9];
 /* Quoted Identifiers
  *
  *   These are divided into four separate tokens, allowing distinction of valid quoted identifiers from invalid quoted
  *   identifiers without sacrificing the ability of the lexer to reliably recover from lexical errors in the input.
  */
 
+QuotedIdentifier: UnterminatedQuotedIdentifier '"';
+// This is a quoted identifier which only contains valid characters but is not terminated
 
-QuotedIdentifier
-   : UnterminatedQuotedIdentifier '"'
-   ;
-   // This is a quoted identifier which only contains valid characters but is not terminated
+UnterminatedQuotedIdentifier: '"' ('""' | ~ [\u0000"])*;
+// This is a quoted identifier which is terminated but contains a \u0000 character
 
-UnterminatedQuotedIdentifier
-   : '"' ('""' | ~ [\u0000"])*
-   ;
-   // This is a quoted identifier which is terminated but contains a \u0000 character
-InvalidQuotedIdentifier
-   : InvalidUnterminatedQuotedIdentifier '"'
-   ;
-   // This is a quoted identifier which is unterminated and contains a \u0000 character
-InvalidUnterminatedQuotedIdentifier
-   : '"' ('""' | ~ '"')*
-   ;
+InvalidQuotedIdentifier: InvalidUnterminatedQuotedIdentifier '"';
+// This is a quoted identifier which is unterminated and contains a \u0000 character
+
+InvalidUnterminatedQuotedIdentifier: '"' ('""' | ~ '"')*;
 /* Unicode Quoted Identifiers
  *
  *   These are divided into four separate tokens, allowing distinction of valid Unicode quoted identifiers from invalid
@@ -2865,254 +1213,229 @@ InvalidUnterminatedQuotedIdentifier
  *
  * TODO: these rules assume "" is still a valid escape sequence within a Unicode quoted identifier.
  */
-UnicodeQuotedIdentifier
-   : 'U' '&' QuotedIdentifier
-   ;
-   // This is a Unicode quoted identifier which only contains valid characters but is not terminated
-UnterminatedUnicodeQuotedIdentifier
-   : 'U' '&' UnterminatedQuotedIdentifier
-   ;
-   // This is a Unicode quoted identifier which is terminated but contains a \u0000 character
-InvalidUnicodeQuotedIdentifier
-   : 'U' '&' InvalidQuotedIdentifier
-   ;
-   // This is a Unicode quoted identifier which is unterminated and contains a \u0000 character
-InvalidUnterminatedUnicodeQuotedIdentifier
-   : 'U' '&' InvalidUnterminatedQuotedIdentifier
-   ;
-   //
-   // CONSTANTS (4.1.2)
-   //
-   // String Constants (4.1.2.1)
-StringConstant
-   : UnterminatedStringConstant '\''
-   ;
 
-UnterminatedStringConstant
-   : '\'' ('\'\'' | ~ '\'')*
-   ;
-   // String Constants with C-style Escapes (4.1.2.2)
+UnicodeQuotedIdentifier: 'U' '&' QuotedIdentifier;
+// This is a Unicode quoted identifier which only contains valid characters but is not terminated
 
-BeginEscapeStringConstant
-   : 'E' '\'' -> more , pushMode (EscapeStringConstantMode)
-   ;
-   // String Constants with Unicode Escapes (4.1.2.3)
+UnterminatedUnicodeQuotedIdentifier: 'U' '&' UnterminatedQuotedIdentifier;
+// This is a Unicode quoted identifier which is terminated but contains a \u0000 character
 
-   //
+InvalidUnicodeQuotedIdentifier: 'U' '&' InvalidQuotedIdentifier;
+// This is a Unicode quoted identifier which is unterminated and contains a \u0000 character
 
-   //   Note that escape sequences are never checked as part of this token due to the ability of users to change the escape
+InvalidUnterminatedUnicodeQuotedIdentifier: 'U' '&' InvalidUnterminatedQuotedIdentifier;
+//
 
-   //   character with a UESCAPE clause following the Unicode string constant.
+// CONSTANTS (4.1.2)
 
-   //
+//
 
-   // TODO: these rules assume '' is still a valid escape sequence within a Unicode string constant.
+// String Constants (4.1.2.1)
 
-UnicodeEscapeStringConstant
-   : UnterminatedUnicodeEscapeStringConstant '\''
-   ;
+StringConstant: UnterminatedStringConstant '\'';
 
-UnterminatedUnicodeEscapeStringConstant
-   : 'U' '&' UnterminatedStringConstant
-   ;
-   // Dollar-quoted String Constants (4.1.2.4)
+UnterminatedStringConstant: '\'' ('\'\'' | ~ '\'')*;
+// String Constants with C-style Escapes (4.1.2.2)
 
-BeginDollarStringConstant
-   : '$' Tag? '$'
-   {pushTag();} -> pushMode (DollarQuotedStringMode)
-   ;
+BeginEscapeStringConstant: 'E' '\'' -> more, pushMode (EscapeStringConstantMode);
+// String Constants with Unicode Escapes (4.1.2.3)
+
+//
+
+//   Note that escape sequences are never checked as part of this token due to the ability of users to change the escape
+
+//   character with a UESCAPE clause following the Unicode string constant.
+
+//
+
+// TODO: these rules assume '' is still a valid escape sequence within a Unicode string constant.
+
+UnicodeEscapeStringConstant: UnterminatedUnicodeEscapeStringConstant '\'';
+
+UnterminatedUnicodeEscapeStringConstant: 'U' '&' UnterminatedStringConstant;
+// Dollar-quoted String Constants (4.1.2.4)
+
+BeginDollarStringConstant: '$' Tag? '$' {this.PushTag();} -> pushMode (DollarQuotedStringMode);
 /* "The tag, if any, of a dollar-quoted string follows the same rules as an
  * unquoted identifier, except that it cannot contain a dollar sign."
  */
 
+fragment Tag: IdentifierStartChar StrictIdentifierChar*;
+// Bit-strings Constants (4.1.2.5)
 
-fragment Tag
-   : IdentifierStartChar StrictIdentifierChar*
-   ;
-   // Bit-strings Constants (4.1.2.5)
+BinaryStringConstant: UnterminatedBinaryStringConstant '\'';
 
-BinaryStringConstant
-   : UnterminatedBinaryStringConstant '\''
-   ;
+UnterminatedBinaryStringConstant: 'B' '\'' [01]*;
 
-UnterminatedBinaryStringConstant
-   : 'B' '\'' [01]*
-   ;
+InvalidBinaryStringConstant: InvalidUnterminatedBinaryStringConstant '\'';
 
-InvalidBinaryStringConstant
-   : InvalidUnterminatedBinaryStringConstant '\''
-   ;
+InvalidUnterminatedBinaryStringConstant: 'B' UnterminatedStringConstant;
 
-InvalidUnterminatedBinaryStringConstant
-   : 'B' UnterminatedStringConstant
-   ;
+HexadecimalStringConstant: UnterminatedHexadecimalStringConstant '\'';
 
-HexadecimalStringConstant
-   : UnterminatedHexadecimalStringConstant '\''
-   ;
+UnterminatedHexadecimalStringConstant: 'X' '\'' [0-9A-F]*;
 
-UnterminatedHexadecimalStringConstant
-   : 'X' '\'' [0-9A-F]*
-   ;
+InvalidHexadecimalStringConstant: InvalidUnterminatedHexadecimalStringConstant '\'';
 
-InvalidHexadecimalStringConstant
-   : InvalidUnterminatedHexadecimalStringConstant '\''
-   ;
+InvalidUnterminatedHexadecimalStringConstant: 'X' UnterminatedStringConstant;
+// Numeric Constants (4.1.2.6)
 
-InvalidUnterminatedHexadecimalStringConstant
-   : 'X' UnterminatedStringConstant
-   ;
-   // Numeric Constants (4.1.2.6)
+Integral: Digits;
 
-Integral
-   : Digits
-   ;
+BinaryIntegral: '0b' Digits;
 
-NumericFail
-   : Digits '..'
-   {HandleNumericFail();}
-   ;
+OctalIntegral: '0o' Digits;
 
-Numeric
-   : Digits '.' Digits? /*? replaced with + to solve problem with DOT_DOT .. but this surely must be rewriten */
+HexadecimalIntegral: '0x' Digits;
 
-   ('E' [+-]? Digits)?
-   | '.' Digits ('E' [+-]? Digits)?
-   | Digits 'E' [+-]? Digits
-   ;
+NumericFail: Digits '..' {this.HandleNumericFail();};
 
-fragment Digits
-   : [0-9]+
-   ;
+Numeric:
+    Digits '.' Digits? /*? replaced with + to solve problem with DOT_DOT .. but this surely must be rewriten */ (
+        'E' [+-]? Digits
+    )?
+    | '.' Digits ('E' [+-]? Digits)?
+    | Digits 'E' [+-]? Digits
+;
 
-PLSQLVARIABLENAME
-   : ':' [A-Z_] [A-Z_0-9$]*
-   ;
+fragment Digits: [0-9]+;
 
-PLSQLIDENTIFIER
-   : ':"' ('\\' . | '""' | ~ ('"' | '\\'))* '"'
-   ;
-   //
+PLSQLVARIABLENAME: ':' [A-Z_] [A-Z_0-9$]*;
 
-   // WHITESPACE (4.1)
+PLSQLIDENTIFIER: ':"' ('\\' . | '""' | ~ ('"' | '\\'))* '"';
+//
 
-   //
+// WHITESPACE (4.1)
 
-Whitespace
-   : [ \t]+ -> channel (HIDDEN)
-   ;
+//
 
-Newline
-   : ('\r' '\n'? | '\n') -> channel (HIDDEN)
-   ;
-   //
+Whitespace: [ \t]+ -> channel (HIDDEN);
 
-   // COMMENTS (4.1.5)
+Newline: ('\r' '\n'? | '\n') -> channel (HIDDEN);
+//
 
-   //
+// COMMENTS (4.1.5)
 
-LineComment
-   : '--' ~ [\r\n]* -> channel (HIDDEN)
-   ;
+//
 
-BlockComment
-   : ('/*' ('/'* BlockComment | ~ [/*] | '/'+ ~ [/*] | '*'+ ~ [/*])* '*'* '*/') -> channel (HIDDEN)
-   ;
-UnterminatedBlockComment
-   : '/*' ('/'* BlockComment | // these characters are not part of special sequences in a block comment
-   ~ [/*] | // handle / or * characters which are not part of /* or */ and do not appear at the end of the file
-   ('/'+ ~ [/*] | '*'+ ~ [/*]))*
-   // Handle the case of / or * characters at the end of the file, or a nested unterminated block comment
-   ('/'+ | '*'+ | '/'* UnterminatedBlockComment)?
-   // Optional assertion to make sure this rule is working as intended
-   {
-            UnterminatedBlockCommentDebugAssert();
-   }
-   ;
-   //
-   // META-COMMANDS
-   //
-   // http://www.postgresql.org/docs/9.3/static/app-psql.html
-MetaCommand
-   : '\\' (~ [\r\n\\"] | '"' ~ [\r\n"]* '"')* ('"' ~ [\r\n"]*)?
-   ;
-EndMetaCommand
-   : '\\\\'
-   ;
-   //
-   // ERROR
-   //
-   // Any character which does not match one of the above rules will appear in the token stream as an ErrorCharacter token.
-   // This ensures the lexer itself will never encounter a syntax error, so all error handling may be performed by the
-   // parser.
-ErrorCharacter
-   : .
-   ;
+LineComment: '--' ~ [\r\n]* -> channel (HIDDEN);
+
+BlockComment:
+    ('/*' ('/'* BlockComment | ~ [/*] | '/'+ ~ [/*] | '*'+ ~ [/*])* '*'* '*/') -> channel (HIDDEN)
+;
+
+UnterminatedBlockComment:
+    '/*' (
+        '/'* BlockComment
+        | // these characters are not part of special sequences in a block comment
+        ~ [/*]
+        | // handle / or * characters which are not part of /* or */ and do not appear at the end of the file
+        ('/'+ ~ [/*] | '*'+ ~ [/*])
+    )*
+    // Handle the case of / or * characters at the end of the file, or a nested unterminated block comment
+    ('/'+ | '*'+ | '/'* UnterminatedBlockComment)?
+    // Optional assertion to make sure this rule is working as intended
+    {this.UnterminatedBlockCommentDebugAssert();}
+;
+//
+
+// META-COMMANDS
+
+//
+
+// http://www.postgresql.org/docs/9.3/static/app-psql.html
+
+MetaCommand: '\\' -> pushMode(META), more ;
+
+//
+
+// ERROR
+
+//
+
+// Any character which does not match one of the above rules will appear in the token stream as an ErrorCharacter token.
+
+// This ensures the lexer itself will never encounter a syntax error, so all error handling may be performed by the
+
+// parser.
+
+ErrorCharacter: .;
+
 mode EscapeStringConstantMode;
-EscapeStringConstant
-   : EscapeStringText '\'' -> mode (AfterEscapeStringConstantMode)
-   ;
-UnterminatedEscapeStringConstant
-   : EscapeStringText
-   // Handle a final unmatched \ character appearing at the end of the file
-   '\\'? EOF
-   ;
-fragment EscapeStringText
-   : ('\'\'' | '\\' ( // two-digit hex escapes are still valid when treated as single-digit escapes
-   'x' [0-9a-fA-F] |
-   'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] |
-   'U' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] | // Any character other than the Unicode escapes can follow a backslash. Some have special meaning,
-   // but that doesn't affect the syntax.
-   ~ [xuU]) | ~ ['\\])*
-   ;
-InvalidEscapeStringConstant
-   : InvalidEscapeStringText '\'' -> mode (AfterEscapeStringConstantMode)
-   ;
-InvalidUnterminatedEscapeStringConstant
-   : InvalidEscapeStringText
-   // Handle a final unmatched \ character appearing at the end of the file
-   '\\'? EOF
-   ;
-fragment InvalidEscapeStringText
-   : ('\'\'' | '\\' . | ~ ['\\])*
-   ;
+EscapeStringConstant: EscapeStringText '\'' -> mode (AfterEscapeStringConstantMode);
+
+UnterminatedEscapeStringConstant:
+    EscapeStringText
+    // Handle a final unmatched \ character appearing at the end of the file
+    '\\'? EOF
+;
+
+fragment EscapeStringText options { caseInsensitive = false; }:
+    (
+        '\'\''
+        | '\\' (
+            // two-digit hex escapes are still valid when treated as single-digit escapes
+            'x' [0-9a-fA-F]
+            | 'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]
+            | 'U' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]
+            | // Any character other than the Unicode escapes can follow a backslash. Some have special meaning,
+            // but that doesn't affect the syntax.
+            ~ [xuU]
+        )
+        | ~ ['\\]
+    )*
+;
+
+InvalidEscapeStringConstant: InvalidEscapeStringText '\'' -> mode (AfterEscapeStringConstantMode);
+
+InvalidUnterminatedEscapeStringConstant:
+    InvalidEscapeStringText
+    // Handle a final unmatched \ character appearing at the end of the file
+    '\\'? EOF
+;
+
+fragment InvalidEscapeStringText: ('\'\'' | '\\' . | ~ ['\\])*;
+
 mode AfterEscapeStringConstantMode;
-AfterEscapeStringConstantMode_Whitespace
-   : Whitespace -> type (Whitespace) , channel (HIDDEN)
-   ;
-AfterEscapeStringConstantMode_Newline
-   : Newline -> type (Newline) , channel (HIDDEN) , mode (AfterEscapeStringConstantWithNewlineMode)
-   ;
-AfterEscapeStringConstantMode_NotContinued
-   :
-   {} // intentionally empty
-   -> skip , popMode
-   ;
+AfterEscapeStringConstantMode_Whitespace: Whitespace -> type (Whitespace), channel (HIDDEN);
+
+AfterEscapeStringConstantMode_Newline:
+    Newline -> type (Newline), channel (HIDDEN), mode (AfterEscapeStringConstantWithNewlineMode)
+;
+
+AfterEscapeStringConstantMode_NotContinued:
+     -> skip, popMode
+;
+
 mode AfterEscapeStringConstantWithNewlineMode;
-AfterEscapeStringConstantWithNewlineMode_Whitespace
-   : Whitespace -> type (Whitespace) , channel (HIDDEN)
-   ;
-AfterEscapeStringConstantWithNewlineMode_Newline
-   : Newline -> type (Newline) , channel (HIDDEN)
-   ;
-AfterEscapeStringConstantWithNewlineMode_Continued
-   : '\'' -> more , mode (EscapeStringConstantMode)
-   ;
-AfterEscapeStringConstantWithNewlineMode_NotContinued
-   :
-   {} // intentionally empty
-   -> skip , popMode
-   ;
+AfterEscapeStringConstantWithNewlineMode_Whitespace:
+    Whitespace -> type (Whitespace), channel (HIDDEN)
+;
+
+AfterEscapeStringConstantWithNewlineMode_Newline: Newline -> type (Newline), channel (HIDDEN);
+
+AfterEscapeStringConstantWithNewlineMode_Continued:
+    '\'' -> more, mode (EscapeStringConstantMode)
+;
+
+AfterEscapeStringConstantWithNewlineMode_NotContinued:
+     -> skip, popMode
+;
+
 mode DollarQuotedStringMode;
-DollarText
-   : ~ '$'+
-   //| '$'([0-9])+
-   | // this alternative improves the efficiency of handling $ characters within a dollar-quoted string which are
-   // not part of the ending tag.
-   '$' ~ '$'*
-   ;
-EndDollarStringConstant
-   : ('$' Tag? '$')
-   {isTag()}?
-   {popTag();} -> popMode
-   ;
+DollarText:
+    ~ '$'+
+    //| '$'([0-9])+
+    | // this alternative improves the efficiency of handling $ characters within a dollar-quoted string which are
+
+    // not part of the ending tag.
+    '$' ~ '$'*
+;
+
+// NB: Next rule on two lines in order to make transformGrammar.py easy.
+EndDollarStringConstant: ('$' Tag? '$') {this.IsTag()}?
+    {this.PopTag();} -> popMode;
+
+mode META;
+MetaSemi : {this.IsSemiColon()}? ';' -> type(SEMI), popMode ;
+MetaOther : ~[;\r\n\\"] .*? ('\\\\' | [\r\n]+) -> type(SEMI), popMode ;

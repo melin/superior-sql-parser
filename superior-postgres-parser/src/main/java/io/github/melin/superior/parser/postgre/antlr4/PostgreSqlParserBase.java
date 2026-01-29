@@ -1,9 +1,7 @@
 package io.github.melin.superior.parser.postgre.antlr4;
 
-import io.github.melin.superior.common.antlr4.UpperCaseCharStream;
 import java.util.List;
 import org.antlr.v4.runtime.*;
-import org.apache.commons.lang3.StringUtils;
 
 public abstract class PostgreSqlParserBase extends Parser {
 
@@ -12,12 +10,14 @@ public abstract class PostgreSqlParserBase extends Parser {
     }
 
     ParserRuleContext GetParsedSqlTree(String script, int line) {
-        PostgreSqlParser ph = getPostgreSQLParser(script);
+        PostgreSqlParser ph = GetPostgreSqlParser(script);
         ParserRuleContext result = ph.root();
         return result;
     }
 
-    public void ParseRoutineBody(PostgreSqlParser.Createfunc_opt_listContext _localctx) {
+    public void ParseRoutineBody() {
+        PostgreSqlParser.Createfunc_opt_listContext _localctx =
+                (PostgreSqlParser.Createfunc_opt_listContext) this.getContext();
         String lang = null;
         for (PostgreSqlParser.Createfunc_opt_itemContext coi : _localctx.createfunc_opt_item()) {
             if (coi.LANGUAGE() != null) {
@@ -46,17 +46,16 @@ public abstract class PostgreSqlParserBase extends Parser {
                 break;
             }
         }
-
-        lang = StringUtils.trim(lang);
         if (func_as != null) {
             String txt = GetRoutineBodyString(func_as.func_as().sconst(0));
-            PostgreSqlParser ph = getPostgreSQLParser(StringUtils.trim(txt));
             switch (lang) {
                 case "plpgsql":
-                    func_as.func_as().Definition = ph.plsqlroot();
+                    // NB: Cannot be done this way.
+                    // PostgreSQLParser ph = GetPostgreSQLParser(txt);
+                    // func_as.func_as().Definition = ph.plsqlroot();
                     break;
                 case "sql":
-                    func_as.func_as().Definition = ph.root();
+                    // func_as.func_as().Definition = ph.root();
                     break;
             }
         }
@@ -95,8 +94,8 @@ public abstract class PostgreSqlParserBase extends Parser {
         return result;
     }
 
-    public PostgreSqlParser getPostgreSQLParser(String script) {
-        UpperCaseCharStream charStream = new UpperCaseCharStream(CharStreams.fromString(script));
+    public PostgreSqlParser GetPostgreSqlParser(String script) {
+        CharStream charStream = CharStreams.fromString(script);
         Lexer lexer = new PostgreSqlLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         PostgreSqlParser parser = new PostgreSqlParser(tokens);
@@ -108,5 +107,11 @@ public abstract class PostgreSqlParserBase extends Parser {
         lexer.addErrorListener(listener_lexer);
         parser.addErrorListener(listener_parser);
         return parser;
+    }
+
+    public boolean OnlyAcceptableOps() {
+        var c = ((CommonTokenStream) this.getInputStream()).LT(1);
+        var text = c.getText();
+        return text.equals("!") || text.equals("!!") || text.equals("!=-");
     }
 }
