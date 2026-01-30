@@ -265,7 +265,7 @@ class PostgreSqlParserDmlTest {
     @Test
     fun insertTest2() {
         val sql = """
-            truncate table films
+            truncate table films;
             INSERT INTO films SELECT * FROM tmp_films WHERE date_prod < '2004-05-07';
         """.trimIndent()
 

@@ -144,6 +144,7 @@ stmt
     | variableresetstmt
     | variablesetstmt
     | variableshowstmt
+    | showstmt
     | viewstmt
     ;
 
@@ -346,6 +347,17 @@ functionsetresetclause
 variableshowstmt
     : SHOW (var_name | TIME ZONE | TRANSACTION ISOLATION LEVEL | SESSION AUTHORIZATION | ALL)
     ;
+
+// redshift show https://docs.aws.amazon.com/redshift/latest/dg/r_SHOW_COLUMNS.html start
+showstmt
+   : SHOW COLUMNS FROM TABLE qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   | SHOW EXTERNAL TABLE qualified_name (PARTITION)?
+   | SHOW SCHEMAS FROM DATABASE qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   | SHOW TABLE qualified_name
+   | SHOW VIEW qualified_name
+   | SHOW TABLES FROM SCHEMA qualified_name (LIKE a_expr_qual_op)? (LIMIT select_limit_value)?
+   ;
+// end
 
 constraintssetstmt
     : SET CONSTRAINTS constraints_set_list constraints_set_mode
@@ -1014,7 +1026,7 @@ createasstmt
     ;
 
 create_as_target
-    : qualified_name column_list_? table_access_method_clause? optwith? oncommitoption? opttablespace?
+    : qualified_name column_list_? table_access_method_clause? optwith? oncommitoption? opttablespace? gaussextension?
     ;
 
 with_data_
@@ -2120,6 +2132,11 @@ common_func_opt_item
     | SECURITY INVOKER
     | LEAKPROOF
     | NOT LEAKPROOF
+    | SHIPPABLE
+    | NOT SHIPPABLE
+    | FENCED
+    | NOT FENCED
+    | PACKAGE
     | COST numericonly
     | ROWS numericonly
     | SUPPORT any_name
@@ -4706,6 +4723,9 @@ unreserved_keyword
     | LARGE_P
     | LAST_P
     | LEAKPROOF
+    | SHIPPABLE
+    | FENCED
+    | PACKAGE
     | LEVEL
     | LISTEN
     | LOAD
@@ -5314,6 +5334,9 @@ bare_label_keyword
     | LATERAL_P
     | LEADING
     | LEAKPROOF
+    | SHIPPABLE
+    | FENCED
+    | PACKAGE
     | LEAST
     | LEFT
     | LEVEL
