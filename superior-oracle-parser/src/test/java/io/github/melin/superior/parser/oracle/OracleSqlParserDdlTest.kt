@@ -7,6 +7,8 @@ import io.github.melin.superior.common.relational.create.CreateDatabase
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
 import io.github.melin.superior.common.relational.create.CreateView
+import io.github.melin.superior.common.relational.drop.DropDatabase
+import io.github.melin.superior.common.relational.drop.DropTable
 import org.junit.Assert
 import org.junit.Test
 
@@ -28,8 +30,9 @@ class OracleSqlParserDdlTest {
             Assert.fail()
         }
 
-        if (dropDatabase is DefaultStatement) {
+        if (dropDatabase is DropDatabase) {
             Assert.assertTrue(true)
+            Assert.assertEquals(StatementType.DROP_DATABASE, dropDatabase.statementType)
         } else {
             Assert.fail()
         }
@@ -136,6 +139,24 @@ class OracleSqlParserDdlTest {
             Assert.assertEquals("employees1.job_id", st2.objValue)
             Assert.assertEquals("abbreviated job title", st2.comment)
             Assert.assertFalse(st2.isNull)
+        }
+    }
+
+    @Test
+    fun dropTableTest() {
+        val sql = """
+            drop table employees purge;
+        """.trimIndent()
+
+        val statement = OracleSqlHelper.parseStatement(sql)
+
+        if (statement is DropTable) {
+            Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+
+            Assert.assertTrue(statement.purge)
+        } else {
+            Assert.fail()
         }
     }
 }

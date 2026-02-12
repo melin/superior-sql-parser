@@ -11,8 +11,10 @@ import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.*
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropDatabase
 import io.github.melin.superior.common.relational.drop.DropFunction
 import io.github.melin.superior.common.relational.drop.DropProcedure
+import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.common.relational.table.ColumnRel
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser
 import io.github.melin.superior.parser.oracle.antlr4.OracleParser.Cursor_declarationContext
@@ -229,6 +231,19 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
         val functionId = parseFunctionName(funcName)
         val function = CreateFunction(functionId, childStatements)
         return function
+    }
+
+    override fun visitDrop_database(ctx: OracleParser.Drop_databaseContext): Statement? {
+        return DropDatabase("")
+    }
+
+    override fun visitDrop_table(ctx: OracleParser.Drop_tableContext): Statement? {
+        val tableId = parseTableViewName(ctx.tableview_name())
+        val ifExists = ctx.EXISTS() != null
+        val purge = ctx.PURGE() != null
+        val dropTable = DropTable(tableId, ifExists)
+        dropTable.purge = purge
+        return dropTable
     }
 
     override fun visitDrop_function(ctx: OracleParser.Drop_functionContext): Statement {
