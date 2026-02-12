@@ -13,4 +13,5 @@ data class DropTable(override val tableId: TableId, var ifExists: Boolean = fals
 
     val tableIds: ArrayList<TableId> = arrayListOf()
     var force: Boolean = false
+    var purge: Boolean = false
 }
