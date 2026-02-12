@@ -176,7 +176,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             }
 
         val createTable = CreateTable(tableId, TableType.POSTGRES, columnRels = columns)
-        if (ctx.opttemp() != null) {
+        if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
             createTable.temporary = true
         }
 
@@ -227,7 +227,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
         super.visitCreatefunctionstmt(ctx)
 
-        val replace = if (ctx.or_replace_() != null) true else false
+        val replace = if (ctx.or_replace_().REPLACE() != null) true else false
         val funcName = ctx.func_name()
 
         if (ctx.FUNCTION() != null) {
@@ -253,30 +253,6 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         }
     }
 
-    override fun visitAnysconst(ctx: PostgreSqlParser.AnysconstContext): Statement? {
-        var execSql = CommonUtils.subsql(command, ctx)
-        execSql = StringUtils.substringBeforeLast(execSql, "'")
-        execSql = StringUtils.trim(execSql)
-        execSql = StringUtils.replace(execSql, "''", "'")
-
-        val statements = PostgreSqlHelper.parseMultiStatement(execSql)
-        childStatements.addAll(statements)
-
-        super.visitAnysconst(ctx)
-        return null
-    }
-
-    /*override fun visitStmt_dynexecute(ctx: PostgreSqlParser.Stmt_dynexecuteContext): Statement? {
-        var execSql = StringUtils.substringAfter(ctx.a_expr().text, "'")
-        execSql = StringUtils.substringBeforeLast(execSql, "'")
-        execSql = StringUtils.trim(execSql)
-        execSql = StringUtils.replace(execSql, "''", "'")
-
-        val statements = PostgreSqlHelper.parseMultiStatement(execSql)
-        childStatements.addAll(statements)
-        return null
-    }*/
-
     /*override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): Statement? {
         super.visitProc_stmt(ctx)
         return null
@@ -290,7 +266,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val createView = CreateView(tableId, queryStmt)
         createView.replace = replace
 
-        if (ctx.opttemp() != null) {
+        if (ctx.opttemp().TEMP() != null || ctx.opttemp().TEMPORARY() != null) {
             createView.temporary = true
         }
         return createView
@@ -359,9 +335,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
-        if (ctx.from_clause() != null) {
-            super.visitFrom_clause(ctx.from_clause())
-        }
+        super.visitFrom_clause(ctx.from_clause())
 
         return UpdateTable(tableId, inputTables)
     }
@@ -372,9 +346,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         addOutputTableId(tableId)
 
         super.visitWhere_or_current_clause(ctx.where_or_current_clause())
-        if (ctx.using_clause() != null) {
-            super.visitUsing_clause(ctx.using_clause())
-        }
+        super.visitUsing_clause(ctx.using_clause())
 
         return DeleteTable(tableId, inputTables)
     }
@@ -582,6 +554,17 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
             if (ctx.comment_text().text != null) CommonUtils.cleanQuote(ctx.comment_text().sconst().text) else null
         return CommentStatement(text, isNull, objType, objValue)
     }
+
+    /*override fun visitStmt_dynexecute(ctx: PostgreSqlParser.Stmt_dynexecuteContext): Statement? {
+        var execSql = StringUtils.substringAfter(ctx.a_expr().text, "'")
+        execSql = StringUtils.substringBeforeLast(execSql, "'")
+        execSql = StringUtils.trim(execSql)
+        execSql = StringUtils.replace(execSql, "''", "'")
+
+        val statements = PostgreSqlHelper.parseMultiStatement(execSql)
+        childStatements.addAll(statements)
+        return null
+    }*/
 
     override fun visitSelect_limit(ctx: PostgreSqlParser.Select_limitContext): Statement? {
         val limitClause = ctx.limit_clause()
