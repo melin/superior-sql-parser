@@ -4,7 +4,6 @@ import java.util.BitSet;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.*;
-import org.antlr.v4.runtime.misc.*;
 
 public class ParserDispatchingErrorListener implements ANTLRErrorListener {
     Parser _parent;
@@ -20,7 +19,7 @@ public class ParserDispatchingErrorListener implements ANTLRErrorListener {
             int charPositionInLine,
             String msg,
             RecognitionException e) {
-        var foo = new ProxyErrorListener(_parent.getErrorListeners());
+        ProxyErrorListener foo = new ProxyErrorListener(_parent.getErrorListeners());
         foo.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
     }
 

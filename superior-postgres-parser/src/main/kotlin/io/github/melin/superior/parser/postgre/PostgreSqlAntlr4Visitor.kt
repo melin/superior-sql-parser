@@ -23,6 +23,7 @@ import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.ColconstraintelemContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.Indirection_elContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.OpttempTableNameContext
+import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParser.PlsqlrootContext
 import io.github.melin.superior.parser.postgre.antlr4.PostgreSqlParserBaseVisitor
 import io.github.melin.superior.parser.postgre.relational.CreatePartitionTable
 import org.antlr.v4.runtime.tree.RuleNode
@@ -58,7 +59,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         return if (currentResult == null) true else false
     }
 
-    override fun visitDeclarecursorstmt(ctx: PostgreSqlParser.DeclarecursorstmtContext): Statement? {
+    override fun visitDecl_cursor_query(ctx: PostgreSqlParser.Decl_cursor_queryContext): Statement? {
         val statement = visitSelectstmt(ctx.selectstmt())
         statement.setSql(source(ctx))
         childStatements.add(statement)
@@ -218,6 +219,9 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
     }
 
     override fun visitFunc_as(ctx: PostgreSqlParser.Func_asContext): Statement? {
+        if (ctx.Definition != null) {
+            visitPlsqlroot(ctx.Definition as PlsqlrootContext)
+        }
         return super.visitFunc_as(ctx)
     }
 
@@ -227,7 +231,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
         super.visitCreatefunctionstmt(ctx)
 
-        val replace = if (ctx.or_replace_().REPLACE() != null) true else false
+        val replace = if (ctx.opt_or_replace().REPLACE() != null) true else false
         val funcName = ctx.func_name()
 
         if (ctx.FUNCTION() != null) {
@@ -253,10 +257,10 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         }
     }
 
-    /*override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): Statement? {
+    override fun visitProc_stmt(ctx: PostgreSqlParser.Proc_stmtContext): Statement? {
         super.visitProc_stmt(ctx)
         return null
-    }*/
+    }
 
     override fun visitViewstmt(ctx: PostgreSqlParser.ViewstmtContext): Statement {
         currentOptType = CREATE_VIEW
@@ -353,8 +357,8 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
 
     override fun visitInsertstmt(ctx: PostgreSqlParser.InsertstmtContext): Statement {
         currentOptType = INSERT
-        if (ctx.with_clause_() != null) {
-            this.visitWith_clause_(ctx.with_clause_())
+        if (ctx.opt_with_clause() != null) {
+            this.visitOpt_with_clause(ctx.opt_with_clause())
         }
 
         val tableId = parseTableName(ctx.insert_target().qualified_name())
@@ -420,8 +424,8 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
     override fun visitIndexstmt(ctx: PostgreSqlParser.IndexstmtContext): Statement {
         val tableId = parseTableName(ctx.relation_expr())
         val indexName =
-            if (ctx.index_name_() != null) {
-                ctx.index_name_().text
+            if (ctx.opt_index_name() != null) {
+                ctx.opt_index_name().text
             } else {
                 ctx.name().text
             }
@@ -433,14 +437,14 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         if (ctx.object_type_any_name() != null) {
             val ifExists = ctx.IF_P() != null
             if (ctx.object_type_any_name().INDEX() != null) {
-                val actions = ctx.any_name_list_().any_name().map { indexName -> DropIndex(indexName.text, ifExists) }
+                val actions = ctx.any_name_list().any_name().map { indexName -> DropIndex(indexName.text, ifExists) }
                 val tableId = TableId("")
                 val alterTable = AlterTable(tableId)
                 alterTable.ifExists = ifExists
                 alterTable.addActions(actions)
                 return alterTable
             } else if (ctx.object_type_any_name().TABLE() != null) {
-                val tableIds = ctx.any_name_list_().any_name().map { tableName -> parseTableName(tableName) }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropTable = DropTable(tableIds.first(), ifExists)
                 dropTable.tableIds.addAll(tableIds)
                 return dropTable
@@ -451,7 +455,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                     } else {
                         false
                     }
-                val tableIds = ctx.any_name_list_().any_name().map { tableName -> parseTableName(tableName) }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 if (isMaterialized) {
                     val dropView = DropMaterializedView(tableIds.first(), ifExists)
                     dropView.tableIds.addAll(tableIds)
@@ -462,7 +466,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
                     return dropView
                 }
             } else if (ctx.object_type_any_name().SEQUENCE() != null) {
-                val tableIds = ctx.any_name_list_().any_name().map { tableName -> parseTableName(tableName) }
+                val tableIds = ctx.any_name_list().any_name().map { tableName -> parseTableName(tableName) }
                 val dropSequence =
                     io.github.melin.superior.common.relational.drop.DropSequence(tableIds.first(), ifExists)
                 dropSequence.tableIds.addAll(tableIds)
@@ -555,7 +559,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         return CommentStatement(text, isNull, objType, objValue)
     }
 
-    /*override fun visitStmt_dynexecute(ctx: PostgreSqlParser.Stmt_dynexecuteContext): Statement? {
+    override fun visitStmt_dynexecute(ctx: PostgreSqlParser.Stmt_dynexecuteContext): Statement? {
         var execSql = StringUtils.substringAfter(ctx.a_expr().text, "'")
         execSql = StringUtils.substringBeforeLast(execSql, "'")
         execSql = StringUtils.trim(execSql)
@@ -564,7 +568,7 @@ class PostgreSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String
         val statements = PostgreSqlHelper.parseMultiStatement(execSql)
         childStatements.addAll(statements)
         return null
-    }*/
+    }
 
     override fun visitSelect_limit(ctx: PostgreSqlParser.Select_limitContext): Statement? {
         val limitClause = ctx.limit_clause()
