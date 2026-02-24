@@ -11,11 +11,6 @@ import java.io.File
 class OracleSqlParserDmlTest {
     @Test
     fun querySqlTest0() {
-        val sql = """
-            select * from test1;
-            select * from test2;
-        """.trimIndent()
-
         val sql1 = FileUtils.readFileToString(File("./src/test/resources/insert.sql"), "UTF-8")
         val statement = OracleSqlHelper.parseStatement(sql1)
         
@@ -25,6 +20,20 @@ class OracleSqlParserDmlTest {
             Assert.assertEquals(TableId("dwd", "dwd_d03_contract_det_s"), statement.outputTables.get(0))
         } else {
             Assert.fail()
+        }
+    }
+
+    @Test
+    fun querySqlTest1() {
+        val sql = """
+            select 1;
+        """.trimIndent()
+
+        try {
+            OracleSqlHelper.parseStatement(sql)
+            Assert.fail()
+        } catch (e: Exception) {
+            Assert.assertTrue(true)
         }
     }
 
