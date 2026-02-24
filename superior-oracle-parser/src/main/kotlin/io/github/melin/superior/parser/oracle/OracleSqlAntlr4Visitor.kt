@@ -238,7 +238,7 @@ class OracleSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?
     }
 
     override fun visitDrop_table(ctx: OracleParser.Drop_tableContext): Statement? {
-        val tableId = parseTableViewName(ctx.tableview_name())
+        val tableId = parseTableViewName(ctx.tableview_name().get(0))
         val ifExists = ctx.EXISTS() != null
         val purge = ctx.PURGE() != null
         val dropTable = DropTable(tableId, ifExists)
