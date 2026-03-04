@@ -7,9 +7,13 @@ import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
+import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.create.CreateView
 import io.github.melin.superior.common.relational.dml.*
+import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParser
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -81,28 +85,51 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         return queryStmt
     }
 
-    override fun visitMerge_into_stmt(ctx: DmSqlParser.Merge_into_stmtContext?): Statement? {
+    override fun visitMerge_into_stmt(ctx: DmSqlParser.Merge_into_stmtContext?): Statement {
         currentOptType = StatementType.MERGE
         return MergeTable(TableId(""))
     }
 
-    override fun visitInsert_stmt(ctx: DmSqlParser.Insert_stmtContext?): Statement? {
+    override fun visitInsert_stmt(ctx: DmSqlParser.Insert_stmtContext?): Statement {
         currentOptType = StatementType.INSERT
         return InsertTable(InsertMode.INTO, QueryStmt(), TableId(""))
     }
 
-    override fun visitUpdate_stmt(ctx: DmSqlParser.Update_stmtContext?): Statement? {
+    override fun visitUpdate_stmt(ctx: DmSqlParser.Update_stmtContext?): Statement {
         currentOptType = StatementType.UPDATE
         return UpdateTable(TableId(""), inputTables)
     }
 
-    override fun visitDelete_stmt(ctx: DmSqlParser.Delete_stmtContext?): Statement? {
+    override fun visitDelete_stmt(ctx: DmSqlParser.Delete_stmtContext?): Statement {
         currentOptType = StatementType.DELETE
         return DeleteTable(TableId(""), inputTables)
     }
 
-    override fun visitCreate_table_stmt(ctx: DmSqlParser.Create_table_stmtContext?): Statement? {
+    override fun visitCreate_table_stmt(ctx: DmSqlParser.Create_table_stmtContext?): Statement {
         currentOptType = StatementType.CREATE_TABLE
         return CreateTable(TableId(""), TableType.DAMENG)
+    }
+
+    override fun visitCreate_view_stmt(ctx: DmSqlParser.Create_view_stmtContext?): Statement {
+        currentOptType = StatementType.CREATE_VIEW
+        return CreateView(TableId(""), QueryStmt(inputTables, limit, offset))
+    }
+
+    override fun visitCreate_materialized_view_stmt(ctx: DmSqlParser.Create_materialized_view_stmtContext?): Statement {
+        currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
+        return CreateMaterializedView(TableId(""), QueryStmt(inputTables, limit, offset))
+    }
+
+    override fun visitComment_stmt(ctx: DmSqlParser.Comment_stmtContext?): Statement {
+        currentOptType = StatementType.COMMENT
+        return CommentStatement()
+    }
+
+    override fun visitDrop_stmt(ctx: DmSqlParser.Drop_stmtContext?): Statement {
+        val dropDbObject = ctx?.drop_db_object()
+        if (dropDbObject?.db_object()?.text.equals("table")) {
+            currentOptType = StatementType.DROP_TABLE
+        }
+        return DropTable(TableId(""), dropDbObject?.exist()?.text == "ifexists")
     }
 }
