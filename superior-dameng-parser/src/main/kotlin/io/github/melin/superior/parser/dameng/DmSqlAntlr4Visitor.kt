@@ -1,15 +1,15 @@
 package io.github.melin.superior.parser.dameng
 
 import com.github.melin.superior.sql.parser.util.CommonUtils
-import io.github.melin.superior.common.*
+import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.TableType
 import io.github.melin.superior.common.antlr4.ParserUtils.source
-import io.github.melin.superior.common.relational.*
+import io.github.melin.superior.common.relational.DefaultStatement
+import io.github.melin.superior.common.relational.Statement
+import io.github.melin.superior.common.relational.TableId
 import io.github.melin.superior.common.relational.common.ShowStatement
-import io.github.melin.superior.common.relational.dml.DeleteTable
-import io.github.melin.superior.common.relational.dml.InsertMode
-import io.github.melin.superior.common.relational.dml.InsertTable
-import io.github.melin.superior.common.relational.dml.QueryStmt
-import io.github.melin.superior.common.relational.dml.UpdateTable
+import io.github.melin.superior.common.relational.create.CreateTable
+import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParser
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParserBaseVisitor
 import org.apache.commons.lang3.StringUtils
@@ -81,6 +81,11 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         return queryStmt
     }
 
+    override fun visitMerge_into_stmt(ctx: DmSqlParser.Merge_into_stmtContext?): Statement? {
+        currentOptType = StatementType.MERGE
+        return MergeTable(TableId(""))
+    }
+
     override fun visitInsert_stmt(ctx: DmSqlParser.Insert_stmtContext?): Statement? {
         currentOptType = StatementType.INSERT
         return InsertTable(InsertMode.INTO, QueryStmt(), TableId(""))
@@ -92,7 +97,12 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     }
 
     override fun visitDelete_stmt(ctx: DmSqlParser.Delete_stmtContext?): Statement? {
-        currentOptType = StatementType.UPDATE
+        currentOptType = StatementType.DELETE
         return DeleteTable(TableId(""), inputTables)
+    }
+
+    override fun visitCreate_table_stmt(ctx: DmSqlParser.Create_table_stmtContext?): Statement? {
+        currentOptType = StatementType.CREATE_TABLE
+        return CreateTable(TableId(""), TableType.DAMENG)
     }
 }
