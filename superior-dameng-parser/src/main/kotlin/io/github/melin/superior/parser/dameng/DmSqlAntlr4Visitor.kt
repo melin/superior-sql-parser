@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils
 /** Created by libinsong on 2018/2/8. */
 class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : DmSqlParserBaseVisitor<Statement>() {
 
+    private var rootTableId: TableId = TableId("")
     private var currentOptType: StatementType = StatementType.UNKOWN
     private var limit: Int? = null
     private var offset: Int? = null
@@ -78,9 +79,8 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     }
 
     override fun visitSelect_stmt(ctx: DmSqlParser.Select_stmtContext?): Statement? {
-        super.visitSelect_stmt(ctx)
         currentOptType = StatementType.SELECT
-//        this.visitWithout_into_select2(ctx?.without_into_select2())
+        super.visitSelect_stmt(ctx)
         if (queryStmt == null) {
             queryStmt = QueryStmt(inputTables, limit, offset)
         }
@@ -89,44 +89,44 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     }
 
     override fun visitMerge_into_stmt(ctx: DmSqlParser.Merge_into_stmtContext?): Statement {
-        super.visitMerge_into_stmt(ctx)
         currentOptType = StatementType.MERGE
+        super.visitMerge_into_stmt(ctx)
         return MergeTable(TableId(""))
     }
 
     override fun visitInsert_stmt(ctx: DmSqlParser.Insert_stmtContext?): Statement {
-        super.visitInsert_stmt(ctx)
         currentOptType = StatementType.INSERT
+        super.visitInsert_stmt(ctx)
         return InsertTable(InsertMode.INTO, QueryStmt(), TableId(""))
     }
 
     override fun visitUpdate_stmt(ctx: DmSqlParser.Update_stmtContext?): Statement {
-        super.visitUpdate_stmt(ctx)
         currentOptType = StatementType.UPDATE
-        return UpdateTable(TableId(""), inputTables)
+        super.visitUpdate_stmt(ctx)
+        return UpdateTable(rootTableId, inputTables)
     }
 
     override fun visitDelete_stmt(ctx: DmSqlParser.Delete_stmtContext?): Statement {
-        super.visitDelete_stmt(ctx)
         currentOptType = StatementType.DELETE
-        return DeleteTable(TableId(""), inputTables)
+        super.visitDelete_stmt(ctx)
+        return DeleteTable(rootTableId, inputTables)
     }
 
     override fun visitCreate_table_stmt(ctx: DmSqlParser.Create_table_stmtContext?): Statement {
-        super.visitCreate_table_stmt(ctx)
         currentOptType = StatementType.CREATE_TABLE
+        super.visitCreate_table_stmt(ctx)
         return CreateTable(TableId(""), TableType.DAMENG)
     }
 
     override fun visitCreate_view_stmt(ctx: DmSqlParser.Create_view_stmtContext?): Statement {
-        super.visitCreate_view_stmt(ctx)
         currentOptType = StatementType.CREATE_VIEW
+        super.visitCreate_view_stmt(ctx)
         return CreateView(TableId(""), QueryStmt(inputTables, limit, offset))
     }
 
     override fun visitCreate_materialized_view_stmt(ctx: DmSqlParser.Create_materialized_view_stmtContext?): Statement {
-        super.visitCreate_materialized_view_stmt(ctx)
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
+        super.visitCreate_materialized_view_stmt(ctx)
         return CreateMaterializedView(TableId(""), QueryStmt(inputTables, limit, offset))
     }
 
@@ -145,11 +145,18 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         return DropTable(TableId(""), dropDbObject?.exist()?.text == "ifexists")
     }
 
-    override fun visitQualified_name(ctx: DmSqlParser.Qualified_nameContext): Statement? {
-        super.visitQualified_name(ctx)
-        val tableId = parseTableViewName(ctx)
-        if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
-            inputTables.add(tableId)
+    override fun visitFull_tv_name(ctx: DmSqlParser.Full_tv_nameContext): Statement? {
+        super.visitFull_tv_name(ctx)
+        val tableId = parseTableViewName(ctx.qualified_name())
+        val parentDeleteStmtBody = ctx.parent?.parent?.parent?.parent?.parent
+        val parentUpdateStmtBody = parentDeleteStmtBody?.parent
+        if (parentUpdateStmtBody is DmSqlParser.Update_stmt_bodyContext
+            || parentDeleteStmtBody is DmSqlParser.Delete_stmtContext) {
+            rootTableId = tableId
+        } else {
+            if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
+                inputTables.add(tableId)
+            }
         }
         return null
     }

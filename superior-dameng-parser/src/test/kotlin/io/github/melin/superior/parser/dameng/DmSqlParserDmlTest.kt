@@ -62,8 +62,8 @@ class DmSqlParserDmlTest {
 
         if (statement is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, statement.statementType)
-//            Assert.assertEquals(2, statement.inputTables.size)
-//            Assert.assertEquals(TableId("table1"), statement.inputTables.get(0))
+            Assert.assertEquals(2, statement.inputTables.size)
+            Assert.assertEquals(TableId("cte1"), statement.inputTables.get(0))
         } else {
             Assert.fail()
         }
@@ -80,8 +80,8 @@ class DmSqlParserDmlTest {
 
         if (statement is DeleteTable) {
             Assert.assertEquals(StatementType.DELETE, statement.statementType)
-//            Assert.assertEquals("films", statement.tableId?.tableName)
-//            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("films", statement.tableId?.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -98,8 +98,8 @@ class DmSqlParserDmlTest {
 
         if (statement is UpdateTable) {
             Assert.assertEquals(StatementType.UPDATE, statement.statementType)
-//            Assert.assertEquals("employees", statement.tableId?.tableName)
-//            Assert.assertEquals(1, statement.inputTables.size)
+            Assert.assertEquals("employees", statement.tableId?.tableName)
+            Assert.assertEquals(1, statement.inputTables.size)
         } else {
             Assert.fail()
         }
