@@ -32,12 +32,18 @@ class DmSqlParserDmlTest {
     @Test
     fun querySqlTest1() {
         val sql = """
-            select 1;
+            select 1 from db.t1;
         """.trimIndent()
 
         try {
             val statement = DmSqlHelper.parseStatement(sql)
-            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            if (statement is QueryStmt) {
+                Assert.assertEquals(StatementType.SELECT, statement.statementType)
+                Assert.assertEquals(1, statement.inputTables.size)
+                Assert.assertEquals(TableId(null, "db", "t1"), statement.inputTables[0])
+            } else {
+                Assert.fail()
+            }
         } catch (e: Exception) {
             Assert.fail()
         }

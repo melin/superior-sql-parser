@@ -117,7 +117,7 @@ class DmSqlParserDdlTest {
     @Test
     fun dropTableTest() {
         val sql = """
-            drop table if exists employees purge;
+            drop table employees purge;
         """.trimIndent()
 
         val statement = DmSqlHelper.parseStatement(sql)
