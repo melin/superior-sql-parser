@@ -22,8 +22,8 @@ class DmSqlParserDmlTest {
 
         if (statement is InsertTable) {
             Assert.assertEquals(StatementType.INSERT, statement.statementType)
-//            Assert.assertEquals(27, statement.queryStmt.inputTables.size)
-//            Assert.assertEquals(TableId("dwd", "dwd_d03_contract_det_s"), statement.outputTables.get(0))
+            Assert.assertEquals(27, statement.queryStmt.inputTables.size)
+            Assert.assertEquals(TableId("dwd", "dwd_d03_contract_det_s"), statement.outputTables.get(0))
         } else {
             Assert.fail()
         }
