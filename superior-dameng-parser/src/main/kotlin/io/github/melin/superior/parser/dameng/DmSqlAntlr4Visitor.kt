@@ -30,6 +30,7 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
 
     private var queryStmt: QueryStmt? = null
     private var inputTables: ArrayList<TableId> = arrayListOf()
+    private var outputTables: ArrayList<TableId> = arrayListOf()
     private var cteTempTables: ArrayList<TableId> = arrayListOf()
 
     // 多语句解析结果
@@ -81,23 +82,34 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     override fun visitSelect_stmt(ctx: DmSqlParser.Select_stmtContext?): Statement? {
         currentOptType = StatementType.SELECT
         super.visitSelect_stmt(ctx)
-        if (queryStmt == null) {
-            queryStmt = QueryStmt(inputTables, limit, offset)
-        }
-        queryStmt?.setSql(source(ctx))
+        return queryStmt
+    }
+
+    override fun visitQuery_exp(ctx: DmSqlParser.Query_expContext?): Statement? {
+        super.visitQuery_exp(ctx)
+        queryStmt = QueryStmt(inputTables, limit, offset)
+        val sql = source(ctx)
+        queryStmt?.setSql(sql)
         return queryStmt
     }
 
     override fun visitMerge_into_stmt(ctx: DmSqlParser.Merge_into_stmtContext?): Statement {
         currentOptType = StatementType.MERGE
         super.visitMerge_into_stmt(ctx)
-        return MergeTable(TableId(""))
+        return MergeTable(rootTableId, inputTables)
     }
 
     override fun visitInsert_stmt(ctx: DmSqlParser.Insert_stmtContext?): Statement {
         currentOptType = StatementType.INSERT
         super.visitInsert_stmt(ctx)
-        return InsertTable(InsertMode.INTO, QueryStmt(), TableId(""))
+        var curQueryStmt: QueryStmt = QueryStmt()
+        if (queryStmt != null) {
+            curQueryStmt = queryStmt as QueryStmt
+        }
+        val retObj = InsertTable(InsertMode.INTO, curQueryStmt, rootTableId)
+        retObj.outputTables.clear()
+        retObj.outputTables.addAll(outputTables)
+        return retObj
     }
 
     override fun visitUpdate_stmt(ctx: DmSqlParser.Update_stmtContext?): Statement {
@@ -148,11 +160,20 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     override fun visitFull_tv_name(ctx: DmSqlParser.Full_tv_nameContext): Statement? {
         super.visitFull_tv_name(ctx)
         val tableId = parseTableViewName(ctx.qualified_name())
-        val parentDeleteStmtBody = ctx.parent?.parent?.parent?.parent?.parent
-        val parentUpdateStmtBody = parentDeleteStmtBody?.parent
-        if (parentUpdateStmtBody is DmSqlParser.Update_stmt_bodyContext
-            || parentDeleteStmtBody is DmSqlParser.Delete_stmtContext) {
-            rootTableId = tableId
+        val parentLv2 = ctx.parent?.parent
+        val parentLv5 = parentLv2?.parent?.parent?.parent
+        val parentLv6 = parentLv5?.parent
+        if (parentLv6 is DmSqlParser.Update_stmt_bodyContext
+            || parentLv5 is DmSqlParser.Delete_stmtContext
+            || parentLv2 is DmSqlParser.Insert_stmtContext
+            || parentLv5 is DmSqlParser.Insert_stmtContext
+            || parentLv5 is DmSqlParser.Insert_stmt_bodyContext
+            || parentLv5 is DmSqlParser.Multi_insert_stmt_bodyContext
+            || parentLv2 is DmSqlParser.Merge_into_stmtContext) {
+            if (rootTableId.tableName == "") {
+                tableId.also { rootTableId = it }
+            }
+            addOutputTableId(tableId)
         } else {
             if (!inputTables.contains(tableId) && !cteTempTables.contains(tableId)) {
                 inputTables.add(tableId)
@@ -168,6 +189,12 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
             return TableId(null, ctx.getChild(0).text, ctx.getChild(2).text)
         } else {
             throw SQLParserException("not suuport tablename")
+        }
+    }
+
+    private fun addOutputTableId(tableId: TableId) {
+        if (!outputTables.contains(tableId)) {
+            outputTables.add(tableId)
         }
     }
 }
