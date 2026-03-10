@@ -2,6 +2,7 @@ package io.github.melin.superior.parser.dameng
 
 import com.github.melin.superior.sql.parser.mysql.DmSqlHelper
 import io.github.melin.superior.common.StatementType
+import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
 import io.github.melin.superior.common.relational.create.CreateTable
@@ -28,7 +29,7 @@ class DmSqlParserDdlTest {
 
         if (statement is CreateTable) {
             Assert.assertEquals(StatementType.CREATE_TABLE, statement.statementType)
-//            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertEquals("employees", statement.tableId.tableName)
 //            Assert.assertEquals(3, statement.columnRels?.size)
 //            Assert.assertTrue(statement.columnRels?.get(0)?.primaryKey!!)
 //            Assert.assertFalse(statement.columnRels?.get(1)?.primaryKey!!)
@@ -54,8 +55,8 @@ class DmSqlParserDdlTest {
 
         if (statement is CreateView) {
             Assert.assertEquals(StatementType.CREATE_VIEW, statement.statementType)
-//            Assert.assertEquals("comedies", statement.tableId.tableName)
-//            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("comedies", statement.tableId.tableName)
+            Assert.assertEquals(2, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -81,8 +82,8 @@ class DmSqlParserDdlTest {
 
         if (statement is CreateMaterializedView) {
             Assert.assertEquals(StatementType.CREATE_MATERIALIZED_VIEW, statement.statementType)
-//            Assert.assertEquals("sales_summary", statement.tableId.tableName)
-//            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
+            Assert.assertEquals("sales_summary", statement.tableId.tableName)
+            Assert.assertEquals(1, statement.queryStmt.inputTables.size)
         } else {
             Assert.fail()
         }
@@ -92,25 +93,25 @@ class DmSqlParserDdlTest {
     fun commentTest0() {
         val sql = """
             COMMENT ON COLUMN employees.job_id IS 'abbreviated job title';
-            COMMENT ON COLUMN employees1.job_id IS 'abbreviated job title'
+            COMMENT ON COLUMN employees1.job_id IS 'abbreviated1 job title'
         """.trimIndent()
 
         val statement = DmSqlHelper.parseMultiStatement(sql)
-        val st1 = statement.get(0)
-        val st2 = statement.get(1)
+        val st1 = statement[0]
+        val st2 = statement[1]
 
         if (st1 is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, st1.statementType)
-//            Assert.assertEquals("employees.job_id", st1.objValue)
-//            Assert.assertEquals("abbreviated job title", st1.comment)
-//            Assert.assertFalse(st1.isNull)
+            Assert.assertEquals("employees.job_id", st1.objValue)
+            Assert.assertEquals("abbreviated job title", st1.comment)
+            Assert.assertFalse(st1.isNull)
         }
 
         if (st2 is CommentStatement) {
             Assert.assertEquals(StatementType.COMMENT, st2.statementType)
-//            Assert.assertEquals("employees1.job_id", st2.objValue)
-//            Assert.assertEquals("abbreviated job title", st2.comment)
-//            Assert.assertFalse(st2.isNull)
+            Assert.assertEquals("employees1.job_id", st2.objValue)
+            Assert.assertEquals("abbreviated1 job title", st2.comment)
+            Assert.assertFalse(st2.isNull)
         }
     }
 
@@ -124,8 +125,43 @@ class DmSqlParserDdlTest {
 
         if (statement is DropTable) {
             Assert.assertEquals(StatementType.DROP_TABLE, statement.statementType)
-//            Assert.assertEquals("employees", statement.tableId.tableName)
-//            Assert.assertTrue(statement.purge)
+            Assert.assertEquals("employees", statement.tableId.tableName)
+            Assert.assertTrue(statement.purge)
+        } else {
+            Assert.fail()
+        }
+    }
+
+    @Test
+    fun alterTableTest() {
+        val sql = """
+            ALTER TABLE "t1" RENAME COLUMN "old_column" TO "new_column_temp";
+            ALTER TABLE "t2" ADD "new_column" VARCHAR(8000);
+            ALTER TABLE "t3" DROP COLUMN "new_column_temp";
+        """.trimIndent()
+
+        val statement = DmSqlHelper.parseMultiStatement(sql)
+        val st1 = statement[0]
+        val st2 = statement[1]
+        val st3 = statement[2]
+
+        if (st1 is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, st1.statementType)
+            Assert.assertEquals("t1", st1.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+
+        if (st2 is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, st2.statementType)
+            Assert.assertEquals("t2", st2.tableId.tableName)
+        } else {
+            Assert.fail()
+        }
+
+        if (st3 is AlterTable) {
+            Assert.assertEquals(StatementType.ALTER_TABLE, st3.statementType)
+            Assert.assertEquals("t3", st3.tableId.tableName)
         } else {
             Assert.fail()
         }

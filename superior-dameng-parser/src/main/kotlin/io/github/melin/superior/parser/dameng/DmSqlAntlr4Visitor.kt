@@ -8,6 +8,7 @@ import io.github.melin.superior.common.antlr4.ParserUtils.source
 import io.github.melin.superior.common.relational.DefaultStatement
 import io.github.melin.superior.common.relational.Statement
 import io.github.melin.superior.common.relational.TableId
+import io.github.melin.superior.common.relational.alter.AlterTable
 import io.github.melin.superior.common.relational.common.CommentStatement
 import io.github.melin.superior.common.relational.common.ShowStatement
 import io.github.melin.superior.common.relational.create.CreateMaterializedView
@@ -17,6 +18,7 @@ import io.github.melin.superior.common.relational.dml.*
 import io.github.melin.superior.common.relational.drop.DropTable
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParser
 import io.github.melin.superior.parser.dameng.antlr4.DmSqlParserBaseVisitor
+import org.antlr.v4.runtime.ParserRuleContext
 import org.apache.commons.lang3.StringUtils
 
 /** Created by libinsong on 2018/2/8. */
@@ -127,34 +129,79 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
     override fun visitCreate_table_stmt(ctx: DmSqlParser.Create_table_stmtContext?): Statement {
         currentOptType = StatementType.CREATE_TABLE
         super.visitCreate_table_stmt(ctx)
-        return CreateTable(TableId(""), TableType.DAMENG)
+        return CreateTable(rootTableId, TableType.DAMENG)
     }
 
     override fun visitCreate_view_stmt(ctx: DmSqlParser.Create_view_stmtContext?): Statement {
         currentOptType = StatementType.CREATE_VIEW
         super.visitCreate_view_stmt(ctx)
-        return CreateView(TableId(""), QueryStmt(inputTables, limit, offset))
+        return CreateView(rootTableId, QueryStmt(inputTables, limit, offset))
     }
 
     override fun visitCreate_materialized_view_stmt(ctx: DmSqlParser.Create_materialized_view_stmtContext?): Statement {
         currentOptType = StatementType.CREATE_MATERIALIZED_VIEW
         super.visitCreate_materialized_view_stmt(ctx)
-        return CreateMaterializedView(TableId(""), QueryStmt(inputTables, limit, offset))
+        return CreateMaterializedView(rootTableId, QueryStmt(inputTables, limit, offset))
     }
 
-    override fun visitComment_stmt(ctx: DmSqlParser.Comment_stmtContext?): Statement {
+    override fun visitFull_view_name2(ctx: DmSqlParser.Full_view_name2Context?): Statement? {
+        if (currentOptType == StatementType.CREATE_VIEW
+            || currentOptType == StatementType.CREATE_MATERIALIZED_VIEW) {
+            if (ctx?.qualified_name2() != null) {
+                rootTableId = parseTableViewName(ctx.qualified_name2())
+            }
+        }
+        return super.visitFull_view_name2(ctx)
+    }
+
+    override fun visitComment_stmt(ctx: DmSqlParser.Comment_stmtContext): Statement {
         super.visitComment_stmt(ctx)
+        var objValue: String? = null
+        val isNull = false
+        var objType: String = ""
+        val text: String = CommonUtils.cleanQuote(ctx.LT_STRING().text)
+        val fullTableName = ctx.full_table_name()
+        val fullColumnName = ctx.full_column_name()
+        val fullViewName = ctx.full_view_name()
+        if (fullTableName != null) {
+            objType = "TABLE"
+            objValue = fullTableName.qualified_name().text
+        } else if(fullColumnName != null) {
+            objType = "COLUMN"
+            objValue = fullColumnName.qualified_name().text
+        } else if(fullViewName != null) {
+            objType = "VIEW"
+            objValue = fullViewName.qualified_name().text
+        }
         currentOptType = StatementType.COMMENT
-        return CommentStatement()
+        return CommentStatement(text, isNull, objType, objValue)
     }
 
-    override fun visitDrop_stmt(ctx: DmSqlParser.Drop_stmtContext?): Statement {
+    override fun visitDrop_stmt(ctx: DmSqlParser.Drop_stmtContext?): Statement? {
         super.visitDrop_stmt(ctx)
         val dropDbObject = ctx?.drop_db_object()
         if (dropDbObject?.db_object()?.text.equals("table")) {
             currentOptType = StatementType.DROP_TABLE
+            val dropStmtBody = ctx?.drop_stmt_body_1()
+            if (dropStmtBody?.full_object_name() != null) {
+                rootTableId = parseTableViewName(dropStmtBody.full_object_name().qualified_name())
+            } else if(dropStmtBody?.full_table_name() != null) {
+                rootTableId = parseTableViewName(dropStmtBody.full_table_name().qualified_name())
+            }
+            val dropTable = DropTable(rootTableId, dropDbObject?.exist()?.text == "ifexists")
+            if (dropStmtBody?.purge_option() != null) {
+                dropTable.purge = true
+            }
+            return dropTable
         }
-        return DropTable(TableId(""), dropDbObject?.exist()?.text == "ifexists")
+        return null
+    }
+
+    override fun visitAlter_table_stmt(ctx: DmSqlParser.Alter_table_stmtContext): Statement {
+        currentOptType = StatementType.ALTER_TABLE
+        super.visitAlter_table_stmt(ctx)
+        rootTableId = parseTableViewName(ctx.full_table_name().qualified_name())
+        return AlterTable(rootTableId)
     }
 
     override fun visitFull_tv_name(ctx: DmSqlParser.Full_tv_nameContext): Statement? {
@@ -182,11 +229,18 @@ class DmSqlAntlr4Visitor(val splitSql: Boolean = false, val command: String?) : 
         return null
     }
 
-    private fun parseTableViewName(ctx: DmSqlParser.Qualified_nameContext): TableId {
+    override fun visitFull_table_name(ctx: DmSqlParser.Full_table_nameContext?): Statement? {
+        if (ctx?.qualified_name() != null) {
+            rootTableId = parseTableViewName(ctx.qualified_name())
+        }
+        return super.visitFull_table_name(ctx)
+    }
+
+    private fun parseTableViewName(ctx: ParserRuleContext): TableId {
         if (ctx.childCount == 1) {
-            return TableId(null, null, ctx.getChild(0).text)
+            return TableId(null, null, CommonUtils.cleanQuote(ctx.getChild(0).text))
         } else if (ctx.childCount == 3) {
-            return TableId(null, ctx.getChild(0).text, ctx.getChild(2).text)
+            return TableId(null, CommonUtils.cleanQuote(ctx.getChild(0).text), CommonUtils.cleanQuote(ctx.getChild(2).text))
         } else {
             throw SQLParserException("not suuport tablename")
         }
