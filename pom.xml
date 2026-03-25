@@ -36,8 +36,8 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <spotless.version>2.44.4</spotless.version>
 
-        <kotlin.version>2.3.0</kotlin.version>
-        <antlr4.version>4.13.2</antlr4.version>
+        <kotlin.version>2.4.0</kotlin.version>
+        <antlr4.version>4.13.1</antlr4.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.3</log4j.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
@@ -363,7 +363,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.9.0</version>
+                        <version>0.10.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <deploymentName>superior-sql-parser-${project.version}</deploymentName>
