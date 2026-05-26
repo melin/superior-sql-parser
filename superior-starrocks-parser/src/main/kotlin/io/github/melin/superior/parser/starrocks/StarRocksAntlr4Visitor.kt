@@ -202,7 +202,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
         val distributionDesc = ctx.distributionDesc();
         if (distributionDesc != null) {
             val distributionColumns =
-                distributionDesc.identifierList().identifier().map { identifier -> identifier.text }
+                distributionDesc.identifierList().identifier().map { identifier -> CommonUtils.cleanQuote(identifier.text) }
             table.distributionColumns = distributionColumns;
             if (distributionDesc.BUCKETS() != null) {
                 val buckets = distributionDesc.INTEGER_VALUE().text.toInt()
@@ -249,6 +249,17 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
 
         ctx.materializedViewDesc().forEach { this.visitMaterializedViewDesc(it) }
         createView.modelType = mvRefreshType
+
+        val distributionDesc = ctx.materializedViewDesc().get(0).distributionDesc()
+        if (distributionDesc != null) {
+            val distributionColumns =
+                distributionDesc.identifierList().identifier().map { identifier -> CommonUtils.cleanQuote(identifier.text) }
+            createView.distributionColumns = distributionColumns;
+            if (distributionDesc.BUCKETS() != null) {
+                val buckets = distributionDesc.INTEGER_VALUE().text.toInt()
+                createView.buckets = buckets
+            }
+        }
 
         this.visitQueryStatement(ctx.queryStatement())
         return createView
