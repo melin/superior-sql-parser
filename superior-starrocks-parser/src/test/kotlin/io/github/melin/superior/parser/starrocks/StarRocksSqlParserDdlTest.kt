@@ -150,6 +150,8 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals(CREATE_TABLE, statement.statementType)
             Assert.assertEquals("meta_role", statement.tableId.tableName)
             Assert.assertEquals("primary", statement.modelType)
+            Assert.assertEquals(10, statement.buckets)
+            Assert.assertEquals(listOf("id"), statement.distributionColumns)
         } else {
             Assert.fail()
         }

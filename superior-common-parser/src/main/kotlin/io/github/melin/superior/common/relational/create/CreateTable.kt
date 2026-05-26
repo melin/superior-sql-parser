@@ -38,6 +38,8 @@ data class CreateTable(
     var clusteredColumns: List<String> = Lists.newArrayList() // 分桶表分桶列
     var sortedColumns: List<String> = Lists.newArrayList() // 分桶表排序列
     var storageHandler: String? = null
+    var distributionColumns: List<String>? = null // 分布式表分布列
+    var buckets: Int? = null // 分桶表分桶数
 
     constructor(
         tableId: TableId,

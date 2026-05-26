@@ -197,6 +197,18 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
         val table = CreateTable(tableId, TableType.STARROCKS, comment, columnRels)
         table.modelType = modelType
         table.partitionType = partitionType
+
+        val distributionDesc = ctx.distributionDesc();
+        if (distributionDesc != null) {
+            val distributionColumns =
+                distributionDesc.identifierList().identifier().map { identifier -> identifier.text }
+            table.distributionColumns = distributionColumns;
+            if (distributionDesc.BUCKETS() != null) {
+                val buckets = distributionDesc.INTEGER_VALUE().text.toInt()
+                table.buckets = buckets
+            }
+        }
+
         return table
     }
 
