@@ -275,6 +275,8 @@ class StarRocksSqlParserDdlTest {
             Assert.assertEquals("Async", statement.modelType)
             Assert.assertEquals(TableId("example_db", "lo_mv1"), statement.tableId)
             Assert.assertEquals(TableId("lineorder"), statement.queryStmt.inputTables.get(0))
+            Assert.assertEquals(10, statement.buckets)
+            Assert.assertEquals(listOf("lo_orderkey"), statement.distributionColumns)
         } else {
             Assert.fail()
         }

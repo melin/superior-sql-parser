@@ -21,4 +21,7 @@ data class CreateMaterializedView(
 
     var modelType: String = "Sync" // 表模型类型
     var properties: Map<String, String> = mapOf()
+
+    var distributionColumns: List<String>? = null // 分布式表分布列
+    var buckets: Int? = null // 分桶表分桶数
 }
