@@ -1279,6 +1279,7 @@ class SparkSqlParserTest {
     fun queryTest0() {
         val sql =
             """
+            use bigata;
             select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10
             select * from `demo_rp`.bigdata.users1 a join address1 b on a.addr_id=b.id limit 102
             select transform(name,idcard) USING 'python udf-python.py'  AS (name,id_card,gre) from db_mxy.person
@@ -1287,10 +1288,10 @@ class SparkSqlParserTest {
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
 
-        Assert.assertEquals(3, statements.size)
+        Assert.assertEquals(4, statements.size)
 
-        val query0 = statements.get(0)
-        val query1 = statements.get(1)
+        val query0 = statements.get(1)
+        val query1 = statements.get(2)
         if (query0 is QueryStmt) {
             Assert.assertEquals(StatementType.SELECT, query0.statementType)
             Assert.assertEquals(2, query0.inputTables.size)
