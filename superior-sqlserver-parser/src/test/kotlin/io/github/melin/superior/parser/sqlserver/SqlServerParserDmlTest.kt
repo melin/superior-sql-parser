@@ -18,7 +18,7 @@ class SqlServerParserDmlTest {
             ORDER BY list_price, product_name 
             OFFSET 20 ROWS 
             FETCH NEXT 10 ROWS ONLY;
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -59,7 +59,7 @@ class SqlServerParserDmlTest {
             JOIN Sales_Quota_CTE ON Sales_Quota_CTE.BusinessEntityID = Sales_CTE.SalesPersonID
                 AND Sales_CTE.SalesYear = Sales_Quota_CTE.SalesQuotaYear
             ORDER BY SalesPersonID, SalesYear
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -79,7 +79,7 @@ class SqlServerParserDmlTest {
             SET @NAME='kkk'
             SELECT * FROM demos.dbo.tab1 WHERsE name=@NAME
             SELECT name FROM demos.dbo.tab1 WHERE name=@NAME
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -97,7 +97,7 @@ class SqlServerParserDmlTest {
             """
             DELETE Production.ProductCostHistory  
             WHERE StandardCost BETWEEN 12.00 AND 14.00 AND EndDate IS NULL;  
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -116,7 +116,7 @@ class SqlServerParserDmlTest {
             DELETE TOP (20)
             FROM Purchasing.PurchaseOrderDetail
             WHERE DueDate < '20020701';
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -138,7 +138,7 @@ class SqlServerParserDmlTest {
                 JOIN dbo.DimProductSubcategory T2  
                 ON T1.ProductSubcategoryKey = T2.ProductSubcategoryKey  
                 WHERE T2.EnglishProductSubcategoryName = 'Road Bikes') 
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -158,7 +158,7 @@ class SqlServerParserDmlTest {
             INSERT INTO Production.UnitMeasure  
             VALUES (N'FT2', N'Square Feet ', '20080923'), (N'Y', N'Yards', '20080923')
                 , (N'Y3', N'Cubic Yards', '20080923');  
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -177,7 +177,7 @@ class SqlServerParserDmlTest {
             UPDATE Cities  
             SET Location = CONVERT(Point, '12.3:46.2')  
             WHERE Name = 'Anchorage';  
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -198,7 +198,7 @@ class SqlServerParserDmlTest {
             FROM (SELECT TOP 10 BusinessEntityID FROM HumanResources.Employee1  
                  ORDER BY HireDate ASC) AS th  
             WHERE HumanResources.Employee.BusinessEntityID = th.BusinessEntityID;
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -227,7 +227,7 @@ class SqlServerParserDmlTest {
                 Target.Price		= Source.Price
             WHEN NOT MATCHED BY Source THEN
                 DELETE;
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)
@@ -249,7 +249,7 @@ class SqlServerParserDmlTest {
             insert into dbo.spt_fallback_dev
             select *
             from dbo.spt_fallback_usg;
-        """
+            """
                 .trimIndent()
 
         val statement = SqlServerHelper.parseStatement(sql)

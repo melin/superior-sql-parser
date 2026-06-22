@@ -21,7 +21,7 @@ class MySqlProcedureParserTest {
                 
                 select * from demos;
             END;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -60,7 +60,7 @@ class MySqlProcedureParserTest {
                 END LOOP myLoop;
                 CLOSE My_Cursor;
             END;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)

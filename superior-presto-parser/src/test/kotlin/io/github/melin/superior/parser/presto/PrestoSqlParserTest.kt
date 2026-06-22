@@ -17,7 +17,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             select a.* from datacompute1.datacompute.dc_job a left join datacompute1.datacompute.dc_job_scheduler b on a.id=b.job_id
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -35,7 +35,7 @@ class PrestoSqlParserTest {
             """
             SELECT COUNT(app_name) AS "应用名" FROM (SELECT * FROM ops.dwd_app_to_container_wt 
             WHERE ds=date_format(CURRENT_DATE - interval '1' DAY, "%Y%m%d") ) tdbi_view
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -52,7 +52,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             select * from preso_table limit 10
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -70,7 +70,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             create table dd_s_s as select * from bigdata.test_demo_test limit 1
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -88,7 +88,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             drop table if exists bigdata.tdl_small_files_2
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -106,7 +106,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             insert into orders select * from new_orders;
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)
@@ -123,7 +123,7 @@ class PrestoSqlParserTest {
         val sql =
             """
             DELETE FROM lineitem WHERE orderkey IN (SELECT orderkey FROM orders WHERE priority = 'LOW');
-        """
+            """
                 .trimIndent()
 
         val statement = PrestoSqlHelper.parseStatement(sql)

@@ -51,7 +51,7 @@ class MySqlParserDmlTest {
             """
             DELETE FROM films
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -71,7 +71,7 @@ class MySqlParserDmlTest {
             """
             DELETE t1, t2 FROM t1 INNER JOIN t2 INNER JOIN t3
             WHERE t1.id=t2.id AND t2.id=t3.id;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -92,7 +92,7 @@ class MySqlParserDmlTest {
             """
             DELETE FROM t1, t2 USING t1 INNER JOIN t2 INNER JOIN t3
             WHERE t1.id=t2.id AND t2.id=t3.id;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -112,7 +112,7 @@ class MySqlParserDmlTest {
         val sql =
             """
             DELETE FROM users
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -131,7 +131,7 @@ class MySqlParserDmlTest {
             """
             UPDATE employees SET sales_count = sales_count + 1 WHERE id =
             (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -151,7 +151,7 @@ class MySqlParserDmlTest {
             """
             UPDATE product p LEFT JOIN product_price pp ON p.productid= pp.productid 
             SET p.isdelete = 1 WHERE pp.productid IS NULL;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -178,7 +178,7 @@ class MySqlParserDmlTest {
               group by region_name
             ) as a on a.name=b.name
             set b.access_station=a.snum,b.access_point=pnum;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -198,7 +198,7 @@ class MySqlParserDmlTest {
             """
             UPDATE items,month SET items.price=month.price
             WHERE items.id=month.id;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -217,7 +217,7 @@ class MySqlParserDmlTest {
         val sql =
             """
             insert into bigdata."user" select * from users a left outer join address b on a.address_id = b.id
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -273,7 +273,7 @@ class MySqlParserDmlTest {
               CTE2 AS (SELECT C, D FROM TABLE2)
             SELECT B, D FROM CTE1 JOIN CTE2
             WHERE CTE1.A = CTE2.C;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -316,7 +316,7 @@ class MySqlParserDmlTest {
                 FROM DATE_RANGE2
             ) AS DERIVED_TABLE
             ON DUPLICATE KEY UPDATE DATE = VALUES(DATE);
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)
@@ -336,7 +336,7 @@ class MySqlParserDmlTest {
             """
             WITH cte1 AS (SELECT 1)
             SELECT * FROM (WITH cte2 AS (SELECT 2) SELECT * FROM cte2 JOIN cte1) AS dt;
-        """
+            """
                 .trimIndent()
 
         val statement = MySqlHelper.parseStatement(sql)

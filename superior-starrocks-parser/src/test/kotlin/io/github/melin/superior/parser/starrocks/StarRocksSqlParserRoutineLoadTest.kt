@@ -23,7 +23,7 @@ class StarRocksSqlParserRoutineLoadTest {
                 "kafka_topic" = "ordertest1",
                 "property.kafka_default_offsets" = "OFFSET_BEGINNING"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -52,7 +52,7 @@ class StarRocksSqlParserRoutineLoadTest {
                 "kafka_partitions" = "0,1,2,3,4,5,6,7",
                 "kafka_offsets" = "OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_END,OFFSET_END,OFFSET_END,OFFSET_END"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -73,7 +73,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val sql =
             """
             PAUSE ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -93,7 +93,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val sql =
             """
             RESUME ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -113,7 +113,7 @@ class StarRocksSqlParserRoutineLoadTest {
         val sql =
             """
             STOP ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)

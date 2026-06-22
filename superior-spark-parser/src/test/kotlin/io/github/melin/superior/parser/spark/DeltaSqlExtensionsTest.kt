@@ -16,9 +16,9 @@ class DeltaSqlExtensionsTest {
         val sql =
             """
             VACUUM eventsTable DRY RUN;
-            VACUUM eventsTable USING INVENTORY inventoryTable
+            VACUUM eventsTable USING INVENTORY inventoryTable;
             VACUUM eventsTable USING INVENTORY (select * from inventoryTable);
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -39,7 +39,7 @@ class DeltaSqlExtensionsTest {
             """
             OPTIMIZE delta_table_name WHERE date >= '2017-01-01'
             OPTIMIZE delta_table_name ZORDER BY (eventType)
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -56,7 +56,7 @@ class DeltaSqlExtensionsTest {
         val sql =
             """
             DESCRIBE DETAIL eventsTable
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -73,7 +73,7 @@ class DeltaSqlExtensionsTest {
         val sql =
             """
             DESCRIBE HISTORY eventsTable
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)

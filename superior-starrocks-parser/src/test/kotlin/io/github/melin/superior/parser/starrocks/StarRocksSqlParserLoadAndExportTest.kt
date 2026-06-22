@@ -28,7 +28,7 @@ class StarRocksSqlParserLoadAndExportTest {
                 "kafka_topic" = "ordertest1",
                 "property.kafka_default_offsets" = "OFFSET_BEGINNING"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -57,7 +57,7 @@ class StarRocksSqlParserLoadAndExportTest {
                 "kafka_partitions" = "0,1,2,3,4,5,6,7",
                 "kafka_offsets" = "OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_BEGINNING,OFFSET_END,OFFSET_END,OFFSET_END,OFFSET_END"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -78,7 +78,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val sql =
             """
             PAUSE ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -98,7 +98,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val sql =
             """
             RESUME ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -118,7 +118,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val sql =
             """
             STOP ROUTINE LOAD FOR example_tbl2_ordertest2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -150,7 +150,7 @@ class StarRocksSqlParserLoadAndExportTest {
             PROPERTIES (
                 "timeout" = "3600"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -171,7 +171,7 @@ class StarRocksSqlParserLoadAndExportTest {
         val sql =
             """
             CANCEL LOAD FROM db1 WHERE LABEL = "label";
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -192,7 +192,7 @@ class StarRocksSqlParserLoadAndExportTest {
             ALTER LOAD FOR test_db.label1 properties (
                 'priority'='HIGHEST'
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -218,7 +218,7 @@ class StarRocksSqlParserLoadAndExportTest {
                 "aws.s3.secret_key" = "yyy",
                 "aws.s3.region" = "zzz"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -239,7 +239,7 @@ class StarRocksSqlParserLoadAndExportTest {
             CANCEL Export
             FROM example_db
             WHERE queryid = "921d8f80-7c9d-11eb-9342-acde48001121";
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)

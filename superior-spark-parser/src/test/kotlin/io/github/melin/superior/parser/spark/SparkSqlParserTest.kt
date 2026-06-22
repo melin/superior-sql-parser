@@ -25,7 +25,7 @@ class SparkSqlParserTest {
             """
             CREATE DATABASE IF NOT EXISTS bigdata1;    
             drop DATABASE IF EXISTS bigdata2
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.splitSql(sql)
@@ -40,7 +40,7 @@ class SparkSqlParserTest {
             """
             CREATE DATABASE IF NOT EXISTS bigdata1;
             drop DATABASE IF EXISTS bigdata2
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -496,7 +496,7 @@ class SparkSqlParserTest {
                 id bigint, data string, ds timestamp) 
             USING iceberg PARTITIONED BY (days(ts))
             lifeCycle 300
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1286,7 +1286,7 @@ class SparkSqlParserTest {
             select * from `demo_rp`.bigdata.users a join address b on a.addr_id=b.id limit 101 OFFSET 10
             select * from `demo_rp`.bigdata.users1 a join address1 b on a.addr_id=b.id limit 102
             select transform(name,idcard) USING 'python udf-python.py'  AS (name,id_card,gre) from db_mxy.person
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -1358,7 +1358,7 @@ class SparkSqlParserTest {
                     select count(distinct partner_code) bzhyyh, count(1) bzdy, week from tdl_dt2x_table
                 ) a
             ) b limit 111
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1621,7 +1621,7 @@ class SparkSqlParserTest {
             INSERT OVERWRITE TABLE toodey1 SELECT sample_07.code,sample_07.salary
             INSERT OVERWRITE TABLE toodey2 SELECT sample_07.code,sample_07.salary WHERE sample_07.salary >= 50000
             INSERT OVERWRITE TABLE toodey3 SELECT sample_07.total_emp,sample_07.salary WHERE sample_07.salary <= 50000
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1658,7 +1658,7 @@ class SparkSqlParserTest {
             set spark.sql.test="ddsd";
             set spark.sql.test2;
             reset spark.sql.test;
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -1712,7 +1712,7 @@ class SparkSqlParserTest {
             """
             DELETE FROM films
             WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1731,7 +1731,7 @@ class SparkSqlParserTest {
             """
             UPDATE employees SET sales_count = sales_count + 1 WHERE id =
             (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1766,7 +1766,7 @@ class SparkSqlParserTest {
             ON logs.uniqueId = updates.uniqueId
             WHEN NOT MATCHED
               THEN INSERT *
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1788,7 +1788,7 @@ class SparkSqlParserTest {
             ON logs.uniqueId = updates.uniqueId AND logs.date > current_date() - INTERVAL 7 DAYS
             WHEN NOT MATCHED AND updates.date > current_date() - INTERVAL 7 DAYS
               THEN INSERT *
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1821,7 +1821,7 @@ class SparkSqlParserTest {
             WHEN NOT MATCHED THEN 
               INSERT(customerid, address, current, effectivedate, enddate) 
               VALUES(staged_updates.customerId, staged_updates.address, true, staged_updates.effectiveDate, null)
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1848,7 +1848,7 @@ class SparkSqlParserTest {
             WHEN MATCHED AND s.deleted = true THEN DELETE
             WHEN MATCHED THEN UPDATE SET key = s.key, value = s.newValue
             WHEN NOT MATCHED AND s.deleted = false THEN INSERT (key, value) VALUES (key, newValue)
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1872,7 +1872,7 @@ class SparkSqlParserTest {
             ON
                a1.name = a2.name
             WHEN MATCHED THEN UPDATE SET a1.age = a2.age
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1892,7 +1892,7 @@ class SparkSqlParserTest {
             with q1 as ( select key from q2 where key = '5'),
             q2 as ( select key from test where key = '5')
             select * from (select key from q1) a
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1916,7 +1916,7 @@ class SparkSqlParserTest {
             e as (select a.key,c.value from a left outer join c on a.key=c.key and c.key is not null)
             insert overwrite table srcp partition (p='abc')
             select * from d union all select * from e
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -1932,11 +1932,11 @@ class SparkSqlParserTest {
     fun exportTest0() {
         val sql =
             """
-           with 
-                a as (select * from test),
-                druid_result as (select * from a)
-           export table druid_result TO 'druid_result.csv'
-        """
+            with 
+                 a as (select * from test),
+                 druid_result as (select * from a)
+            export table druid_result TO 'druid_result.csv'
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2027,7 +2027,7 @@ class SparkSqlParserTest {
             from db.table.history h
             join db.table.snapshots s on h.snapshot_id = s.snapshot_id
             order by made_current_at
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2073,7 +2073,7 @@ class SparkSqlParserTest {
             datatunnel source('sftp') options(host='x.x.x.x') 
             transform = "select * from result where type='sql'"
             sink('hive') options(table='demo', columns=['id', 'name'])
-        """
+            """
                 .trimIndent()
         val statement = SparkSqlHelper.parseStatement(sql)
 
@@ -2120,7 +2120,7 @@ class SparkSqlParserTest {
                 tableName='tmp_demo_test2',
                 columns=['*'])
             SINK('log') OPTIONS(numRows = 10)
-        """
+            """
                 .trimIndent()
         val statement = SparkSqlHelper.parseStatement(sql)
         if (statement is DataTunnelExpr) {
@@ -2146,7 +2146,7 @@ class SparkSqlParserTest {
                 port=1521,
                 serviceName='XE',
                 databaseName='FLINKUSER',    tableName='ORDERS', 
-                columns=[{'name' : "pk", "type" : "id"},
+                columns=[{"name" : "pk", "type" : "id"},
                           { "name" : "col_ip","type" : "ip" },
                           { "name" : "col_double","type" : "double" },
                           { "name" : "col_long","type" : "long" },
@@ -2160,7 +2160,7 @@ class SparkSqlParserTest {
                           { "name" : "col_geo_shape", "type" : "geo_shape", "tree" : "quadtree", "precision" : "10m"}
                         ])
                 SINK('log') OPTIONS(numRows = 10)
-        """
+            """
                 .trimIndent()
         val statement = SparkSqlHelper.parseStatement(sql)
 
@@ -2231,7 +2231,7 @@ class SparkSqlParserTest {
               older_than => CURRENT_TIMESTAMP - INTERVAL '5' DAYS,
               dry_run => true
             )
-        """
+            """
                 .trimIndent()
         val statement = SparkSqlHelper.parseStatement(sql)
 
@@ -2356,7 +2356,7 @@ class SparkSqlParserTest {
             """
             create view tdl_spark_test using csv File '/user/dataworks/users/qianxiao/demo.csv' Options( delimiter=',',header='true')
             COMPRESSION gz;
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2375,7 +2375,7 @@ class SparkSqlParserTest {
         val sql =
             """
             SELECT * FROM range(6 + cos(3));
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2391,7 +2391,7 @@ class SparkSqlParserTest {
             """
             cache lazy table fire_service_calls_tbl_cache OPTIONS ('storageLevel' 'DISK_ONLY') as 
             select * from (select * from demo.db.fire_service_calls_tbl) a
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2409,7 +2409,7 @@ class SparkSqlParserTest {
         val sql =
             """
             uncache table fire_service_calls_tbl_cache;
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2429,10 +2429,10 @@ class SparkSqlParserTest {
             ADD ARCHIVE '/some/other.tgz';
             ADD ARCHIVE "/path with space/abc.tar";
             ADD ARCHIVES "/path with space/def.tgz" '/path with space/ghi.zip';
-            
+
             LIST JAR;
             LIST JAR /tmp/test.jar /some/random.jar /another/random.jar;
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)
@@ -2453,7 +2453,7 @@ class SparkSqlParserTest {
             )
             insert overwrite directory 'hdfs://xxx' row format delimited fields terminated by '\t'
             select a, b from test
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2470,7 +2470,7 @@ class SparkSqlParserTest {
         val sql =
             """
             load data inpath 'hdfs:///user/xxx.txt' into table aaa.bbb partition(ds='2024-02-27');
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)
@@ -2501,7 +2501,7 @@ class SparkSqlParserTest {
               destPath = "hdfs://cdh1:8020/temp",
               overwrite = true
             )
-        """
+            """
                 .trimIndent()
 
         val statements = SparkSqlHelper.parseMultiStatement(sql)

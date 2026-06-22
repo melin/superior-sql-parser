@@ -24,7 +24,7 @@ class StarRocksSqlParserDdlTest {
                 "iceberg.catalog.type"="hive",
                 "iceberg.catalog.hive.metastore.uris"="thrift://x.x.x.x:9083"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -41,7 +41,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             DROP CATALOG iceberg_metastore_catalog;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -59,7 +59,7 @@ class StarRocksSqlParserDdlTest {
             """
             CREATE DATABASE IF Not EXISTS db_test;
             Drop DATABASE IF EXISTS db_test1;
-        """
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -79,7 +79,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             DROP DATABASE IF EXISTS db_test;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -96,7 +96,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             ALTER DATABASE example_db SET DATA QUOTA 100G;
-        """
+            """
                 .trimIndent()
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterDatabase) {
@@ -112,7 +112,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             ALTER DATABASE example_db RENAME example_db2;
-        """
+            """
                 .trimIndent()
         val statement = StarRocksHelper.parseStatement(sql)
         if (statement is AlterDatabase) {
@@ -142,7 +142,7 @@ class StarRocksSqlParserDdlTest {
                 gmt_modified datetime     null
             ) ENGINE = olap PRIMARY KEY(id)
             DISTRIBUTED BY HASH (id) BUCKETS 10;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -171,7 +171,7 @@ class StarRocksSqlParserDdlTest {
             DUPLICATE KEY(event_day, site_id, city_code, user_name)
             PARTITION BY date_trunc('day', event_day)
             DISTRIBUTED BY HASH(event_day, site_id);
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -189,8 +189,8 @@ class StarRocksSqlParserDdlTest {
     fun dropTableTest() {
         val sql =
             """
-           DROP TABLE IF EXISTS example_db.My_table force;
-        """
+            DROP TABLE IF EXISTS example_db.My_table force;
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -217,7 +217,7 @@ class StarRocksSqlParserDdlTest {
             AS SELECT c1 as k1, k2, k3, SUM(v1) FROM example_table
             WHERE k1 = 20160112
             GROUP BY k1,k2,k3;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -236,8 +236,8 @@ class StarRocksSqlParserDdlTest {
     fun dropViewTest() {
         val sql =
             """
-           DROP VIEW IF EXISTS example_db.example_view;
-        """
+            DROP VIEW IF EXISTS example_db.example_view;
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -266,7 +266,7 @@ class StarRocksSqlParserDdlTest {
             from lineorder 
             group by lo_orderkey, lo_custkey 
             order by lo_orderkey;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -286,8 +286,8 @@ class StarRocksSqlParserDdlTest {
     fun dropMaterializedViewTest() {
         val sql =
             """
-           DROP MATERIALIZED VIEW IF EXISTS k1_k2;
-        """
+            DROP MATERIALIZED VIEW IF EXISTS k1_k2;
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -303,10 +303,10 @@ class StarRocksSqlParserDdlTest {
     fun alterMaterializedViewTest() {
         val sql =
             """
-           ALTER MATERIALIZED VIEW lo_mv1 RENAME lo_mv1_new_name;
-           ALTER MATERIALIZED VIEW lo_mv2 REFRESH ASYNC EVERY(INTERVAL 1 DAY);
-           ALTER MATERIALIZED VIEW mv1 SET ("session.query_timeout" = "40000");
-        """
+            ALTER MATERIALIZED VIEW lo_mv1 RENAME lo_mv1_new_name;
+            ALTER MATERIALIZED VIEW lo_mv2 REFRESH ASYNC EVERY(INTERVAL 1 DAY);
+            ALTER MATERIALIZED VIEW mv1 SET ("session.query_timeout" = "40000");
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -317,8 +317,8 @@ class StarRocksSqlParserDdlTest {
     fun refreshMaterializedViewTest() {
         val sql =
             """
-           REFRESH MATERIALIZED VIEW lo_mv1 PARTITION START ("2020-02-01") END ("2020-03-01") FORCE;
-        """
+            REFRESH MATERIALIZED VIEW lo_mv1 PARTITION START ("2020-02-01") END ("2020-03-01") FORCE;
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -337,8 +337,8 @@ class StarRocksSqlParserDdlTest {
     fun cancelRefreshMaterializedViewTest() {
         val sql =
             """
-           CANCEL REFRESH MATERIALIZED VIEW lo_mv1;
-        """
+            CANCEL REFRESH MATERIALIZED VIEW lo_mv1;
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -354,7 +354,7 @@ class StarRocksSqlParserDdlTest {
             """
             CREATE INDEX index3 ON sales_records (item_id) USING BITMAP COMMENT '';
 
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -374,7 +374,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             DROP INDEX index3 ON sales_records;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -399,7 +399,7 @@ class StarRocksSqlParserDdlTest {
                 "type" = "StarrocksJar",
                 "file" = "http://http_host:http_port/udf-1.0-SNAPSHOT-jar-with-dependencies.jar"
             );
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -419,7 +419,7 @@ class StarRocksSqlParserDdlTest {
         val sql =
             """
             DROP GLOBAL FUNCTION MY_UDF_JSON_GET(string, string) 
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)

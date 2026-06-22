@@ -198,11 +198,13 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
         table.modelType = modelType
         table.partitionType = partitionType
 
-        val distributionDesc = ctx.distributionDesc();
+        val distributionDesc = ctx.distributionDesc()
         if (distributionDesc != null) {
             val distributionColumns =
-                distributionDesc.identifierList().identifier().map { identifier -> CommonUtils.cleanQuote(identifier.text) }
-            table.distributionColumns = distributionColumns;
+                distributionDesc.identifierList().identifier().map { identifier ->
+                    CommonUtils.cleanQuote(identifier.text)
+                }
+            table.distributionColumns = distributionColumns
             if (distributionDesc.BUCKETS() != null) {
                 val buckets = distributionDesc.INTEGER_VALUE().text.toInt()
                 table.buckets = buckets
@@ -252,8 +254,10 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) : StarRocksParserBas
         val distributionDesc = ctx.materializedViewDesc().get(0).distributionDesc()
         if (distributionDesc != null) {
             val distributionColumns =
-                distributionDesc.identifierList().identifier().map { identifier -> CommonUtils.cleanQuote(identifier.text) }
-            createView.distributionColumns = distributionColumns;
+                distributionDesc.identifierList().identifier().map { identifier ->
+                    CommonUtils.cleanQuote(identifier.text)
+                }
+            createView.distributionColumns = distributionColumns
             if (distributionDesc.BUCKETS() != null) {
                 val buckets = distributionDesc.INTEGER_VALUE().text.toInt()
                 createView.buckets = buckets

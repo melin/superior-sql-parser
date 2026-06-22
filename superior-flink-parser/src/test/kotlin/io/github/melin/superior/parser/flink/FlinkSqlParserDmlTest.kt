@@ -23,11 +23,11 @@ class FlinkSqlParserDmlTest {
             FROM orders_with_total
             GROUP BY order_id
             limit 10;
-            
+
             SELECT order_id, price FROM (VALUES (1, 2.0), (2, 3.1))  AS t (order_id, price);
-            
+
             SELECT * FROM TABLE(TUMBLE(TABLE Bid, DESCRIPTOR(bidtime), INTERVAL '10' MINUTES));
-            
+
             SELECT * FROM TABLE(
                TUMBLE(
                  DATA => TABLE Bid,
@@ -59,7 +59,7 @@ class FlinkSqlParserDmlTest {
                 ROW_NUMBER() OVER (PARTITION BY category ORDER BY sales DESC) AS row_num
               FROM ShopSales)
             WHERE row_num <= 5;
-            
+
             SELECT *
             FROM Ticker
                 MATCH_RECOGNIZE (
@@ -82,7 +82,7 @@ class FlinkSqlParserDmlTest {
                 
                 set sfdf_1 = 'adf';
                 set sfdf_2 = true;
-        """
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -179,7 +179,7 @@ class FlinkSqlParserDmlTest {
 
             set 'execution.checkpointing.checkpoints-after-tasks-finish.enabled' = false;
             SELECT * FROM flink_meta_role;
-        """
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -211,15 +211,15 @@ class FlinkSqlParserDmlTest {
                 'password' = 'root2023',
                 'base-url' = 'jdbc:mysql://172.18.5.44:3306'
             );
-            
+
             USE CATALOG my_catalog;
-            
+
             DROP CATALOG IF EXISTS my_catalog
-            
+
             EXPLAIN PLAN FOR select * from my_catalog.demos.orders;
             EXPLAIN ESTIMATED_COST, CHANGELOG_MODE, PLAN_ADVICE, JSON_EXECUTION_PLAN
              select * from my_catalog.demos.orders;
-        """
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -237,51 +237,51 @@ class FlinkSqlParserDmlTest {
     fun multiInsertTest() {
         val sql =
             """
-            CREATE TABLE pageviews (
-              user_id BIGINT,
-              page_id BIGINT,
-              viewtime TIMESTAMP,
-              proctime AS PROCTIME()
-            ) WITH (
-              'connector' = 'kafka',
-              'topic' = 'pageviews',
-              'properties.bootstrap.servers' = '...',
-              'format' = 'avro'
-            );
-            
-            CREATE TABLE pageview (
-              page_id BIGINT,
-              cnt BIGINT
-            ) WITH (
-              'connector' = 'jdbc',
-              'url' = 'jdbc:mysql://localhost:3306/mydatabase',
-              'table-name' = 'pageview'
-            );
-            
-            CREATE TABLE uniqueview (
-              page_id BIGINT,
-              cnt BIGINT
-            ) WITH (
-              'connector' = 'jdbc',
-              'url' = 'jdbc:mysql://localhost:3306/mydatabase',
-              'table-name' = 'uniqueview'
-            );
-            
-            EXECUTE STATEMENT SET
-            BEGIN
-            
-            INSERT INTO pageview
-            SELECT page_id, count(1)
-            FROM pageviews
-            GROUP BY page_id;
-            
-            INSERT INTO uniqueview
-            SELECT page_id, count(distinct user_id)
-            FROM pageviews
-            GROUP BY page_id;
-            
-           END;
-        """
+             CREATE TABLE pageviews (
+               user_id BIGINT,
+               page_id BIGINT,
+               viewtime TIMESTAMP,
+               proctime AS PROCTIME()
+             ) WITH (
+               'connector' = 'kafka',
+               'topic' = 'pageviews',
+               'properties.bootstrap.servers' = '...',
+               'format' = 'avro'
+             );
+             
+             CREATE TABLE pageview (
+               page_id BIGINT,
+               cnt BIGINT
+             ) WITH (
+               'connector' = 'jdbc',
+               'url' = 'jdbc:mysql://localhost:3306/mydatabase',
+               'table-name' = 'pageview'
+             );
+             
+             CREATE TABLE uniqueview (
+               page_id BIGINT,
+               cnt BIGINT
+             ) WITH (
+               'connector' = 'jdbc',
+               'url' = 'jdbc:mysql://localhost:3306/mydatabase',
+               'table-name' = 'uniqueview'
+             );
+             
+             EXECUTE STATEMENT SET
+             BEGIN
+             
+             INSERT INTO pageview
+             SELECT page_id, count(1)
+             FROM pageviews
+             GROUP BY page_id;
+             
+             INSERT INTO uniqueview
+             SELECT page_id, count(distinct user_id)
+             FROM pageviews
+             GROUP BY page_id;
+             
+            END;
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)

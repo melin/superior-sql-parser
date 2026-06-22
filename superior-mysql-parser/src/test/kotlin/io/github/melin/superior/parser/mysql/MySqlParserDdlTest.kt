@@ -23,7 +23,7 @@ class MySqlParserDdlTest {
             """
             CREATE DATABASE IF NOT EXISTS bigdata1;    
             drop DATABASE IF EXISTS bigdata2
-        """
+            """
                 .trimIndent()
 
         val statements = MySqlHelper.splitSql(sql)
@@ -38,7 +38,7 @@ class MySqlParserDdlTest {
             """
             CREATE DATABASE IF NOT EXISTS "bigdata1";
             drop DATABASE IF EXISTS bigdata2
-        """
+            """
                 .trimIndent()
 
         val statements = MySqlHelper.parseMultiStatement(sql)
@@ -387,7 +387,7 @@ class MySqlParserDdlTest {
             ADD COLUMN new_column1 VARCHAR(255) default null,
             ADD COLUMN new_column2 INT not null default 0,
             ADD COLUMN new_column3 TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-        """
+            """
                 .trimIndent()
         val statement = MySqlHelper.parseStatement(sql)
 

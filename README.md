@@ -5,16 +5,16 @@
 <dependency>
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-[spark|presto|mysql|oracle|...]-parser</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
-> 4.0.x 支持jdk8, antlr 4.9.3, 4.1.x 支持 jdk11, antlr 4.13.1
+> 4.0.x 支持jdk8, antlr 4.9.3, 4.1.x 支持 jdk17, antlr 4.13.1
 
 ## Build
 ```
 export GPG_TTY=$(tty)
-mvn clean deploy -Pdeploy
+mvn spotless:apply clean deploy -Pdeploy
 ```
 
 ### API

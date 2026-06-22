@@ -11,7 +11,7 @@ class FlinkCheckSql {
             CREATE TABLE test (
               name VARCHAR(12)
             ) with(key = 'name')
-        """
+            """
                 .trimIndent()
 
         FlinkSqlHelper.checkSqlSyntax(sql)

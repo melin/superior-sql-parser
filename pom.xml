@@ -5,7 +5,7 @@
 
     <groupId>io.github.melin.superior</groupId>
     <artifactId>superior-sql-parser</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Superior SQL Parser</name>
 
@@ -30,11 +30,11 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <spotless.version>2.44.4</spotless.version>
+        <spotless.version>3.6.0</spotless.version>
 
         <kotlin.version>2.4.0</kotlin.version>
         <antlr4.version>4.13.1</antlr4.version>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.4.0-jre</version>
+            <version>33.6.0-jre</version>
             <scope>provided</scope>
         </dependency>
 

@@ -11,7 +11,7 @@ class UserUDFParserTest {
         val sql =
             """
             CREATE TEMP FUNCTION foo() RETURNS INT RETURN 1
-        """
+            """
                 .trimIndent()
 
         val statement = SparkSqlHelper.parseStatement(sql)

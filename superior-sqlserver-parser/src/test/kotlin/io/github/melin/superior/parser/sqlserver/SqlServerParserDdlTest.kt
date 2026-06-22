@@ -29,7 +29,7 @@ class SqlServerParserDdlTest {
             GO
                 DROP DATABASE Sales, demos;  
             GO 
-        """
+            """
                 .trimIndent()
 
         val statements = SqlServerHelper.parseMultiStatement(sql)

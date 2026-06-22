@@ -18,7 +18,7 @@ class StarRocksSqlParserDmlTest {
             """
             SELECT * FROM hive1.hive_db.hive_table limit 10 offset 20;
             select hello('test', 23)
-        """
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -51,7 +51,7 @@ class StarRocksSqlParserDmlTest {
             with t1 as (select * from bigdata.users),
                 t2 as (select 2)
             select * from t1 union all select * from t2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -69,7 +69,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             DELETE FROM my_table PARTITION p1 WHERE k1 = 3;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -88,7 +88,7 @@ class StarRocksSqlParserDmlTest {
             """
             DELETE FROM score_board
             WHERE name IN (select name from users where country = "China");
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -112,7 +112,7 @@ class StarRocksSqlParserDmlTest {
             )
             DELETE FROM films USING foo_producers
             WHERE producer_id = foo_producers.id;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -135,7 +135,7 @@ class StarRocksSqlParserDmlTest {
             FROM accounts
             WHERE accounts.name = 'Acme Corporation'
                AND employees.id = accounts.sales_person;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -160,7 +160,7 @@ class StarRocksSqlParserDmlTest {
             UPDATE employees SET sales_count = sales_count + 1
             FROM acme_accounts
             WHERE employees.id = acme_accounts.sales_person;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -179,7 +179,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             INSERT INTO test SELECT * FROM test2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -198,7 +198,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             INSERT INTO test PARTITION(p1, p2) WITH LABEL `label1` SELECT * FROM test2;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -217,7 +217,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             INSERT INTO test.`table1` VALUES (1, "test", 23)
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -245,7 +245,7 @@ class StarRocksSqlParserDmlTest {
                 "aws.s3.region" = "test-region-1"
             )
             SELECT * FROM test_db.test_table;
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -268,7 +268,7 @@ class StarRocksSqlParserDmlTest {
             JOIN orders o ON u.id = o.user_id
             WHERE o.amount > 100
             GROUP BY u.id
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -288,7 +288,7 @@ class StarRocksSqlParserDmlTest {
             SHOW CREATE MATERIALIZED VIEW lo_mv1;
             SHOW CREATE TABLE example_db.example_table;
             SHOW DELETE FROM bigdata;
-        """
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -307,9 +307,9 @@ class StarRocksSqlParserDmlTest {
             SUBMIT /*+set_var(query_timeout=100000)*/ TASK test1 AS
             INSERT OVERWRITE insert_wiki_edit
             SELECT * FROM source_wiki_edit;
-            
+
             DROP TASK test1
-        """
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -327,7 +327,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             CREATE TABLE order_new (a, b, c) AS SELECT k1, k2, k3 FROM orders;
-        """
+            """
                 .trimIndent()
 
         val statements = StarRocksHelper.parseMultiStatement(sql)
@@ -347,7 +347,7 @@ class StarRocksSqlParserDmlTest {
             select t1.* from (
                 select * from `default`.person
             ) t1
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -365,7 +365,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             SELECT * FROM users.1v1_user
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)
@@ -385,7 +385,7 @@ class StarRocksSqlParserDmlTest {
         val sql =
             """
             SELECT * FROM hive.users.1v1_user
-        """
+            """
                 .trimIndent()
 
         val statement = StarRocksHelper.parseStatement(sql)

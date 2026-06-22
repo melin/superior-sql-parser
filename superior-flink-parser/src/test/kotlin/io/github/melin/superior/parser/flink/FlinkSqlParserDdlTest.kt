@@ -39,7 +39,7 @@ class FlinkSqlParserDdlTest {
                 'value.changelog-json.timestamp-format.standard'='ISO-8601',
                 'value.changelog-json.ignore-parse-errors' = 'true'
             );
-            
+
             CREATE VIEW IF NOT EXISTS `MDM_VIEW_PRODUCT_ENRICHMENT` AS 
             (SELECT 'WTCTH' BU_CODE, 'WTCTH' FORMULA_COUNTRY_ID,
                 uif.ITEM PRODUCT_ID,
@@ -60,10 +60,10 @@ class FlinkSqlParserDdlTest {
                 ON CAST(CAST(uif.UDA_ID AS DECIMAL(5, 0)) AS STRING) = pat.ATTRIB_ID
                 AND pat.ATTRIB_TYPE = 'PRODUCT_ENRICHMENT'
             );
-            
+
             INSERT INTO PROCESSED_MDM_PRODUCT_ENRICHMENT(PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED) 
             select PRODUCT_ID, ENRICHMENT_ID, LANG, ENRICHMENT_VALUE,LAST_UPDATED from MDM_VIEW_PRODUCT_ENRICHMENT_TRANSLATE;
-        """
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -110,7 +110,7 @@ class FlinkSqlParserDdlTest {
             ) WITH (
                 'connector' = 'kafka'
             )
-        """
+            """
                 .trimIndent()
 
         val statements = FlinkSqlHelper.parseMultiStatement(sql)
@@ -130,7 +130,7 @@ class FlinkSqlParserDdlTest {
             """
             CREATE TABLE `Orders` (product STRING PRIMARY KEY NOT ENFORCED, `a.b.c` INT)
             WITH ('type'='source', 'foo'='bar')
-        """
+            """
                 .trimIndent()
 
         val createTable = FlinkSqlHelper.parseStatement(sql)
@@ -160,7 +160,7 @@ class FlinkSqlParserDdlTest {
                 'username' = 'root',
                 'password' = 'root2023'
             );
-        """
+            """
                 .trimIndent()
 
         val createTable = FlinkSqlHelper.parseStatement(sql)
