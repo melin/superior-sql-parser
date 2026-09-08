@@ -2595,7 +2595,7 @@ primaryExpression
     | value=primaryExpression LEFT_BRACKET index=valueExpression RIGHT_BRACKET                               #collectionSubscript
     | primaryExpression LEFT_BRACKET start=INTEGER_VALUE? COLON end=INTEGER_VALUE? RIGHT_BRACKET               #arraySlice
     | primaryExpression ARROW string                                                      #arrowExpression
-    | (identifier | identifierList) LEFT_PAREN expression                                       #lambdaFunctionExpr
+    | (identifier | identifierList) ARROW expression                                       #lambdaFunctionExpr
     | identifierList ARROW LEFT_PAREN(expressionList)?RIGHT_PAREN                                         #lambdaFunctionExpr
     | left = primaryExpression NOT? MATCH right = primaryExpression                       #matchExpr
     ;
