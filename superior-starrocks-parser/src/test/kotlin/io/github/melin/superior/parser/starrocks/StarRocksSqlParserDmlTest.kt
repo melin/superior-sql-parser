@@ -13,6 +13,22 @@ import org.junit.Test
 class StarRocksSqlParserDmlTest {
 
     @Test
+    fun selectArrayMapLambdaTest() {
+        val sqls = listOf(
+            "select array_map((x,y,z) -> x + y, [1], [2], [4]);",
+            "select array_map(x -> x + 1, [1]);",
+            "select array_map((x) -> x + 1, [1]);",
+            "select array_map((x,y) -> (x + y), [1], [2]);"
+        )
+        for (sql in sqls) {
+            val statement = StarRocksHelper.parseStatement(sql)
+            Assert.assertTrue(sql, statement is QueryStmt)
+            Assert.assertEquals(StatementType.SELECT, statement.statementType)
+            Assert.assertEquals(0, (statement as QueryStmt).inputTables.size)
+        }
+    }
+
+    @Test
     fun selectTest0() {
         val sql =
             """
