@@ -270,8 +270,8 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
             mvRefreshType = "Async"
         } else if (ctx.MANUAL() != null) {
             mvRefreshType = "Manual"
-        } else if (ctx.INCREMENTAL() != null) {
-            mvRefreshType = "Incremental"
+        } else if (ctx.SCHEDULE() != null) {
+            mvRefreshType = "Schedule"
         }
 
         return null
@@ -585,7 +585,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
         return CancelExport(database, queryId)
     }
 
-    override fun visitCreateFunctionStatement(ctx: CreateFunctionStatementContext): Statement {
+    override fun visitCreateUdfFunctionStmt(ctx: CreateUdfFunctionStmtContext): Statement? {
         val functionId = parseTableName(ctx.qualifiedName())
         val global = ctx.GLOBAL() != null
         val properties = parseOptions(ctx.properties())
@@ -735,7 +735,7 @@ class StarRocksAntlr4Visitor(val splitSql: Boolean = false) :
     private fun parseOptions(ctx: PropertiesContext?): Map<String, String> {
         val properties = HashMap<String, String>()
         if (ctx != null) {
-            ctx.property().forEach { item ->
+            ctx.propertyList().property().forEach { item ->
                 val property = item as PropertyContext
                 val key = CommonUtils.cleanQuote(property.key.text)
                 val value = CommonUtils.cleanQuote(property.value.text)
